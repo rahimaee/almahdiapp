@@ -1,0 +1,9 @@
+<div class="container mt-4">
+    <h2>حذف مرکز آموزشی</h2>
+    <p>آیا مطمئن هستید که می‌خواهید "{{ center.name }}" را حذف کنید؟</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">حذف</button>
+        <a href="{% url 'training_center_list' %}" class="btn btn-secondary">لغو</a>
+    </form>
+</div>

@@ -1,0 +1,11 @@
+<div class="container mt-5">
+    <h2>ویرایش کسری و اضافه خدمت برای سرباز {{ object.soldier }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="btn btn-primary">ویرایش</button>
+    </form>
+    <a href="{% url 'soldier_list' %}" class="btn btn-link mt-3">بازگشت به لیست سربازها</a>
+</div>

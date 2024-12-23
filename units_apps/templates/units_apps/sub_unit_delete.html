@@ -1,0 +1,8 @@
+<div class="container mt-4">
+    <h2>آیا مطمئن هستید که می‌خواهید زیرواحد "{{ sub_unit.name }}" را حذف کنید؟</h2>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">حذف</button>
+        <a href="{% url 'sub_unit_list' %}" class="btn btn-secondary">بازگشت</a>
+    </form>
+</div>

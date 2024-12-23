@@ -1,0 +1,27 @@
+<div class="container mt-4">
+    <h2>لیست زیرواحدها</h2>
+    <a href="{% url 'sub_unit_create' %}" class="btn btn-success mb-3">ایجاد زیرواحد جدید</a>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>شناسه</th>
+            <th>نام</th>
+            <th>واحد اصلی</th>
+            <th>عملیات</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for sub_unit in sub_units %}
+            <tr>
+                <td>{{ sub_unit.id }}</td>
+                <td>{{ sub_unit.name }}</td>
+                <td>{{ sub_unit.parent_unit.name }}</td>
+                <td>
+                    <a href="{% url 'sub_unit_edit' sub_unit.id %}" class="btn btn-warning btn-sm">ویرایش</a>
+                    <a href="{% url 'sub_unit_delete' sub_unit.id %}" class="btn btn-danger btn-sm">حذف</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

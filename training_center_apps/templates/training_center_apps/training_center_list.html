@@ -1,0 +1,25 @@
+<div class="container mt-4">
+    <h2>لیست مراکز آموزشی</h2>
+    <a href="{% url 'training_center_create' %}" class="btn btn-primary mb-3">ایجاد مرکز آموزشی جدید</a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>نام مرکز آموزشی</th>
+                <th>وضعیت</th>
+                <th>عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for center in centers %}
+            <tr>
+                <td>{{ center.name }}</td>
+                <td>{{ center.is_active|yesno:"فعال,غیرفعال" }}</td>
+                <td>
+                    <a href="{% url 'training_center_edit' center.pk %}" class="btn btn-sm btn-warning">ویرایش</a>
+                    <a href="{% url 'training_center_delete' center.pk %}" class="btn btn-sm btn-danger">حذف</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
