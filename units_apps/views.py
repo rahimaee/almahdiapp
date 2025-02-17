@@ -1,8 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
 from .models import ParentUnit, SubUnit
 from .forms import ParentUnitForm, SubUnitForm
-
+from django.http import JsonResponse
 
 # لیست واحدهای اصلی
 def parent_unit_list(request):
@@ -68,3 +67,12 @@ def sub_unit_delete(request, pk):
         sub_unit.delete()
         return redirect('sub_unit_list')
     return render(request, 'units_apps/sub_unit_delete.html', {'sub_unit': sub_unit})
+
+
+
+def get_sub_units(request):
+    parent_unit_id = request.GET.get("parent_unit_id")
+    if parent_unit_id:
+        sub_units = SubUnit.objects.filter(parent_unit_id=parent_unit_id).values("id", "name")
+        return JsonResponse(list(sub_units), safe=False)
+    return JsonResponse([], safe=False)

@@ -1,0 +1,198 @@
+{% extends "shared/_PanelMain.html" %}
+{% load static %}
+
+{% block main %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h1 class="text-primary">
+                        مشخصات سرباز
+                        <small>{{ soldier.first_name }} {{ soldier.last_name }}</small>
+                    </h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Personal Information -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">مشخصات شخصی</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>کد ملی:</label>
+                                    <p class="form-control-static">{{ soldier.national_code }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>نام پدر:</label>
+                                    <p class="form-control-static">{{ soldier.father_name }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>تاریخ تولد:</label>
+                                    <p class="form-control-static">{{ soldier.birth_date }}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>محل تولد:</label>
+                                    <p class="form-control-static">{{ soldier.birth_place }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- More personal info rows... -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Health Information -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">اطلاعات سلامت</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>وضعیت سلامت:</label>
+                                <p>{{ soldier.get_health_status_display }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label>گروه خون:</label>
+                                <p>{{ soldier.get_blood_group_display }}</p>
+                            </div>
+                        </div>
+                        <!-- More health info... -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Military Information -->
+            <div class="col-md-6">
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">اطلاعات نظامی</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>درجه:</label>
+                                <p>{{ soldier.get_rank_display }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label>تاریخ اعزام:</label>
+                                <p>{{ soldier.dispatch_date }}</p>
+                            </div>
+                        </div>
+                        <!-- More military info... -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">اطلاعات تماس</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>تلفن همراه:</label>
+                                <p>{{ soldier.phone_mobile }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <label>آدرس:</label>
+                                <p>{{ soldier.address }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <label>کد پستی:</label>
+                                <p>{{ soldier.postal_code }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Sections -->
+        <div class="row">
+            <!-- Skills Section -->
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">مهارت‌ها و مدارک</h3>
+                    </div>
+                    <div class="panel-body">
+                        <dl class="dl-horizontal">
+                            <dt>گواهینامه رانندگی:</dt>
+                            <dd>{{ soldier.get_has_driving_license_display }}</dd>
+
+                            <dt>گروه مهارتی:</dt>
+                            <dd>{{ soldier.get_skill_group_display }}</dd>
+
+                            <dt>مدرک تحصیلی:</dt>
+                            <dd>{{ soldier.degree }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Photo Section -->
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">عکس پرسنلی</h3>
+                    </div>
+                    <div class="panel-body text-center">
+                        {% if soldier.photo_scan %}
+                            <img src="{{ soldier.photo_scan.url }}"
+                                 class="img-thumbnail"
+                                 style="max-height: 200px"
+                                 alt="عکس سرباز">
+                        {% else %}
+                            <p class="text-muted">عکس موجود نیست</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well well-sm">
+                    <a href="#" class="btn btn-primary">
+                        <i class="glyphicon glyphicon-edit"></i> ویرایش اطلاعات
+                    </a>
+                    <a href="#" class="btn btn-default">
+                        <i class="glyphicon glyphicon-print"></i> چاپ پرونده
+                    </a>
+                    <a href="{% url 'manage_soldier_documents' soldier.id %}" class="btn btn-default">
+                        <i class="glyphicon glyphicon-print"></i>مدارک پرونده
+                    </a>
+                    <a href="{% url 'soldier_service_edit' soldier.id %}" class="btn btn-default">
+                        <i class="glyphicon glyphicon-print"></i>کسریا اضافه خدمت
+                    </a>
+                    <a href="{% url 'soldier_vacation_edit' soldier.id %}" class="btn btn-default">
+                        <i class="glyphicon glyphicon-print"></i>استعلام مرخصی
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

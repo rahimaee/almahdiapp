@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.timezone import now
 
+
 class ParentUnit(models.Model):
     name = models.CharField(max_length=255, verbose_name="نام واحد اصلی")
 
@@ -38,6 +39,7 @@ class UnitHistory(models.Model):
     )
     start_date = models.DateTimeField(default=now, verbose_name="تاریخ شروع")
     end_date = models.DateTimeField(null=True, blank=True, verbose_name="تاریخ پایان")
+    skill_training_workshop = models.BooleanField(default=False, verbose_name='کارگاه مهات آموزی')
 
     class Meta:
         verbose_name = "تاریخچه بخش خدمت"

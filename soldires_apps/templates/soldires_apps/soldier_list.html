@@ -1,0 +1,182 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+
+
+{% block header %}
+
+    <style>
+        .accordion-toggle {
+            cursor: pointer;
+        }
+
+        .table-hover > tbody > tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .table-condensed td, .table-condensed th {
+            padding: 8px;
+        }
+
+        .label {
+            font-weight: normal;
+            padding: 0.3em 0.6em;
+            display: inline-block;
+            margin: 2px;
+        }
+
+        .dl-horizontal dt {
+            width: 90px;
+            text-align: right;
+        }
+
+        .dl-horizontal dd {
+            margin-right: 100px;
+        }
+
+        .btn-group-vertical > .btn {
+            margin-bottom: 5px;
+            text-align: right;
+            padding: 6px 12px;
+        }
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+{% endblock %}
+
+{% block main %}
+    <div class="table-responsive">
+        <table class="table table-hover table-condensed">
+            <thead>
+            <tr>
+                <th style="width: 120px;">عملیات</th>
+                <th>نام</th>
+                <th>کد ملی</th>
+                <th>وضعیت</th>
+                <th>واحد</th>
+                <th>تلفن</th>
+                <th>پایان خدمت</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for soldier in soldiers %}
+                <tr data-toggle="collapse" data-target="#row{{ soldier.id }}" class="accordion-toggle">
+                    <td>
+                        <div class="btn-group btn-group-xs">
+                            <a href="{% url 'soldier_edit' soldier.id %}" class="btn btn-default">
+                                <i class="fa fa-pencil"></i>
+                            </a>
+                            <button class="btn btn-danger">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                    <td>
+                        {{ soldier.first_name }} {{ soldier.last_name }}
+                        {% if soldier.photo_scan %}
+                            <i class="fa fa-camera text-primary"></i>
+                        {% endif %}
+                    </td>
+                    <td>{{ soldier.national_code }}</td>
+                    <td>
+                    <span class="label
+                          {% if soldier.health_status == 'سالم' %}label-success
+                          {% elif soldier.health_status == 'معاف از رزم' %}label-danger
+                          {% else %}label-warning{% endif %}">
+                        {{ soldier.health_status }}
+                    </span>
+                        {% if soldier.is_fugitive %}
+                            <span class="label label-default">فراری</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if soldier.current_parent_unit %}
+                            <span data-toggle="tooltip" title="{{ soldier.current_parent_unit }}">
+                        {{ soldier.current_parent_unit|truncatechars:12 }}
+                    </span>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ soldier.phone_mobile }}</td>
+                    <td>
+                        {% if soldier.service_end_date %}
+                            {{ soldier.service_end_date|date:"Y/m/d" }}
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="7" class="hiddenRow">
+                        <div class="accordian-body collapse" id="row{{ soldier.id }}">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <h5><i class="fa fa-info-circle text-primary"></i> مشخصات فردی</h5>
+                                            <dl class="dl-horizontal">
+                                                <dt>تاریخ تولد:</dt>
+                                                <dd>{{ soldier.birth_date|date:"Y/m/d" }}</dd>
+
+                                                <dt>گروه خون:</dt>
+                                                <dd>{{ soldier.blood_group }}</dd>
+
+                                                <dt>تاهل:</dt>
+                                                <dd>{{ soldier.get_marital_status_display }}</dd>
+                                            </dl>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <h5><i class="fa fa-shield text-success"></i> وضعیت خدمت</h5>
+                                            <dl class="dl-horizontal">
+                                                <dt>تاریخ اعزام:</dt>
+                                                <dd>{{ soldier.dispatch_date|date:"Y/m/d" }}</dd>
+
+                                                <dt>خدمت انجام شده:</dt>
+                                                <dd>{{ soldier.service_duration_completed }} روز</dd>
+
+                                                <dt>تردد:</dt>
+                                                <dd>
+                                                    {% if soldier.traffic_status %}
+                                                        {{ soldier.get_traffic_status_display }}
+                                                    {% else %}
+                                                        <span class="text-muted">-</span>
+                                                    {% endif %}
+                                                </dd>
+                                            </dl>
+                                        </div>
+
+                                        <div class="col-md-5">
+                                            <h5><i class="fa fa-cogs text-danger"></i> مدیریت</h5>
+                                            <div class="btn-group-vertical btn-block">
+                                                <a href="{% url 'soldier_detail' soldier.pk %}"
+                                                   class="btn btn-default btn-sm text-right">
+                                                    <i class="fa fa-exchange"></i>
+                                                    اطلاعات کامل
+                                                </a>
+                                                <a class="btn btn-info btn-sm text-right">
+                                                    <i class="fa fa-file-text"></i> پرونده پزشکی
+                                                </a>
+                                                <a href="{% url 'soldier_service_edit' soldier.pk %}"
+                                                   class="btn btn-warning btn-sm text-right">
+                                                    <i class="fa fa-history"></i> کسریا اضافه خدمت
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+

@@ -1,0 +1,91 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+
+{% block main %}
+
+    <div class="container">
+        <h2 class="text-center">فرم مدیریت مرخصی</h2>
+        <form method="post" class="form-horizontal">
+            {% csrf_token %}
+
+            <!-- بخش سقف مرخصی -->
+            <div class="panel panel-default">
+                <div class="panel-heading">سقف مرخصی‌ها</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>{{ form.annual_leave_quota.label }}</label>
+                                {{ form.annual_leave_quota }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>{{ form.incentive_leave_quota.label }}</label>
+                                {{ form.incentive_leave_quota }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>{{ form.sick_leave_quota.label }}</label>
+                                {{ form.sick_leave_quota }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- بخش مرخصی استفاده شده -->
+            <div class="panel panel-default">
+                <div class="panel-heading">مرخصی استفاده شده</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>{{ form.annual_leave_used.label }}</label>
+                                {{ form.annual_leave_used }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>{{ form.incentive_leave_used.label }}</label>
+                                {{ form.incentive_leave_used }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>{{ form.sick_leave_used.label }}</label>
+                                {{ form.sick_leave_used }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- بخش سقف مازاد -->
+            <div class="panel panel-default">
+                <div class="panel-heading">سقف مازاد</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{ form.extra_sick_leave_quota.label }}</label>
+                                {{ form.extra_sick_leave_quota }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>{{ form.extra_annual_leave_quota.label }}</label>
+                                {{ form.extra_annual_leave_quota }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group text-center">
+                <button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

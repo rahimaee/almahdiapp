@@ -10,4 +10,5 @@ urlpatterns = [
     path('sub-units/create/', views.sub_unit_form, name='sub_unit_create'),
     path('sub-units/edit/<int:pk>/', views.sub_unit_form, name='sub_unit_edit'),
     path('sub-units/delete/<int:pk>/', views.sub_unit_delete, name='sub_unit_delete'),
+    path("get-sub-units/", views.get_sub_units, name="get-sub-units"),
 ]

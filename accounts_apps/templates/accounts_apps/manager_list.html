@@ -1,0 +1,19 @@
+<!-- templates/manager_list.html -->
+
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>لیست مسئولین</title>
+</head>
+<body>
+    <h1>لیست مسئولین</h1>
+    <ul>
+        {% for manager in managers %}
+            <li>
+                <a href="{% url 'manager_permissions' manager.id %}">{{ manager.username }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,9 +1,12 @@
-<div class="container mt-4">
-    <h1>حذف واحد اصلی</h1>
-    <p>آیا مطمئن هستید که می‌خواهید این واحد را حذف کنید؟</p>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">بله، حذف شود</button>
-        <a href="{% url 'parent_unit_list' %}" class="btn btn-secondary">خیر</a>
-    </form>
-</div>
+{% extends 'shared/_PanelMain.html' %}
+{% block main %}
+    <div class="container mt-4">
+        <h1>حذف واحد اصلی</h1>
+        <p>آیا مطمئن هستید که می‌خواهید این واحد را حذف کنید؟</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">بله، حذف شود</button>
+            <a href="{% url 'parent_unit_list' %}" class="btn btn-secondary">خیر</a>
+        </form>
+    </div>
+{% endblock %}

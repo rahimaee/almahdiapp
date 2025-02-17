@@ -1,9 +1,13 @@
-<div class="container mt-4">
-    <h2>{% if form.instance.pk %}ویرایش زیرواحد{% else %}ایجاد زیرواحد جدید{% endif %}</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">ذخیره</button>
-        <a href="{% url 'sub_unit_list' %}" class="btn btn-secondary">بازگشت</a>
-    </form>
-</div>
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+    <div class="container mt-4">
+        <h2>{% if form.instance.pk %}ویرایش زیرواحد{% else %}ایجاد زیرواحد جدید{% endif %}</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">ذخیره</button>
+            <a href="{% url 'sub_unit_list' %}" class="btn btn-secondary">بازگشت</a>
+        </form>
+    </div>
+{% endblock %}

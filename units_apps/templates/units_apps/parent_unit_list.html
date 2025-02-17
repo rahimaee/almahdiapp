@@ -1,25 +1,29 @@
-<div class="container mt-4">
-    <h1>لیست واحدهای اصلی</h1>
-    <a href="{% url 'parent_unit_create' %}" class="btn btn-success mb-3">ایجاد واحد جدید</a>
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th>شناسه</th>
-            <th>نام</th>
-            <th>عملیات</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for unit in parent_units %}
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+    <div class="container mt-4">
+        <h1>لیست واحدهای اصلی</h1>
+        <a href="{% url 'parent_unit_create' %}" class="btn btn-success mb-3">ایجاد واحد جدید</a>
+        <table class="table table-bordered">
+            <thead>
             <tr>
-                <td>{{ unit.id }}</td>
-                <td>{{ unit.name }}</td>
-                <td>
-                    <a href="{% url 'parent_unit_edit' unit.id %}" class="btn btn-primary btn-sm">ویرایش</a>
-                    <a href="{% url 'parent_unit_delete' unit.id %}" class="btn btn-danger btn-sm">حذف</a>
-                </td>
+                <th>شناسه</th>
+                <th>نام</th>
+                <th>عملیات</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+            {% for unit in parent_units %}
+                <tr>
+                    <td>{{ unit.id }}</td>
+                    <td>{{ unit.name }}</td>
+                    <td>
+                        <a href="{% url 'parent_unit_edit' unit.id %}" class="btn btn-primary btn-sm">ویرایش</a>
+                        <a href="{% url 'parent_unit_delete' unit.id %}" class="btn btn-danger btn-sm">حذف</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

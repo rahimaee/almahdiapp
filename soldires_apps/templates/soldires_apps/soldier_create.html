@@ -1,0 +1,283 @@
+<!-- templates/soldiers/soldier_create.html -->
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block header %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock %}
+{% block main %}
+
+    <div class="box box-warning">
+        <div class="box-header with-border">
+            <h3 class="box-title">ایجاد سرباز جدید</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <form role="form" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.national_code.label }}
+                    {{ form.national_code }}
+                    <span style='color: red'>{{ form.national_code.errors }}</span>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            {{ form.first_name.label }}
+                            {{ form.first_name }}
+                        </div>
+                        <div class="col-xs-4">
+                            {{ form.last_name.label }}
+                            {{ form.last_name }}
+                        </div>
+                        <div class="col-xs-4">
+                            {{ form.father_name.label }}
+                            {{ form.father_name }}
+                        </div>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            {{ form.birth_date.label }}
+                            {{ form.birth_date }}
+                        </div>
+                        <div class="col-xs-4">
+                            {{ form.birth_place.label }}
+                            {{ form.birth_place }}
+                        </div>
+                        <div class="col-xs-4">
+                            {{ form.issuance_place.label }}
+                            {{ form.issuance_place }}
+                        </div>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            {{ form.residence_province.label }}
+                            {{ form.residence_province }}
+                        </div>
+                        <div class="col-xs-4">
+                            {{ form.residence_city.label }}
+                            {{ form.residence_city }}
+                        </div>
+                        <div class="col-xs-4">
+                            {{ form.postal_code.label }}
+                            {{ form.postal_code }}
+                        </div>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            {{ form.address.label }}
+                            {{ form.address }}
+                        </div>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            {{ form.phone_mobile.label }}
+                            {{ form.phone_mobile }}
+                        </div>
+                        <div class="col-xs-3">
+                            {{ form.phone_virtual.label }}
+                            {{ form.phone_virtual }}
+                        </div>
+                        <div class="col-xs-3">
+                            {{ form.phone_parents.label }}
+                            {{ form.phone_parents }}
+                        </div>
+                        <div class="col-xs-3">
+                            {{ form.phone_home.label }}
+                            {{ form.phone_home }}
+                        </div>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            {{ form.organizational_code.label }}
+                            {{ form.organizational_code }}
+                        </div>
+                        <div class="col-xs-4">
+                            {{ form.id_card_code.label }}
+                            {{ form.id_card_code }}
+                        </div>
+                        <div class="col-xs-4">
+                            {{ form.is_guard_duty.label }}
+                            {{ form.is_guard_duty }}
+                        </div>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            {{ form.current_parent_unit.label }}
+                            {{ form.current_parent_unit }}
+                        </div>
+                        <div class="col-xs-6">
+                            {{ form.current_sub_unit.label }}
+                            {{ form.current_sub_unit }}
+                        </div>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            {{ form.rank.label }}
+                            {{ form.rank }}
+                        </div>
+                        <div class="col-xs-6">
+                            {{ form.service_entry_date.label }}
+                            {{ form.service_entry_date }}
+                        </div>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            {{ form.dispatch_date.label }}
+                            {{ form.dispatch_date }}
+                        </div>
+                        <div class="col-xs-3">
+                            {{ form.training_duration.label }}
+                            {{ form.training_duration }}
+                        </div>
+                        <div class="col-xs-3">
+                            {{ form.basic_training_center.label }}
+                            {{ form.basic_training_center }}
+                        </div>
+                        <div class="col-xs-3">
+                            {{ form.essential_service_duration.label }}
+                            {{ form.essential_service_duration }}
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-xs-4">
+                                {{ form.marital_status.label }}
+                                {{ form.marital_status }}
+                            </div>
+                            <div class="col-xs-4">
+                                {{ form.independent_married.label }}
+                                {{ form.independent_married }}
+                            </div>
+                            <div class="col-xs-4">
+                                {{ form.number_of_children.label }}
+                                {{ form.number_of_children }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-xs-4">
+                                {{ form.health_status.label }}
+                                {{ form.health_status }}
+                            </div>
+                            <div class="col-xs-4">
+                                {{ form.health_status_description.label }}
+                                {{ form.health_status_description }}
+                            </div>
+                            <div class="col-xs-4">
+                                {{ form.blood_group.label }}
+                                {{ form.blood_group }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                {{ form.is_certificate.label }}
+                                {{ form.is_certificate }}
+                            </div>
+                            <div class="col-xs-3">
+                                {{ form.skill_certificate.label }}
+                                {{ form.skill_certificate }}
+                            </div>
+                            <div class="col-xs-3">
+                                {{ form.number_of_certificates.label }}
+                                {{ form.number_of_certificates }}
+                            </div>
+                            <div class="col-xs-3">
+                                {{ form.skill_group.label }}
+                                {{ form.skill_group }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                {{ form.has_driving_license.label }}
+                                {{ form.has_driving_license }}
+                            </div>
+                            <div class="col-xs-6">
+                                {{ form.degree.label }}
+                                {{ form.degree }}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn btn-primary">ایجاد سرباز</button>
+            </form>
+            <a href="{% url 'soldier_list' %}" class="btn btn-secondary mt-2">بازگشت به لیست</a>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block footer %}
+    <script>
+        $(document).ready(function () {
+            $("#province-select").change(function () {
+                var provinceId = $(this).val();
+                if (provinceId) {
+                    $.ajax({
+                        url: "{% url 'get-cities' %}",
+                        data: {province_id: provinceId},
+                        dataType: "json",
+                        success: function (data) {
+                            var citySelect = $("#city-select");
+                            citySelect.empty();
+                            citySelect.append('<option value="">انتخاب شهر</option>');
+                            $.each(data, function (index, city) {
+                                citySelect.append('<option value="' + city.id + '">' + city.name + '</option>');
+                            });
+                        }
+                    });
+                } else {
+                    $("#city-select").empty().append('<option value="">انتخاب شهر</option>');
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#parent-unit-select").change(function () {
+                var parentUnitId = $(this).val();
+                if (parentUnitId) {
+                    $.ajax({
+                        url: "{% url 'get-sub-units' %}",
+                        data: {parent_unit_id: parentUnitId},
+                        dataType: "json",
+                        success: function (data) {
+                            var subUnitSelect = $("#sub-unit-select");
+                            subUnitSelect.empty();
+                            subUnitSelect.append('<option value="">انتخاب زیرواحد</option>');
+                            $.each(data, function (index, sub_unit) {
+                                subUnitSelect.append('<option value="' + sub_unit.id + '">' + sub_unit.name + '</option>');
+                            });
+                        }
+                    });
+                } else {
+                    $("#sub-unit-select").empty().append('<option value="">انتخاب زیرواحد</option>');
+                }
+            });
+        });
+    </script>
+{% endblock %}

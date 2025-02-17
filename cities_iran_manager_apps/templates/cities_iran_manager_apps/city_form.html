@@ -1,0 +1,14 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+	<div class="container mt-4">
+    <h2>ایجاد شهر</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">ذخیره</button>
+    </form>
+    <br>
+    <a href="{% url 'province_list' %}" class="btn btn-secondary">بازگشت به لیست استان‌ها</a>
+</div>
+{% endblock %}

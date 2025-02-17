@@ -1,0 +1,52 @@
+{% load render_partial %}
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    {% render_partial 'header_references_partial_view' %}
+    {% block header %}
+
+    {% endblock %}
+</head>
+{% render_partial 'header_partial_view' %}
+{% render_partial 'navbar_partial_view' %}
+
+<body class="hold-transition skin-yellow-light sidebar-mini">
+<div class="wrapper">
+
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                عنوان صفحه
+                <small>توضیحات</small>
+            </h1>
+            <ol class="breadcrumb">
+                <li><a href="#"><i class="fa fa-dashboard"></i>خانه</a></li>
+                <li class="active">صفحه</li>
+            </ol>
+        </section>
+        <div class="head_p">
+            <p>منابع انسانی</p>
+        </div>
+        <!-- Main content -->
+        <section class="content container-fluid">
+
+            {% block main %}no data{% endblock %}
+
+        </section>
+        <!-- /.content -->
+    </div>
+
+    <footer class="main-footer text-left">
+        <strong>طراحی و توسعه سید محمد رضا رحیمایی</strong>
+    </footer>
+</div>
+
+{% include 'shared/_FooterReferences.html' %}
+
+
+{% block footer %}
+{% endblock %}
+
+</body>
+</html>

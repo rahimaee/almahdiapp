@@ -1,0 +1,22 @@
+<!-- templates/assign_permission.html -->
+
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>اختصاص دسترسی به {{ manager.username }}</title>
+</head>
+<body>
+    <h1>اختصاص دسترسی به {{ manager.username }}</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="permission">دسترسی:</label>
+        <select name="permission">
+            {% for permission in permissions %}
+                <option value="{{ permission.id }}">{{ permission.permission_name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">اختصاص دسترسی</button>
+    </form>
+</body>
+</html>

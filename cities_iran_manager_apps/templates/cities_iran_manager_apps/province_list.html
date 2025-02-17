@@ -1,0 +1,30 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+    <div class="container mt-4">
+        <h2>لیست استان‌ها</h2>
+        <a href="{% url 'province_create' %}" class="btn btn-success mb-3">ایجاد استان جدید</a>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>نام استان</th>
+                <th>کد تلفن</th>
+                <th>بومی</th>
+                <th>عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for province in provinces %}
+                <tr>
+                    <td>{{ province.name }}</td>
+                    <td>{{ province.tel_prefix }}</td>
+                    <td>{% if province.native %}بله{% else %}خیر{% endif %}</td>
+                    <td>
+                        <a href="{% url 'province_edit' province.pk %}" class="btn btn-warning btn-sm">ویرایش</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

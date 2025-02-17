@@ -13,3 +13,5 @@ class SoldierServiceUpdateView(UpdateView):
     def get_object(self, queryset=None):
         soldier = self.kwargs.get('soldier_id')
         return SoldierService.objects.get(soldier_id=soldier)
+
+

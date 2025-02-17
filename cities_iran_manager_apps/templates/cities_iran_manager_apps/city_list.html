@@ -1,0 +1,110 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block header %}
+    <style>
+        .province-box {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .province-header {
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            transition: background-color 0.3s ease;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .province-header:hover {
+            background-color: #0056b3;
+        }
+
+        .city-card {
+            margin-bottom: 10px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .city-card:hover {
+            background-color: #f1f1f1;
+        }
+
+        .city-name {
+            font-size: 0.95rem;
+            font-weight: bold;
+        }
+
+        .city-actions {
+            margin-top: 5px;
+        }
+
+        .city-actions a {
+            margin-right: 5px;
+        }
+
+        .collapse {
+            background-color: #ffffff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+{% endblock %}
+{% block main %}
+    <div class="box box-warning">
+        <div class="box-header with-border">
+            <h3 class="box-title">لیست شهرها</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <a href="{% url 'city_create' %}" class="btn btn-success btn-sm mb-3">ایجاد شهر جدید</a>
+            <br>
+            <div id="accordion">
+                {% for province in provinces %}
+                    <div class="province-box">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <button class="btn province-header w-100 text-right" data-toggle="collapse"
+                                            data-target="#collapse{{ forloop.counter }}" aria-expanded="false">
+                                        <i class="fas fa-chevron-down"></i> {{ province.name }}
+                                    </button>
+                                </h5>
+                            </div>
+
+                            <div id="collapse{{ forloop.counter }}" class="collapse" data-parent="#accordion">
+                                <div class="card-body">
+                                    {% for city in province.cities.all %}
+                                        <div class="city-card">
+                                            <div class="city-name">{{ city.name }} (مسافت: {{ city.distance }} کیلومتر)
+                                            </div>
+                                            <div class="city-actions">
+                                                <a href="{% url 'city_edit' city.pk %}"
+                                                   class="btn btn-primary btn-sm">ویرایش</a>
+                                            </div>
+                                        </div>
+                                    {% empty %}
+                                        <p>هیچ شهری برای این استان ثبت نشده است.</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>هیچ استانی در سیستم ثبت نشده است.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+

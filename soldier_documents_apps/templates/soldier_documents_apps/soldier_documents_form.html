@@ -1,20 +1,165 @@
-<!DOCTYPE html>
-<html lang="fa">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مدیریت مدارک سرباز</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-<div class="container mt-5">
-    <h1 class="text-center mb-4">مدیریت مدارک سرباز</h1>
-    <h3 class="text-center mb-4">{{ soldier.name }}</h3>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary btn-block">ذخیره</button>
-    </form>
-</div>
-</body>
-</html>
+{% extends 'shared/_PanelMain.html' %}
+
+{% block main %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">مدیریت مدارک سرباز</h1>
+
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="panel panel-primary">
+                <div class="panel-heading">فرم های اصلی</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="checkbox">
+                                <label>{{ form.personal_info_form }} فرم اطلاعات فردی</label>
+                            </div>
+                            <div class="checkbox">
+                                <label>{{ form.training_skills_form }} فرم مهارت‌آموزی</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="checkbox">
+                                <label>{{ form.mental_health_form_training }} برگه سلامت روان آموزشی</label>
+                            </div>
+                            <div class="checkbox">
+                                <label>{{ form.green_dispatch_paper }} برگه سبز اعزام</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="checkbox">
+                                <label>{{ form.introduction_letter }} معرفی نامه (پاراف شده)</label>
+                            </div>
+                            <div class="checkbox">
+                                <label>{{ form.training_center_referral_paper }} برگه مراجعه به مرکز آموزش</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- بخش مدارک آموزشی -->
+            <div class="panel panel-success">
+                <div class="panel-heading">مدارک آموزشی</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="checkbox">
+                                <label>{{ form.ideological_report_card }} کارنامه عقیدتی</label>
+                            </div>
+                            <div class="checkbox">
+                                <label>{{ form.green_training_paper }} برگه سبز آموزشی</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="checkbox">
+                                <label>{{ form.educational_report_card }} کارنامه آموزشی</label>
+                            </div>
+                            <div class="checkbox">
+                                <label>{{ form.five_skills_certificate }} گواهینامه ۵ گانه</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="checkbox">
+                                <label>{{ form.rank_certificate }} حکم درجه</label>
+                            </div>
+                            <div class="checkbox">
+                                <label>{{ form.chip_delivery_form }} برگه تحویل تراشه</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- بخش مدارک سلامت -->
+            <div class="panel panel-info">
+                <div class="panel-heading">مدارک سلامت</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="checkbox">
+                                <label>{{ form.unit_mental_health_form }} برگه سلامت روان یگان</label>
+                            </div>
+                            <div class="checkbox">
+                                <label>{{ form.vaccination_paper }} برگه واکسیناسیون</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="checkbox">
+                                <label>{{ form.sater_paper }} برگه ساتر</label>
+                            </div>
+                            <div class="checkbox">
+                                <label>{{ form.blood_card_or_license }} کارت خون یا گواهینامه</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- بخش مدارک شناسایی -->
+            <div class="panel panel-warning">
+                <div class="panel-heading">مدارک شناسایی</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="checkbox">
+                                <label>{{ form.national_card_copy }} کپی کارت ملی</label>
+                            </div>
+                            <div class="checkbox">
+                                <label>{{ form.id_card_copy }} کپی شناسنامه</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="checkbox">
+                                <label>{{ form.spouse_national_card_copy }} کپی کارت ملی همسر</label>
+                            </div>
+                            <div class="checkbox">
+                                <label>{{ form.spouse_id_card_copy }} کپی شناسنامه همسر</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="checkbox">
+                                <label>{{ form.marriage_certificate_copy }} کپی سند ازدواج</label>
+                            </div>
+                            <div class="checkbox">
+                                <label>{{ form.children_id_card_copy }} کپی شناسنامه فرزندان</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- بخش سایر مدارک -->
+            <div class="panel panel-danger">
+                <div class="panel-heading">سایر مدارک</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="checkbox">
+                                <label>{{ form.protection_sheet }} ته برگ حفاظت</label>
+                            </div>
+                            <div class="checkbox">
+                                <label>{{ form.supervision_sheet }} ته برگ نظارت</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="checkbox">
+                                <label>{{ form.ideological_sheet }} ته برگ عقیدتی</label>
+                            </div>
+                            <div class="checkbox">
+                                <label>{{ form.judicial_sheet }} ته برگ قضایی</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="checkbox">
+                                <label>{{ form.photo }} عکس</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">ذخیره</button>
+        </form>
+    </div>
+{% endblock %}

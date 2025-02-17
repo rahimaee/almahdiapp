@@ -15,8 +15,39 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include, re_path
+from django.conf.urls.static import static
+from django.conf import settings
+from home_apps.views import *
 
 urlpatterns = [
-       path('admin/', admin.site.urls),
+    path('', include('home_apps.urls')),
+    path('admin/', admin.site.urls),
+    path('soldiers/', include('soldires_apps.urls')),
+    path('documents/', include('soldier_documents_apps.urls')),
+    path('services/', include('soldier_service_apps.urls')),
+    path('vacation/', include('soldier_vacation_apps.urls')),
+    path('training/', include('training_center_apps.urls')),
+    path('accounts/', include('accounts_apps.urls')),
+    path('units/', include('units_apps.urls')),
+    path('iran_c_p/', include('cities_iran_manager_apps.urls')),
+    re_path(r'^header_partial_view',
+            header_partial_view,
+            name='header_partial_view'),
+    re_path(r'^header_references_partial_view',
+            header_references_partial_view,
+            name='header_references_partial_view'),
+    re_path(r'^footer_partial_view',
+            footer_partial_view,
+            name='footer_partial_view'),
+    re_path(r'^footer_references_partial_view',
+            footer_references_partial_view,
+            name='footer_references_partial_view'),
+    re_path(r'^navbar_partial_view',
+            navbar_partial_view,
+            name='navbar_partial_view'),
+
 ]
+urlpatterns = urlpatterns + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# add media static files
+urlpatterns = urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

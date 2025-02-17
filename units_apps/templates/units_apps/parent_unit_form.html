@@ -1,9 +1,13 @@
-<div class="container mt-4">
-    <h1>فرم واحد اصلی</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">ذخیره</button>
-        <a href="{% url 'parent_unit_list' %}" class="btn btn-secondary">بازگشت</a>
-    </form>
-</div>
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+    <div class="container mt-4">
+        <h1>فرم واحد اصلی</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-success">ذخیره</button>
+            <a href="{% url 'parent_unit_list' %}" class="btn btn-secondary">بازگشت</a>
+        </form>
+    </div>
+{% endblock %}

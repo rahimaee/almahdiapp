@@ -10,10 +10,12 @@ def manage_soldier_documents(request, soldier_id):
 
     if request.method == "POST":
         form = SoldierDocumentsForm(request.POST, instance=document)
+        print(form.errors)
         if form.is_valid():
             form.save()
             return redirect('soldier_list')  # تغییر دهید به مسیر مناسب
     else:
+
         form = SoldierDocumentsForm(instance=document)
 
     return render(request, 'soldier_documents_apps/soldier_documents_form.html', {'form': form, 'soldier': soldier})

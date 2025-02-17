@@ -1,11 +1,302 @@
-<div class="container mt-5">
-    <h2>ویرایش کسری و اضافه خدمت برای سرباز {{ object.soldier }}</h2>
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            {{ form.as_p }}
-        </div>
-        <button type="submit" class="btn btn-primary">ویرایش</button>
-    </form>
-    <a href="{% url 'soldier_list' %}" class="btn btn-link mt-3">بازگشت به لیست سربازها</a>
-</div>
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+
+
+{% block header %}
+    <style>
+
+        .panel-custom {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .panel-custom .panel-heading {
+            background-color: #337ab7;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .panel-custom .panel-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            width: 100%;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+            padding: 8px 12px;
+        }
+
+        .btn-primary {
+            background-color: #337ab7;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+        .btn-primary:hover {
+            background-color: #286090;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #777;
+        }
+
+        .alert-danger {
+            font-size: 12px;
+            padding: 5px;
+            margin-top: 5px;
+        }
+    </style>
+{% endblock %}
+
+
+{% block main %}
+    <div class="container">
+        <h2 class="text-center" style="margin-bottom: 30px;">فرم SoldierService</h2>
+
+        <form method="post" class="form-horizontal">
+            {% csrf_token %}
+
+            <!-- بخش کسری‌ها -->
+            <div class="panel panel-custom">
+                <div class="panel-heading">
+                    <i class="fa fa-minus-circle"></i> کسری‌ها
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="reduction_veterans">کسری رزمندگان:</label>
+                                {{ form.reduction_veterans }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="reduction_disability">کسری جانبازی:</label>
+                                {{ form.reduction_disability }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="reduction_bsj">کسری بسیج:</label>
+                                {{ form.reduction_bsj }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="reduction_project">کسری پروژه:</label>
+                                {{ form.reduction_project }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="reduction_children">کسری فرزند:</label>
+                                {{ form.reduction_children }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="reduction_spouse">کسری همسر:</label>
+                                {{ form.reduction_spouse }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="reduction_operational_areas">کسری مناطق عملیاتی:</label>
+                                {{ form.reduction_operational_areas }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="reduction_seniority">بخشش سنواتی:</label>
+                                {{ form.reduction_seniority }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="reduction_non_local">کسر غیربومی:</label>
+                                {{ form.reduction_non_local }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="reduction_system_adjustment">تطبیق با سامانه:</label>
+                                {{ form.reduction_system_adjustment }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="reduction_other">غیره:</label>
+                                {{ form.reduction_other }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="reduction_total">مجموع کسری خدمت:</label>
+                                {{ form.reduction_total }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- بخش اضافه خدمت -->
+            <div class="panel panel-custom" style="margin-top: 20px;">
+                <div class="panel-heading">
+                    <i class="fa fa-plus-circle"></i> اضافه خدمت
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="addition_seniority">سنواتی:</label>
+                                {{ form.addition_seniority }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="addition_discipline">انضباطی:</label>
+                                {{ form.addition_discipline }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="addition_gap">خلاء:</label>
+                                {{ form.addition_gap }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="addition_system">سامانه:</label>
+                                {{ form.addition_system }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="addition_other">غیره:</label>
+                                {{ form.addition_other }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="addition_total">مجموع اضافه خدمت:</label>
+                                {{ form.addition_total }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- بخش تاریخ‌ها -->
+            <div class="panel panel-custom" style="margin-top: 20px;">
+                <div class="panel-heading">
+                    <i class="fa fa-calendar"></i> تاریخ‌ها
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="start_date">تاریخ اعزام:</label>
+                                {{ form.start_date }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="service_end_date">تاریخ پایان خدمت اصلی:</label>
+                                {{ form.service_end_date }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="actual_service_end_date">پایان خدمت اصلی:</label>
+                                {{ form.actual_service_end_date }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="calculate_until_date">محاسبه تا تاریخ:</label>
+                                {{ form.calculate_until_date }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- بخش خدمت به روز -->
+            <div class="panel panel-custom" style="margin-top: 20px;">
+                <div class="panel-heading">
+                    <i class="fa fa-clock-o"></i> خدمت به روز
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="main_service_days">خدمت اصلی به روز:</label>
+                                {{ form.main_service_days }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="secondary_service_days">کمکی (خدمت اصلی):</label>
+                                {{ form.secondary_service_days }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- بخش خدمت دوره ضرورت -->
+            <div class="panel panel-custom" style="margin-top: 20px;">
+                <div class="panel-heading">
+                    <i class="fa fa-calendar-check-o"></i> خدمت دوره ضرورت
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="mandatory_service_months">خدمت دوره ضرورت (به ماه):</label>
+                                {{ form.mandatory_service_months }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- بخش توضیحات -->
+            <div class="panel panel-custom" style="margin-top: 20px;">
+                <div class="panel-heading">
+                    <i class="fa fa-pencil"></i> توضیحات
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="notes">توضیحات:</label>
+                        {{ form.notes }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- دکمه ارسال فرم -->
+            <div class="form-group text-center" style="margin-top: 30px;">
+                <button type="submit" class="btn btn-primary">ذخیره</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

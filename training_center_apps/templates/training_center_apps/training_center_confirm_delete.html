@@ -1,9 +1,13 @@
-<div class="container mt-4">
-    <h2>حذف مرکز آموزشی</h2>
-    <p>آیا مطمئن هستید که می‌خواهید "{{ center.name }}" را حذف کنید؟</p>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">حذف</button>
-        <a href="{% url 'training_center_list' %}" class="btn btn-secondary">لغو</a>
-    </form>
-</div>
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+    <div class="container mt-4">
+        <h2>{{ form.instance.pk|default:"ایجاد مرکز آموزشی جدید" }}</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-success">ذخیره</button>
+            <a href="{% url 'training_center_list' %}" class="btn btn-secondary">بازگشت</a>
+        </form>
+    </div>
+{% endblock %}

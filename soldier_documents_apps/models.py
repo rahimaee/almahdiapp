@@ -32,4 +32,4 @@ class SoldierDocuments(models.Model):
     judicial_sheet = models.BooleanField("چهاربرگ (ته برگ قضایی)", default=False)
 
     def __str__(self):
-        return f"مدارک سرباز: {self.soldier.name}"
+        return f"مدارک سرباز: {self.soldier}"
