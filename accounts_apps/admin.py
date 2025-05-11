@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Section, Permission, ManagerPermission, AccessHistory
+from .models import Section, Permission, ManagerPermission, AccessHistory,Feature
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import MyUser
@@ -32,6 +32,8 @@ admin.site.register(Section, SectionAdmin)
 admin.site.register(Permission, PermissionAdmin)
 admin.site.register(ManagerPermission, ManagerPermissionAdmin)
 admin.site.register(AccessHistory, AccessHistoryAdmin)
+admin.site.register(Feature)
+
 
 
 @admin.register(MyUser)

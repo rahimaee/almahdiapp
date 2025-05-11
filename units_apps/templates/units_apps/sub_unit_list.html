@@ -10,6 +10,7 @@
                 <th>شناسه</th>
                 <th>نام</th>
                 <th>واحد اصلی</th>
+                <th>نوع تردد</th>
                 <th>عملیات</th>
             </tr>
             </thead>
@@ -19,6 +20,7 @@
                     <td>{{ sub_unit.id }}</td>
                     <td>{{ sub_unit.name }}</td>
                     <td>{{ sub_unit.parent_unit.name }}</td>
+                    <td>{{ sub_unit.work_type }}</td>
                     <td>
                         <a href="{% url 'sub_unit_edit' sub_unit.id %}" class="btn btn-warning btn-sm">ویرایش</a>
                         <a href="{% url 'sub_unit_delete' sub_unit.id %}" class="btn btn-danger btn-sm">حذف</a>

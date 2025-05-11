@@ -1,0 +1,92 @@
+{% extends 'shared/_PanelMain.html' %}
+
+{% load static %}
+{% block header %}
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: 'Arial', sans-serif;
+            direction: rtl; /* اضافه کردن جهت راست به چپ */
+        }
+
+        .profile-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 400px;
+            margin: 50px auto;
+            text-align: center;
+            color: #333;
+        }
+
+        .profile-card img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .profile-card h3 {
+            font-size: 26px;
+            margin: 15px 0;
+            color: #333;
+        }
+
+        .profile-card p {
+            font-size: 18px;
+            color: #777;
+        }
+
+        .profile-card .details {
+            text-align: right; /* تغییر به راست چین برای بخش جزئیات */
+            margin-top: 20px;
+        }
+
+        .profile-card .details div {
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .profile-card .details span {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .profile-card .btn {
+            background-color: #5bc0de;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 30px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            text-decoration: none;
+        }
+
+        .profile-card .btn:hover {
+            background-color: #31b0d5;
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+    <div class="profile-card">
+        <img src="{{ user.profile_picture.url }}" alt="Profile Picture">
+        <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+        <p>{{ user.Employment_status }}</p>
+
+        <div class="details">
+            <div><span>کد ملی:</span> {{ user.national_code }}</div>
+            <div><span>شماره تلفن:</span> {{ user.phone_number }}</div>
+            <div><span>آدرس:</span> {{ user.address }}</div>
+            <div><span>کدپاسداری:</span> {{ user.id_code }}</div>
+        </div>
+
+        <a href="{% url 'panel_home' %}" class="btn">بازگشت به خانه</a>
+        <a href="{% url 'change_password' %}" class="btn">تغییر رمز عبور</a>
+    </div>
+{% endblock %}

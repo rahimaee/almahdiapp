@@ -1,7 +1,7 @@
 {% extends 'shared/_PanelMain.html' %}
 {% load static %}
 
-
+{% load jalali_filters %}
 {% block header %}
     <style>
 
@@ -213,19 +213,19 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="start_date">تاریخ اعزام:</label>
-                                {{ form.start_date }}
+                                {{ form.start_date.value|to_jalali_to }}
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="service_end_date">تاریخ پایان خدمت اصلی:</label>
-                                {{ form.service_end_date }}
+                                {{ form.service_end_date.value|to_jalali_to }}
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="actual_service_end_date">پایان خدمت اصلی:</label>
-                                {{ form.actual_service_end_date }}
+                                {{ form.actual_service_end_date.value|to_jalali_to }}
                             </div>
                         </div>
                     </div>
@@ -233,7 +233,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="calculate_until_date">محاسبه تا تاریخ:</label>
-                                {{ form.calculate_until_date }}
+                                {{ form.calculate_until_date.value|to_jalali_to }}
                             </div>
                         </div>
                     </div>

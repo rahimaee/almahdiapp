@@ -113,25 +113,33 @@
                 </div>
                 <div class="box-body">
                     <div class="row">
-                        <div class="col-xs-6">
+                        <div class="col-xs-4">
                             {{ form.current_parent_unit.label }}
                             {{ form.current_parent_unit }}
                         </div>
-                        <div class="col-xs-6">
+                        <div class="col-xs-4">
                             {{ form.current_sub_unit.label }}
                             {{ form.current_sub_unit }}
+                        </div>
+                        <div class="col-xs-4">
+                            {{ form.traffic_status.label }}
+                            {{ form.traffic_status }}
                         </div>
                     </div>
                 </div>
                 <div class="box-body">
                     <div class="row">
-                        <div class="col-xs-6">
+                        <div class="col-xs-4">
                             {{ form.rank.label }}
                             {{ form.rank }}
                         </div>
-                        <div class="col-xs-6">
+                        <div class="col-xs-4">
                             {{ form.service_entry_date.label }}
                             {{ form.service_entry_date }}
+                        </div>
+                        <div class="col-xs-4">
+                            {{ form.referral_person.label }}
+                            {{ form.referral_person }}
                         </div>
                     </div>
                 </div>
@@ -210,17 +218,40 @@
 
                     <div class="box-body">
                         <div class="row">
-                            <div class="col-xs-6">
-                                {{ form.has_driving_license.label }}
-                                {{ form.has_driving_license }}
-                            </div>
-                            <div class="col-xs-6">
+                            <div class="col-xs-4">
                                 {{ form.degree.label }}
                                 {{ form.degree }}
                             </div>
+                            <div class="col-xs-4">
+                                {{ form.field_of_study.label }}
+                                {{ form.field_of_study }}
+                            </div>
+                            <div class="col-xs-4">
+                                {{ form.expertise.label }}
+                                {{ form.expertise }}
+                            </div>
                         </div>
                     </div>
-
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                {{ form.driving_license_type.label }}
+                                {{ form.driving_license_type }}
+                            </div>
+                            <div class="col-xs-3">
+                                {{ form.is_sayyed.label }}
+                                {{ form.is_sayyed }}
+                            </div>
+                            <div class="col-xs-3">
+                                {{ form.is_sunni.label }}
+                                {{ form.is_sunni }}
+                            </div>
+                            <div class="col-xs-3">
+                                {{ form.is_sunni.label }}
+                                {{ form.is_sunni }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-primary">ایجاد سرباز</button>

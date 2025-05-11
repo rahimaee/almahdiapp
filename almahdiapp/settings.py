@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'home_apps',
     'django_render_partial',
     'cities_iran_manager_apps',
+    'soldire_naserin_apps',
+    'apps_settings',
 ]
 
 MIDDLEWARE = [

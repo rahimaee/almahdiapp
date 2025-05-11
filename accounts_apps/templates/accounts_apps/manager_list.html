@@ -1,12 +1,5 @@
-<!-- templates/manager_list.html -->
-
-<!DOCTYPE html>
-<html lang="fa">
-<head>
-    <meta charset="UTF-8">
-    <title>لیست مسئولین</title>
-</head>
-<body>
+{% extends 'shared/_PanelMain.html' %}
+{% block main %}
     <h1>لیست مسئولین</h1>
     <ul>
         {% for manager in managers %}
@@ -15,5 +8,4 @@
             </li>
         {% endfor %}
     </ul>
-</body>
-</html>
+{% endblock %}

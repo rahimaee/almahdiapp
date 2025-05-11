@@ -1,0 +1,42 @@
+{% extends 'shared/_PanelMain.html' %}
+{% block header %}
+    <style>
+        body {
+            background-color: #fff8f0;
+        }
+
+        .navbar {
+            background-color: orange;
+        }
+
+        .btn-orange {
+            background-color: orange;
+            border-color: orange;
+            color: white;
+        }
+
+        .btn-orange:hover {
+            background-color: darkorange;
+        }
+    </style>
+{% endblock %}
+{% block main %}
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="{% url 'user_list' %}">مدیریت کاربران</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>حذف کاربر</h2>
+        <p>آیا مطمئن هستید که می‌خواهید کاربر "{{ user.get_full_name }}" را حذف کنید؟</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">بله، حذف شود</button>
+            <a href="{% url 'user_list' %}" class="btn btn-default">لغو</a>
+        </form>
+    </div>
+{% endblock %}
+{% load static %}

@@ -14,9 +14,17 @@ class ParentUnit(models.Model):
 
 
 class SubUnit(models.Model):
+    WORK_TYPE_CHOICES = [('اداری', 'اداری'), ('شیفتی', 'شیفتی'), ('پستی', 'پستی')]
     name = models.CharField(max_length=255, verbose_name="نام زیرواحد")
     parent_unit = models.ForeignKey(
         ParentUnit, on_delete=models.CASCADE, related_name='sub_units', verbose_name="واحد اصلی"
+    )
+    work_type = models.CharField(
+        choices=WORK_TYPE_CHOICES,
+        verbose_name='تردد',
+        null=True,
+        blank=True,
+        max_length=50,
     )
 
     class Meta:

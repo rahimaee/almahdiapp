@@ -1,34 +1,52 @@
+import uuid
+import os
 from django.db import models
 from django.utils.timezone import now
 from units_apps.models import UnitHistory
 from training_center_apps.models import TrainingCenter
 from django_jalali.db import models as jmodels
+from django.utils.deconstruct import deconstructible
+from multiselectfield import MultiSelectField
+import re
 
 
-class OrganizationalCode(models.Model):
-    code_number = models.PositiveIntegerField(unique=True, verbose_name='کد سازمانی')
-    is_active = models.BooleanField(default=False, verbose_name='فعال/غیرفعال')  # فعال یا غیرفعال بودن کد
+@deconstructible
+class PathAndRename:
+    def __init__(self, sub_path):
+        self.sub_path = sub_path
 
-    def __str__(self):
-        return f"کد {self.code_number} - {'غیرآزاد' if self.is_active else 'آزاد'}"
+    def __call__(self, instance, filename):
+        ext = filename.split('.')[-1]
+        # تولید یک اسم یونیک با uuid
+        filename = f"{uuid.uuid4().hex}.{ext}"
+        return os.path.join(self.sub_path, filename)
 
 
 class Soldier(models.Model):
     degree_choices = [
-        ('زیردیپلم','زیردیپلم'),
-        ('دیپلم','دیپلم'),
-        ('فوق دیپلم','فوق دیپلم'),
-        ('لیسانس','لیسانس'),
-        ('فوق لیسانس','فوق لیسانس'),
-        ('دکترا','دکترا'),
-        ('دکترا پزشکی','دکترا پزشکی'),
+        ('زیردیپلم', 'زیردیپلم'),
+        ('دیپلم', 'دیپلم'),
+        ('فوق دیپلم', 'فوق دیپلم'),
+        ('لیسانس', 'لیسانس'),
+        ('فوق لیسانس', 'فوق لیسانس'),
+        ('دکترا', 'دکترا'),
+        ('دکترا پزشکی', 'دکترا پزشکی'),
     ]
     is_guard_duty_CHOICES = [
         (False, 'خیر'),
         (True, 'بلی'),
     ]
+    driving_license_type_choices = [
+        ('پایه سوم', 'پایه سوم'),
+        ('پایه دوم', 'پایه دوم'),
+        ('پایه اول', 'پایه اول'),
+        ('موتورسیکلت', 'موتورسیکلت'),
+        ('ویژه', 'ویژه'),
+        ('ندارد', 'ندارد'),
+    ]
     has_driving_license_choices = [
-        ("پایه سوم", "پایه سوم")
+        ('دارد', 'دارد'),
+        ('ندارد', 'ندارد'),
     ]
     skill_group_choices = [
         (
@@ -57,27 +75,28 @@ class Soldier(models.Model):
     ]
     RANK_CHOICES = [
         ('سرباز(1)', 'سرباز(1)'),
-        ('سرباز دوم(2)','سرباز دوم(2)'),
-        ('سرباز یکم(3)','سرباز یکم(3)'),
-        ('رزمیار(4)','رزمیار(4)'),
-        ('رزم آور سوم(5)','رزم آور سوم(5)'),
-        ('رزم آور دوم(6)','رزم آور دوم(6)'),
-        ('رزم آور یکم(7)','رزم آور یکم(7)'),
-        ('رزمدار دوم(8)','رزمدار دوم(8)'),
-        ('رزمدار یکم(9)','رزمدار یکم(9)'),
-        ('ستوان سوم(10)','ستوان سوم(10)'),
-        ('ستوان دوم(11)','ستوان دوم(11)'),
-        ('ستوان یکم(12)','ستوان یکم(12)'),
+        ('سرباز دوم(2)', 'سرباز دوم(2)'),
+        ('سرباز یکم(3)', 'سرباز یکم(3)'),
+        ('رزمیار(4)', 'رزمیار(4)'),
+        ('رزم آور سوم(5)', 'رزم آور سوم(5)'),
+        ('رزم آور دوم(6)', 'رزم آور دوم(6)'),
+        ('رزم آور یکم(7)', 'رزم آور یکم(7)'),
+        ('رزمدار دوم(8)', 'رزمدار دوم(8)'),
+        ('رزمدار یکم(9)', 'رزمدار یکم(9)'),
+        ('ستوان سوم(10)', 'ستوان سوم(10)'),
+        ('ستوان دوم(11)', 'ستوان دوم(11)'),
+        ('ستوان یکم(12)', 'ستوان یکم(12)'),
 
     ]
-    MARITAL_STATUS_CHOICES = [('single', 'مجرد'), ('married', 'متاهل')]
+    MARITAL_STATUS_CHOICES = [('مجرد', 'مجرد'), ('متاهل', 'متاهل')]
     HEALTH_STATUS_CHOICES = [('سالم', 'سالم'), ('معاف از رزم', 'معاف از رزم'), ('گروه ب', 'گروه ب'),
                              ('معاف+گروه ب', 'معاف+گروه ب'), ]
     blood_group_choices = [('A+', 'A+'), ('A-', 'A-'), ('B+', 'B+'), ('B-', 'B-'),
                            ('AB+', 'AB+'), ('AB-', 'AB-'), ('O+', 'O+'), ('O-', 'O-')]
+    traffic_status_choices = [('روزانه', 'روزانه'), ('هفتگی', 'هفتگی'), ('ماهانه', 'ماهانه')]
     # مشخصات شخصی
     organizational_code = models.OneToOneField(
-        OrganizationalCode,
+        'OrganizationalCode',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -92,7 +111,7 @@ class Soldier(models.Model):
     id_card_code = models.CharField(
         max_length=50, blank=True, null=True, verbose_name="کد پاسداری"
     )
-    birth_date = jmodels.jDateField(null=True, blank=True, verbose_name='تاریخ تولد')
+    birth_date = models.DateField(null=True, blank=True, verbose_name='تاریخ تولد')
     birth_place = models.CharField(max_length=100, verbose_name="محل تولد")
     issuance_place = models.CharField(max_length=100, verbose_name="محل صدور")
     marital_status = models.CharField(
@@ -117,9 +136,12 @@ class Soldier(models.Model):
         max_length=3,
         choices=blood_group_choices,
         verbose_name="گروه خون",
+        null=True,
+        blank=True,
     )
-    naserin_group_number = models.CharField(
-        max_length=50, blank=True, null=True, verbose_name="شماره گروه ناصرین"
+    naserin_group = models.ForeignKey(
+        'soldire_naserin_apps.NaserinGroup', on_delete=models.SET_NULL, blank=True, null=True,
+        verbose_name="گروه ناصرین"
     )
 
     # اطلاعات سکونت
@@ -127,9 +149,6 @@ class Soldier(models.Model):
                                        blank=True, verbose_name='شهر')
     residence_province = models.ForeignKey('cities_iran_manager_apps.Province', on_delete=models.SET_NULL, null=True,
                                            blank=True, verbose_name='استان')
-    residence_distance_km = models.DecimalField(
-        max_digits=5, decimal_places=2, verbose_name="کیلومتر", blank=True, null=True,
-    )
     postal_code = models.CharField(max_length=10, verbose_name="کدپستی")
     phone_home = models.CharField(
         max_length=15, blank=True, null=True, verbose_name="منزل"
@@ -146,7 +165,10 @@ class Soldier(models.Model):
     rank = models.CharField(
         choices=RANK_CHOICES,
         max_length=50,
-        verbose_name="درجه"
+        verbose_name="درجه",
+        blank=True,
+        null=True,
+
     )
     is_guard_duty = models.BooleanField(default=False, verbose_name="پاسدار وظیفه")
     is_fugitive = models.BooleanField(default=False, verbose_name="فراری")
@@ -156,13 +178,10 @@ class Soldier(models.Model):
     addiction_record = models.PositiveIntegerField(
         default=0, verbose_name="سابقه اعتیاد", blank=True, null=True,
     )
-    education_major = models.CharField(
-        max_length=100, verbose_name="رشته تحصیلی", null=True, blank=True,
-    )
     referral_person = models.CharField(
-        max_length=100, blank=True, null=True, verbose_name="معرف"
+        max_length=200, blank=True, null=True, verbose_name="معرف"
     )
-    dispatch_date = jmodels.jDateField(null=True, blank=True, verbose_name='تاریخ اعزام')
+    dispatch_date = models.DateField(null=True, blank=True, verbose_name='تاریخ اعزام')
     training_duration = models.PositiveIntegerField(
         verbose_name="مدت آموزش (روز)"
     )
@@ -171,7 +190,7 @@ class Soldier(models.Model):
     service_duration_completed = models.PositiveIntegerField(
         verbose_name="مقدار خدمت انجام شده", blank=True, null=True,
     )
-    service_entry_date = jmodels.jDateField(null=True, blank=True, verbose_name='تاریخ ورود به یگان')
+    service_entry_date = models.DateField(null=True, blank=True, verbose_name='تاریخ ورود به یگان')
 
     total_service_adjustment = models.DecimalField(
         max_digits=5, decimal_places=2, verbose_name="مجموع (کسری/اضافه خدمت)", null=True, blank=True,
@@ -185,7 +204,6 @@ class Soldier(models.Model):
     service_end_date = models.DateField(
         blank=True, null=True, verbose_name="پایان خدمت"
     )
-
     # اطلاعات محل خدمت
     current_parent_unit = models.ForeignKey(
         "units_apps.ParentUnit", on_delete=models.SET_NULL, null=True, blank=True, verbose_name="واحد اصلی فعلی"
@@ -196,7 +214,7 @@ class Soldier(models.Model):
 
     traffic_status = models.CharField(
         max_length=50,
-        choices=[('daily', 'روزانه'), ('weekly', 'هفتگی'), ('monthly', 'ماهانه')],
+        choices=traffic_status_choices,
         verbose_name="تردد",
         blank=True,
         null=True,
@@ -210,9 +228,9 @@ class Soldier(models.Model):
         max_length=200, verbose_name="گواهینامه دارد؟", null=True, blank=True,
         choices=has_driving_license_choices
     )
-    driving_license_type = models.CharField(
-        max_length=100, blank=True, null=True, verbose_name="نوع گواهینامه"
-    )
+
+    driving_license_type = MultiSelectField(choices=driving_license_type_choices, max_length=200, null=True, blank=True,
+                                            verbose_name='نوع گواهینامه')
 
     file_shortage = models.TextField(
         blank=True, null=True, verbose_name="کسری پرونده"
@@ -229,7 +247,7 @@ class Soldier(models.Model):
         max_length=50, blank=True, null=True, verbose_name="دوره عقیدتی"
     )
     independent_married = models.BooleanField(
-        default=False, verbose_name="متاهل مستقل"
+        default=False, verbose_name="متاهل مستقل", null=True, blank=True,
     )
     weekly_or_monthly_presence = models.CharField(
         max_length=50, blank=True, null=True, verbose_name="حضور هفتگی/ماهانه"
@@ -240,8 +258,12 @@ class Soldier(models.Model):
     )
     is_sunni = models.BooleanField(default=False, verbose_name="اهل تسنن")
     is_sayyed = models.BooleanField(default=False, verbose_name="سید")
+
     photo_scan = models.ImageField(
-        upload_to='photos/', blank=True, null=True, verbose_name="اسکن عکس"
+        upload_to=PathAndRename('photos/'),
+        blank=True,
+        null=True,
+        verbose_name="اسکن عکس"
     )
     eligible_for_card_issuance = models.BooleanField(
         default=True, verbose_name="واجد شرایط صدور کارت پایان خدمت"
@@ -262,17 +284,36 @@ class Soldier(models.Model):
         max_length=100, blank=True, null=True, verbose_name="مدرک مهارتی", choices=skill_certificate_choices
     )
     number_of_certificates = models.PositiveIntegerField(
-        default=0, verbose_name="تعداد مدرک"
+        default=0, verbose_name="تعداد مدرک", null=True, blank=True,
     )
     is_certificate = models.BooleanField(
-        default=False, verbose_name="مدرک مهارت آموزی دارد؟", choices=need_certificate_choices
+        default=False, verbose_name="مدرک مهارت آموزی دارد؟", choices=need_certificate_choices, null=True, blank=True
     )
     degree = models.CharField(
         max_length=100, blank=True, null=True, verbose_name="مدرک تحصیلی", choices=degree_choices
     )
     field_of_study = models.CharField(
-        max_length=100, blank=True, null=True, verbose_name="رشته تحصیلی"
+        max_length=200, blank=True, null=True, verbose_name="رشته تحصیلی"
     )
+    absorption = models.BooleanField(default=False, verbose_name='جذبی؟')
+
+    def update_has_driving_license(self):
+        if self.driving_license_type != "ندارد":
+            self.has_driving_license = 'دارد'
+        else:
+            self.has_driving_license = 'ندارد'
+
+    def update_is_seyed(self):
+        if re.search(r'\bسید\b', self.first_name):
+            self.is_sayyed = True
+        else:
+            self.is_sayyed = False
+
+    def update_absorption(self):
+        if self.referral_person is not None:
+            self.absorption = True
+        else:
+            self.absorption = False
 
     def change_unit(self, new_parent_unit, new_sub_unit):
         # پایان دادن به واحد قبلی
@@ -294,5 +335,20 @@ class Soldier(models.Model):
         self.current_sub_unit = new_sub_unit
         self.save()
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.update_has_driving_license()
+        self.update_is_seyed()
+        self.update_absorption()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.organizational_code}"
+
+
+class OrganizationalCode(models.Model):
+    code_number = models.PositiveIntegerField(unique=True, verbose_name='کد سازمانی')
+    is_active = models.BooleanField(default=False, verbose_name='فعال/غیرفعال')  # فعال یا غیرفعال بودن کد
+
+    def __str__(self):
+        return f"کد {self.code_number} - {'غیرآزاد' if self.is_active else 'آزاد'}"

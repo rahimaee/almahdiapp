@@ -12,7 +12,7 @@
             <div class="pull-right info">
                 <p>{{ user.get_full_name }}({{ user.get_employment_status }})</p>
                 <!-- Status -->
-                <a href="#"><i class="fa fa-circle text-success"></i>آنلاین</a>
+                <a href="{% url 'profile' %}"><i class="fa fa-circle text-success"></i>آنلاین</a>
             </div>
         </div>
 
@@ -46,10 +46,35 @@
                 <ul class="treeview-menu">
                     <li><a href="{% url 'soldier_list' %}">لیست سربازان</a></li>
                     <li><a href="{% url 'soldier_create' %}">سرباز جدید</a></li>
+                    <li><a href="{% url 'bulk_photo_upload' %}">آپلود گروهی عکس بر اساس کد ملی</a></li>
+
+
                 </ul>
             </li>
-
-
+            <li class="treeview">
+                <a href="#"><i class="fa fa-user-plus"></i> <span>مدیریت مدیران</span>
+                    <span class="pull-left-container">
+                        <i class="fa fa-angle-right pull-left"></i>
+                      </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="{% url 'user_list' %}">لیست مدیران</a></li>
+                    <li><a href="{% url 'user_create' %}">مدیر جدید</a></li>
+                </ul>
+            </li>
+            <li class="treeview">
+                <a href="#"><i class="fa fa-user-plus"></i> <span>مدیریت ناصرین</span>
+                    <span class="pull-left-container">
+                        <i class="fa fa-angle-right pull-left"></i>
+                      </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="{% url 'naserin_list' %}">لیست گروه های ناصرین</a></li>
+                    <li><a href="{% url 'naserin_create' %}">ایجاد گروه ناصرین</a></li>
+                    <li><a href="{% url 'soldire_naserin_list' %}">لیست سربازان و گروه های ناصرین</a></li>
+                    <li><a href="{% url 'bulk_edit_naserin' %}">تخصیص گروه به سربازان فاقد گروه</a></li>
+                </ul>
+            </li>
             {% if request.user.is_staff == True %}
                 <li class="treeview">
                     <a href="#"><i class="fa fa-envelope"></i> <span>مدیریت نامه</span>

@@ -1,0 +1,57 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+    <div class="container" style="margin-top:50px; max-width:600px;">
+        <h2 class="text-center">ویرایش پروفایل</h2>
+
+        <form method="post" enctype="multipart/form-data" class="form-horizontal">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group {% if field.errors %}has-error{% endif %}">
+                    <label class="control-label col-sm-4">{{ field.label_tag }}</label>
+                    <div class="col-sm-8">
+                        {{ field }}
+                        {% for error in field.errors %}
+                            <span class="help-block">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="form-group">
+                <div class="col-sm-offset-4 col-sm-8">
+                    <button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
+                    <a href="{% url 'panel_home' %}" class="btn btn-default">بازگشت</a>
+                </div>
+            </div>
+        </form>
+
+        <h3 class="mt-4">دسترسی‌ها و سمت‌ها</h3>
+        <ul>
+            {% if is_admin %}
+                <li><strong>سمت شما:</strong> مدیر کل سیستم</li>
+            {% else %}
+                <li><strong>گروه‌ها:</strong>
+                    {% for group in user_groups %}
+                        {{ group.name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </li>
+                <li><strong>دسترسی‌ها:</strong>
+                    {% for perm in user_permissions %}
+                        {{ perm.name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </li>
+            {% endif %}
+            <li><strong>واحدهای شما:</strong>
+                {% for unit in user_units %}
+                    {{ unit.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </li>
+            <li><strong>امکانات شما:</strong>
+                {% for feature in user_features %}
+                    {{ feature.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </li>
+        </ul>
+
+    </div>
+{% endblock %}

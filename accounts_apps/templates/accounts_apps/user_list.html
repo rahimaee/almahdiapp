@@ -1,0 +1,75 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+
+{% block header %}
+    <style>
+        body {
+            background-color: #fff8f0;
+        }
+
+        .navbar {
+            background-color: orange;
+        }
+
+        .btn-orange {
+            background-color: orange;
+            border-color: orange;
+            color: white;
+        }
+
+        .btn-orange:hover {
+            background-color: darkorange;
+        }
+    </style>
+{% endblock %}
+{% block main %}
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">مدیریت کاربران</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>لیست کاربران</h2>
+        <a href="{% url 'user_create' %}" class="btn btn-orange">افزودن کاربر جدید</a>
+        <br><br>
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr style="background-color: orange; color: white;">
+                <th>نام کاربری</th>
+                <th>نام</th>
+                <th>نام خانوادگی</th>
+                <th>کد ملی</th>
+                <th>شماره تلفن</th>
+                <th>وضعیت شاغل</th>
+                <th>عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.first_name }}</td>
+                    <td>{{ user.last_name }}</td>
+                    <td>{{ user.national_code }}</td>
+                    <td>{{ user.phone_number }}</td>
+                    <td>{{ user.get_employment_status }}</td>
+                    <td>
+                        <a href="{% url 'user_update' user.pk %}" class="btn btn-warning btn-xs">ویرایش</a>
+                        <a href="{% url 'user_delete' user.pk %}" class="btn btn-danger btn-xs">حذف</a>
+                        <a href="{% url 'manage_user_access' user.pk %}" class="btn btn-danger btn-xs">دسترسی</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">هیچ کاربری یافت نشد.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

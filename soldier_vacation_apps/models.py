@@ -4,6 +4,8 @@ from django.db import models
 
 class LeaveBalance(models.Model):
     soldier = models.ForeignKey('soldires_apps.Soldier', on_delete=models.CASCADE)
+    initial_annual_leave_quota = models.PositiveIntegerField("سقف اولیه مرخصی استحقاقی کمکی", default=0)
+
     # سقف مرخصی‌ها
     annual_leave_quota = models.PositiveIntegerField("سقف مرخصی استحقاقی", default=0)
     incentive_leave_quota = models.PositiveIntegerField("سقف مرخصی تشویقی", default=0)

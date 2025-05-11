@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
-from django.conf import settings
 
 
 class MyUser(AbstractUser):
@@ -12,8 +11,11 @@ class MyUser(AbstractUser):
                                         verbose_name="عکس پروفایل")
     address = models.TextField(blank=True, null=True, verbose_name="آدرس")
     id_code = models.CharField(blank=True, null=True, max_length=50, verbose_name='کدپاسداری')
-    units = models.ForeignKey('units_apps.ParentUnit', on_delete=models.PROTECT,
-                              verbose_name='واحد', blank=True, null=True, )
+    units = models.ManyToManyField(
+        'units_apps.ParentUnit',
+        blank=True,
+        verbose_name="واحدهای اصلی قابل مشاهده"
+    )
     Employment_status = models.CharField(
         blank=True,
         null=True,
@@ -21,16 +23,31 @@ class MyUser(AbstractUser):
         choices=[('سرباز', 'سرباز'), ('پاسدار', 'پاسدار'), ('کارمند', 'کارمند')],
         verbose_name='وضعیت شاغل',
     )
+    features = models.ManyToManyField(
+        'Feature',
+        blank=True,
+        verbose_name="امکانات قابل دسترسی"
+    )
 
     # متدهای اختیاری
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.username})"
+
+    def has_feature(self, feature_name):
+        return self.features.filter(name=feature_name).exists()
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
 
     def get_employment_status(self):
         return self.Employment_status
+
+
+class Feature(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
 
 
 class Section(models.Model):

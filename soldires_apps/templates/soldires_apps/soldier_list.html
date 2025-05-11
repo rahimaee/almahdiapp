@@ -1,6 +1,6 @@
 {% extends 'shared/_PanelMain.html' %}
 {% load static %}
-
+{% load jalali_filters %}
 
 {% block header %}
 
@@ -48,11 +48,172 @@
 {% endblock %}
 
 {% block main %}
+    <div class="box box-warning">
+        <div class="box-header with-border">
+            <h3 class="box-title">لیست سربازان</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">جستجوی پیشرفته سربازان</h4>
+            </div>
+            <form method="get" class="card-body">
+                <div class="row g-4">
+                    <!-- ستون 1 -->
+                    <div class="col-md-4">
+                        <h5 class="text-primary mb-3">اطلاعات هویتی</h5>
+                        <div class="mb-3">
+                            <label class="form-label">کد ملی</label>
+                            {{ form.national_code }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">نام</label>
+                            {{ form.first_name }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">نام خانوادگی</label>
+                            {{ form.last_name }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">نام پدر</label>
+                            {{ form.father_name }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">کد سازمانی</label>
+                            {{ form.organizational_code }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">کد پاسداری</label>
+                            {{ form.id_card_code }}
+                        </div>
+                    </div>
+
+                    <!-- ستون 2 -->
+                    <div class="col-md-4">
+                        <h5 class="text-primary mb-3">اطلاعات خدمت</h5>
+                        <div class="mb-3">
+                            <label class="form-label">واحد اصلی</label>
+                            {{ form.current_parent_unit }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">زیرواحد</label>
+                            {{ form.current_sub_unit }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">درجه</label>
+                            <select name="rank" class="form-control">
+                                <option value="">--- انتخاب کنید ---</option>
+                                {% for value, label in form.rank.field.choices %}
+                                    <option value="{{ value }}"
+                                            {% if request.GET.rank == value|stringformat:"s" %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">تاریخ ورود به یگان</label>
+                            {{ form.service_entry_date }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">تاریخ اعزام</label>
+                            {{ form.dispatch_date }}
+                        </div>
+                        <div class="form-check form-switch">
+                            {{ form.is_guard_duty }}
+                            <label class="form-check-label">پاسدار وظیفه</label>
+                        </div>
+                    </div>
+
+                    <!-- ستون 3 -->
+                    <div class="col-md-4">
+                        <h5 class="text-primary mb-3">اطلاعات تکمیلی</h5>
+                        <div class="mb-3">
+                            <label class="form-label">وضعیت سلامت</label>
+                            <select name="health_status" class="form-control">
+                                <option value="">--- انتخاب کنید ---</option>
+                                {% for value, label in form.health_status.field.choices %}
+                                    <option value="{{ value }}"
+                                            {% if request.GET.health_status == value|stringformat:"s" %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">گروه خون</label>
+                            <select name="blood_group" class="form-control">
+                                <option value="">--- انتخاب کنید ---</option>
+                                {% for value, label in form.blood_group.field.choices %}
+                                    <option value="{{ value }}"
+                                            {% if request.GET.blood_group == value|stringformat:"s" %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">مدرک تحصیلی</label>
+                            <select name="degree" class="form-control">
+                                <option value="">--- انتخاب کنید ---</option>
+                                {% for value, label in form.degree.field.choices %}
+                                    <option value="{{ value }}"
+                                            {% if request.GET.degree == value|stringformat:"s" %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">گروه مهارتی</label>
+                            <select name="skill_group" class="form-control">
+                                <option value="">--- انتخاب کنید ---</option>
+                                {% for value, label in form.skill_group.field.choices %}
+                                    <option value="{{ value }}"
+                                            {% if request.GET.skill_group == value|stringformat:"s" %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">وضعیت تأهل</label>
+                            <select name="marital_status" class="form-control">
+                                <option value="">--- انتخاب کنید ---</option>
+                                {% for value, label in form.marital_status.field.choices %}
+                                    <option value="{{ value }}"
+                                            {% if request.GET.marital_status == value|stringformat:"s" %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-check form-switch">
+                            {{ form.independent_married }}
+                            <label class="form-check-label">متاهل مستقل</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-search me-2"></i>جستجو
+                    </button>
+                    <a href="?" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-undo me-2"></i>بازنشانی
+                    </a>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+
     <div class="table-responsive">
         <table class="table table-hover table-condensed">
             <thead>
             <tr>
-                <th style="width: 120px;">عملیات</th>
+                <th>کدسازمانی</th>
                 <th>نام</th>
                 <th>کد ملی</th>
                 <th>وضعیت</th>
@@ -64,16 +225,7 @@
             <tbody>
             {% for soldier in soldiers %}
                 <tr data-toggle="collapse" data-target="#row{{ soldier.id }}" class="accordion-toggle">
-                    <td>
-                        <div class="btn-group btn-group-xs">
-                            <a href="{% url 'soldier_edit' soldier.id %}" class="btn btn-default">
-                                <i class="fa fa-pencil"></i>
-                            </a>
-                            <button class="btn btn-danger">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
+                    <td>{{ soldier.organizational_code.code_number }}</td>
                     <td>
                         {{ soldier.first_name }} {{ soldier.last_name }}
                         {% if soldier.photo_scan %}
@@ -117,10 +269,11 @@
                                 <div class="panel-body">
                                     <div class="row">
                                         <div class="col-md-3">
-                                            <h5><i class="fa fa-info-circle text-primary"></i> مشخصات فردی</h5>
+                                            <h5><i class="fa fa-info-circle text-primary"></i> مشخصات فردی
+                                            </h5>
                                             <dl class="dl-horizontal">
                                                 <dt>تاریخ تولد:</dt>
-                                                <dd>{{ soldier.birth_date|date:"Y/m/d" }}</dd>
+                                                <dd>{{ soldier.birth_date|to_jalali }}</dd>
 
                                                 <dt>گروه خون:</dt>
                                                 <dd>{{ soldier.blood_group }}</dd>
@@ -134,10 +287,10 @@
                                             <h5><i class="fa fa-shield text-success"></i> وضعیت خدمت</h5>
                                             <dl class="dl-horizontal">
                                                 <dt>تاریخ اعزام:</dt>
-                                                <dd>{{ soldier.dispatch_date|date:"Y/m/d" }}</dd>
+                                                <dd id="dispatch-date">{{ soldier.dispatch_date|to_jalali }}</dd>
 
                                                 <dt>خدمت انجام شده:</dt>
-                                                <dd>{{ soldier.service_duration_completed }} روز</dd>
+                                                <dd id="days-since-dispatch"> {{ soldier.dispatch_date|to_end }}روز گذشته </dd>
 
                                                 <dt>تردد:</dt>
                                                 <dd>
@@ -165,6 +318,10 @@
                                                    class="btn btn-warning btn-sm text-right">
                                                     <i class="fa fa-history"></i> کسریا اضافه خدمت
                                                 </a>
+                                                  <a href="{% url 'upload_soldier_photo' soldier.pk %}"
+                                                   class="btn btn-warning btn-sm text-right">
+                                                    <i class="fa fa-history"></i>بارگذاری عکس برای سرباز
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -177,6 +334,7 @@
             </tbody>
         </table>
     </div>
+    </div>
+    </div>
 {% endblock %}
-
 

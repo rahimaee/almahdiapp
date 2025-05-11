@@ -30,6 +30,7 @@ class SoldierDocuments(models.Model):
     supervision_sheet = models.BooleanField("چهاربرگ (ته برگ نظارت)", default=False)
     ideological_sheet = models.BooleanField("چهاربرگ (ته برگ عقیدتی)", default=False)
     judicial_sheet = models.BooleanField("چهاربرگ (ته برگ قضایی)", default=False)
+    hokme_karo_gozini = models.BooleanField("حکم کارگزینی", default=False)
 
     def __str__(self):
         return f"مدارک سرباز: {self.soldier}"

@@ -21,7 +21,6 @@ def import_provinces():
             id=item["id"],
             defaults={
                 "name": item["name"],
-                "slug": item["slug"],
                 "tel_prefix": item.get("tel_prefix", "")
             }
         )
@@ -42,7 +41,6 @@ def import_cities():
                 id=item["id"],
                 defaults={
                     "name": item["name"],
-                    "slug": item["slug"],
                     "province": province
                 }
             )

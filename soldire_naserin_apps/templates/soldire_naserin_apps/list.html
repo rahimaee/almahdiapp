@@ -1,0 +1,39 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+
+
+{% block main %}
+    <div class="container">
+        <h2>لیست گروه‌های ناصرین</h2>
+        <a href="{% url 'naserin_create' %}" class="btn btn-success" style="margin-bottom: 15px;">افزودن گروه جدید</a>
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>شناسه</th>
+                <th>نام گروه</th>
+                <th>توضیحات</th>
+                <th>مدیر</th>
+                <th>عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for group in groups %}
+                <tr>
+                    <td>{{ group.id }}</td>
+                    <td>{{ group.name }}</td>
+                    <td>{{ group.description }}</td>
+                    <td>{{ group.manager.get_full_name }}</td>
+                    <td>
+                        <a href="{% url 'naserin_edit' group.id %}" class="btn btn-primary btn-sm">ویرایش</a>
+                        <!-- اگر خواستی حذف هم اضافه کنیم -->
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">هیچ گروهی ثبت نشده است.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
