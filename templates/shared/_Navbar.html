@@ -47,8 +47,6 @@
                     <li><a href="{% url 'soldier_list' %}">لیست سربازان</a></li>
                     <li><a href="{% url 'soldier_create' %}">سرباز جدید</a></li>
                     <li><a href="{% url 'bulk_photo_upload' %}">آپلود گروهی عکس بر اساس کد ملی</a></li>
-
-
                 </ul>
             </li>
             <li class="treeview">
@@ -60,6 +58,20 @@
                 <ul class="treeview-menu">
                     <li><a href="{% url 'user_list' %}">لیست مدیران</a></li>
                     <li><a href="{% url 'user_create' %}">مدیر جدید</a></li>
+                </ul>
+            </li>
+            <li class="treeview">
+                <a href="#"><i class="fa fa-user-plus"></i> <span>مدیریت عقیدتی</span>
+                    <span class="pull-left-container">
+                        <i class="fa fa-angle-right pull-left"></i>
+                      </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="{% url 'religious_period_list' %}">لیست</a></li>
+                    <li><a href="{% url 'religious_period_add' %}">ایجاد دوره</a></li>
+                    <li><a href="{% url 'soldiers_with_training' %}">لیست سربازان و دوره عقیدتی</a></li>
+                    <li><a href="{% url 'soldiers_without_training' %}">سربازان بدون دوره عقیدتی</a></li>
+                    <li><a href="{% url 'upload-excel' %}">آپلود فایل اکسل دوره عقیدتی</a></li>
                 </ul>
             </li>
             <li class="treeview">

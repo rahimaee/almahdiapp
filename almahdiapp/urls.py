@@ -32,6 +32,7 @@ urlpatterns = [
     path('units/', include('units_apps.urls')),
     path('iran_c_p/', include('cities_iran_manager_apps.urls')),
     path('naserin/', include('soldire_naserin_apps.urls')),
+    path('religious-period/', include('soldire_religious_period_apps.urls')),
     re_path(r'^header_partial_view',
             header_partial_view,
             name='header_partial_view'),

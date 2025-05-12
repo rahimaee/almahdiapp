@@ -71,20 +71,6 @@ class SoldierService(models.Model):
         )
 
     def get_effective_service_months(self):
-        # این تابع ماه‌های خدمت واقعی رو میده (۲۱ - کسری + اضافه خدمت)
-        from apps_settings.models import AppsSettings
-        app_settings = AppsSettings.objects.first()
-
-        # مدت پایه خدمت
-        base_months = int(app_settings.essential_service_duration) - int(app_settings.Length_of_service_in_the_unit)
-
-        # محاسبه تعداد روز خدمت واقعی
-        net_days = (base_months * 30) - self.reduction_total + self.addition_total
-
-        # تبدیل به ماه
-        return max(round(net_days / 30), 0)
-
-    def get_effective_service_months(self):
         from apps_settings.models import AppsSettings
         app_settings = AppsSettings.objects.first()
 
@@ -112,20 +98,66 @@ class SoldierService(models.Model):
         leave_balance.annual_leave_remaining = max(net_quota - leave_balance.annual_leave_used, 0)
         leave_balance.save()
 
+    def update_soldire_service_end_date(self):
+        from soldires_apps.models import Soldier
+        soldier = Soldier.objects.filter(id=self.soldier.id).first()
+        soldier.service_end_date = self.actual_service_end_date
+        soldier.total_service_adjustment = self.addition_total - self.reduction_total
+        soldier.save()
+
+    def get_reduction_types_with_values(self):
+        types = []
+        from soldires_apps.models import Soldier
+        soldier = Soldier.objects.filter(id=self.soldier.id).first()
+        if self.reduction_veterans > 0:
+            types.append(f"رزمندگان: {self.reduction_veterans} روز")
+        if self.reduction_disability > 0:
+            types.append(f"جانباز: {self.reduction_disability} روز")
+        if self.reduction_bsj > 0:
+            types.append(f"بسیج: {self.reduction_bsj} روز")
+        if self.reduction_project > 0:
+            types.append(f"پروژه‌ای: {self.reduction_project} روز")
+        if self.reduction_children > 0:
+            types.append(f"فرزند: {self.reduction_children} روز")
+        if self.reduction_spouse > 0:
+            types.append(f"همسر: {self.reduction_spouse} روز")
+        if self.reduction_operational_areas > 0:
+            types.append(f"مناطق عملیاتی: {self.reduction_operational_areas} روز")
+        if self.reduction_seniority > 0:
+            types.append(f"بخشش سنواتی: {self.reduction_seniority} روز")
+        if self.reduction_non_local > 0:
+            types.append(f"غیربومی: {self.reduction_non_local} روز")
+        if self.reduction_system_adjustment > 0:
+            types.append(f"تطبیق سامانه: {self.reduction_system_adjustment} روز")
+        if self.reduction_other > 0:
+            types.append(f"سایر: {self.reduction_other} روز")
+        if self.addition_seniority > 0:
+            types.append(f"سنواتی: {self.addition_seniority} روز")
+        if self.addition_discipline > 0:
+            types.append(f"انضباطی: {self.addition_discipline} روز")
+        if self.addition_gap > 0:
+            types.append(f"خلاء: {self.addition_gap} روز")
+        if self.addition_system > 0:
+            types.append(f"سامانه: {self.addition_system} روز")
+        if self.addition_other > 0:
+            types.append(f"سایر: {self.addition_other} روز")
+        soldier.service_deduction_type = "، ".join(types) if types else "ندارد"
+        soldier.save()
+
     def update_actual_service_end_date(self):
         if self.service_end_date is not None:
             # Convert Gregorian to Jalali
             jalali_date = jdatetime.date.fromgregorian(date=self.service_end_date)
-            
+
             # Calculate total days to add/subtract
             total_days = self.addition_total - self.reduction_total
-            
+
             # Add/subtract days in Jalali calendar
             jalali_date += datetime.timedelta(days=total_days)
-            
+
             # Convert back to Gregorian
             self.actual_service_end_date = jalali_date.togregorian()
-            
+
         else:
             from soldires_apps.models import Soldier
             from apps_settings.models import AppsSettings
@@ -137,28 +169,29 @@ class SoldierService(models.Model):
             if start_date:
                 # Convert start date to Jalali
                 start_date_jalali = jdatetime.date.fromgregorian(date=start_date)
-                
+
                 # Calculate total days to add/subtract
                 total_days = self.addition_total - self.reduction_total
-                
+
                 # Calculate service_end_date (exactly 21 months = 630 days)
                 service_end_datetime = datetime.datetime.combine(start_date_jalali.togregorian(), datetime.time())
                 service_end_datetime = service_end_datetime + datetime.timedelta(days=630)  # 21 months * 30 days
                 service_end_date = service_end_datetime.date()
-                
+
                 # Convert to Jalali for display
                 service_end_jalali = jdatetime.date.fromgregorian(date=service_end_date)
-                
+
                 # Set service_end_date (without reductions/additions)
                 self.service_end_date = service_end_date
-                
+
                 # Calculate actual_service_end_date with reductions/additions
-                actual_end_datetime = service_end_datetime - datetime.timedelta(days=abs(total_days) if total_days < 0 else 0)
+                actual_end_datetime = service_end_datetime - datetime.timedelta(
+                    days=abs(total_days) if total_days < 0 else 0)
                 actual_end_date = actual_end_datetime.date()
-                
+
                 # Convert back to Jalali for final date
                 actual_end_jalali = jdatetime.date.fromgregorian(date=actual_end_date)
-                
+
                 # Set the actual service end date
                 self.actual_service_end_date = actual_end_jalali.togregorian()
 
@@ -177,6 +210,8 @@ class SoldierService(models.Model):
         self.calculate_until_date = datetime.date.today()
         self.update_actual_service_end_date()
         self.get_dispatch_date()
+        self.update_soldire_service_end_date()
+        self.get_reduction_types_with_values()
         super().save(*args, **kwargs)  # اول ذخیره کن
 
     def __str__(self):

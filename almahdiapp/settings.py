@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django_render_partial',
     'cities_iran_manager_apps',
     'soldire_naserin_apps',
+    'soldire_religious_period_apps',
     'apps_settings',
 ]
 

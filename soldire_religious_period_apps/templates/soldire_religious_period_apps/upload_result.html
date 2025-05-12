@@ -1,0 +1,27 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+    <div class="container">
+        <h2 class="text-center">نتیجه پردازش فایل</h2>
+
+        {% if errors %}
+            <div class="alert alert-warning">
+                <strong>برخی خطاها رخ داده‌اند:</strong>
+                <ul>
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <div class="alert alert-success text-center">
+                ✅ همه {{ total }} مورد با موفقیت ثبت شدند.
+            </div>
+        {% endif %}
+
+        <div class="text-center" style="margin-top: 20px;">
+            <a href="{% url 'upload-excel' %}" class="btn btn-primary">آپلود فایل جدید</a>
+        </div>
+    </div>
+{% endblock %}
+

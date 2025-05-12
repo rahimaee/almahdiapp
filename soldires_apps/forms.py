@@ -137,11 +137,6 @@ class SoldierForm(forms.ModelForm):
         label='تردد',
         required=False,
     )
-    is_sayyed = forms.BooleanField(
-        required=False,  # به صورت پیش‌فرض مقدار True یا False می‌گیرد
-        label="آیا سید هستید؟",  # اضافه کردن برچسب
-        initial=False  # مقدار پیش‌فرض False است
-    )
     is_sunni = forms.BooleanField(
         required=False,  # به صورت پیش‌فرض مقدار True یا False می‌گیرد
         label="اهل تسنن؟",  # اضافه کردن برچسب
@@ -152,7 +147,11 @@ class SoldierForm(forms.ModelForm):
         label="معسرین؟",  # اضافه کردن برچسب
         initial=False  # مقدار پیش‌فرض False است
     )
-
+    Is_the_Basij_sufficient = forms.BooleanField(
+        required=False,  # به صورت پیش‌فرض مقدار True یا False می‌گیرد
+        label="کفایتدار بسیج؟",  # اضافه کردن برچسب
+        initial=False  # مقدار پیش‌فرض False است
+    )
     class Meta:
         model = Soldier
         fields = '__all__'

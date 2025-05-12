@@ -55,7 +55,7 @@
         <!-- /.box-header -->
         <div class="box-body">
             <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">جستجوی پیشرفته سربازان</h4>
+                <h4 class="mb-0" style="text-align: center">جستجوی پیشرفته سربازان</h4>
             </div>
             <form method="get" class="card-body">
                 <div class="row g-4">
@@ -197,10 +197,10 @@
 
                 <div class="text-center mt-4">
                     <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="fas fa-search me-2"></i>جستجو
+                        <i class="fa fa-search me-2"></i>جستجو
                     </button>
-                    <a href="?" class="btn btn-outline-secondary btn-lg">
-                        <i class="fas fa-undo me-2"></i>بازنشانی
+                    <a href="?" class="btn btn-facebook btn-lg">
+                        <i class="fa fa-undo me-2"></i>بازنشانی
                     </a>
                 </div>
             </form>
@@ -217,7 +217,8 @@
                 <th>نام</th>
                 <th>کد ملی</th>
                 <th>وضعیت</th>
-                <th>واحد</th>
+                <th>قسمت</th>
+                <th>زیرقسمت</th>
                 <th>تلفن</th>
                 <th>پایان خدمت</th>
             </tr>
@@ -236,8 +237,9 @@
                     <td>
                     <span class="label
                           {% if soldier.health_status == 'سالم' %}label-success
-                          {% elif soldier.health_status == 'معاف از رزم' %}label-danger
-                          {% else %}label-warning{% endif %}">
+                          {% elif soldier.health_status == 'معاف از رزم' %}label-primary
+                          {% elif soldier.health_status == 'گروه ب' %}label-warning
+                          {% else %}label-danger{% endif %}">
                         {{ soldier.health_status }}
                     </span>
                         {% if soldier.is_fugitive %}
@@ -253,17 +255,26 @@
                             <span class="text-muted">-</span>
                         {% endif %}
                     </td>
-                    <td>{{ soldier.phone_mobile }}</td>
                     <td>
-                        {% if soldier.service_end_date %}
-                            {{ soldier.service_end_date|date:"Y/m/d" }}
+                        {% if soldier.current_sub_unit %}
+                            <span data-toggle="tooltip" title="{{ soldier.current_sub_unit }}">
+                        {{ soldier.current_sub_unit|truncatechars:12 }}
+                    </span>
                         {% else %}
                             <span class="text-muted">-</span>
                         {% endif %}
                     </td>
+                    <td>{{ soldier.phone_mobile }}</td>
+                    <td>
+                        {% if soldier.service_end_date %}
+                            {{ soldier.service_end_date|to_jalali }}
+                        {% else %}
+                            <span class="text-muted">نامشخص</span>
+                        {% endif %}
+                    </td>
                 </tr>
                 <tr>
-                    <td colspan="7" class="hiddenRow">
+                    <td colspan="8" class="hiddenRow">
                         <div class="accordian-body collapse" id="row{{ soldier.id }}">
                             <div class="panel panel-default">
                                 <div class="panel-body">
@@ -290,7 +301,9 @@
                                                 <dd id="dispatch-date">{{ soldier.dispatch_date|to_jalali }}</dd>
 
                                                 <dt>خدمت انجام شده:</dt>
-                                                <dd id="days-since-dispatch"> {{ soldier.dispatch_date|to_end }}روز گذشته </dd>
+                                                <dd id="days-since-dispatch"> {{ soldier.dispatch_date|to_end }}روز
+                                                    گذشته
+                                                </dd>
 
                                                 <dt>تردد:</dt>
                                                 <dd>
@@ -318,7 +331,7 @@
                                                    class="btn btn-warning btn-sm text-right">
                                                     <i class="fa fa-history"></i> کسریا اضافه خدمت
                                                 </a>
-                                                  <a href="{% url 'upload_soldier_photo' soldier.pk %}"
+                                                <a href="{% url 'upload_soldier_photo' soldier.pk %}"
                                                    class="btn btn-warning btn-sm text-right">
                                                     <i class="fa fa-history"></i>بارگذاری عکس برای سرباز
                                                 </a>

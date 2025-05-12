@@ -1,0 +1,83 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+
+{% block header %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <h2 class="text-center">لیست سربازان بدون دوره عقیدتی</h2>
+        <button class="btn btn-success" id="download-btn" style="margin-bottom: 15px;">دانلود اکسل</button>
+        <table id="soldiers-table" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>کدسازمانی</th>
+                <th>نام</th>
+                <th>نام خانوادگی</th>
+                <th>کد ملی</th>
+                <th>قسمت</th>
+                <th>زیر قسمت</th>
+                <th>مدرک</th>
+                <th>درجه</th>
+                <th>موبایل</th>
+                <th>عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for soldier in soldiers %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ soldier.organizational_code.code_number }}</td>
+                    <td>{{ soldier.first_name }}</td>
+                    <td>{{ soldier.last_name }}</td>
+                    <td>{{ soldier.national_code }}</td>
+                    <td>{{ soldier.current_parent_unit.name }}</td>
+                    <td>{{ soldier.current_sub_unit.name }}</td>
+                    <td>{{ soldier.degree }}</td>
+                    <td>{{ soldier.rank }}</td>
+                    <td>{{ soldier.phone_mobile }}</td>
+                    <td>
+                        <a href="{% url 'soldier_detail' pk=soldier.id %}" class="btn btn-info btn-sm">اطلاعات سرباز</a>
+                        <a href="{% url 'edit_ideological_period' soldier.id %}" class="btn btn-primary btn-sm">
+                            دوره
+                            عقیدتی</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="11" class="text-center">هیچ سربازی بدون دوره عقیدتی پیدا نشد.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <script>
+        document.getElementById('download-btn').addEventListener('click', function () {
+            // گرفتن جدول
+            var table = document.getElementById('soldiers-table');
+
+            // تبدیل جدول به فرمت اکسل
+            var wb = XLSX.utils.table_to_book(table, {sheet: 'Soldiers Without Training'});  // نام شیت کوتاه‌تر شد
+
+            // دستکاری سلول‌ها برای تبدیل داده‌ها به رشته
+            var sheet = wb.Sheets['Soldiers Without Training'];
+            for (var row = 1; row <= sheet['!rows']; row++) {
+                for (var col = 0; col < sheet['!cols']; col++) {
+                    var cell = sheet[XLSX.utils.encode_cell({r: row, c: col})];
+                    if (cell) {
+                        // تبدیل سلول به رشته
+                        cell.v = String(cell.v);
+                    }
+                }
+            }
+
+            // ایجاد فایل اکسل و دانلود آن
+            XLSX.writeFile(wb, 'soldiers_without_training.xlsx');
+        });
+    </script>
+{% endblock %}

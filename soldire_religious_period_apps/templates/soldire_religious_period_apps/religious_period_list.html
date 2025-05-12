@@ -1,0 +1,40 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+    <div class="container">
+        <h2 class="text-center">لیست دوره‌های عقیدتی</h2>
+        <a href="{% url 'religious_period_add' %}" class="btn btn-primary" style="margin-bottom: 15px;">افزودن دوره
+            جدید</a>
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>کد دوره</th>
+                <th>نام دوره</th>
+                <th>تاریخ</th>
+                <th>توضیحات</th>
+                <th>عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for period in periods %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ period.id }}</td>
+                    <td>{{ period.name }}</td>
+                    <td>{{ period.date }}</td>
+                    <td>{{ period.description }}</td>
+                    <td>
+                        <a href="{% url 'religious_period_edit' period.pk %}" class="btn btn-warning btn-sm">ویرایش</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">هیچ دوره‌ای ثبت نشده است.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+

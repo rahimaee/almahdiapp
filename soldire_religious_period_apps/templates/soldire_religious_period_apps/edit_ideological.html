@@ -1,0 +1,20 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+    <div class="container">
+        <h3 class="text-center">ویرایش دوره عقیدتی برای: {{ soldier }}</h3>
+        <form method="post" class="form-horizontal" style="margin-top: 30px;">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="form-group">
+                {{ form.ideological_training_period.label_tag }}
+                {{ form.ideological_training_period }}
+                {% for error in form.ideological_training_period.errors %}
+                    <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <button type="submit" class="btn btn-success">ذخیره</button>
+            <a href="{% url 'soldier_detail' soldier.id %}" class="btn btn-default">انصراف</a>
+        </form>
+    </div>
+{% endblock %}

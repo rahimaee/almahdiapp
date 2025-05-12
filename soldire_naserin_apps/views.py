@@ -33,9 +33,18 @@ def naserin_list(request):
     return render(request, 'soldire_naserin_apps/list.html', {'groups': groups})
 
 
+from accounts_apps.models import MyUser
+
+
 def soldire_naserin_list(request):
     groups = NaserinGroup.objects.all()
-    return render(request, 'soldire_naserin_apps/soldire_naserin_list.html', {'groups': groups})
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            soldires = Soldier.objects.filter().all()
+        else:
+            soldires = Soldier.objects.filter(naserin_group__manager_id=request.user.id).all()
+
+    return render(request, 'soldire_naserin_apps/soldire_naserin_list.html', {'soldires': soldires})
 
 
 def edit_soldier_naserin(request, soldier_id):

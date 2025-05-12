@@ -118,6 +118,8 @@ class Soldier(models.Model):
         max_length=20,
         choices=MARITAL_STATUS_CHOICES,
         verbose_name="وضعیت تاهل",
+        null=True,
+        blank=True,
     )
     number_of_children = models.PositiveIntegerField(
         default=0, verbose_name="تعداد اولاد"
@@ -192,11 +194,9 @@ class Soldier(models.Model):
     )
     service_entry_date = models.DateField(null=True, blank=True, verbose_name='تاریخ ورود به یگان')
 
-    total_service_adjustment = models.DecimalField(
-        max_digits=5, decimal_places=2, verbose_name="مجموع (کسری/اضافه خدمت)", null=True, blank=True,
-    )
+    total_service_adjustment = models.IntegerField(verbose_name="مجموع (کسری/اضافه خدمت)", null=True, blank=True)
     service_deduction_type = models.CharField(
-        max_length=100, blank=True, null=True, verbose_name="نوع کسری خدمت"
+        max_length=250, blank=True, null=True, verbose_name="نوع کسری خدمت"
     )
     service_extension_type = models.CharField(
         max_length=100, blank=True, null=True, verbose_name="نوع اضافه خدمت"
@@ -243,9 +243,10 @@ class Soldier(models.Model):
     card_chip = models.CharField(
         max_length=50, blank=True, null=True, verbose_name="تراشه/کارت"
     )
-    ideological_training_period = models.CharField(
-        max_length=50, blank=True, null=True, verbose_name="دوره عقیدتی"
-    )
+    ideological_training_period = models.ForeignKey('soldire_religious_period_apps.ReligiousPeriod',
+                                                    on_delete=models.SET_NULL, null=True, blank=True,
+                                                    verbose_name="دوره عقیدتی" ,related_name='training_period_ideological'
+                                                    )
     independent_married = models.BooleanField(
         default=False, verbose_name="متاهل مستقل", null=True, blank=True,
     )
@@ -296,6 +297,7 @@ class Soldier(models.Model):
         max_length=200, blank=True, null=True, verbose_name="رشته تحصیلی"
     )
     absorption = models.BooleanField(default=False, verbose_name='جذبی؟')
+    Is_the_Basij_sufficient = models.BooleanField(default=False, verbose_name='کفایتدار بسیج')
 
     def update_has_driving_license(self):
         if self.driving_license_type != "ندارد":
@@ -304,7 +306,7 @@ class Soldier(models.Model):
             self.has_driving_license = 'ندارد'
 
     def update_is_seyed(self):
-        if re.search(r'\bسید\b', self.first_name):
+        if re.search(r'(^|[\s‌])سید', self.first_name):
             self.is_sayyed = True
         else:
             self.is_sayyed = False
@@ -336,7 +338,6 @@ class Soldier(models.Model):
         self.save()
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
         self.update_has_driving_license()
         self.update_is_seyed()
         self.update_absorption()
