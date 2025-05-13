@@ -95,6 +95,8 @@
                       </span>
                     </a>
                     <ul class="treeview-menu">
+                        <li><a href="{% url 'ClearanceLetterListView' %}">لیست نامه تسویه‌حساب اصلی</a></li>
+                        <li><a href="{% url 'clearance_letter_create' %}">ایجاد نامه تسویه‌حساب اصلی</a></li>
                     </ul>
                 </li>
             {% endif %}
@@ -146,7 +148,22 @@
                     </ul>
                 </li>
             {% endif %}
-
+            <li class="treeview">
+                <a href="#"><i class="fa fa-area-chart"></i> <span>اطلاعات تسویه حساب و کارت</span>
+                    <span class="pull-left-container">
+                        <i class="fa fa-angle-right pull-left"></i>
+                      </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="{% url 'review_settlements' %}">لیست سربازانی که نیاز به بررسی حقوق دارند</a></li>
+                    <li><a href="{% url 'soldiers_settlement_list' %}">وضعیت تسویه‌حساب</a></li>
+                    <li><a href="{% url 'soldiers_ready_for_card' %}">سربازان آماده برای ارسال کارت</a></li>
+                    <li><a href="{% url 'card_series_list' %}">لیست سری‌های کارت</a></li>
+                    <li><a href="{% url 'card_series_create' %}">ایجاد سری کارت</a></li>
+                    <li><a href="{% url 'card_send_list_n' %}">بررسی ارسال کارت‌ها</a></li>
+                    <li><a href="{% url 'card_send_list' %}">لیست</a></li>
+                </ul>
+            </li>
             <li class="treeview">
                 <a href="#"><i class="fa fa-area-chart"></i> <span>آمار</span>
                     <span class="pull-left-container">

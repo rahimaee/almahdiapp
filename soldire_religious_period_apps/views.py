@@ -50,7 +50,7 @@ def edit_ideological_period(request, soldier_id):
         form = SoldierIdeologicalForm(request.POST, instance=soldier)
         if form.is_valid():
             form.save()
-            return redirect('soldier_detail', soldier_id=soldier.id)  # یا هر آدرس دیگری
+            return redirect('soldier_detail', pk=soldier.id)  # یا هر آدرس دیگری
     else:
         form = SoldierIdeologicalForm(instance=soldier)
     return render(request, 'soldire_religious_period_apps/edit_ideological.html', {'form': form, 'soldier': soldier})

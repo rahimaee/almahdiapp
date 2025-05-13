@@ -1,0 +1,59 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+
+    <div class="container">
+        <h2 class="text-center">لیست بررسی ارسال کارت‌ها</h2>
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+            <tr>
+                <th>ردیف</th>
+                <th>نام و نام خانوادگی</th>
+                <th>کد ملی</th>
+                <th>سری کارت</th>
+                <th>بررسی شد؟</th>
+                <th>کارت صادر شده؟</th>
+                <th>تاریخ بررسی</th>
+                <th>توضیحات</th>
+                <th>عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in card_sends %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ item.soldier.first_name }} {{ item.soldier.last_name }}</td>
+                    <td>{{ item.soldier.national_code }}</td>
+                    <td>{{ item.series.title }}</td>
+                    <td>
+                        {% if item.is_checked %}
+                            <span class="label label-success">بله</span>
+                        {% else %}
+                            <span class="label label-default">خیر</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if item.is_issued %}
+                            <span class="label label-success">بله</span>
+                        {% else %}
+                            <span class="label label-warning">خیر</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ item.review_date|default:"-" }}</td>
+                    <td>{{ item.note|default:"-" }}</td>
+                    <td>
+                        <a href="{% url 'cards:card_send_review' item.id %}" class="btn btn-xs btn-primary">بررسی</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center">موردی یافت نشد.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+
+

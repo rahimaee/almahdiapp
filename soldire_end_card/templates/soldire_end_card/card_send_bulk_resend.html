@@ -1,0 +1,16 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+    <div class="container">
+        <h3>ارسال مجدد افراد صادرنشده به سری جدید</h3>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.series.label_tag }}
+                {{ form.series }}
+            </div>
+            <button type="submit" class="btn btn-primary">ارسال مجدد</button>
+            <a href="{% url 'cards:card_send_list' %}" class="btn btn-default">بازگشت</a>
+        </form>
+    </div>
+{% endblock %}

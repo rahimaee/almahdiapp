@@ -1,0 +1,44 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% load jalali_filters %}
+{% block main %}
+    <div class="container">
+        <h2 class="text-center">لیست سربازانی که نیاز به بررسی دارند</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>نام سرباز</th>
+                    <th>میزان بدهی باقی‌مانده</th>
+                    <th>تاریخ اخرین بررسی حقوق</th>
+                    <th>بدهی جدید</th>
+                    <th>نیاز به بررسی مجدد</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for settlement in settlements %}
+                    <tr>
+                        <td>{{ settlement.soldier.first_name }} {{ settlement.soldier.last_name }}</td>
+                        <td>{{ settlement.current_debt_rial }} ریال</td>
+                        <td>{{ settlement.updated_at|to_jalali}}</td>
+                        <td>
+                            <input type="number" name="debt_{{ settlement.id }}" class="form-control"
+                                   placeholder="میزان بدهی جدید">
+                        </td>
+                        <td>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="no_review_{{ settlement.id }}"
+                                       {% if not settlement.need_rights_recheck %}checked{% endif %}> نیازی به بررسی
+                                ندارد
+                            </label>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit" class="btn btn-primary btn-block">ثبت تغییرات</button>
+        </form>
+    </div>
+{% endblock %}
+

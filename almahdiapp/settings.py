@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'cities_iran_manager_apps',
     'soldire_naserin_apps',
     'soldire_religious_period_apps',
+    'soldire_end_card',
+    'soldire_letter_apps',
     'apps_settings',
 ]
 

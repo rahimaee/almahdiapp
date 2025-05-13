@@ -1,0 +1,36 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% load jalali_filters %}
+{% block main %}
+    <div class="container">
+        <h2 class="text-center">لیست سری‌های کارت</h2>
+        <a href="{% url 'card_series_create' %}" class="btn btn-success">ایجاد سری جدید</a>
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>نام سری</th>
+                <th>تاریخ ارسال</th>
+                <th>وضعیت</th>
+                <th>عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in series %}
+                <tr>
+                    <td>{{ item.title }}</td>
+                    <td>{{ item.send_date|to_jalali }}</td>
+                    <td>{{ item.get_status_display }}</td>
+                    <td>
+                        <a href="{% url 'card_series_edit' item.pk %}" class="btn btn-primary btn-sm">ویرایش</a>
+                        <a href="{% url 'card_send_list_series' item.pk %}" class="btn btn-primary btn-sm">لیست سربازان</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">هیچ سری کارتی ثبت نشده است.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

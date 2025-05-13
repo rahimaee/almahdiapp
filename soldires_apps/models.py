@@ -8,6 +8,7 @@ from django_jalali.db import models as jmodels
 from django.utils.deconstruct import deconstructible
 from multiselectfield import MultiSelectField
 import re
+from django.utils import timezone
 
 
 @deconstructible
@@ -245,7 +246,8 @@ class Soldier(models.Model):
     )
     ideological_training_period = models.ForeignKey('soldire_religious_period_apps.ReligiousPeriod',
                                                     on_delete=models.SET_NULL, null=True, blank=True,
-                                                    verbose_name="دوره عقیدتی" ,related_name='training_period_ideological'
+                                                    verbose_name="دوره عقیدتی",
+                                                    related_name='training_period_ideological'
                                                     )
     independent_married = models.BooleanField(
         default=False, verbose_name="متاهل مستقل", null=True, blank=True,
@@ -353,3 +355,73 @@ class OrganizationalCode(models.Model):
 
     def __str__(self):
         return f"کد {self.code_number} - {'غیرآزاد' if self.is_active else 'آزاد'}"
+
+
+class Settlement(models.Model):
+    soldier = models.OneToOneField("Soldier", on_delete=models.CASCADE, related_name="settlement")
+
+    reason_for_non_issuance = models.TextField("علت عدم صدور", blank=True, null=True)
+
+    total_debt_rial = models.BigIntegerField("میزان بدهی (ریال)", default=0)
+    current_debt_rial = models.BigIntegerField("بدهی باقی‌مانده (ریال)", default=0)
+
+    last_rights_check_date = models.DateField("اخرین تاریخ بررسی حقوق", blank=True, null=True)
+    need_rights_recheck = models.BooleanField("نیاز به بررسی مجدد حقوق", default=True)
+
+    final_settlement_date = models.DateField("تاریخ ثبت تسویه در سامانه", blank=True, null=True)
+
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('pending', 'در انتظار تسویه'),
+            ('partial', 'تسویه ناقص'),
+            ('cleared', 'تسویه کامل'),
+            ('transitional', 'انتقالی'),
+            ('review', 'بررسی'),
+        ],
+        default='pending',
+        verbose_name="وضعیت"
+    )
+
+    description = models.TextField("توضیحات", blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def update_debt_status(self):
+        total_paid = sum(payment.amount_rial for payment in self.payments.all())
+
+        # اگر پرداخت بیش از کل بدهی باشه، باز هم بدهی صفر میشه ولی وضعیت باید دقیق مشخص بشه
+        self.current_debt_rial = max(self.total_debt_rial - total_paid, 0)
+
+        if total_paid >= self.total_debt_rial:
+            self.status = 'cleared'
+        elif total_paid > 0:
+            self.status = 'partial'
+        else:
+            self.status = 'pending'
+
+        self.save()
+
+    def __str__(self):
+        return f"تسویه - {self.soldier}"
+
+
+class PaymentReceipt(models.Model):
+    settlement = models.ForeignKey(Settlement, on_delete=models.CASCADE, related_name="payments")
+
+    amount_rial = models.BigIntegerField("مبلغ واریزی (ریال)")
+    receipt_number = models.CharField("شماره فیش واریزی", max_length=100)
+    deposit_date = models.DateField("تاریخ فیش واریزی")
+    bank_operator_code = models.CharField("کد متصدی بانک", max_length=50)
+
+    receipt_file = models.FileField("فایل فیش", upload_to='receipts/', blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.settlement.update_debt_status()
+
+    def __str__(self):
+        return f"{self.receipt_number} - {self.amount_rial} ریال"

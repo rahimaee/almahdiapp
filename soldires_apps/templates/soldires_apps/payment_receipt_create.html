@@ -1,0 +1,37 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+    <div class="container">
+        <h2 class="text-center">ثبت فیش واریزی برای سربازان</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="settlement_id">انتخاب سرباز:</label>
+                <select name="settlement_id" class="form-control">
+                    {% for settlement in settlements %}
+                        <option value="{{ settlement.id }}">{{ settlement.soldier.first_name }} {{ settlement.soldier.last_name }}
+                            - بدهی: {{ settlement.current_debt_rial }} ریال
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="amount_rial">مبلغ واریزی (ریال):</label>
+                <input type="number" name="amount_rial" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="receipt_number">شماره فیش واریزی:</label>
+                <input type="text" name="receipt_number" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="deposit_date">تاریخ فیش واریزی:</label>
+                <input type="date" name="deposit_date" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="bank_operator_code">کد متصدی بانک:</label>
+                <input type="text" name="bank_operator_code" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">ثبت فیش واریزی</button>
+        </form>
+    </div>
+{% endblock %}

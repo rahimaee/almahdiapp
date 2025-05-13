@@ -1,0 +1,23 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+    <div class="container">
+        <h3 class="text-center">ایجاد نامه تسویه‌حساب سرباز</h3>
+        <hr>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.soldier.label_tag }} {{ form.soldier }}
+            </div>
+            <div class="form-group">
+                {{ form.reason.label_tag }} {{ form.reason }}
+            </div>
+            <div class="form-group">
+                {{ form.description.label_tag }} {{ form.description }}
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-success">ثبت نامه</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

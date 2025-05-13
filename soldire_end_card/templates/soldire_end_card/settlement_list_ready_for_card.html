@@ -1,0 +1,49 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+    <div class="container">
+        <h2 class="text-center">سربازان آماده برای ارسال کارت</h2>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>نام</th>
+                <th>نام خانوادگی</th>
+                <th>مقدار بدهی (ریال)</th>
+                <th>وضعیت تسویه‌حساب</th>
+                <th>تاریخ آخرین بررسی</th>
+                <th>عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in soldiers_ready_for_card %}
+                <tr>
+                    <td>{{ item.soldier.first_name }}</td>
+                    <td>{{ item.soldier.last_name }}</td>
+
+                    <!-- نمایش مقدار بدهی -->
+                    <td>
+                        {{ item.current_debt_rial }}
+                    </td>
+
+                    <!-- نمایش وضعیت تسویه‌حساب -->
+                    <td>
+                        {{ item.status }}
+                    </td>
+
+                    <!-- نمایش تاریخ آخرین بررسی -->
+                    <td>
+                        {{ item.last_rights_check_date }}
+                    </td>
+
+                    <!-- عملیات -->
+                    <td>
+                        <a href="{% url 'card_send_create_for_soldier' soldier_id=item.soldier.id %}" class="btn btn-primary btn-sm">ارسال
+                            کارت</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

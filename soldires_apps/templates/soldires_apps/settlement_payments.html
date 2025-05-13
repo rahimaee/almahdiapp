@@ -1,0 +1,52 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% load jalali_filters %}
+{% block main %}
+    <div class="container">
+        <h3>فیش‌های واریزی مربوط به تسویه‌ حساب سرباز: <strong>{{ settlement.soldier }}</strong></h3>
+        <p>وضعیت تسویه: <span class="label label-info">{{ settlement.get_status_display }}</span></p>
+        <p>بدهی کل: <strong>{{ settlement.total_debt_rial }}</strong> ریال</p>
+        <p>بدهی باقی‌مانده: <strong>{{ settlement.current_debt_rial }}</strong> ریال</p>
+
+        <hr>
+
+        {% if payments %}
+            <table class="table table-bordered table-striped">
+                <thead>
+                <tr class="active">
+                    <th>شماره</th>
+                    <th>شماره فیش</th>
+                    <th>مبلغ واریزی (ریال)</th>
+                    <th>تاریخ واریز</th>
+                    <th>کد متصدی بانک</th>
+                    <th>فایل فیش</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for payment in payments %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ payment.receipt_number }}</td>
+                        <td>{{ payment.amount_rial }}</td>
+                        <td>{{ payment.deposit_date|to_jalali }}</td>
+                        <td>{{ payment.bank_operator_code }}</td>
+                        <td>
+                            {% if payment.receipt_file %}
+                                <a href="{{ payment.receipt_file.url }}" target="_blank" class="btn btn-xs btn-success">مشاهده</a>
+                            {% else %}
+                                <span class="text-muted">ندارد</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-warning">هیچ فیش واریزی ثبت نشده است.</div>
+        {% endif %}
+
+        <a href="{% url 'panel_home' %}" class="btn btn-default">بازگشت</a>
+    </div>
+
+{% endblock %}
+

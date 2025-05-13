@@ -190,11 +190,15 @@
                     </div>
                     <div class="col-md-3">
                         <label>سابقه فرار:</label>
-                        <p>{{ soldier.fugitive_record }}</p>
+                        <p>{{ soldier.fugitive_record|default_if_none:'-' }}</p>
                     </div>
                     <div class="col-md-3">
                         <label>سابقه اعتیاد:</label>
-                        <p>{{ soldier.addiction_record }}</p>
+                        <p>{{ soldier.addiction_record|default_if_none:'-' }}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <label>تراشه/کارت:</label>
+                        <p>{{ soldier.card_chip|default_if_none:'-' }}</p>
                     </div>
                 </div>
                 <div class="row">
@@ -372,13 +376,30 @@
                 </div>
 
                 <hr>
+                <h4 class="text-success">اطلاعات عقیدتی</h4>
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>نام دوره:</label>
+                        <p>{{ soldier.ideological_training_period.name|default_if_none:"-" }}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <label>تاریخ دوره:</label>
+                        <p>{{ soldier.ideological_training_period.date|default_if_none:"-" }}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <label>توضیحات:</label>
+                        <p>{{ soldier.ideological_training_period.description|default_if_none:"-" }}</p>
+                    </div>
+                </div>
+
+                <hr>
                 <!-- Action Buttons -->
                 <div class="text-center">
-                    <a href="#" class="btn btn-primary">
-                        <i class="glyphicon glyphicon-edit"></i> ویرایش اطلاعات
+                    <a href="{% url 'soldier_edit' pk=soldier.pk %}" class="btn btn-primary">
+                        <i class="fa fa-edit"></i> ویرایش اطلاعات
                     </a>
                     <a href="#" class="btn btn-default">
-                        <i class="glyphicon glyphicon-print"></i> چاپ پرونده
+                        <i class="fa fa-print"></i> چاپ پرونده
                     </a>
                     <a href="{% url 'manage_soldier_documents' soldier.id %}" class="btn btn-default">
                         <i class="glyphicon glyphicon-print"></i> مدارک پرونده

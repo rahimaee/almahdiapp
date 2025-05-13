@@ -1,0 +1,68 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+    <div class="container">
+        <h2 class="text-center">لیست سربازان و وضعیت تسویه‌حساب</h2>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>نام</th>
+                <th>نام خانوادگی</th>
+                <th>مقدار بدهی (ریال)</th>
+                <th>وضعیت تسویه‌حساب</th>
+                <th>تاریخ آخرین بررسی</th>
+                <th>عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in soldier_data %}
+                <tr>
+                    <td>{{ item.soldier.first_name }}</td>
+                    <td>{{ item.soldier.last_name }}</td>
+
+                    <!-- نمایش مقدار بدهی -->
+                    <td>
+                        {% if item.settlement %}
+                            {{ item.settlement.current_debt_rial }}
+                        {% else %}
+                            ندارد
+                        {% endif %}
+                    </td>
+
+                    <!-- نمایش وضعیت تسویه‌حساب -->
+                    <td>
+                        {% if item.settlement %}
+                            {{ item.settlement.status }}
+                        {% else %}
+                            بدون وضعیت
+                        {% endif %}
+                    </td>
+
+                    <!-- نمایش تاریخ آخرین بررسی -->
+                    <td>
+                        {% if item.settlement %}
+                            {{ item.settlement.last_rights_check_date }}
+                        {% else %}
+                            ندارد
+                        {% endif %}
+                    </td>
+
+                    <!-- عملیات -->
+                    <td>
+                        {% if item.settlement %}
+                            <a href="{% url 'payment_receipt_create' %}?settlement_id={{ item.settlement.id }}"
+                               class="btn btn-success btn-sm">ثبت فیش واریزی</a>
+                        {% else %}
+                            <span class="label label-warning">تسویه‌حساب ندارد</span>
+                        {% endif %}
+
+                        <a href="{% url 'settlement_payments' settlement_id=item.settlement.id %}"
+                           class="btn btn-success btn-sm">فیش واریزی</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

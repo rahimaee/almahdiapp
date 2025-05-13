@@ -1,0 +1,67 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% load jalali_filters %}
+{% block main %}
+    <div class="container">
+        <h3 class="text-center">لیست کارت‌های صادر شده</h3>
+
+        <div class="text-left" style="margin-bottom: 15px;">
+            <a href="{% url 'card_send_create' %}" class="btn btn-success">افزودن کارت جدید</a>
+        </div>
+
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>نام سری کارت</th>
+                <th>وضعیت سری کارت</th>
+                <th>سرباز</th>
+                <th>تاریخ بررسی</th>
+                <th>بررسی شده؟</th>
+                <th>کارت صادر شده؟</th>
+                <th>توضیحات</th>
+                <th>عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for card in cards %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ card.series.title }}</td>
+                    <td>{{ card.series.status }}</td>
+                    <td>{{ card.soldier }}</td>
+                    <td>{{ card.review_date|to_jalali }}</td>
+                    <td>
+                        {% if card.is_checked %}
+                            <span class="label label-success">بله</span>
+                        {% else %}
+                            <span class="label label-default">خیر</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if card.is_issued %}
+                            <span class="label label-primary">صادر شده</span>
+                        {% else %}
+                            {% if card.is_checked %}
+                                <span class="label label-danger">مشکل دارد</span>
+                            {% else %}
+                                <span class="label label-warning">در انتظار</span>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td>{{ card.note|default_if_none:'-' }}</td>
+                    <td>
+                        <a href="{% url 'card_send_update' card.pk %}" class="btn btn-xs btn-info">ویرایش</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">هیچ کارتی ثبت نشده است.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+
