@@ -1,0 +1,15 @@
+{% extends 'shared/_PanelMain.html' %}
+
+{% load static %}
+
+
+{% block main %}
+    <div class="container">
+        <h3>آیا مطمئن هستید که می‌خواهید این نامه را حذف کنید؟</h3>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">بله، حذف شود</button>
+            <a href="{% url 'introduction_letter_list' %}" class="btn btn-secondary">انصراف</a>
+        </form>
+    </div>
+{% endblock %}

@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.text import capfirst
 
 # Create your models here.
 class SoldierDocuments(models.Model):
@@ -31,6 +32,21 @@ class SoldierDocuments(models.Model):
     ideological_sheet = models.BooleanField("چهاربرگ (ته برگ عقیدتی)", default=False)
     judicial_sheet = models.BooleanField("چهاربرگ (ته برگ قضایی)", default=False)
     hokme_karo_gozini = models.BooleanField("حکم کارگزینی", default=False)
+
+    IMPORTANT_FIELDS = [
+        'personal_info_form',
+        'ideological_sheet',
+        'spouse_id_card_copy',
+    ]
+
+    def get_missing_documents(self):
+        missing = []
+        for field_name in self.IMPORTANT_FIELDS:
+            value = getattr(self, field_name)
+            if not value:
+                verbose = self._meta.get_field(field_name).verbose_name
+                missing.append(capfirst(verbose))
+        return missing
 
     def __str__(self):
         return f"مدارک سرباز: {self.soldier}"

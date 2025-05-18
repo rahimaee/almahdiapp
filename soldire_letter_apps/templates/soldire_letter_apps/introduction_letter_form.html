@@ -1,0 +1,46 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+
+{% block main %}
+    <div class="container">
+        <h3>فرم نامه</h3>
+
+        {# نمایش پیام‌ها #}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}"
+                     role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            {% if show_force_submit %}
+                <input type="hidden" name="force_submit" value="true">
+                <button type="submit" class="btn btn-danger">تأیید دستی و ادامه</button>
+                <a href="{% url 'introduction_letter_create' %}" class="btn btn-secondary">انصراف</a>
+            {% else %}
+                <button type="submit" class="btn btn-primary">ثبت نامه معرفی</button>
+            {% endif %}
+        </form>
+
+        <script src="{% static 'dist/js/jquery-3.6.0.min.js' %}"></script>
+        <script>
+            $('#id_part').change(function () {
+                var url = "{% url 'ajax_load_sub_units' %}";
+                var partId = $(this).val();
+                $.ajax({
+                    url: url,
+                    data: {'part': partId},
+                    success: function (data) {
+                        $("#id_sub_part").html(data);
+                    }
+                });
+            });
+        </script>
+    </div>
+{% endblock %}

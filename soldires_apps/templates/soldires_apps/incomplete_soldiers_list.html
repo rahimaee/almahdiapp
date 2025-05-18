@@ -1,0 +1,63 @@
+{% extends 'shared/_PanelMain.html' %}
+
+{% load static %}
+
+
+{% block main %}
+    <div class="container">
+        <h3 class="text-center">لیست سربازان با نقص اطلاعات یا مدارک</h3>
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+            <tr>
+                <th>ردیف</th>
+                <th>نام</th>
+                <th>نام خانوادگی</th>
+                <th>کد ملی</th>
+                <th>مشخصات ناقص</th>
+                <th>مدارک ناقص</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for soldier in soldiers %}
+                {% with missing_info=soldier.get_missing_fields missing_docs=soldier.soldierdocuments.get_missing_documents %}
+                    {% if missing_info or missing_docs %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ soldier.first_name }}</td>
+                            <td>{{ soldier.last_name }}</td>
+                            <td>{{ soldier.national_code }}</td>
+                            <td>
+                                {% if missing_info %}
+                                    <ul>
+                                        {% for field in missing_info %}
+                                            <li>{{ field }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <span class="text-success">کامل</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if missing_docs %}
+                                    <ul>
+                                        {% for doc in missing_docs %}
+                                            <li>{{ doc }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <span class="text-success">کامل</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endwith %}
+            {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">سربازی با اطلاعات ناقص یافت نشد.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+

@@ -1,0 +1,46 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% load jalali_filters %}
+
+{% block main %}
+    <h3>لیست نامه‌های گواهی</h3>
+    <a href="{% url 'membership_certificate_create' %}" class="btn btn-success">ایجاد گواهی جدید</a>
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+
+            <th>#</th>
+            <th>شماره نامه</th>
+            <th>نام</th>
+            <th>نام خانوادگی</th>
+            <th>کدملی</th>
+            <th>موضوع</th>
+            <th>مقصد</th>
+            <th>توضحات داخل نامه</th>
+            <th>توضحالت تکمیلی</th>
+            <th>عملیات</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for c in certificates %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ c.normal_letter.letter_number }}</td>
+                <td>{{ c.soldier.first_name }}</td>
+                <td>{{ c.soldier.last_name }}</td>
+                <td>{{ c.soldier.national_code }}</td>
+                <td>{{ c.subject }}</td>
+                <td>{{ c.normal_letter.destination }}</td>
+                <td>{{ c.description_in }}</td>
+                <td>{{ c.description }}</td>
+                <td>{{ c.normal_letter.date|to_jalali }}</td>
+                <td>
+                    <a href="{% url 'membership_certificate_edit' c.id %}" class="btn btn-primary btn-xs">ویرایش</a>
+                    <a href="{% url 'membership_certificate_delete' c.id %}" class="btn btn-danger btn-xs">حذف</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+

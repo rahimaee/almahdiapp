@@ -26,7 +26,7 @@ class SubUnit(models.Model):
         blank=True,
         max_length=50,
     )
-
+    HealthIodine = models.BooleanField(default=False, verbose_name='دریافت تائیدیه سلامت')
     class Meta:
         verbose_name = "زیرواحد"
         verbose_name_plural = "زیرواحدها"

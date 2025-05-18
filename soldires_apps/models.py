@@ -106,15 +106,15 @@ class Soldier(models.Model):
     national_code = models.CharField(
         max_length=10, unique=True, verbose_name="کد ملی"
     )
-    first_name = models.CharField(max_length=50, verbose_name="نام")
-    last_name = models.CharField(max_length=50, verbose_name="نام خانوادگی")
-    father_name = models.CharField(max_length=50, verbose_name="نام پدر")
+    first_name = models.CharField(max_length=100, verbose_name="نام", null=True, blank=True)
+    last_name = models.CharField(max_length=150, verbose_name="نام خانوادگی", null=True, blank=True)
+    father_name = models.CharField(max_length=150, verbose_name="نام پدر", null=True, blank=True)
     id_card_code = models.CharField(
         max_length=50, blank=True, null=True, verbose_name="کد پاسداری"
     )
     birth_date = models.DateField(null=True, blank=True, verbose_name='تاریخ تولد')
-    birth_place = models.CharField(max_length=100, verbose_name="محل تولد")
-    issuance_place = models.CharField(max_length=100, verbose_name="محل صدور")
+    birth_place = models.CharField(max_length=100, verbose_name="محل تولد", null=True, blank=True)
+    issuance_place = models.CharField(max_length=100, verbose_name="محل صدور", null=True, blank=True)
     marital_status = models.CharField(
         max_length=20,
         choices=MARITAL_STATUS_CHOICES,
@@ -130,7 +130,7 @@ class Soldier(models.Model):
     health_status = models.CharField(
         max_length=100,
         choices=HEALTH_STATUS_CHOICES,
-        verbose_name="وضعیت سلامت"
+        verbose_name="وضعیت سلامت", null=True, blank=True,
     )
     health_status_description = models.TextField(
         blank=True, null=True, verbose_name="توضیحات وضعیت سلامت"
@@ -300,6 +300,25 @@ class Soldier(models.Model):
     )
     absorption = models.BooleanField(default=False, verbose_name='جذبی؟')
     Is_the_Basij_sufficient = models.BooleanField(default=False, verbose_name='کفایتدار بسیج')
+
+    IMPORTANT_FIELDS = [
+        'first_name',
+        'last_name',
+        'national_code',
+        'father_name',
+        'birth_date',
+        'marital_status',
+        'id_card_code',
+    ]
+
+    def get_missing_fields(self):
+        missing = []
+        for field_name in self.IMPORTANT_FIELDS:
+            value = getattr(self, field_name)
+            if not value:
+                verbose = self._meta.get_field(field_name).verbose_name
+                missing.append(verbose)
+        return missing
 
     def update_has_driving_license(self):
         if self.driving_license_type != "ندارد":

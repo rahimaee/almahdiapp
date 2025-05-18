@@ -1,7 +1,37 @@
 from django.urls import path
-from .views import ClearanceLetterCreateView,ClearanceLetterListView
+from .views import *
 
 urlpatterns = [
     path('clearance_letter_create/', ClearanceLetterCreateView.as_view(), name='clearance_letter_create'),
     path('ClearanceLetterListView/', ClearanceLetterListView.as_view(), name='ClearanceLetterListView'),
+    path('normal-letters/', normal_letter_list, name='normal_letter_list'),
+    path('mental-health/retest/<int:test_id>/', create_new_letter_from_old, name='create_new_letter_from_old'),
+    path('mental-health/retest/batch/', create_group_mental_health_letters,
+         name='create_group_mental_health_letters'),
+    path('judicial/', judicial_inquiry_list, name='judicial_inquiry_list'),
+    path('judicial/create/', judicial_inquiry_create, name='judicial_inquiry_create'),
+    path('judicial/edit/<int:pk>/', judicial_inquiry_edit, name='judicial_inquiry_edit'),
+    path('judicial/delete/<int:pk>/', judicial_inquiry_delete, name='judicial_inquiry_delete'),
+    path('domestic_settlement/', domestic_settlement_list, name='domestic_settlement_list'),
+    path('domestic_settlement/create/', domestic_settlement_create, name='domestic_settlement_create'),
+    path('domestic_settlement/delete/<int:pk>/', domestic_settlement_delete, name='domestic_settlement_delete'),
+    path('domestic_settlement/approved/<int:letter_id>/', approved_domestic_settlement,
+         name='approved_domestic_settlement'),
+    path('domestic_settlement/print/<int:letter_id>/', print_domestic_settlement, name='print_domestic_settlement'),
+    path('introduction/', introduction_letter_list, name='introduction_letter_list'),
+    path('introduction/create/', introduction_letter_create, name='introduction_letter_create'),
+    path('introduction/<int:pk>/update/', introduction_letter_update, name='introduction_letter_update'),
+    path('introduction/<int:pk>/delete/', introduction_letter_delete, name='introduction_letter_delete'),
+    path('introduction/approved/<int:letter_id>/', approved_introduction_letter,
+         name='approved_introduction_letter'),
+    path('introduction/print/<int:letter_id>/', print_introduction_letter, name='print_introduction_letter'),
+    path('ajax/load-sub-units/', load_sub_units, name='ajax_load_sub_units'),
+    path('certificates/', membership_certificate_list, name='membership_certificate_list'),
+    path('certificates/create/', membership_certificate_create, name='membership_certificate_create'),
+    path('certificates/<int:pk>/edit/', membership_certificate_edit, name='membership_certificate_edit'),
+    path('certificates/<int:pk>/delete/', membership_certificate_delete, name='membership_certificate_delete'),
+    path('health_iodine_letter/', health_iodine_letter_list, name='health_iodine_letter_list'),
+    path('health_iodine_letter/create/', health_iodine_letter_create, name='health_iodine_letter_create'),
+    path('health_iodine_letter/<int:pk>/update/', health_iodine_letter_update, name='health_iodine_letter_update'),
+    path('health_iodine_letter/<int:pk>/delete/', health_iodine_letter_delete, name='health_iodine_letter_delete'),
 ]

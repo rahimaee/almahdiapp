@@ -1,0 +1,44 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% load jalali_filters %}
+{% block main %}
+    <form method="post" action="{% url 'create_group_mental_health_letters' %}">
+        {% csrf_token %}
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th><input type="checkbox" id="select-all"></th>
+                <th>نام</th>
+                <th>نام خانوادگی</th>
+                <th>کد ملی</th>
+                <th>موضوع تست قبلی</th>
+                <th>تاریخ تست قبلی</th>
+                <th>عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for test in due_letters %}
+                <tr>
+                    <td><input type="checkbox" name="selected_tests" value="{{ test.id }}"></td>
+                    <td>{{ test.normal_letter.soldier.first_name }}</td>
+                    <td>{{ test.normal_letter.soldier.last_name }}</td>
+                    <td>{{ test.normal_letter.soldier.national_code }}</td>
+                    <td>{{ test.get_subject_display }}</td>
+                    <td>{{ test.created_at|to_jalali }}</td>
+                    <td>
+                        <a href="{% url 'create_new_letter_from_old' test.id %}" class="btn btn-sm btn-success">
+                            ایجاد نامه جدید
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">موردی برای تست مجدد یافت نشد.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn btn-primary">ایجاد گروهی نامه سلامت روان</button>
+    </form>
+{% endblock %}

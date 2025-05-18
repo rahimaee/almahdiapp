@@ -47,6 +47,10 @@
                     <li><a href="{% url 'soldier_list' %}">لیست سربازان</a></li>
                     <li><a href="{% url 'soldier_create' %}">سرباز جدید</a></li>
                     <li><a href="{% url 'bulk_photo_upload' %}">آپلود گروهی عکس بر اساس کد ملی</a></li>
+                    <li><a href="{% url 'due_mental_health_letters' %}">تست مجدد روان پس از 6 ماه</a></li>
+                    <li><a href="{% url 'escaped_soldiers' %}">فراری ها</a></li>
+                    <li><a href="{% url 'soldiers_by_entry_date' %}">ورودی های جدید</a></li>
+                    <li><a href="{% url 'incomplete_soldiers_list' %}">نواقص پرونده</a></li>
                 </ul>
             </li>
             <li class="treeview">
@@ -97,6 +101,18 @@
                     <ul class="treeview-menu">
                         <li><a href="{% url 'ClearanceLetterListView' %}">لیست نامه تسویه‌حساب اصلی</a></li>
                         <li><a href="{% url 'clearance_letter_create' %}">ایجاد نامه تسویه‌حساب اصلی</a></li>
+                        <li><a href="{% url 'normal_letter_list' %}">لیست نامه های عادی</a></li>
+                        <li><a href="{% url 'judicial_inquiry_list' %}">لیست استعلام قضایی</a></li>
+                        <li><a href="{% url 'judicial_inquiry_create' %}">ایجاد استعلام قضایی</a></li>
+                        <li><a href="{% url 'domestic_settlement_list' %}">لیست توسیه حساب داخلی</a></li>
+                        <li><a href="{% url 'domestic_settlement_create' %}">ایجاد توسیه حساب داخلی</a></li>
+                        <li><a href="{% url 'introduction_letter_list' %}">لیست نامه معرفی</a></li>
+                        <li><a href="{% url 'introduction_letter_create' %}">ایجاد معرفی</a></li>
+                        <li><a href="{% url 'membership_certificate_list' %}">لیست گواهی</a></li>
+                        <li><a href="{% url 'membership_certificate_create' %}">ایجاد گواهی</a></li>
+                        <li><a href="{% url 'membership_certificate_create' %}">ایجاد گواهی</a></li>
+                        <li><a href="{% url 'health_iodine_letter_list' %}">لیست تائیدیه سلامت</a></li>
+                        <li><a href="{% url 'health_iodine_letter_create' %}">ایحاد تائیدیه سلامت</a></li>
                     </ul>
                 </li>
             {% endif %}

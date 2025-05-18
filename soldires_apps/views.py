@@ -1,10 +1,11 @@
 # views.py
 import datetime
-
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-
+from django.utils import timezone
+from datetime import timedelta
+from soldire_letter_apps.models import NormalLetterMentalHealthAssessmentAndEvaluation
 from .models import Soldier, OrganizationalCode, Settlement, PaymentReceipt
 from .forms import SoldierForm, SoldierSearchForm, SoldierPhotoForm, PhotoZipUploadForm, SoldierFormUpdate
 from cities_iran_manager_apps.models import City, Province
@@ -437,3 +438,65 @@ def settlement_payments_view(request, settlement_id):
         'settlement': settlement,
         'payments': payments,
     })
+
+
+from django.db.models import OuterRef, Subquery, Max
+
+
+def due_mental_health_letters(request):
+    six_months_ago = timezone.now() - timedelta(days=180)
+
+    # آخرین تست هر سرباز
+    latest_letters = NormalLetterMentalHealthAssessmentAndEvaluation.objects.values(
+        'normal_letter__soldier'
+    ).annotate(
+        latest_date=Max('created_at')
+    ).filter(
+        latest_date__lte=six_months_ago
+    )
+
+    # گرفتن آی‌دی سربازهایی که شرایط بالا رو دارند
+    due_soldier_ids = [entry['normal_letter__soldier'] for entry in latest_letters]
+
+    # پیدا کردن آخرین نامه‌های آن سربازها
+    due_letters = NormalLetterMentalHealthAssessmentAndEvaluation.objects.filter(
+        normal_letter__soldier__in=due_soldier_ids
+    ).order_by('normal_letter__soldier', '-created_at').distinct('normal_letter__soldier')
+
+    context = {
+        'due_letters': due_letters,
+    }
+    return render(request, 'soldires_apps/due_mental_health_letters.html', context)
+
+
+def soldiers_by_entry_date(request):
+    soldiers = []
+    from_date = request.GET.get('from_date')
+    to_date = request.GET.get('to_date')
+
+    if from_date and to_date:
+        try:
+            # تبدیل تاریخ‌های شمسی به میلادی
+            from_parts = list(map(int, from_date.split('/')))
+            to_parts = list(map(int, to_date.split('/')))
+            from_gregorian = jdatetime.date(*from_parts).togregorian()
+            to_gregorian = jdatetime.date(*to_parts).togregorian()
+
+            soldiers = Soldier.objects.filter(
+                service_entry_date__range=(from_gregorian, to_gregorian)
+            ).order_by('service_entry_date')
+
+        except Exception as e:
+            print("خطا در تبدیل تاریخ:", e)
+
+    return render(request, 'soldires_apps/soldiers_by_entry_date.html', {
+        'soldiers': soldiers,
+        'from_date': from_date,
+        'to_date': to_date
+    })
+
+
+def incomplete_soldiers_list(request):
+    from .models import Soldier
+    soldiers = Soldier.objects.all()
+    return render(request, 'soldires_apps/incomplete_soldiers_list.html', {'soldiers': soldiers})

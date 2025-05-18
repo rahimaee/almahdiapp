@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'soldire_religious_period_apps',
     'soldire_end_card',
     'soldire_letter_apps',
+    'soldire_runaway_apps',
     'apps_settings',
 ]
 

@@ -7,3 +7,4 @@ admin.site.register(Soldier)
 admin.site.register(OrganizationalCode)
 admin.site.register(Settlement)
 admin.site.register(PaymentReceipt)
+

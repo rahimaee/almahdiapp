@@ -35,6 +35,7 @@ urlpatterns = [
     path('religious-period/', include('soldire_religious_period_apps.urls')),
     path('card/', include('soldire_end_card.urls')),
     path('letter/', include('soldire_letter_apps.urls')),
+    path('escaped/', include('soldire_runaway_apps.urls')),
     re_path(r'^header_partial_view',
             header_partial_view,
             name='header_partial_view'),

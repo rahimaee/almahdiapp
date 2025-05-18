@@ -13,4 +13,8 @@ urlpatterns = [
     path('payment_receipt_create/', views.payment_receipt_create, name='payment_receipt_create'),
     path('soldiers_settlement_list/', views.soldiers_settlement_list, name='soldiers_settlement_list'),
     path('settlement/<int:settlement_id>/payments/', views.settlement_payments_view, name='settlement_payments'),
+    path('mental-health/due/', views.due_mental_health_letters, name='due_mental_health_letters'),
+    path('soldiers-by-entry-date/', views.soldiers_by_entry_date, name='soldiers_by_entry_date'),
+    path('incomplete_soldiers_list/', views.incomplete_soldiers_list, name='incomplete_soldiers_list'),
+
 ]

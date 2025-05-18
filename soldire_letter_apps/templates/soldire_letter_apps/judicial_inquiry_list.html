@@ -1,0 +1,72 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+
+    <div class="container">
+        <h3>لیست نامه‌های استعلام قضایی</h3>
+
+        <form method="get" class="form-inline" style="margin-bottom: 20px;">
+            <input type="text" name="q" class="form-control" placeholder="جستجو..." value="{{ request.GET.q }}">
+            <button type="submit" class="btn btn-default">جستجو</button>
+            <a href="{% url 'judicial_inquiry_create' %}" class="btn btn-success pull-left">نامه جدید</a>
+        </form>
+
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+            <tr>
+                <th>شماره نامه</th>
+                <th>نام</th>
+                <th>نام خانوادگی</th>
+                <th>کد ملی</th>
+                <th>علت استعلام</th>
+                <th>موضوع</th>
+                <th>تاریخ</th>
+                <th>وضعیت</th>
+                <th>عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for inquiry in page_obj %}
+                <tr>
+                    <td>{{ inquiry.normal_letter.letter_number }}</td>
+                    <td>{{ inquiry.normal_letter.soldier.first_name }}</td>
+                    <td>{{ inquiry.normal_letter.soldier.last_name }}</td>
+                    <td>{{ inquiry.normal_letter.soldier.national_code }}</td>
+                    <td>{{ inquiry.get_reason_display }}</td>
+                    <td>{{ inquiry.subject }}</td>
+                    <td>{{ inquiry.normal_letter.date|date:"Y/m/d" }}</td>
+                    <td>{{ inquiry.normal_letter.get_status_display }}</td>
+                    <td>
+                        <a href="{% url 'judicial_inquiry_edit' inquiry.pk %}" class="btn btn-xs btn-primary">ویرایش</a>
+                        <a href="{% url 'judicial_inquiry_delete' inquiry.pk %}" class="btn btn-xs btn-danger">حذف</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center">هیچ نامه‌ای یافت نشد.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% if page_obj.has_other_pages %}
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li><a href="?q={{ request.GET.q }}&page=1">&laquo;</a></li>
+                    <li><a href="?q={{ request.GET.q }}&page={{ page_obj.previous_page_number }}">&lsaquo;</a></li>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="active"><a>{{ num }}</a></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li><a href="?q={{ request.GET.q }}&page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <li><a href="?q={{ request.GET.q }}&page={{ page_obj.next_page_number }}">&rsaquo;</a></li>
+                    <li><a href="?q={{ request.GET.q }}&page={{ page_obj.paginator.num_pages }}">&raquo;</a></li>
+                {% endif %}
+            </ul>
+        {% endif %}
+    </div>
+{% endblock %}

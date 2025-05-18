@@ -1,0 +1,80 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% load jalali_filters %}
+{% block main %}
+    <div class="container">
+        <h2 class="text-center">لیست نامه‌های عادی</h2>
+
+        <form method="get" class="form-inline text-center" style="margin-bottom: 20px;">
+            <div class="form-group">
+                <input type="text" name="q" value="{{ query }}" placeholder="جستجو..." class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary">جستجو</button>
+        </form>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr class="text-center">
+                <th>شماره نامه</th>
+                <th>نوع نامه</th>
+                <th>نام سرباز</th>
+                <th>نام خانوادگی</th>
+                <th>کد ملی</th>
+                <th>مقصد</th>
+                <th>تاریخ</th>
+                <th>وضعیت</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for letter in letters %}
+                <tr>
+                    <td>{{ letter.letter_number }}</td>
+                    <td>{{ letter.get_letter_type_display }}</td>
+                    <td>{{ letter.soldier.first_name }}</td>
+                    <td>{{ letter.soldier.last_name }}</td>
+                    <td>{{ letter.soldier.national_code }}</td>
+                    <td>{{ letter.destination }}</td>
+                    <td>{{ letter.date|to_jalali }}</td>
+                    <td>{{ letter.get_status_display }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center">هیچ نامه‌ای یافت نشد.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% if letters.has_other_pages %}
+            <nav class="text-center">
+                <ul class="pagination">
+                    {% if letters.has_previous %}
+                        <li><a href="?{% if query %}q={{ query }}&{% endif %}page=1">&laquo;</a></li>
+                        <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ letters.previous_page_number }}">&lsaquo;</a>
+                        </li>
+                    {% else %}
+                        <li class="disabled"><span>&laquo;</span></li>
+                        <li class="disabled"><span>&lsaquo;</span></li>
+                    {% endif %}
+
+                    {% for num in letters.paginator.page_range %}
+                        {% if letters.number == num %}
+                            <li class="active"><span>{{ num }}</span></li>
+                        {% elif num > letters.number|add:'-3' and num < letters.number|add:'3' %}
+                            <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if letters.has_next %}
+                        <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ letters.next_page_number }}">&rsaquo;</a>
+                        </li>
+                        <li><a href="?{% if query %}q={{ query }}&{% endif %}page={{ letters.paginator.num_pages }}">&raquo;</a>
+                        </li>
+                    {% else %}
+                        <li class="disabled"><span>&rsaquo;</span></li>
+                        <li class="disabled"><span>&raquo;</span></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    </div>
+{% endblock %}

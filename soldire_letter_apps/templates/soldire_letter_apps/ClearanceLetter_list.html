@@ -21,6 +21,7 @@
                 <th>شماره نامه</th>
                 <th>علت تسویه</th>
                 <th>تاریخ صدور</th>
+                <th>وضعیت</th>
             </tr>
             </thead>
             <tbody>
@@ -33,6 +34,7 @@
                     <td>{{ letter.letter_number }}</td>
                     <td>{{ letter.get_reason_display }}</td>
                     <td>{{ letter.issue_date|to_jalali }}</td>
+                    <td>{{ letter.status }}</td>
                 </tr>
             {% empty %}
                 <tr>

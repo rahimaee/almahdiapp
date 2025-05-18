@@ -1,0 +1,27 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% load jalali_filters %}
+{% block main %}
+    <div class="container">
+        <h3>سوابق فرار برای {{ soldier.first_name }} {{ soldier.last_name }}</h3>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>تاریخ شروع</th>
+                <th>تاریخ بازگشت</th>
+                <th>توضیحات</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for escape in escapes %}
+                <tr>
+                    <td>{{ escape.start_date|to_jalali }}</td>
+                    <td>{{ escape.return_date|default:"-- هنوز بازنگشته --" }}</td>
+                    <td>{{ escape.note|default:"بدون توضیح" }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a href="{% url 'escaped_soldiers' %}" class="btn btn-default">بازگشت</a>
+    </div>
+{% endblock %}

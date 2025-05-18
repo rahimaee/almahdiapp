@@ -1,0 +1,67 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+    <div class="container">
+
+        <h2 class="text-center">لیست سربازهای فراری</h2>
+
+        <!-- فرم جست‌وجو -->
+        <form method="get" class="form-inline text-center" style="margin-bottom: 20px;">
+            <input type="text" name="q" class="form-control" placeholder="جست‌وجو بر اساس نام یا کد ملی"
+                   value="{{ query }}">
+            <button type="submit" class="btn btn-primary">جست‌وجو</button>
+        </form>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>نام</th>
+                <th>کد ملی</th>
+                <th>جزئیات فرار</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for soldier in page_obj %}
+                <tr>
+                    <td>{{ soldier.first_name }} {{ soldier.last_name }}</td>
+                    <td>{{ soldier.national_code }}</td>
+                    <td>
+                        <a href="{% url 'soldier_escape_details' soldier.id %}" class="btn btn-info btn-sm">مشاهده
+                            سوابق</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center text-danger">موردی یافت نشد.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- صفحه‌بندی -->
+        <nav class="text-center">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li><a href="?q={{ query }}&page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+                {% else %}
+                    <li class="disabled"><span>&laquo;</span></li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="active"><span>{{ num }}</span></li>
+                    {% else %}
+                        <li><a href="?q={{ query }}&page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li><a href="?q={{ query }}&page={{ page_obj.next_page_number }}">&raquo;</a></li>
+                {% else %}
+                    <li class="disabled"><span>&raquo;</span></li>
+                {% endif %}
+            </ul>
+        </nav>
+
+    </div>
+{% endblock %}

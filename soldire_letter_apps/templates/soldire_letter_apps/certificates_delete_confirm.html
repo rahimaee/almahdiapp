@@ -1,0 +1,13 @@
+{% extends 'shared/_PanelMain.html' %}
+
+{% load static %}
+
+
+{% block main %}
+    <h3>آیا مطمئن هستید که می‌خواهید گواهی {{ certificate }} را حذف کنید؟</h3>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">حذف</button>
+        <a href="{% url 'membership_certificate_list' %}" class="btn btn-default">بازگشت</a>
+    </form>
+{% endblock %}
