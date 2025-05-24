@@ -9,9 +9,9 @@ from soldires_apps.models import Soldier
 from units_apps.models import SubUnit
 from .models import ClearanceLetter, NormalLetter, NormalLetterMentalHealthAssessmentAndEvaluation, \
     NormalLetterJudicialInquiry, NormalLetterDomesticSettlement, IntroductionLetter, MembershipCertificate, \
-    NormalLetterHealthIodine
+    NormalLetterHealthIodine, NormalLetterCommitmentLetter
 from .forms import ClearanceLetterForm, NormalLetterJudicialInquiryForm, NormalLetterDomesticSettlementForm, \
-    IntroductionLetterForm, MembershipCertificateForm, HealthIodineForm
+    IntroductionLetterForm, MembershipCertificateForm, HealthIodineForm, CommitmentLetterForm
 from django.db.models import Q
 from django.utils import timezone
 from datetime import timedelta
@@ -602,3 +602,88 @@ def health_iodine_letter_delete(request, pk):
     else:
         form = IntroductionLetterForm(instance=letter)
     return render(request, 'soldire_letter_apps/health_iodine_letter_form.html', {'form': form})
+
+
+def commitment_letter_list(request):
+    query = request.GET.get('q', '')
+    letters = NormalLetterCommitmentLetter.objects.all()
+
+    if query:
+        letters = letters.filter(
+            Q(normal_letter__letter_number__icontains=query) |
+            Q(normal_letter__soldier__national_code__icontains=query) |
+            Q(normal_letter__soldier__first_name__icontains=query) |
+            Q(normal_letter__soldier__last_name__icontains=query)
+        )
+
+    paginator = Paginator(letters.order_by('-normal_letter__created_by'), 100)  # 10 نامه در هر صفحه
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'soldire_letter_apps/commitment_letter_list.html', {
+        'page_obj': page_obj,
+        'query': query,
+    })
+
+
+def commitment_letter_create(request):
+    if request.method == 'POST':
+        form = CommitmentLetterForm(request.POST)
+        if form.is_valid():
+            soldier = form.cleaned_data['soldier']
+            normal_letter = NormalLetter.objects.create(
+                soldier=soldier,
+                destination='داخلی',
+                letter_type='تعهد نامه',
+                created_by=request.user if request.user.is_authenticated else None
+            )
+            cl = form.save(commit=False)
+            cl.normal_letter = normal_letter
+            cl.save()
+            return redirect('commitment_letter_list')
+    else:
+        form = CommitmentLetterForm()
+        form.fields['soldier'].queryset = Soldier.objects.filter().all()
+    return render(request, 'soldire_letter_apps/commitment_letter_form.html', {'form': form})
+
+
+def commitment_letter_update(request, pk):
+    letter = get_object_or_404(NormalLetterCommitmentLetter, pk=pk)
+    if request.method == 'POST':
+        form = CommitmentLetterForm(request.POST, instance=letter)
+        if form.is_valid():
+            form.save()
+            return redirect('commitment_letter_list')
+    else:
+        form = CommitmentLetterForm(instance=letter)
+        soldier = letter.normal_letter.soldier
+        form.fields['soldier'].initial = soldier
+        form.fields['soldier'].disabled = True
+    return render(request, 'soldire_letter_apps/commitment_letter_form.html', {'form': form})
+
+
+# برسی برای حذف نامه
+def commitment_letter_delete(request, pk):
+    return render(request, 'soldire_letter_apps/commitment_letter_form.html', )
+
+
+def approved_commitment_letter(request, letter_id):
+    commitment_letter = NormalLetterCommitmentLetter.objects.get(id=letter_id)
+    find_soldire = Soldier.objects.get(pk=commitment_letter.normal_letter.soldier.id)
+    if commitment_letter.status == 'چاپ و درحال بررسی':
+        commitment_letter.status = 'تأیید نهایی'
+        commitment_letter.save()
+        find_soldire.card_chip = commitment_letter.type_card_chip
+        find_soldire.save()
+    return redirect('commitment_letter_list')
+
+
+def print_commitment_letter(request, letter_id):
+    letter = IntroductionLetter.objects.get(id=letter_id)
+    if letter.status == 'ایجاد شده':
+        letter.status = 'چاپ و درحال بررسی'
+        letter.save()
+    return render(request, 'soldire_letter_apps/print_commitment_letter.html', {'letter': letter})
+
+
+

@@ -1,0 +1,82 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% load jalali_filters %}
+
+
+
+{% block main %}
+    <div class="container">
+        <h2>لیست تعهد نامه</h2>
+
+        <form method="get" class="form-inline mb-3">
+            <input type="text" name="q" class="form-control mr-2" placeholder="جستجو..." value="{{ query }}">
+            <button type="submit" class="btn btn-primary">جستجو</button>
+            <a href="{% url 'commitment_letter_create' %}" class="btn btn-success ml-3">ایجاد نامه جدید</a>
+        </form>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>شماره نامه</th>
+                <th>تاریخ</th>
+                <th>نام سرباز</th>
+                <th>کد ملی</th>
+                <th>نوع نامه</th>
+                <th>وضعیت</th>
+                <th>تراشه/کارت</th>
+                <th>عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for letter in page_obj %}
+                <tr>
+                    <td>{{ letter.normal_letter.letter_number }}</td>
+                    <td>{{ letter.normal_letter.date|to_jalali }}</td>
+                    <td>{{ letter.normal_letter.soldier.first_name }} {{ letter.soldier.last_name }}</td>
+                    <td>{{ letter.normal_letter.soldier.national_code }}</td>
+                    <td>{{ letter.normal_letter.letter_type }}</td>
+                    <td>{{ letter.type_card_chip }}</td>
+                    <td>{{ letter.normal_letter.status }}</td>
+                    <td>
+                        <a href="{% url 'print_introduction_letter' letter.id %}"
+                           class="btn btn-sm btn-success">چاپ</a>
+                        <a href="{% url 'approved_introduction_letter' letter_id=letter.id %}"
+                           class="btn btn-sm btn-facebook">تایید</a>
+                        <a href="{% url 'commitment_letter_update' pk=letter.id %}"
+                           class="btn btn-sm btn-warning">ویرایش</a>
+                        <a href="{% url 'introduction_letter_delete' letter.id %}" class="btn btn-sm btn-danger">حذف</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7">موردی یافت نشد.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <nav>
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link"
+                                             href="?page={{ page_obj.previous_page_number }}&q={{ query }}">قبلی</a>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}&q={{ query }}">{{ num }}</a>
+                    </li>
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link"
+                                             href="?page={{ page_obj.next_page_number }}&q={{ query }}">بعدی</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+
+    </div>
+
+{% endblock %}
+

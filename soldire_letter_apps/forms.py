@@ -199,3 +199,19 @@ class HealthIodineForm(forms.ModelForm):
                 pass
         elif self.instance.pk and self.instance.part:
             self.fields['sub_part'].queryset = self.instance.part.sub_units.all()
+
+
+class CommitmentLetterForm(forms.ModelForm):
+    soldier = forms.ModelChoiceField(
+        queryset=Soldier.objects.all(),
+        label='سرباز',
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    class Meta:
+        model = NormalLetterCommitmentLetter
+        exclude = ['normal_letter']
+        widgets = {
+            'soldier': forms.Select(attrs={'class': 'form-control'}),
+            'type_card_chip': forms.Select(attrs={'class': 'form-control'}),
+        }

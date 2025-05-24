@@ -500,3 +500,4 @@ def incomplete_soldiers_list(request):
     from .models import Soldier
     soldiers = Soldier.objects.all()
     return render(request, 'soldires_apps/incomplete_soldiers_list.html', {'soldiers': soldiers})
+

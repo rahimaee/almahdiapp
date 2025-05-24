@@ -19,6 +19,33 @@
       apply the skin class to the body tag so the changes take effect. -->
 <link rel="stylesheet" href="{% static 'dist/css/skins/skin-yellow-light.min.css' %}">
 
+<style>
+
+    /*  */
+    @font-face {
+        font-family: YekanBakh;
+        src: url("/assets/fonts/YekanBakh-Regular.woff2") format("woff2"),
+        url("/assets/fonts/YekanBakh-Regular.woff") format("woff"),
+        url("/assets/fonts/YekanBakh-Regular.ttf") format("truetype");
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    @font-face {
+        font-family: YekanBakhBold;
+        src: url("/assets/fonts/YekanBakh-Bold.woff2") format("woff2"),
+        url("/assets/fonts/YekanBakh-Bold.woff") format("woff"),
+        url("/assets/fonts/YekanBakh-Bold.ttf") format("truetype");
+        font-weight: bold;
+        font-style: normal;
+    }
+
+    html *,
+    body * {
+        font-family: YekanBakh, sans-serif;
+    }
+
+</style>
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 <!--[if lt IE 9]>

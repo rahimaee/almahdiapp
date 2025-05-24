@@ -265,3 +265,22 @@ class NormalLetterHealthIodine(models.Model):
     class Meta:
         verbose_name = "نامه  تائیدیه سلامت"
         verbose_name_plural = "نامه‌های  تائیدیه سلامت"
+
+
+class NormalLetterCommitmentLetter(models.Model):
+    normal_letter = models.OneToOneField(
+        'soldire_letter_apps.NormalLetter',
+        on_delete=models.CASCADE,
+        verbose_name='نامه عادی'
+    )
+    CARD_CHIP_CHOICES = [('کارت', 'کارت'), ('تراشه', 'تراشه')]
+    type_card_chip = models.CharField(max_length=100, choices=CARD_CHIP_CHOICES, null=True, blank=True,
+                                      verbose_name='تراشه/کارت')
+
+    class Meta:
+        verbose_name = "تعهد نامه"
+        verbose_name_plural = "تعهد نامه"
+
+    def __str__(self):
+        return f"{self.normal_letter} - {self.type_card_chip}"
+

@@ -1,0 +1,16 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+
+{% block main %}
+    <div class="container">
+        <h3>فرم تعهد نامه</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.soldier.label }}
+            {{ form.soldier }}
+            {{ form.type_card_chip.label }}
+            {{ form.type_card_chip }}
+            <button type="submit" class="btn btn-primary">ثبت</button>
+        </form>
+    </div>
+{% endblock %}
