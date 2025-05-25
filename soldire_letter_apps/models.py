@@ -7,10 +7,10 @@ from datetime import timedelta
 
 class ClearanceLetter(models.Model):
     CLEARANCE_REASON_CHOICES = [
-        ('service_completed', 'پایان خدمت'),
-        ('university_admission', 'قبولی در دانشگاه'),
-        ('transfer', 'انتقال'),
-        ('permanent_exemption', 'معافیت دائم'),
+        ('پایان خدمت', 'پایان خدمت'),
+        ('قبولی در دانشگاه', 'قبولی در دانشگاه'),
+        ('انتقال', 'انتقال'),
+        ('معافیت دائم', 'معافیت دائم'),
     ]
     CLEARANCE_STATUS_CHOICES = [
         ('ایجاد شده', 'ایجاد شده'),
@@ -163,7 +163,7 @@ class NormalLetterDomesticSettlement(models.Model):
 class IntroductionLetter(models.Model):
     LETTER_TYPE_CHOICES = [
         ('معرفی‌نامه', 'معرفی‌نامه'),
-        ('چهاربرگ', 'چهاربرگ'),
+        ('چهاربرگ+معرفی نامه', 'چهاربرگ+معرفی نامه'),
     ]
 
     STATUS_CHOICES = [

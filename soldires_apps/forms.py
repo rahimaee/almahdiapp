@@ -209,6 +209,10 @@ class SoldierForm(forms.ModelForm):
             'driving_license_type': forms.CheckboxSelectMultiple(),
             'referral_person': forms.TextInput(
                 attrs={'class': 'form-control', 'placeholder': 'معرف را وارد کنید'}),
+            'height': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'قد را وارد کنید'}),
+            'weight': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'وزن را وارد کنید'}),
+            'eye_color': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'رنگ چشم را وارد کنید'}),
+            'hair_color': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'رنگ مو را وارد کنید'}),
         }
 
         def clean_national_code(self):
@@ -581,7 +585,7 @@ class SoldierFormUpdate(forms.ModelForm):
                   'independent_married', 'skill_certificate', 'is_certificate', 'is_guard_duty', 'health_status',
                   'marital_status',
                   'basic_training_center', 'residence_city', 'residence_province', 'organizational_code',
-                  'current_sub_unit', 'current_parent_unit','rank']
+                  'current_sub_unit', 'current_parent_unit', 'rank', 'height', 'weight', 'eye_color', 'hair_color']
         widgets = {
             # ۱. اطلاعات هویتی و شناسایی
             'national_code': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'کدملی را وارد کنید'}),
@@ -631,6 +635,10 @@ class SoldierFormUpdate(forms.ModelForm):
             'driving_license_type': forms.CheckboxSelectMultiple(),
             'referral_person': forms.TextInput(
                 attrs={'class': 'form-control', 'placeholder': 'معرف را وارد کنید'}),
+            'height': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'قد را وارد کنید'}),
+            'weight': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'وزن را وارد کنید'}),
+            'eye_color': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'رنگ چشم را وارد کنید'}),
+            'hair_color': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'رنگ مو را وارد کنید'}),
         }
 
         def clean_national_code(self):

@@ -300,7 +300,10 @@ class Soldier(models.Model):
     )
     absorption = models.BooleanField(default=False, verbose_name='جذبی؟')
     Is_the_Basij_sufficient = models.BooleanField(default=False, verbose_name='کفایتدار بسیج')
-
+    height = models.CharField(max_length=200,null=True,blank=True,verbose_name='قد')
+    weight =models.CharField(max_length=200,null=True,blank=True,verbose_name='وزن')
+    eye_color = models.CharField(max_length=200,null=True,blank=True,verbose_name='رنگ چشم')
+    hair_color = models.CharField(max_length=200,null=True,blank=True,verbose_name='رنگ مو')
     IMPORTANT_FIELDS = [
         'first_name',
         'last_name',

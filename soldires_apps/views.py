@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.utils import timezone
 from datetime import timedelta
-from soldire_letter_apps.models import NormalLetterMentalHealthAssessmentAndEvaluation
+from soldire_letter_apps.models import NormalLetterMentalHealthAssessmentAndEvaluation, IntroductionLetter
 from .models import Soldier, OrganizationalCode, Settlement, PaymentReceipt
 from .forms import SoldierForm, SoldierSearchForm, SoldierPhotoForm, PhotoZipUploadForm, SoldierFormUpdate
 from cities_iran_manager_apps.models import City, Province
@@ -186,6 +186,14 @@ def soldier_create(request):
             personal_code.is_active = True
             personal_code.save()
             service.save()
+            # ایجاد معرفی نامه و 4 برگ
+            my_in_letter = IntroductionLetter()
+            my_in_letter.soldier = find_soldire
+            my_in_letter.part = form.cleaned_data['current_parent_unit']
+            my_in_letter.sub_part = form.cleaned_data['current_sub_unit']
+            my_in_letter.letter_type = 'چهاربرگ+معرفی نامه'
+            my_in_letter.save()
+            # ایجاد نامه تست سلامت
             return redirect("soldier_list")
     else:
         form = SoldierForm()
@@ -409,7 +417,6 @@ def payment_receipt_create(request):
             deposit_date=deposit_date,
             bank_operator_code=bank_operator_code
         )
-
         return redirect('payment_receipt_create')  # پس از ثبت فیش، صفحه را دوباره بارگذاری می‌کنیم
 
     return render(request, 'soldires_apps/payment_receipt_create.html', {'settlements': settlements})
@@ -500,4 +507,3 @@ def incomplete_soldiers_list(request):
     from .models import Soldier
     soldiers = Soldier.objects.all()
     return render(request, 'soldires_apps/incomplete_soldiers_list.html', {'soldiers': soldiers})
-
