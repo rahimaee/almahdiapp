@@ -1,11 +1,17 @@
 # views.py
 import datetime
+import traceback
+
+from django.db import transaction, IntegrityError
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.utils import timezone
 from datetime import timedelta
-from soldire_letter_apps.models import NormalLetterMentalHealthAssessmentAndEvaluation, IntroductionLetter
+
+from soldier_vacation_apps.models import LeaveBalance
+from soldire_letter_apps.models import NormalLetterMentalHealthAssessmentAndEvaluation, IntroductionLetter, \
+    NormalLetter, NormalLetterHealthIodine
 from .models import Soldier, OrganizationalCode, Settlement, PaymentReceipt
 from .forms import SoldierForm, SoldierSearchForm, SoldierPhotoForm, PhotoZipUploadForm, SoldierFormUpdate
 from cities_iran_manager_apps.models import City, Province
@@ -129,6 +135,7 @@ def convert_jalali_to_gregorian_string(jalali_str):
 def soldier_create(request):
     if request.method == "POST":
         post_data = request.POST.copy()
+
         # تبدیل تاریخ‌های شمسی به میلادی
         date_fields = ["birth_date", "dispatch_date", "service_entry_date"]
         for field in date_fields:
@@ -137,71 +144,114 @@ def soldier_create(request):
                 try:
                     year, month, day = map(int, date_value.split("/"))
                     gregorian_date = jdatetime.date(year, month, day).togregorian()
-                    post_data[field] = gregorian_date.isoformat()  # تبدیل به فرمت تاریخ میلادی
+                    post_data[field] = gregorian_date.isoformat()
                 except ValueError:
                     pass
 
-        # ایجاد فرم با داده‌های POST
+        # ساخت فرم
         form = SoldierForm(post_data)
 
-        # بروزرسانی queryset شهرها بر اساس استان انتخاب شده
-        residence_province_id = post_data.get('residence_province')
-        if residence_province_id:
-            try:
-                province = Province.objects.get(id=residence_province_id)
-                form.fields['residence_city'].queryset = City.objects.filter(province=province)
-            except (Province.DoesNotExist, ValueError):
-                form.fields['residence_city'].queryset = City.objects.none()
+        # بروزرسانی شهرها و زیرواحدها در فرم
+        try:
+            province = Province.objects.get(id=post_data.get('residence_province'))
+            form.fields['residence_city'].queryset = City.objects.filter(province=province)
+        except (Province.DoesNotExist, ValueError, TypeError):
+            form.fields['residence_city'].queryset = City.objects.none()
 
-        current_parent_unit_id = post_data.get('current_parent_unit')
-        if current_parent_unit_id:
-            try:
-                current_parent_unit = ParentUnit.objects.get(id=current_parent_unit_id)
-                form.fields['current_sub_unit'].queryset = SubUnit.objects.filter(parent_unit=current_parent_unit)
-            except (ParentUnit.DoesNotExist, ValueError):
-                form.fields['current_sub_unit'].queryset = SubUnit.objects.none()
-        # اعتبارسنجی و ذخیره فرم
+        try:
+            parent_unit = ParentUnit.objects.get(id=post_data.get('current_parent_unit'))
+            form.fields['current_sub_unit'].queryset = SubUnit.objects.filter(parent_unit=parent_unit)
+        except (ParentUnit.DoesNotExist, ValueError, TypeError):
+            form.fields['current_sub_unit'].queryset = SubUnit.objects.none()
+
         if form.is_valid():
-            form_save = form.save()
-            soldire_id = form_save.id
-            aps = AppsSettings.objects.first()
-            find_soldire = Soldier.objects.filter(pk=soldire_id).first()
-            doc = SoldierDocuments.objects.create(soldier_id=find_soldire.id)
-            service = SoldierService()
-            service.annual_leave_quota = aps.annual_leave_quota
-            service.incentive_leave_quota = aps.incentive_leave_quota
-            service.sick_leave_quota = aps.sick_leave_quota
-            service.soldier = find_soldire
-            marital_status = find_soldire.marital_status
-            number_of_children = find_soldire.number_of_children
-            if marital_status == 'married':
-                service.reduction_spouse = 60
-                if number_of_children > 0:
-                    service.reduction_children = 90
-                if number_of_children > 1:
-                    service.reduction_children = 90 + 120
-                if number_of_children > 2:
-                    service.reduction_children = 90 + 120 + 150
-            personal_code = OrganizationalCode.objects.filter(id=find_soldire.organizational_code.id).first()
-            personal_code.is_active = True
-            personal_code.save()
-            service.save()
-            # ایجاد معرفی نامه و 4 برگ
-            my_in_letter = IntroductionLetter()
-            my_in_letter.soldier = find_soldire
-            my_in_letter.part = form.cleaned_data['current_parent_unit']
-            my_in_letter.sub_part = form.cleaned_data['current_sub_unit']
-            my_in_letter.letter_type = 'چهاربرگ+معرفی نامه'
-            my_in_letter.save()
-            # ایجاد نامه تست سلامت
-            return redirect("soldier_list")
+            try:
+                with transaction.atomic():
+                    soldier = form.save()
+                    aps = AppsSettings.objects.first()
+
+                    # تخصیص کد سازمانی
+                    org_code = soldier.organizational_code
+                    if org_code.is_active:
+                        new_code = OrganizationalCode.objects.filter(is_active=False).first()
+                        if not new_code:
+                            form.add_error(None, "کد آزاد برای اختصاص به سرباز موجود نیست.")
+                            raise IntegrityError("No free organizational code available.")
+                        soldier.organizational_code = new_code
+                        soldier.save()
+                        org_code = new_code
+                    org_code.is_active = True
+                    org_code.save()
+
+                    # مدارک و سرویس
+                    SoldierDocuments.objects.create(soldier=soldier)
+                    
+                    # ایجاد سرویس سرباز با روش جدید
+                    try:
+                        service = SoldierService()
+                        service.soldier = soldier
+                        service.save()
+                        
+                        # کسری بر اساس وضعیت تأهل
+                        if soldier.marital_status == 'متاهل':
+                            service.reduction_spouse = 60
+                            children = soldier.number_of_children
+                            if children >= 1:
+                                service.reduction_children = 90
+                            if children >= 2:
+                                service.reduction_children += 120
+                            if children >= 3:
+                                service.reduction_children += 150
+                            service.save()
+                    except Exception as e:
+                        print(f"Error creating SoldierService: {str(e)}")
+                        raise
+
+                    # ایجاد نامه‌های مربوطه
+                    IntroductionLetter.objects.create(
+                        soldier=soldier,
+                        part=form.cleaned_data['current_parent_unit'],
+                        sub_part=form.cleaned_data['current_sub_unit'],
+                        letter_type='چهاربرگ+معرفی نامه'
+                    )
+
+                    normal_letter = NormalLetter.objects.create(
+                        soldier=soldier,
+                        destination='به : قسمت بهداشت و درمان آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه',
+                        letter_type='سنجش و ارزیابی سلامت روان',
+                        created_by=request.user if request.user.is_authenticated else None
+                    )
+
+                    NormalLetterMentalHealthAssessmentAndEvaluation.objects.create(
+                        subject='تست سلامت بدو ورود',
+                        normal_letter=normal_letter
+                    )
+                    if soldier.current_sub_unit and getattr(soldier.current_sub_unit, 'HealthIodine', False):
+                        letter2 = NormalLetter.objects.create(
+                            soldier=soldier,
+                            destination='به : قسمت بهداشت و درمان آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه',
+                            letter_type='دریافت تائیدیه سلامت',
+                            created_by=request.user if request.user.is_authenticated else None
+                        )
+                        NormalLetterHealthIodine.objects.create(
+                            normal_letter=letter2,
+                            sub_part=soldier.current_sub_unit,
+                            part=soldier.current_parent_unit
+                        )
+                    return redirect("soldier_list")
+            except IntegrityError as e:
+                print("IntegrityError occurred:", e)
+                traceback.print_exc()
+                form.add_error(None, f"خطای پایگاه داده: {str(e)}")
+            except Exception as e:
+                print("Error occurred:", e)
+                traceback.print_exc()
+                form.add_error(None, f"خطای غیرمنتظره: {str(e)}")
+
     else:
         form = SoldierForm()
         aps = AppsSettings.objects.first()
-        if aps is None:
-            form.fields['essential_service_duration'].initial = 0
-        else:
-            form.fields['essential_service_duration'].initial = aps.essential_service_duration
+        form.fields['essential_service_duration'].initial = aps.essential_service_duration if aps else 0
 
     return render(request, "soldires_apps/soldier_create.html", {"form": form})
 

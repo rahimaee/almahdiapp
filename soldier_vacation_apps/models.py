@@ -1,9 +1,10 @@
 from django.db import models
 
+
 # Create your models here.
 
 class LeaveBalance(models.Model):
-    soldier = models.ForeignKey('soldires_apps.Soldier', on_delete=models.CASCADE)
+    soldier = models.OneToOneField('soldires_apps.Soldier', on_delete=models.CASCADE)
     initial_annual_leave_quota = models.PositiveIntegerField("سقف اولیه مرخصی استحقاقی کمکی", default=0)
 
     # سقف مرخصی‌ها

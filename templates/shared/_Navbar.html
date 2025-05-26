@@ -7,7 +7,9 @@
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel">
             <div class="pull-right image">
-                <img src="{{ user.profile_picture.url }}" class="img-circle elevation-2" alt="User Image">
+                {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture.url }}" class="img-circle elevation-2" alt="User Image">
+                {% endif %}
             </div>
             <div class="pull-right info">
                 <p>{{ user.get_full_name }}({{ user.get_employment_status }})</p>

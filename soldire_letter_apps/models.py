@@ -60,11 +60,12 @@ class NormalLetter(models.Model):
         ('service', 'گواهی اشتغال به خدمت'),
         ('request', 'نامه درخواست'),
         ('other', 'سایر'),
+        ('سنجش و ارزیابی سلامت روان', 'سنجش و ارزیابی سلامت روان'),
     ]
 
     soldier = models.ForeignKey('soldires_apps.Soldier', on_delete=models.CASCADE, verbose_name='سرباز')
     letter_number = models.CharField(max_length=30, unique=True, editable=False, verbose_name='شماره نامه')
-    letter_type = models.CharField(max_length=20, choices=LETTER_TYPE_CHOICES, verbose_name='نوع نامه')
+    letter_type = models.CharField(max_length=250, choices=LETTER_TYPE_CHOICES, verbose_name='نوع نامه')
     date = models.DateField(auto_now_add=True, verbose_name='تاریخ نامه')
     destination = models.CharField(max_length=255, verbose_name='مقصد نامه')
     description = models.TextField(blank=True, null=True, verbose_name='توضیحات')
