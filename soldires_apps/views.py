@@ -9,6 +9,8 @@ from django.utils import timezone
 from django.utils import timezone
 from datetime import timedelta
 
+from accounts_apps.decorators import feature_required
+from accounts_apps.utils import get_accessible_soldiers_for_user
 from soldier_vacation_apps.models import LeaveBalance
 from soldire_letter_apps.models import NormalLetterMentalHealthAssessmentAndEvaluation, IntroductionLetter, \
     NormalLetter, NormalLetterHealthIodine
@@ -33,9 +35,11 @@ from .models import UnitHistory
 from django.db.models.fields.related import ForeignKey, OneToOneField
 
 
+@feature_required('لیست سربازان')
 def soldier_list(request):
     form = SoldierSearchForm(request.GET or None)
-    soldiers = Soldier.objects.all().select_related(
+    soldiers = get_accessible_soldiers_for_user(request.user)
+    soldiers = soldiers.filter().select_related(
         'residence_province',
         'residence_city',
         'current_parent_unit',

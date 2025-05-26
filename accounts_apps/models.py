@@ -44,7 +44,7 @@ class MyUser(AbstractUser):
 
 
 class Feature(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=250)
 
     def __str__(self):
         return self.name

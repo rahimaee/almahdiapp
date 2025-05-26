@@ -1,9 +1,12 @@
 # views.py
-
-from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
-from .models import ManagerPermission, Permission, AccessHistory, MyUser
-from .forms import ManagerPermissionForm, UserAccessForm, MyUserProfileForm
+from django.http import HttpResponse
+
+from .models import ManagerPermission, Permission, AccessHistory, MyUser, Feature
+from .forms import UserAccessForm, MyUserProfileForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 
 
 # لیست مسئولین
@@ -109,13 +112,6 @@ def user_delete(request, pk):
     return render(request, 'accounts_apps/user_confirm_delete.html', {'user': user})
 
 
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.forms import PasswordChangeForm
-from django.shortcuts import render, redirect
-
-
 @login_required
 def change_password(request):
     if request.method == 'POST':
@@ -165,3 +161,36 @@ def profile_view(request):
 @login_required
 def profile_view(request):
     return render(request, 'accounts_apps/profile_card.html', {'user': request.user})
+
+
+def import_feature(request):
+    features = [
+        'لیست سربازان',
+        'اطلاعات کامل سرباز',
+        'سرباز جدید',
+        'ویرایش سرباز',
+        'آپلود گروهی عکس بر اساس کد ملی',
+        'تست مجدد روان پس از 6 ماه',
+        'فراری ها',
+        'ورودی های جدید',
+        'نواقص پرونده',
+        'بارگذاری عکس برای سرباز',
+        'چاپ پرونده',
+        'مدیریت مدارک سرباز',
+        'کسریااضافه خدمت'
+        'فرم مدیریت مرخصی',
+    ]
+    for name in features:
+        Feature.objects.get_or_create(name=name)
+    return HttpResponse("success")
+
+
+def access_denied_view(request):
+    reason = request.GET.get("reason")
+    feature = request.GET.get("feature", "نامشخص")
+
+    context = {
+        "reason": reason,
+        "feature": feature,
+    }
+    return render(request, "accounts_apps/access_denied.html", context)

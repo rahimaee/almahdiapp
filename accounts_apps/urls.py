@@ -14,4 +14,6 @@ urlpatterns = [
     path('users/<int:pk>/delete/', views.user_delete, name='user_delete'),
     path('change-password/', views.change_password, name='change_password'),
     path('profile/', views.profile_view, name='profile'),
+    path('import_feature/', views.import_feature, name='import_feature'),
+    path('access-denied/', views.access_denied_view, name='access_denied'),
 ]

@@ -1,0 +1,38 @@
+{% extends 'shared/_PanelMain.html' %}
+
+{% load static %}
+
+
+
+{% block header %}
+    <title>دسترسی غیرمجاز</title>
+    <style>
+
+        .panel {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+    </style>
+{% endblock %}
+
+
+{% block main %}
+    <div class="container">
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h3 class="panel-title">خطای دسترسی</h3>
+            </div>
+            <div class="panel-body">
+                {% if reason == 'unauthenticated' %}
+                    <p>شما وارد نشده‌اید. لطفاً ابتدا وارد حساب کاربری خود شوید.</p>
+                {% elif reason == 'unauthorized' %}
+                    <p>شما به قابلیت <strong>«{{ feature }}»</strong> دسترسی ندارید.</p>
+                {% else %}
+                    <p>دسترسی شما به این بخش مجاز نیست.</p>
+                {% endif %}
+                <a href="/" class="btn btn-primary">بازگشت به صفحه اصلی</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
