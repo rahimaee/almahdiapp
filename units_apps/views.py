@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import ParentUnit, SubUnit
 from .forms import ParentUnitForm, SubUnitForm
 from django.http import JsonResponse
+from django.db import transaction, IntegrityError
 
 # لیست واحدهای اصلی
 def parent_unit_list(request):
@@ -17,10 +18,16 @@ def parent_unit_form(request, pk=None):
         parent_unit = None
 
     if request.method == 'POST':
-        form = ParentUnitForm(request.POST, instance=parent_unit)
-        if form.is_valid():
-            form.save()
-            return redirect('parent_unit_list')
+        while True:
+            try:
+                with transaction.atomic():
+                    form = ParentUnitForm(request.POST, instance=parent_unit)
+                    if form.is_valid():
+                        form.save()
+                        return redirect('parent_unit_list')
+                    break
+            except IntegrityError:
+                continue
     else:
         form = ParentUnitForm(instance=parent_unit)
 
@@ -31,11 +38,15 @@ def parent_unit_form(request, pk=None):
 def parent_unit_delete(request, pk):
     parent_unit = get_object_or_404(ParentUnit, pk=pk)
     if request.method == 'POST':
-        parent_unit.delete()
-        return redirect('parent_unit_list')
+        while True:
+            try:
+                with transaction.atomic():
+                    parent_unit.delete()
+                    return redirect('parent_unit_list')
+            except IntegrityError:
+                continue
 
     return render(request, 'units_apps/parent_unit_delete.html', {'parent_unit': parent_unit})
-
 
 
 # لیست زیرواحدها
@@ -51,10 +62,16 @@ def sub_unit_form(request, pk=None):
         sub_unit = None
 
     if request.method == 'POST':
-        form = SubUnitForm(request.POST, instance=sub_unit)
-        if form.is_valid():
-            form.save()
-            return redirect('sub_unit_list')
+        while True:
+            try:
+                with transaction.atomic():
+                    form = SubUnitForm(request.POST, instance=sub_unit)
+                    if form.is_valid():
+                        form.save()
+                        return redirect('sub_unit_list')
+                    break
+            except IntegrityError:
+                continue
     else:
         form = SubUnitForm(instance=sub_unit)
 
@@ -64,15 +81,24 @@ def sub_unit_form(request, pk=None):
 def sub_unit_delete(request, pk):
     sub_unit = get_object_or_404(SubUnit, pk=pk)
     if request.method == 'POST':
-        sub_unit.delete()
-        return redirect('sub_unit_list')
+        while True:
+            try:
+                with transaction.atomic():
+                    sub_unit.delete()
+                    return redirect('sub_unit_list')
+            except IntegrityError:
+                continue
     return render(request, 'units_apps/sub_unit_delete.html', {'sub_unit': sub_unit})
-
 
 
 def get_sub_units(request):
     parent_unit_id = request.GET.get("parent_unit_id")
     if parent_unit_id:
-        sub_units = SubUnit.objects.filter(parent_unit_id=parent_unit_id).values("id", "name")
-        return JsonResponse(list(sub_units), safe=False)
+        while True:
+            try:
+                with transaction.atomic():
+                    sub_units = SubUnit.objects.filter(parent_unit_id=parent_unit_id).values("id", "name")
+                    return JsonResponse(list(sub_units), safe=False)
+            except IntegrityError:
+                continue
     return JsonResponse([], safe=False)

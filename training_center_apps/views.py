@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.db import transaction, IntegrityError
 from .models import TrainingCenter
 from .forms import TrainingCenterForm
 
@@ -10,10 +11,16 @@ def training_center_list(request):
 
 def training_center_create(request):
     if request.method == 'POST':
-        form = TrainingCenterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('training_center_list')
+        while True:
+            try:
+                with transaction.atomic():
+                    form = TrainingCenterForm(request.POST)
+                    if form.is_valid():
+                        form.save()
+                        return redirect('training_center_list')
+                    break
+            except IntegrityError:
+                continue
     else:
         form = TrainingCenterForm()
     return render(request, 'training_center_apps/training_center_form.html', {'form': form})
@@ -22,10 +29,16 @@ def training_center_create(request):
 def training_center_edit(request, pk):
     center = get_object_or_404(TrainingCenter, pk=pk)
     if request.method == 'POST':
-        form = TrainingCenterForm(request.POST, instance=center)
-        if form.is_valid():
-            form.save()
-            return redirect('training_center_list')
+        while True:
+            try:
+                with transaction.atomic():
+                    form = TrainingCenterForm(request.POST, instance=center)
+                    if form.is_valid():
+                        form.save()
+                        return redirect('training_center_list')
+                    break
+            except IntegrityError:
+                continue
     else:
         form = TrainingCenterForm(instance=center)
     return render(request, 'training_center_apps/training_center_form.html', {'form': form})
@@ -34,6 +47,11 @@ def training_center_edit(request, pk):
 def training_center_delete(request, pk):
     center = get_object_or_404(TrainingCenter, pk=pk)
     if request.method == 'POST':
-        center.delete()
-        return redirect('training_center_list')
+        while True:
+            try:
+                with transaction.atomic():
+                    center.delete()
+                    return redirect('training_center_list')
+            except IntegrityError:
+                continue
     return render(request, 'training_center_apps/training_center_confirm_delete.html', {'center': center})
