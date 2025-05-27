@@ -6,82 +6,80 @@
 {% endblock %}
 
 {% block main %}
-    <div class="container">
-        <h2 class="text-center">لیست سربازان و دوره عقیدتی</h2>
-        <button class="btn btn-success" id="download-btn" style="margin-bottom: 15px;">دانلود اکسل</button>
-        <table id="soldiers-table" class="table table-bordered table-striped">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>کدسازمانی</th>
-                <th>نام</th>
-                <th>نام خانوادگی</th>
-                <th>کد ملی</th>
-                <th>قسمت</th>
-                <th>زیر قسمت</th>
-                <th>مدرک</th>
-                <th>درجه</th>
-                <th>موبایل</th>
-                <th>نام دوره عقیدتی</th>
-                <th>تاریخ عقیدتی</th>
-                <th>توضیحات عقیدتی</th>
-                <th>عملیات</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for soldier in soldiers %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ soldier.organizational_code.code_number }}</td>
-                    <td>{{ soldier.first_name }}</td>
-                    <td>{{ soldier.last_name }}</td>
-                    <td>{{ soldier.national_code }}</td>
-                    <td>{{ soldier.current_parent_unit.name }}</td>
-                    <td>{{ soldier.current_sub_unit.name }}</td>
-                    <td>{{ soldier.degree }}</td>
-                    <td>{{ soldier.rank }}</td>
-                    <td>{{ soldier.phone_mobile }}</td>
-                    <td>{{ soldier.ideological_training_period.name }}</td>
-                    <td>{{ soldier.ideological_training_period.date }}</td>
-                    <td>{{ soldier.ideological_training_period.description }}</td>
-                    <td>
-                        <a href="{% url 'soldier_detail' pk=soldier.id %}" class="btn btn-info btn-sm">اطلاعات سرباز</a>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="14" class="text-center">هیچ سربازی پیدا نشد.</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-
-        </table>
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading text-center">
+            <h3 class="panel-title" style="font-size: 20px; font-weight: bold;">
+                <span class="glyphicon glyphicon-list-alt"></span> لیست سربازان و دوره عقیدتی
+            </h3>
+        </div>
+        <div class="panel-body">
+            <div class="text-right" style="margin-bottom: 15px;">
+                <button class="btn btn-success btn-sm" id="download-btn">
+                    <span class="glyphicon glyphicon-download-alt"></span> دانلود اکسل
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table id="soldiers-table" class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <tr class="active text-center">
+                            <th>#</th>
+                            <th>کدسازمانی</th>
+                            <th>نام</th>
+                            <th>نام خانوادگی</th>
+                            <th>کد ملی</th>
+                            <th>قسمت</th>
+                            <th>زیر قسمت</th>
+                            <th>مدرک</th>
+                            <th>درجه</th>
+                            <th>موبایل</th>
+                            <th>نام دوره عقیدتی</th>
+                            <th>تاریخ عقیدتی</th>
+                            <th>توضیحات عقیدتی</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for soldier in soldiers %}
+                        <tr>
+                            <td class="text-center">{{ forloop.counter }}</td>
+                            <td>{{ soldier.organizational_code.code_number }}</td>
+                            <td>{{ soldier.first_name }}</td>
+                            <td>{{ soldier.last_name }}</td>
+                            <td>{{ soldier.national_code }}</td>
+                            <td>{{ soldier.current_parent_unit.name }}</td>
+                            <td>{{ soldier.current_sub_unit.name }}</td>
+                            <td>{{ soldier.degree }}</td>
+                            <td>{{ soldier.rank }}</td>
+                            <td>{{ soldier.phone_mobile }}</td>
+                            <td>{{ soldier.ideological_training_period.name }}</td>
+                            <td>{{ soldier.ideological_training_period.date }}</td>
+                            <td>{{ soldier.ideological_training_period.description }}</td>
+                            <td class="text-center">
+                                <a href="{% url 'soldier_detail' pk=soldier.id %}" class="btn btn-info btn-xs">
+                                    <span class="glyphicon glyphicon-eye-open"></span> مشاهده
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="14" class="text-center text-danger">هیچ سربازی پیدا نشد.</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
+</div>
 {% endblock %}
 
 {% block footer %}
-    <script>
-        document.getElementById('download-btn').addEventListener('click', function () {
-            // گرفتن جدول
-            var table = document.getElementById('soldiers-table');
-
-            // تبدیل جدول به فرمت اکسل
-            var wb = XLSX.utils.table_to_book(table, {sheet: 'Soldiers With Training'});  // نام شیت کوتاه‌تر شد
-
-            // دستکاری سلول‌ها برای تبدیل داده‌ها به رشته
-            var sheet = wb.Sheets['Soldiers With Training'];
-            for (var row = 1; row <= sheet['!rows']; row++) {
-                for (var col = 0; col < sheet['!cols']; col++) {
-                    var cell = sheet[XLSX.utils.encode_cell({r: row, c: col})];
-                    if (cell) {
-                        // تبدیل سلول به رشته
-                        cell.v = String(cell.v);
-                    }
-                }
-            }
-
-            // ایجاد فایل اکسل و دانلود آن
-            XLSX.writeFile(wb, 'soldiers_With_training.xlsx');
-        });
-    </script>
+<script>
+    document.getElementById('download-btn').addEventListener('click', function () {
+        var table = document.getElementById('soldiers-table');
+        var wb = XLSX.utils.table_to_book(table, {sheet: 'Soldiers With Training'});
+        XLSX.writeFile(wb, 'soldiers_with_training.xlsx');
+    });
+</script>
 {% endblock %}

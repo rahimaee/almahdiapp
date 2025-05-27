@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
+
+from accounts_apps.decorators import feature_required
 from soldires_apps.models import Soldier
 from .models import ReligiousPeriod
 from .forms import ReligiousPeriodForm, SoldierIdeologicalForm, ExcelUploadForm
 import pandas as pd
 
-
+@feature_required('ایجاد دوره عقیدتی')
 def create_religious_period(request):
     if request.method == 'POST':
         form = ReligiousPeriodForm(request.POST)
@@ -15,7 +17,7 @@ def create_religious_period(request):
         form = ReligiousPeriodForm()
     return render(request, 'soldire_religious_period_apps/religious_period_form.html', {'form': form})
 
-
+@feature_required('ویرایش دوره عقیدتی')
 def update_religious_period(request, pk):
     period = get_object_or_404(ReligiousPeriod, pk=pk)
     if request.method == 'POST':
@@ -27,23 +29,23 @@ def update_religious_period(request, pk):
         form = ReligiousPeriodForm(instance=period)
     return render(request, 'soldire_religious_period_apps/religious_period_form.html', {'form': form})
 
-
+@feature_required('لیست عقیدتی')
 def religious_period_list(request):
     periods = ReligiousPeriod.objects.all()
     return render(request, 'soldire_religious_period_apps/religious_period_list.html', {'periods': periods})
 
-
+@feature_required('لیست سربازانی که دوره عقیدتی ندارند')
 def soldiers_without_ideological_training(request):
     # دریافت سربازانی که دوره عقیدتی ندارند
-    soldiers = Soldier.objects.filter(ideological_training_period__isnull=True)
+    soldiers = Soldier.objects.filter(ideological_training_period__isnull=True, is_checked_out=False)
     return render(request, 'soldire_religious_period_apps/soldiers_without_training.html', {'soldiers': soldiers})
 
-
+@feature_required('لیست سربازان و دوره عقیدتی')
 def soldiers_with_religious_period(request):
-    soldiers = Soldier.objects.filter(ideological_training_period__isnull=False)
+    soldiers = Soldier.objects.filter(ideological_training_period__isnull=False, is_checked_out=False)
     return render(request, 'soldire_religious_period_apps/soldiers_with_training.html', {'soldiers': soldiers})
 
-
+@feature_required('تخصیص دوره عقیدتی به فرد')
 def edit_ideological_period(request, soldier_id):
     soldier = get_object_or_404(Soldier, id=soldier_id)
     if request.method == 'POST':
@@ -55,7 +57,7 @@ def edit_ideological_period(request, soldier_id):
         form = SoldierIdeologicalForm(instance=soldier)
     return render(request, 'soldire_religious_period_apps/edit_ideological.html', {'form': form, 'soldier': soldier})
 
-
+@feature_required('آپلود فایل اکسل دوره عقیدتی')
 def upload_excel_view(request):
     errors = []
     success_count = 0

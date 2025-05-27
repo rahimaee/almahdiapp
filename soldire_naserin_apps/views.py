@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 
+from accounts_apps.decorators import feature_required
 from soldires_apps.models import Soldier
 from .models import NaserinGroup
 from .forms import NaserinGroupForm
 
 
+@feature_required('ایجاد گروه ناصرین')
 def naserin_create(request):
     if request.method == 'POST':
         form = NaserinGroupForm(request.POST)
@@ -16,6 +18,7 @@ def naserin_create(request):
     return render(request, 'soldire_naserin_apps/create.html', {'form': form})
 
 
+@feature_required('ویرایش گروه ناصرین')
 def naserin_edit(request, pk):
     group = get_object_or_404(NaserinGroup, pk=pk)
     if request.method == 'POST':
@@ -28,6 +31,7 @@ def naserin_edit(request, pk):
     return render(request, 'soldire_naserin_apps/edit.html', {'form': form, 'group': group})
 
 
+@feature_required('لیست گروه‌های ناصرین')
 def naserin_list(request):
     groups = NaserinGroup.objects.all()
     return render(request, 'soldire_naserin_apps/list.html', {'groups': groups})
@@ -36,17 +40,19 @@ def naserin_list(request):
 from accounts_apps.models import MyUser
 
 
+@feature_required('جدول افراد و گروه های ناصرین')
 def soldire_naserin_list(request):
     groups = NaserinGroup.objects.all()
     if request.user.is_authenticated:
         if request.user.is_superuser:
-            soldires = Soldier.objects.filter().all()
+            soldires = Soldier.objects.filter(is_checked_out=False).all()
         else:
-            soldires = Soldier.objects.filter(naserin_group__manager_id=request.user.id).all()
+            soldires = Soldier.objects.filter(is_checked_out=False, naserin_group__manager_id=request.user.id).all()
 
     return render(request, 'soldire_naserin_apps/soldire_naserin_list.html', {'soldires': soldires})
 
 
+@feature_required('ویرایش گروه ناصرین سربازان')
 def edit_soldier_naserin(request, soldier_id):
     soldier = get_object_or_404(Soldier, id=soldier_id)
     naserin_groups = NaserinGroup.objects.all()
@@ -63,6 +69,7 @@ def edit_soldier_naserin(request, soldier_id):
     })
 
 
+@feature_required('تخصیص گروه ناصرین به سربازان فاقد گروهی')
 # اختصاص گروه ناصرین به چند سرباز
 def bulk_edit_naserin(request):
     soldiers = Soldier.objects.all()

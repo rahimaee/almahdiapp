@@ -39,7 +39,7 @@ from django.db.models.fields.related import ForeignKey, OneToOneField
 def soldier_list(request):
     form = SoldierSearchForm(request.GET or None)
     soldiers = get_accessible_soldiers_for_user(request.user)
-    soldiers = soldiers.filter().select_related(
+    soldiers = soldiers.filter(is_checked_out=False).select_related(
         'residence_province',
         'residence_city',
         'current_parent_unit',
@@ -189,13 +189,13 @@ def soldier_create(request):
 
                     # مدارک و سرویس
                     SoldierDocuments.objects.create(soldier=soldier)
-                    
+
                     # ایجاد سرویس سرباز با روش جدید
                     try:
                         service = SoldierService()
                         service.soldier = soldier
                         service.save()
-                        
+
                         # کسری بر اساس وضعیت تأهل
                         if soldier.marital_status == 'متاهل':
                             service.reduction_spouse = 60
@@ -513,7 +513,8 @@ def due_mental_health_letters(request):
     ).annotate(
         latest_date=Max('created_at')
     ).filter(
-        latest_date__lte=six_months_ago
+        latest_date__lte=six_months_ago,
+        normal_letter__soldier__is_checked_out=False,
     )
 
     # گرفتن آی‌دی سربازهایی که شرایط بالا رو دارند
@@ -544,7 +545,8 @@ def soldiers_by_entry_date(request):
             to_gregorian = jdatetime.date(*to_parts).togregorian()
 
             soldiers = Soldier.objects.filter(
-                service_entry_date__range=(from_gregorian, to_gregorian)
+                service_entry_date__range=(from_gregorian, to_gregorian),
+                is_checked_out=False,
             ).order_by('service_entry_date')
 
         except Exception as e:
@@ -559,5 +561,25 @@ def soldiers_by_entry_date(request):
 
 def incomplete_soldiers_list(request):
     from .models import Soldier
-    soldiers = Soldier.objects.all()
+    soldiers = Soldier.objects.filter(is_checked_out=False).all()
     return render(request, 'soldires_apps/incomplete_soldiers_list.html', {'soldiers': soldiers})
+
+
+def soldires_new_status_view(request, pk):
+    soldier = get_object_or_404(Soldier, pk=pk)
+
+    status_list_normal = ['ایجاد شده', 'چاپ و بررسی شده', 'تایید شده']
+    status_list_intro = ['ایجاد شده', 'چاپ و درحال بررسی', 'تأیید نهایی']
+
+    normal_letters = NormalLetter.objects.filter(soldier=soldier, status__in=status_list_normal)
+    intro_letters = IntroductionLetter.objects.filter(soldier=soldier, status__in=status_list_intro)
+
+    context = {
+        'soldier': soldier,
+        'normal_letters': normal_letters,
+        'intro_letters': intro_letters,
+        'status_list_normal': status_list_normal,
+        'status_list_intro': status_list_intro,
+    }
+
+    return render(request, 'soldires_apps/soldires_new_status_view.html', context)

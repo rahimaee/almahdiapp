@@ -1,63 +1,82 @@
 {% extends 'shared/_PanelMain.html' %}
-
 {% load static %}
-
 
 {% block main %}
     <div class="container">
-        <h3 class="text-center">لیست سربازان با نقص اطلاعات یا مدارک</h3>
-        <table class="table table-bordered table-striped table-hover">
-            <thead>
-            <tr>
-                <th>ردیف</th>
-                <th>نام</th>
-                <th>نام خانوادگی</th>
-                <th>کد ملی</th>
-                <th>مشخصات ناقص</th>
-                <th>مدارک ناقص</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for soldier in soldiers %}
-                {% with missing_info=soldier.get_missing_fields missing_docs=soldier.soldierdocuments.get_missing_documents %}
-                    {% if missing_info or missing_docs %}
+        <div class="panel panel-success">
+            <div class="panel-heading text-center">
+                <h3 class="panel-title">
+                    <i class="glyphicon glyphicon-warning-sign"></i>
+                    لیست سربازان با نقص اطلاعات یا مدارک
+                </h3>
+            </div>
+            <div class="panel-body">
+                <table class="table table-bordered table-hover table-striped text-center">
+                    <thead>
+                    <tr class="success">
+                        <th>ردیف</th>
+                        <th>نام</th>
+                        <th>نام خانوادگی</th>
+                        <th>کد ملی</th>
+                        <th>مشخصات ناقص</th>
+                        <th>مدارک ناقص</th>
+                        <th>عملیات</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for soldier in soldiers %}
+                        {% with missing_info=soldier.get_missing_fields missing_docs=soldier.soldierdocuments.get_missing_documents %}
+                            {% if missing_info or missing_docs %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ soldier.first_name }}</td>
+                                    <td>{{ soldier.last_name }}</td>
+                                    <td>{{ soldier.national_code }}</td>
+                                    <td>
+                                        {% if missing_info %}
+                                            <ul class="list-unstyled text-danger">
+                                                {% for field in missing_info %}
+                                                    <li><i class="glyphicon glyphicon-remove-sign"></i> {{ field }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <span class="label label-success">
+                                                <i class="glyphicon glyphicon-ok"></i> کامل
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if missing_docs %}
+                                            <ul class="list-unstyled text-danger">
+                                                {% for doc in missing_docs %}
+                                                    <li><i class="glyphicon glyphicon-file"></i> {{ doc }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <span class="label label-success">
+                                                <i class="glyphicon glyphicon-ok"></i> کامل
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'manage_soldier_documents' soldier.id %}"
+                                           class="btn btn-info btn-sm">
+                                            <i class="glyphicon glyphicon-folder-open"></i> مشاهده مدارک
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endwith %}
+                    {% empty %}
                         <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ soldier.first_name }}</td>
-                            <td>{{ soldier.last_name }}</td>
-                            <td>{{ soldier.national_code }}</td>
-                            <td>
-                                {% if missing_info %}
-                                    <ul>
-                                        {% for field in missing_info %}
-                                            <li>{{ field }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                {% else %}
-                                    <span class="text-success">کامل</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if missing_docs %}
-                                    <ul>
-                                        {% for doc in missing_docs %}
-                                            <li>{{ doc }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                {% else %}
-                                    <span class="text-success">کامل</span>
-                                {% endif %}
+                            <td colspan="7" class="text-center text-muted">
+                                <i class="glyphicon glyphicon-ok-circle"></i> هیچ سربازی با اطلاعات ناقص یافت نشد.
                             </td>
                         </tr>
-                    {% endif %}
-                {% endwith %}
-            {% empty %}
-                <tr>
-                    <td colspan="6" class="text-center">سربازی با اطلاعات ناقص یافت نشد.</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 {% endblock %}
-

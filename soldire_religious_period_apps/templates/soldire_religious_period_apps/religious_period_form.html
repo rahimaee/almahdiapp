@@ -1,27 +1,65 @@
 {% extends 'shared/_PanelMain.html' %}
 {% load static %}
+
 {% block main %}
     <div class="container">
-        <h2 class="text-center">فرم دوره عقیدتی</h2>
-        <form method="post" class="form-horizontal">
-            {% csrf_token %}
-            {% for field in form %}
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">{{ field.label_tag }}</label>
-                    <div class="col-sm-10">
-                        {{ field }}
-                        {% if field.errors %}
-                            <div class="text-danger">{{ field.errors }}</div>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endfor %}
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" class="btn btn-success">ذخیره</button>
-                    <a href="{% url 'religious_period_list' %}" class="btn btn-default">بازگشت</a>
-                </div>
+        <div class="panel panel-primary">
+            <div class="panel-heading text-center">
+                <h3 class="panel-title">
+                    <i class="glyphicon glyphicon-book"></i>
+                    فرم ثبت دوره عقیدتی
+                </h3>
             </div>
-        </form>
+            <div class="panel-body">
+                <form method="post" class="form-horizontal" novalidate>
+                    {% csrf_token %}
+
+                    <div class="form-group{% if form.name.errors %} has-error{% endif %}">
+                        <label class="col-sm-2 control-label">{{ form.name.label }}</label>
+                        <div class="col-sm-10">
+                            {{ form.name }}
+                            {% if form.name.help_text %}
+                                <span class="help-block text-muted">{{ form.name.help_text }}</span>
+                            {% endif %}
+                            {% for error in form.name.errors %}
+                                <span class="help-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="form-group{% if form.date.errors %} has-error{% endif %}">
+                        <label class="col-sm-2 control-label">{{ form.date.label }}</label>
+                        <div class="col-sm-10">
+                            {{ form.date }}
+                            {% for error in form.date.errors %}
+                                <span class="help-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="form-group{% if form.description.errors %} has-error{% endif %}">
+                        <label class="col-sm-2 control-label">{{ form.description.label }}</label>
+                        <div class="col-sm-10">
+                            {{ form.description }}
+                            {% for error in form.description.errors %}
+                                <span class="help-block">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-success">
+                                <i class="glyphicon glyphicon-ok"></i> ذخیره
+                            </button>
+                            <a href="{% url 'religious_period_list' %}" class="btn btn-default">
+                                <i class="glyphicon glyphicon-arrow-left"></i> بازگشت
+                            </a>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
     </div>
 {% endblock %}

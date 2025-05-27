@@ -119,6 +119,7 @@
                         <td> {{ soldier.service_entry_date|to_jalali }}</td>
                         <td>{{ soldier.service_entry_date|to_jalali }}</td>
                         <td>{{ soldier.service_end_date|to_jalali }}</td>
+                        <td><a href="{% url 'soldires_new_status_view' pk=soldier.pk %}">a</a></td>
                     </tr>
                 {% endfor %}
                 </tbody>

@@ -16,5 +16,6 @@ urlpatterns = [
     path('mental-health/due/', views.due_mental_health_letters, name='due_mental_health_letters'),
     path('soldiers-by-entry-date/', views.soldiers_by_entry_date, name='soldiers_by_entry_date'),
     path('incomplete_soldiers_list/', views.incomplete_soldiers_list, name='incomplete_soldiers_list'),
+    path('soldier/new/status/<int:pk>/letters/', views.soldires_new_status_view, name='soldires_new_status_view'),
 
 ]

@@ -1,0 +1,161 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+
+{% block header %}
+    <style>
+        .card-box {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 15px;
+            background-color: #fff;
+        }
+
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 5px;
+        }
+
+        .section-header {
+            font-size: 20px;
+            margin-top: 30px;
+            color: #4CAF50;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 5px;
+        }
+
+        .label-status {
+            font-size: 13px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            display: inline-block;
+        }
+
+        .label-ایجاد {
+            background: #f0ad4e;
+            color: #fff;
+        }
+
+        .label-بررسی {
+            background: #5bc0de;
+            color: #fff;
+        }
+
+        .label-تایید {
+            background: #5cb85c;
+            color: #fff;
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+
+
+    <div class="container">
+
+        <!-- اطلاعات سرباز -->
+        <div class="card-box">
+            <div class="card-title">
+                <i class="glyphicon glyphicon-user"></i> اطلاعات سرباز
+            </div>
+            <p><strong>نام:</strong> {{ soldier.first_name }} {{ soldier.last_name }}</p>
+            <p><strong>کد ملی:</strong> {{ soldier.national_code }}</p>
+            <p><strong>یگان:</strong> {{ soldier.unit }}</p>
+            <!-- هر اطلاعات دیگری خواستی اینجا اضافه کن -->
+        </div>
+
+        <!-- نامه‌های عادی -->
+        <h3 class="section-header"><i class="glyphicon glyphicon-envelope"></i> نامه‌های عادی</h3>
+        {% for status in status_list_normal %}
+            <div class="card-box">
+                <div class="card-title">
+                    <i class="glyphicon glyphicon-tag"></i>
+                    وضعیت:
+                    {% if "ایجاد" in status %}
+                        <span class="label label-status label-ایجاد">{{ status }}</span>
+                    {% elif "بررسی" in status %}
+                        <span class="label label-status label-بررسی">{{ status }}</span>
+                    {% elif "تایید" in status %}
+                        <span class="label label-status label-تایید">{{ status }}</span>
+                    {% else %}
+                        {{ status }}
+                    {% endif %}
+                </div>
+                <table class="table table-hover table-bordered">
+                    <thead>
+                    <tr>
+                        <th>شماره نامه</th>
+                        <th>نوع</th>
+                        <th>تاریخ</th>
+                        <th>مقصد</th>
+                        <th>توضیحات</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for letter in normal_letters %}
+                        {% if letter.status == status %}
+                            <tr>
+                                <td>{{ letter.letter_number }}</td>
+                                <td>{{ letter.get_letter_type_display }}</td>
+                                <td>{{ letter.date }}</td>
+                                <td>{{ letter.destination }}</td>
+                                <td>{{ letter.description|default:"—" }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+
+        <!-- نامه‌های معرفی -->
+        <h3 class="section-header"><i class="glyphicon glyphicon-briefcase"></i> نامه‌های معرفی</h3>
+        {% for status in status_list_intro %}
+            <div class="card-box">
+                <div class="card-title">
+                    <i class="glyphicon glyphicon-tag"></i>
+                    وضعیت:
+                    {% if "ایجاد" in status %}
+                        <span class="label label-status label-ایجاد">{{ status }}</span>
+                    {% elif "بررسی" in status %}
+                        <span class="label label-status label-بررسی">{{ status }}</span>
+                    {% elif "تأیید" in status %}
+                        <span class="label label-status label-تایید">{{ status }}</span>
+                    {% else %}
+                        {{ status }}
+                    {% endif %}
+                </div>
+                <table class="table table-hover table-bordered">
+                    <thead>
+                    <tr>
+                        <th>شماره نامه</th>
+                        <th>نوع</th>
+                        <th>تاریخ</th>
+                        <th>قسمت</th>
+                        <th>زیرقسمت</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for letter in intro_letters %}
+                        {% if letter.status == status %}
+                            <tr>
+                                <td>{{ letter.letter_number }}</td>
+                                <td>{{ letter.get_letter_type_display }}</td>
+                                <td>{{ letter.letter_date }}</td>
+                                <td>{{ letter.part|default:"—" }}</td>
+                                <td>{{ letter.sub_part|default:"—" }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+
+    </div>
+{% endblock %}

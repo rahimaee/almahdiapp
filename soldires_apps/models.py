@@ -300,10 +300,21 @@ class Soldier(models.Model):
     )
     absorption = models.BooleanField(default=False, verbose_name='جذبی؟')
     Is_the_Basij_sufficient = models.BooleanField(default=False, verbose_name='کفایتدار بسیج')
-    height = models.CharField(max_length=200,null=True,blank=True,verbose_name='قد')
-    weight =models.CharField(max_length=200,null=True,blank=True,verbose_name='وزن')
-    eye_color = models.CharField(max_length=200,null=True,blank=True,verbose_name='رنگ چشم')
-    hair_color = models.CharField(max_length=200,null=True,blank=True,verbose_name='رنگ مو')
+    height = models.CharField(max_length=200, null=True, blank=True, verbose_name='قد')
+    weight = models.CharField(max_length=200, null=True, blank=True, verbose_name='وزن')
+    eye_color = models.CharField(max_length=200, null=True, blank=True, verbose_name='رنگ چشم')
+    hair_color = models.CharField(max_length=200, null=True, blank=True, verbose_name='رنگ مو')
+    STATUS_CHOICES = [
+        ('توجیحی', 'توجیحی'),
+        ('حین خدمت', 'حین خدمت'),
+        ('پایان خدمت', 'پایان خدمت'),
+        ('انتقالی', 'انتقالی'),
+        ('قبولی در دانشگاه', 'قبولی در دانشگاه'),
+        ('استخدام در نیروهای مسلح', 'استخدام در نیروهای مسلح'),
+    ]
+    status = models.CharField(max_length=200, choices=STATUS_CHOICES, null=True, blank=True, verbose_name='وضعیت فرد')
+    is_checked_out = models.BooleanField(default=False, verbose_name='تسویه حساب')
+
     IMPORTANT_FIELDS = [
         'first_name',
         'last_name',
