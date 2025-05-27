@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-
 from accounts_apps.decorators import feature_required
 from soldires_apps.models import Soldier
 from .models import NaserinGroup
 from .forms import NaserinGroupForm
+from accounts_apps.models import MyUser
 
 
 @feature_required('ایجاد گروه ناصرین')
@@ -37,9 +37,7 @@ def naserin_list(request):
     return render(request, 'soldire_naserin_apps/list.html', {'groups': groups})
 
 
-from accounts_apps.models import MyUser
-
-
+# word here i mohammad
 @feature_required('جدول افراد و گروه های ناصرین')
 def soldire_naserin_list(request):
     groups = NaserinGroup.objects.all()
