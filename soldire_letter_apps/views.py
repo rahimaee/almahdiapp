@@ -603,6 +603,10 @@ def health_iodine_letter_delete(request, pk):
         form = IntroductionLetterForm(instance=letter)
     return render(request, 'soldire_letter_apps/health_iodine_letter_form.html', {'form': form})
 
+def print_health_iodine(request, letter_id):
+    letter = NormalLetterHealthIodine.objects.get(id=letter_id)
+    
+    return render(request, 'soldire_letter_apps/print_health_iodine.html', {'letter': letter.normal_letter , 'health_letter':letter})
 
 def commitment_letter_list(request):
     query = request.GET.get('q', '')

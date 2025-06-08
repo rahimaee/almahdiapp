@@ -1,10 +1,166 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'shared/_LetterA5.html' %}
+{% load static %}
+{% load jalali_filters %}
 
-</body>
-</html>
+{% block title %}نامه معرفی به قسمت{% endblock %}
+
+{% block content %}
+<style>
+    .content {
+        padding:5px;
+    }
+    .custom-content{
+        font-size:14px;
+    }
+    .content-masol {
+        padding:10px 5px;
+    }
+    .signature-masol {
+        width:40%;
+        height:48px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-weight:bold;
+        color:#aaa;
+        
+    }
+    .footer-masol {
+        display:flex;
+        justify-content:space-between;
+        align-items:end;
+        
+    }
+    .footer-masol .org-code {
+        margin-top:0;
+    }
+</style>
+<div>
+  با صلوات بر محمد (ص) و آل محمد (ص) و با احترام،
+  بدین‌وسیله سرباز وظیفه
+  <strong>{{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</strong>
+  فرزند <strong>{{ letter.soldier.father_name }}</strong>
+  با شماره ملی <strong>{{ letter.soldier.national_code }}</strong>،
+  کد سربازی <strong>{{ letter.soldier.sarbazi_code }}</strong> و
+  تاریخ اعزام <strong>{{ letter.soldier.enlistment_date|to_jalali }}</strong>
+  در تاریخ <strong>{{ letter.letter_date|to_jalali }}</strong>
+  جهت به‌کارگیری به عنوان
+  <strong>«{{ letter.sub_part }}»</strong>
+  حضورتان معرفی می‌گردد.
+</div>
+{% endblock %}
+
+{% block pages %}
+
+<div class="page">
+    <div class="print-content">
+    <!-- هدر -->
+    <div class="header">
+        <div class="left-info">
+            <strong>تاریخ:</strong> {{ letter.date|to_jalali }}<br>
+            <strong>شماره نامه:</strong> {{ letter.letter_number }}
+        </div>
+        <div>
+            <img src="{% static 'img/allah-placeholder.png' %}" alt="آرم وسط">
+        </div>
+        <div class="sepah-logo">
+            <img src="{% static 'img/Sepah.png' %}" alt="آرم راست">
+        </div>
+    </div>
+
+    <!-- شعار ثابت -->
+    <div class="slogan">
+      «افزایش توان دفاع همه‌جانبه در سال جهش تولید با مشارکت مردم»
+    </div>
+
+    <!-- محتوای متغیر نامه -->
+    <div class="content-box">
+        <div>
+           {{ letter.destination }}
+           <br>
+    <strong>از:</strong> قسمت نیروی انسانی آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه
+  </div>
+      <div style="margin-top:10px; font-weight:bold;">
+         موضوع: {{ letter.letter_type }}
+      </div>
+      
+      <div  class="content flex-content">
+        <div class="custom-content">
+        با صلوات بر محمد (ص) و آل محمد (ص) و با احترام،
+        بدین‌وسیله سرباز وظیفه
+        <strong>{{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</strong>
+        فرزند <strong>{{ letter.soldier.father_name }}</strong>
+        با شماره ملی <strong>{{ letter.soldier.national_code }}</strong>،
+        کد سربازی <strong>{{ letter.soldier.sarbazi_code }}</strong> و
+        تاریخ اعزام <strong>{{ letter.soldier.enlistment_date|to_jalali }}</strong>
+        در تاریخ <strong>{{ letter.letter_date|to_jalali }}</strong>
+        جهت به‌کارگیری به عنوان
+        <strong>«{{ letter.sub_part }}»</strong>
+        حضورتان معرفی می‌گردد.
+        </div>
+      </div>
+      
+      <div style="margin-top:0px;" class="footer">
+        <div class="signature">
+          <div class="signature-box"></div>
+          <div class="signature-name">
+             <span class="manager-dagre">سرهنگ دوم پاسدار</span>
+            <span style="margin:0 20px;"></span>
+            <span class="manager-name">رضا سروی</span>
+          </div>
+          <div class="manager-title">
+            مدیر نیروی انسانی آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه
+          </div>
+        </div>
+      </div>
+
+    </div>
+    {% if letter.soldier.organizational_code %}
+    <div class="org-code">
+      <span class="code-badge">{{ letter.soldier.organizational_code }}</span>
+    </div>
+    {% endif %}
+
+    <div class="breaker"></div>
+<div class="masol-box">
+    <div class="content-box">
+        <div >
+            <strong>به:</strong>
+            {% if letter.part %}
+                {{ letter.part.title }} آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه
+            {% else %}
+                آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه
+            {% endif %}
+            <br>
+            <strong>از:</strong> قسمت نیروی انسانی آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه
+        </div>
+        <div class="content-masol">
+            با احترام بدین‌وسیله، بازگشت به نامه‌ی شماره‌ی 
+            <strong>5351</strong> مورخ <strong>1403/10/02</strong>
+            به اطلاع می‌رسد سرباز وظیفه
+            <strong>{{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</strong>
+            فرزند <strong>{{ letter.soldier.father_name }}</strong>
+            خود را در تاریخ <strong>{{ letter.letter_date|to_jalali }}</strong> 
+            به این قسمت معرفی نموده است.
+        </div>
+
+        <div class="footer-masol">
+
+        {% if letter.soldier.organizational_code %}
+            <div class="org-code">
+            <span class="code-badge">{{ letter.soldier.organizational_code }}</span>
+            </div>
+        {% endif %}
+        <div class="signature-masol signature-shape">
+            امضای مسئول
+        </div>
+        </div>
+    </div>
+    </div>
+    
+</div>
+  </div>
+</div>
+
+
+{% endblock %}
