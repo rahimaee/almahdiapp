@@ -2,81 +2,176 @@
 {% load static %}
 {% load jalali_filters %}
 
-
-
 {% block main %}
-    <div class="container">
-        <h2>لیست نامه‌ها</h2>
+<style>
+    .modern-table-container {
+        margin-top: 2rem;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        background: #fff;
+    }
 
-        <form method="get" class="form-inline mb-3">
-            <input type="text" name="q" class="form-control mr-2" placeholder="جستجو..." value="{{ query }}">
-            <button type="submit" class="btn btn-primary">جستجو</button>
-            <a href="{% url 'health_iodine_letter_create' %}" class="btn btn-success ml-3">ایجاد نامه جدید</a>
-        </form>
+    .modern-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
 
-        <table class="table table-bordered table-striped">
-            <thead>
-            <tr>
-                <th>شماره نامه</th>
-                <th>تاریخ</th>
-                <th>نام سرباز</th>
-                <th>کد ملی</th>
-                <th>نوع نامه</th>
-                <th>وضعیت</th>
-                <th>عملیات</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for letter in page_obj %}
-                <tr>
-                    <td>{{ letter.normal_letter.letter_number }}</td>
-                    <td>{{ letter.normal_letter.date|to_jalali }}</td>
-                    <td>{{ letter.normal_letter.soldier.first_name }} {{ letter.soldier.last_name }}</td>
-                    <td>{{ letter.normal_letter.soldier.national_code }}</td>
-                    <td>{{ letter.part.name }}</td>
-                    <td>{{ letter.sub_part.name }}</td>
-                    <td>{{ letter.normal_letter.status }}</td>
-                    <td>{{ letter }}</td>
-                    <td>
-                        <a href="{% url 'print_introduction_letter' letter.id %}"
-                           class="btn btn-sm btn-success">چاپ</a>
-                        <a href="{% url 'approved_introduction_letter' letter_id=letter.id %}"
-                           class="btn btn-sm btn-facebook">تایید</a>
-                        <a href="{% url 'introduction_letter_update' letter.id %}"
-                           class="btn btn-sm btn-warning">ویرایش</a>
-                        <a href="{% url 'introduction_letter_delete' letter.id %}" class="btn btn-sm btn-danger">حذف</a>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="7">موردی یافت نشد.</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+    .modern-table thead {
+        background: linear-gradient(to left, #4e73df, #224abe);
+        color: white;
+        font-weight: bold;
+    }
 
-        <nav>
-            <ul class="pagination">
+    .modern-table th,
+    .modern-table td {
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .modern-table tbody tr {
+        transition: background-color 0.3s ease;
+        border-bottom: 1px solid #eee;
+    }
+
+    .modern-table tbody tr:hover {
+        background-color: #f0f4ff;
+    }
+
+    .btn-create {
+        background: linear-gradient(to left, #1cc88a, #17a673);
+        color: white;
+        border-radius: 6px;
+        padding: 8px 20px;
+        font-weight: 500;
+    }
+
+    .btn-create:hover {
+        opacity: 0.95;
+    }
+
+    .header-tools {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        padding:15px;
+        gap:1rem;
+    }
+
+    .search-form {
+        display:flex;
+        align-items:center;
+        border:1px solid gray;
+        border-radius: 6px;
+    }
+
+    .search-form input {
+        border: none;
+        outline: none;
+        border-radius: 6px;
+        padding-right: 6px;
+        width: 200px;
+    }
+
+    .table-actions a {
+        padding: 4px 10px;
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+        color: white !important;
+        border-radius: 6px;
+    }
+
+    .table-actions a.bg-success { background-color: #28a745; }
+    .table-actions a.bg-primary { background-color: #007bff; }
+    .table-actions a.bg-warning { background-color: #ffc107; color: black !important; }
+    .table-actions a.bg-danger  { background-color: #dc3545; }
+
+    .table-actions a:hover {
+        transform: translateY(-1px);
+        opacity: 0.9;
+    }
+    .header-tools .center-box {
+        flex:1;
+        display:flex;
+        align-items:center;
+        justify-content:end;
+    }
+    .pagination .page-link {
+        border-radius: 10px !important;
+    }
+    
+    .pagination {
+        margin:0;
+    }
+</style>
+
+<div class="container">
+    <h2 class="fw-bold text-primary text-center">📄 فهرست نامه‌های بهداشت</h2>
+
+    <div class="modern-table-container">
+        <div class="header-tools mb-3">
+            <a href="{% url 'health_iodine_letter_create' %}" class="btn btn-create">➕ ایجاد نامه جدید</a>
+               <div class="center-box"> 
+            <ul class="pagination justify-content-center">
                 {% if page_obj.has_previous %}
-                    <li class="page-item"><a class="page-link"
-                                             href="?page={{ page_obj.previous_page_number }}&q={{ query }}">قبلی</a>
-                    </li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ query }}">«</a></li>
                 {% endif %}
-
                 {% for num in page_obj.paginator.page_range %}
                     <li class="page-item {% if page_obj.number == num %}active{% endif %}">
                         <a class="page-link" href="?page={{ num }}&q={{ query }}">{{ num }}</a>
                     </li>
                 {% endfor %}
-
                 {% if page_obj.has_next %}
-                    <li class="page-item"><a class="page-link"
-                                             href="?page={{ page_obj.next_page_number }}&q={{ query }}">بعدی</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ query }}">»</a></li>
                 {% endif %}
             </ul>
-        </nav>
+        </div>
+            <form method="get" class="search-form d-flex align-items-center gap-2">
+                <input type="text" name="q" class="form-control" placeholder="عبارت..." value="{{ query }}">
+                <button type="submit" class="btn btn-outline-primary btn-sm">جستجو 🔍</button>
+            </form>
+        </div>
 
+        <table class="modern-table">
+            <thead>
+                <tr>
+                    <th>شماره نامه</th>
+                    <th>تاریخ</th>
+                    <th>نام سرباز</th>
+                    <th>کد ملی</th>
+                    <th>قسمت</th>
+                    <th>زیرقسمت</th>
+                    <th>وضعیت</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for letter in page_obj %}
+                    <tr>
+                        <td>{{ letter.normal_letter.letter_number }}</td>
+                        <td>{{ letter.normal_letter.date|to_jalali }}</td>
+                        <td>{{ letter.normal_letter.soldier.first_name }} {{ letter.soldier.last_name }}</td>
+                        <td>{{ letter.normal_letter.soldier.national_code }}</td>
+                        <td>{{ letter.part.name }}</td>
+                        <td>{{ letter.sub_part.name }}</td>
+                        <td><span class="badge bg-info text-dark">{{ letter.normal_letter.get_status_display }}</span></td>
+                        <td class="table-actions">
+                            <a href="{% url 'print_health_iodine' letter.id %}" class="bg-success">🖨 چاپ</a>
+                            <a href="{% url 'approved_introduction_letter' letter_id=letter.id %}" class="bg-primary">✔ تایید</a>
+                            <a href="{% url 'introduction_letter_update' letter.id %}" class="bg-warning">✏ ویرایش</a>
+                            <a href="{% url 'introduction_letter_delete' letter.id %}" class="bg-danger">🗑 حذف</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted">موردی یافت نشد.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+            
     </div>
-
+</div>
 {% endblock %}
-

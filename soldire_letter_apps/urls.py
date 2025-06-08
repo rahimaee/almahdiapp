@@ -34,6 +34,7 @@ urlpatterns = [
     path('health_iodine_letter/create/', health_iodine_letter_create, name='health_iodine_letter_create'),
     path('health_iodine_letter/<int:pk>/update/', health_iodine_letter_update, name='health_iodine_letter_update'),
     path('health_iodine_letter/<int:pk>/delete/', health_iodine_letter_delete, name='health_iodine_letter_delete'),
+    path('health_iodine_letter/print/<int:letter_id>/', print_health_iodine, name='print_health_iodine'),
     path('commitment_letter/', commitment_letter_list, name='commitment_letter_list'),
     path('commitment_letter/create/', commitment_letter_create, name='commitment_letter_create'),
     path('commitment_letter/<int:pk>/update/', commitment_letter_update, name='commitment_letter_update'),

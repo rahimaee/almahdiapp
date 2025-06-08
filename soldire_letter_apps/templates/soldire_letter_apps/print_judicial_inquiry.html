@@ -1,10 +1,280 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% load jalali_filters %}
 
-</body>
-</html>
+{% block main %}
+<style>
+.custom-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    inset: 0; 
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+  }
+
+  .custom-modal-content {
+    background: #fff;
+    padding: 25px 30px 35px;
+    border-radius: 10px;
+    position: relative;
+    direction: rtl;
+    box-shadow: 0 0 18px rgb(0 0 0 / 0.2);
+    overflow-y: auto;
+    max-height: 90vh;
+  }
+
+  .custom-modal-header {
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    text-align: center;
+    letter-spacing: 0.7px;
+  }
+  #print-content {
+    margin:0;
+    padding:10px;
+    box-sizing:border-box;
+  }
+  .page-A0 {
+    width: 841mm;
+  }
+
+  .page-A1 {
+    width: 594mm;
+  }
+
+  .page-A2 {
+    width: 420mm;
+  }
+
+  .page-A3 {
+    width: 297mm;
+  }
+
+  .page-A4 {
+    width: 210mm;
+  }
+
+  .page-A5 {
+    width: 148mm;
+  }
+
+  .page-A6 {
+    width: 105mm;
+  }
+
+
+  .custom-modal-close:hover {
+    background-color: #c0392b;
+  }
+
+  .letter-container {
+    font-family: "IRANSans", Tahoma, sans-serif;
+    direction: rtl;
+    padding: 15px 20px;
+  }
+
+  .letter-border {
+    border: 2px solid black;
+    padding: 25px 35px;
+    border-radius: 12px;
+    background-color: white;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .letter-border h2 {
+    font-weight: 900;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    text-align: center;
+    letter-spacing: 1.2px;
+  }
+
+  .letter-border hr {
+    border: none;
+    border-top: 2.5px solid #333;
+    margin: 0 0 22px 0;
+  }
+
+  .letter-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 5px;
+  }
+
+  .letter-table td {
+    padding: 12px 10px;
+    vertical-align: top;
+    font-size: 1.05rem;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .letter-table td:first-child {
+    font-weight: 700;
+    width: 35%;
+    color: #222;
+  }
+
+  .letter-table td:last-child {
+    color: #555;
+  }
+
+  .signature {
+    margin-top: 45px;
+    font-size: 1.1rem;
+    color: #222;
+  }
+
+
+  
+  @media (max-width: 768px) {
+    form.form-inline {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .print-btn {
+      max-width: 100%;
+      padding: 12px;
+      font-size: 1.1rem;
+    }
+
+    table.table th, table.table td {
+      font-size: 0.85rem;
+      padding: 10px 8px;
+    }
+  }
+
+  @media print {
+    @page {
+      margin: 0; 
+    }
+
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    body  *  {
+      visibility: hidden !important;
+    }
+
+    #print-content, #print-content * {
+      visibility: visible !important;
+    }
+
+    .print-btn, .close-btn {
+      display: none !important;
+    }
+  }
+
+    .bismillah {
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .logo {
+      text-align: center;
+      flex: 1;
+    }
+
+    .logo img {
+      width: 80px;
+    }
+
+    .date-info {
+      text-align: left;
+      font-size: 14px;
+      flex: 1;
+    }
+
+    .slogan {
+      margin-top: 30px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .from-to {
+      margin-top: 25px;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .content {
+      margin-top: 20px;
+      font-size: 16px;
+      line-height: 2;
+      text-align: justify;
+    }
+
+    .signature {
+      margin-top: 60px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .signature p {
+      margin: 0;
+    }
+</style>
+<div id="print-content" class="letter-border" aria-live="polite" aria-atomic="true">
+  
+  <table>
+    <tbody>
+      <tr>
+        <td>
+              <div style="text-align: center;">
+      <img src="{% static 'img/Sepah.png' %}" alt="آرم سپاه" width="40">
+    </div>
+        </td>
+        <td col>
+            <div style="text-align: center; font-size: 20px; font-weight: bold; font-size:20px">بسم الله الرحمن الرحیم</div>
+        </td>
+          <td>
+            <div style="text-align: left; font-size: 10px;">
+              <strong>تاریخ:</strong> <span id="modal-date"></span><br>
+              <strong> شماره نامه: </strong> <span id="modal-letter-number"></span>
+            </div>
+          </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <br/>
+  <div style="text-align: center; margin-top: 20px; font-weight: bold;">«سال ۱۴۰۳؛ سال رشد تولید، مشارکت‌های مردمی»</div>
+
+  <div style="margin-top: 15px;">
+    از: معاونت اداری و پشتیبانی<br>
+    به: ستاد نیروی انسانی
+  </div>
+  <div style="margin-top: 20px; font-size: 16px; line-height: 2; text-align: justify;">
+    با سلام و احترام،<br><br>
+    بدین‌وسیله به اطلاع می‌رساند سرباز محترم جناب آقای <strong><span id="modal-first-name"></span> <span id="modal-last-name"></span></strong>
+    با کد ملی <strong><span id="modal-national-code"></span></strong>، به دلیل <strong><span id="modal-reason"></span></strong>، 
+    موضوع نامه <strong><span id="modal-subject"></span></strong>، در تاریخ <strong><span id="modal-date"></span></strong> 
+    نسبت به تسویه حساب داخلی اقدام نموده‌اند.<br><br>
+    وضعیت نهایی ایشان: <strong><span id="modal-status"></span></strong> می‌باشد.<br>
+    لطفاً اقدامات لازم جهت بایگانی پرونده انجام گردد.
+  </div>
+
+  <div class="signature" style="text-align: center; margin-top: 60px;">
+    با احترام،<br>
+    مسئول پرونده
+  </div>
+</div>
+{% endblock %}

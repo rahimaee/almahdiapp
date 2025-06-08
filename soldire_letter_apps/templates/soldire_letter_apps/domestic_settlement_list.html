@@ -1,77 +1,657 @@
 {% extends 'shared/_PanelMain.html' %}
 {% load static %}
 {% load jalali_filters %}
+
 {% block main %}
+<style>
+  * {
+    box-sizing: border-box;
+  }
 
-    <div class="container">
-        <h3>لیست نامه‌های توسیه حساب داخلی</h3>
+  body {
+    font-family: "IRANSans", Tahoma, sans-serif;
+    direction: rtl;
+    background-color: #f9f9f9;
+    color: #333;
+  }
 
-        <form method="get" class="form-inline" style="margin-bottom: 20px;">
-            <input type="text" name="q" class="form-control" placeholder="جستجو..." value="{{ request.GET.q }}">
-            <button type="submit" class="btn btn-default">جستجو</button>
-            <a href="{% url 'judicial_inquiry_create' %}" class="btn btn-success pull-left">نامه جدید</a>
-        </form>
+  .container {
+    max-width: 1100px;
+    margin: 30px auto 60px;
+    padding: 0 15px;
+  }
 
-        <table class="table table-bordered table-striped table-hover">
-            <thead>
-            <tr>
-                <th>شماره نامه</th>
-                <th>نام</th>
-                <th>نام خانوادگی</th>
-                <th>کد ملی</th>
-                <th>علت تسویه</th>
-                <th>موضوع</th>
-                <th>تاریخ</th>
-                <th>وضعیت</th>
-                <th>عملیات</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for domestic_settlement in page_obj %}
-                <tr>
-                    <td>{{ domestic_settlement.normal_letter.letter_number }}</td>
-                    <td>{{ domestic_settlement.normal_letter.soldier.first_name }}</td>
-                    <td>{{ domestic_settlement.normal_letter.soldier.last_name }}</td>
-                    <td>{{ domestic_settlement.normal_letter.soldier.national_code }}</td>
-                    <td>{{ domestic_settlement.get_reason_display }}</td>
-                    <td>{{ domestic_settlement.subject }}</td>
-                    <td>{{ domestic_settlement.normal_letter.date|to_jalali }}</td>
-                    <td>{{ domestic_settlement.normal_letter.get_status_display }}</td>
-                    <td>
-                        <a href="{% url 'print_domestic_settlement' domestic_settlement.normal_letter.id %}"
-                           class="btn btn-xs btn-facebook">چاپ</a>
-                        <a href="{% url 'approved_domestic_settlement' domestic_settlement.normal_letter.id %}"
-                           class="btn btn-xs btn-success">تایید</a>
-                        <a href="{% url 'domestic_settlement_delete' domestic_settlement.pk %}"
-                           class="btn btn-xs btn-danger">حذف</a>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="9" class="text-center">هیچ نامه‌ای یافت نشد.</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+  h3 {
+    margin-bottom: 25px;
+    font-weight: 700;
+    color: #222;
+    text-align: center;
+    font-size: 1.8rem;
+  }
 
-        {% if page_obj.has_other_pages %}
-            <ul class="pagination">
-                {% if page_obj.has_previous %}
-                    <li><a href="?q={{ request.GET.q }}&page=1">&laquo;</a></li>
-                    <li><a href="?q={{ request.GET.q }}&page={{ page_obj.previous_page_number }}">&lsaquo;</a></li>
-                {% endif %}
-                {% for num in page_obj.paginator.page_range %}
-                    {% if page_obj.number == num %}
-                        <li class="active"><a>{{ num }}</a></li>
-                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                        <li><a href="?q={{ request.GET.q }}&page={{ num }}">{{ num }}</a></li>
-                    {% endif %}
-                {% endfor %}
-                {% if page_obj.has_next %}
-                    <li><a href="?q={{ request.GET.q }}&page={{ page_obj.next_page_number }}">&rsaquo;</a></li>
-                    <li><a href="?q={{ request.GET.q }}&page={{ page_obj.paginator.num_pages }}">&raquo;</a></li>
-                {% endif %}
-            </ul>
+  form.form-inline {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+  }
+
+  form.form-inline input[type="text"] {
+    flex-grow: 1;
+    min-width: 200px;
+    padding: 8px 12px;
+    border: 1.8px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+  form.form-inline input[type="text"]:focus {
+    outline: none;
+    border-color: #4caf50;
+    box-shadow: 0 0 5px #4caf50a6;
+  }
+
+  form.form-inline button,
+  form.form-inline a.btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  form.form-inline button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+  form.form-inline button:hover {
+    background-color: #45a049;
+  }
+
+  form.form-inline a.btn {
+    background-color: #007bff;
+    color: white;
+  }
+  form.form-inline a.btn.pull-left {
+    margin-left: auto;
+  }
+  form.form-inline a.btn:hover {
+    background-color: #0056b3;
+  }
+
+  table.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+  }
+
+  table.table thead {
+    background-color: #4caf50;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  table.table th,
+  table.table td {
+    padding: 12px 14px;
+    text-align: center;
+    border-bottom: 1px solid #e2e2e2;
+    vertical-align: middle;
+    font-size: 0.95rem;
+  }
+
+  table.table tbody tr:hover {
+    background-color: #f1f8e9;
+  }
+
+  table.table tbody tr td.text-center {
+    padding: 40px 0;
+    font-size: 1.1rem;
+    color: #999;
+    font-style: italic;
+  }
+
+  .btn {
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    transition: background-color 0.25s ease;
+    user-select: none;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-sm {
+    font-size: 0.8rem;
+    padding: 5px 9px;
+  }
+  .btn-xs {
+    font-size: 0.75rem;
+    padding: 4px 7px;
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    color: #fff;
+  }
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+
+  .btn-facebook {
+    background-color: #3b5998;
+    color: white;
+  }
+  .btn-facebook:hover {
+    background-color: #2d4373;
+  }
+
+  .btn-success {
+    background-color: #28a745;
+    color: white;
+  }
+  .btn-success:hover {
+    background-color: #1e7e34;
+  }
+
+  .btn-danger {
+    background-color: #dc3545;
+    color: white;
+  }
+  .btn-danger:hover {
+    background-color: #a71d2a;
+  }
+
+  ul.pagination {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+    margin-top: 25px;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+
+  ul.pagination li {
+    display: inline-block;
+  }
+
+  ul.pagination li a,
+  ul.pagination li .active {
+    display: block;
+    padding: 6px 11px;
+    border-radius: 5px;
+    border: 1.5px solid #4caf50;
+    color: #4caf50;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    min-width: 32px;
+    text-align: center;
+    user-select: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  ul.pagination li .active {
+    background-color: #4caf50;
+    color: white;
+    cursor: default;
+  }
+
+  ul.pagination li a:hover {
+    background-color: #4caf50;
+    color: white;
+  }
+
+  .custom-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    inset: 0; 
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+  }
+
+  .custom-modal-content {
+    background: #fff;
+    padding: 25px 30px 35px;
+    border-radius: 10px;
+    position: relative;
+    direction: rtl;
+    box-shadow: 0 0 18px rgb(0 0 0 / 0.2);
+    overflow-y: auto;
+    max-height: 90vh;
+  }
+
+  .custom-modal-header {
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    text-align: center;
+    letter-spacing: 0.7px;
+  }
+  #print-content {
+    margin:0;
+    padding:10px;
+    box-sizing:border-box;
+  }
+  .page-A0 {
+    width: 841mm;
+  }
+
+  .page-A1 {
+    width: 594mm;
+  }
+
+  .page-A2 {
+    width: 420mm;
+  }
+
+  .page-A3 {
+    width: 297mm;
+  }
+
+  .page-A4 {
+    width: 210mm;
+  }
+
+  .page-A5 {
+    width: 148mm;
+  }
+
+  .page-A6 {
+    width: 105mm;
+  }
+
+
+  .custom-modal-close:hover {
+    background-color: #c0392b;
+  }
+
+  .letter-container {
+    font-family: "IRANSans", Tahoma, sans-serif;
+    direction: rtl;
+    padding: 15px 20px;
+  }
+
+  .letter-border {
+    border: 2px solid black;
+    padding: 25px 35px;
+    border-radius: 12px;
+    background-color: white;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .letter-border h2 {
+    font-weight: 900;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    text-align: center;
+    letter-spacing: 1.2px;
+  }
+
+  .letter-border hr {
+    border: none;
+    border-top: 2.5px solid #333;
+    margin: 0 0 22px 0;
+  }
+
+  .letter-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 5px;
+  }
+
+  .letter-table td {
+    padding: 12px 10px;
+    vertical-align: top;
+    font-size: 1.05rem;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .letter-table td:first-child {
+    font-weight: 700;
+    width: 35%;
+    color: #222;
+  }
+
+  .letter-table td:last-child {
+    color: #555;
+  }
+
+  .signature {
+    margin-top: 45px;
+    font-size: 1.1rem;
+    color: #222;
+  }
+
+  .print-btn {
+    display: block;
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 18px;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    margin: 25px auto 0;
+    max-width: 180px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+  }
+  .close-btn {
+    background: #e74c3c;
+    display: block;
+    color: white;
+    padding: 10px 18px;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    margin: 25px auto 0;
+    max-width: 180px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+  }
+  .print-btn:hover {
+    background-color: #3a8a3a;
+  }
+
+  @media (max-width: 768px) {
+    form.form-inline {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .print-btn {
+      max-width: 100%;
+      padding: 12px;
+      font-size: 1.1rem;
+    }
+
+    table.table th, table.table td {
+      font-size: 0.85rem;
+      padding: 10px 8px;
+    }
+  }
+
+  @media print {
+    @page {
+      margin: 0; 
+    }
+
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    body  *  {
+      visibility: hidden !important;
+    }
+
+    #print-content, #print-content * {
+      visibility: visible !important;
+    }
+
+    .print-btn, .close-btn {
+      display: none !important;
+    }
+  }
+
+    .bismillah {
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .logo {
+      text-align: center;
+      flex: 1;
+    }
+
+    .logo img {
+      width: 80px;
+    }
+
+    .date-info {
+      text-align: left;
+      font-size: 14px;
+      flex: 1;
+    }
+
+    .slogan {
+      margin-top: 30px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .from-to {
+      margin-top: 25px;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .content {
+      margin-top: 20px;
+      font-size: 16px;
+      line-height: 2;
+      text-align: justify;
+    }
+
+    .signature {
+      margin-top: 60px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .signature p {
+      margin: 0;
+    }
+</style>
+
+<script>
+        function openModal(button) {
+          const letterNumber = button.getAttribute('data-letter-number');
+          const firstName = button.getAttribute('data-first-name');
+          const lastName = button.getAttribute('data-last-name');
+          const nationalCode = button.getAttribute('data-national-code');
+          const reason = button.getAttribute('data-reason');
+          const subject = button.getAttribute('data-subject');
+          const date = button.getAttribute('data-date');
+          const status = button.getAttribute('data-status');
+
+          document.getElementById('modal-letter-number').textContent = letterNumber;
+          document.getElementById('modal-first-name').textContent = firstName;
+          document.getElementById('modal-last-name').textContent = lastName;
+          document.getElementById('modal-national-code').textContent = nationalCode;
+          document.getElementById('modal-reason').textContent = reason;
+          document.getElementById('modal-subject').textContent = subject;
+          document.getElementById('modal-date').textContent = date;
+          document.getElementById('modal-status').textContent = status;
+
+          document.getElementById('custom-modal').style.display = 'flex';
+          document.body.style.overflow = 'hidden';
+
+          window.currentPrintContent = document.getElementById('print-content').innerHTML;
+        }
+
+      function closeModal() {
+        document.getElementById('custom-modal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+      function printById(elementId) {
+          window.print();
+      }
+      function printLetter() {
+        printById("print-content")
+      }
+</script>
+
+<div class="container">
+  <h3>لیست نامه‌های تسویه حساب داخلی</h3>
+
+  <form method="get" class="form-inline" role="search" aria-label="جستجوی نامه‌ها">
+    <input type="text" name="q" class="form-control" placeholder="جستجو..." value="{{ request.GET.q }}" aria-label="جستجوی نامه‌ها">
+    <button type="submit" class="btn">جستجو</button>
+    <a href="{% url 'judicial_inquiry_create' %}" class="btn pull-left">نامه جدید</a>
+  </form>
+
+  <table class="table" aria-describedby="لیست نامه‌های تسویه حساب داخلی">
+    <thead>
+      <tr>
+        <th scope="col">شماره نامه</th>
+        <th scope="col">نام</th>
+        <th scope="col">نام خانوادگی</th>
+        <th scope="col">کد ملی</th>
+        <th scope="col">علت تسویه</th>
+        <th scope="col">موضوع</th>
+        <th scope="col">تاریخ</th>
+        <th scope="col">وضعیت</th>
+        <th scope="col">عملیات</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for domestic_settlement in page_obj %}
+        <tr>
+ <td>{{ domestic_settlement.normal_letter.letter_number }}</td>
+        <td>{{ domestic_settlement.normal_letter.soldier.first_name }}</td>
+        <td>{{ domestic_settlement.normal_letter.soldier.last_name }}</td>
+        <td>{{ domestic_settlement.normal_letter.soldier.national_code }}</td>
+        <td>{{ domestic_settlement.get_reason_display }}</td>
+        <td>{{ domestic_settlement.subject }}</td>
+        <td>{{ domestic_settlement.normal_letter.date|to_jalali }}</td>
+        <td>{{ domestic_settlement.normal_letter.get_status_display }}</td>
+          <td>
+<button 
+  class="btn btn-sm btn-primary" 
+  title="مشاهده نامه" 
+  aria-label="مشاهده نامه {{ domestic_settlement.normal_letter.letter_number }}" 
+  onclick="openModal(this)"
+  data-letter-number="{{ domestic_settlement.normal_letter.letter_number }}"
+  data-first-name="{{ domestic_settlement.normal_letter.soldier.first_name }}"
+  data-last-name="{{ domestic_settlement.normal_letter.soldier.last_name }}"
+  data-national-code="{{ domestic_settlement.normal_letter.soldier.national_code }}"
+  data-reason="{{ domestic_settlement.get_reason_display }}"
+  data-subject="{{ domestic_settlement.subject }}"
+  data-date="{{ domestic_settlement.normal_letter.date|to_jalali }}"
+  data-status="{{ domestic_settlement.normal_letter.get_status_display }}"
+>مشاهده</button>
+                      <a href="{% url 'print_domestic_settlement' domestic_settlement.normal_letter.id %}"  class="btn btn-xs btn-success">چاپ</a>
+            <a href="{% url 'judicial_inquiry_edit' domestic_settlement.id %}" class="btn btn-sm btn-facebook" title="ویرایش نامه" aria-label="ویرایش نامه {{ domestic_settlement.normal_letter.letter_number }}">ویرایش</a>
+            <a href="{% url 'judicial_inquiry_delete' domestic_settlement.id %}" class="btn btn-sm btn-danger" title="حذف نامه" aria-label="حذف نامه {{ domestic_settlement.normal_letter.letter_number }}" onclick="return confirm('آیا از حذف این نامه اطمینان دارید؟');">حذف</a>
+          </td>
+        </tr>
+
+      {% empty %}
+        <tr>
+          <td colspan="9" class="text-center">هیچ داده‌ای برای نمایش وجود ندارد.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+  <nav aria-label="صفحه‌بندی نامه‌ها">
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+        <li><a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" aria-label="صفحه قبلی">&laquo;</a></li>
+      {% else %}
+        <li><span class="disabled" aria-disabled="true">&laquo;</span></li>
+      {% endif %}
+
+      {% for num in page_obj.paginator.page_range %}
+        {% if num == page_obj.number %}
+          <li><span class="active" aria-current="page">{{ num }}</span></li>
+        {% else %}
+          <li><a href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a></li>
         {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <li><a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" aria-label="صفحه بعد">&raquo;</a></li>
+      {% else %}
+        <li><span class="disabled" aria-disabled="true">&raquo;</span></li>
+      {% endif %}
+    </ul>
+  </nav>
+</div>
+
+<!-- Modal عمومی -->
+<div id="custom-modal" class="custom-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="custom-modal-content page-A5">
+<div id="print-content" class="letter-border" aria-live="polite" aria-atomic="true">
+  
+  <table>
+    <tbody>
+      <tr>
+        <td>
+              <div style="text-align: center;">
+      <img src="{% static 'img/Sepah.png' %}" alt="آرم سپاه" width="40">
     </div>
+        </td>
+        <td col>
+            <div style="text-align: center; font-size: 20px; font-weight: bold; font-size:20px">بسم الله الرحمن الرحیم</div>
+        </td>
+          <td>
+            <div style="text-align: left; font-size: 10px;">
+              <strong>تاریخ:</strong> <span id="modal-date"></span><br>
+              <strong> شماره نامه: </strong> <span id="modal-letter-number"></span>
+            </div>
+          </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <br/>
+  <div style="text-align: center; margin-top: 20px; font-weight: bold;">«سال ۱۴۰۳؛ سال رشد تولید، مشارکت‌های مردمی»</div>
+
+  <div style="margin-top: 15px;">
+    از: معاونت اداری و پشتیبانی<br>
+    به: ستاد نیروی انسانی
+  </div>
+  <div style="margin-top: 20px; font-size: 16px; line-height: 2; text-align: justify;">
+    با سلام و احترام،<br><br>
+    بدین‌وسیله به اطلاع می‌رساند سرباز محترم جناب آقای <strong><span id="modal-first-name"></span> <span id="modal-last-name"></span></strong>
+    با کد ملی <strong><span id="modal-national-code"></span></strong>، به دلیل <strong><span id="modal-reason"></span></strong>، 
+    موضوع نامه <strong><span id="modal-subject"></span></strong>، در تاریخ <strong><span id="modal-date"></span></strong> 
+    نسبت به تسویه حساب داخلی اقدام نموده‌اند.<br><br>
+    وضعیت نهایی ایشان: <strong><span id="modal-status"></span></strong> می‌باشد.<br>
+    لطفاً اقدامات لازم جهت بایگانی پرونده انجام گردد.
+  </div>
+
+  <div class="signature" style="text-align: center; margin-top: 60px;">
+    با احترام،<br>
+    مسئول پرونده
+  </div>
+</div>
+
+    <button class="print-btn" onclick="printLetter()" aria-label="چاپ نامه">چاپ نامه</button>
+    <button class="close-btn" onclick="closeModal()" aria-label="بستن پنجره">بستن</button>
+
+  </div>
+</div>
+
 {% endblock %}

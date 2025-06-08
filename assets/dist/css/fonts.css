@@ -1,0 +1,33 @@
+@font-face {
+  font-family: YekanBakh;
+  src: url("../../fonts/YekanBakh-Regular.woff2") format("woff2"),
+    url("../../fonts/YekanBakh-Regular.woff") format("woff"),
+    url("../../fonts/YekanBakh-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: YekanBakhBold;
+  src: url("../../fonts/YekanBakh-Bold.woff2") format("woff2"),
+    url("../../fonts/YekanBakh-Bold.woff") format("woff"),
+    url("../../fonts/YekanBakh-Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: Yekan;
+  src: url("../YEKAN%20PLUS.TTF") format("truetype");
+}
+
+@font-face {
+  font-family: BNazanin;
+  src: url("../BNazanin.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: Naskh;
+  src: url("../Far_Naskh.ttf") format("truetype");
+}

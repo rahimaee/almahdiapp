@@ -2,24 +2,166 @@
 {% load static %}
 {% load jalali_filters %}
 {% block main %}
-    <div class="container">
-        <h2 class="text-center">لیست نامه‌های عادی</h2>
+<style>
+           .national-card {
+        padding : 5px;
+        margin :0;
+        text-align:center;
+        font-family: YekanBakh, Yekan, Naskh, sans-serif;
+    }
+    .text-truncate {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;  
+        overflow: hidden;
+    }
 
-        <form method="get" class="form-inline text-center" style="margin-bottom: 20px;">
-            <div class="form-group">
-                <input type="text" name="q" value="{{ query }}" placeholder="جستجو..." class="form-control">
+    .full-name { 
+        font-weight:bold;
+        text-align:center;
+        margin-bottom:5px;
+    }
+    .destination {
+        max-width:300px;
+    }
+</style>
+
+<style>
+    .modern-table-container {
+        margin-top: 2rem;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        background: #fff;
+    }
+
+    .modern-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .modern-table thead {
+        background: linear-gradient(to left, #4e73df, #224abe);
+        color: white;
+        font-weight: bold;
+    }
+
+    .modern-table th,
+    .modern-table td {
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .modern-table tbody tr {
+        transition: background-color 0.3s ease;
+        border-bottom: 1px solid #eee;
+    }
+
+    .modern-table tbody tr:hover {
+        background-color: #f0f4ff;
+    }
+
+    .btn-create {
+        background: linear-gradient(to left, #1cc88a, #17a673);
+        color: white;
+        border-radius: 6px;
+        padding: 8px 20px;
+        font-weight: 500;
+    }
+
+    .btn-create:hover {
+        opacity: 0.95;
+    }
+
+    .header-tools {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        padding:15px;
+        gap:1rem;
+    }
+
+    .search-form {
+        display:flex;
+        align-items:center;
+        border:1px solid gray;
+        border-radius: 6px;
+    }
+
+    .search-form input {
+        border: none;
+        outline: none;
+        border-radius: 6px;
+        padding-right: 6px;
+        width: 200px;
+    }
+
+    .table-actions a {
+        padding: 4px 10px;
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+        color: white !important;
+        border-radius: 6px;
+    }
+
+    .table-actions a.bg-success { background-color: #28a745; }
+    .table-actions a.bg-primary { background-color: #007bff; }
+    .table-actions a.bg-warning { background-color: #ffc107; color: black !important; }
+    .table-actions a.bg-danger  { background-color: #dc3545; }
+
+    .table-actions a:hover {
+        transform: translateY(-1px);
+        opacity: 0.9;
+    }
+    .header-tools .center-box {
+        flex:1;
+        display:flex;
+        align-items:center;
+        justify-content:end;
+    }
+    .pagination .page-link {
+        border-radius: 10px !important;
+    }
+    
+    .pagination {
+        margin:0;
+    }
+</style>
+
+<div class="container">
+        <h2 class="fw-bold text-primary text-center">📄 فهرست نامه‌های عادی</h2>
+
+        <div class="modern-table-container">
+            <div class="header-tools mb-3">
+                <div class="center-box"> 
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ query }}">«</a></li>
+                    {% endif %}
+                    {% for num in page_obj.paginator.page_range %}
+                        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}&q={{ query }}">{{ num }}</a>
+                        </li>
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ query }}">»</a></li>
+                    {% endif %}
+                </ul>
             </div>
-            <button type="submit" class="btn btn-primary">جستجو</button>
-        </form>
+                <form method="get" class="search-form d-flex align-items-center gap-2">
+                    <input type="text" name="q" class="form-control" placeholder="عبارت..." value="{{ query }}">
+                    <button type="submit" class="btn btn-outline-primary btn-sm">جستجو 🔍</button>
+                </form>
+            </div>
 
-        <table class="table table-bordered table-striped">
+        <table class="modern-table">
             <thead>
             <tr class="text-center">
                 <th>شماره نامه</th>
                 <th>نوع نامه</th>
-                <th>نام سرباز</th>
-                <th>نام خانوادگی</th>
-                <th>کد ملی</th>
+                <th>نام و نام خانوادگی</th>
                 <th>مقصد</th>
                 <th>تاریخ</th>
                 <th>وضعیت</th>
@@ -30,10 +172,15 @@
                 <tr>
                     <td>{{ letter.letter_number }}</td>
                     <td>{{ letter.get_letter_type_display }}</td>
-                    <td>{{ letter.soldier.first_name }}</td>
-                    <td>{{ letter.soldier.last_name }}</td>
-                    <td>{{ letter.soldier.national_code }}</td>
-                    <td>{{ letter.destination }}</td>
+                    <td>
+                        <div class="full-name">{{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</div>
+                        <div>
+                            <pre class="national-card">کد ملی : {{letter.soldier.national_code}}</pre>
+                        </div>
+                    </td>
+                    <td>
+                        <p class="destination text-truncate">{{ letter.destination }}</p>
+                    </td>
                     <td>{{ letter.date|to_jalali }}</td>
                     <td>{{ letter.get_status_display }}</td>
                 </tr>
