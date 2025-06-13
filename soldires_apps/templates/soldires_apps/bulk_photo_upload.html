@@ -1,48 +1,223 @@
 {% extends 'shared/_PanelMain.html' %}
 {% load static %}
 {% block main %}
-<div class="container" style="margin-top:50px;">
-    <h3 class="text-center">آپلود گروهی عکس بر اساس کد ملی</h3>
+<style>
+  /* کارت باکس */
+  .upload-card {
+    max-width: 600px;
+    margin: 60px auto;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1.5px solid #ccc;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 30px 35px;
+    position: relative;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+  }
 
-    {% if message %}
-        <div class="alert alert-info text-center">{{ message }}</div>
-    {% endif %}
+  /* وقتی فایل را درگ می‌کنند روی کارت */
+  .upload-card.dragover {
+    border-color: #4a90e2;
+    background-color: rgba(74, 144, 226, 0.1);
+  }
 
-    <form method="POST" enctype="multipart/form-data" class="form-horizontal">
-        {% csrf_token %}
-        <div class="form-group">
-            <label class="col-sm-2 control-label">انتخاب فایل ZIP</label>
-            <div class="col-sm-6">
-                {{ form.zip_file }}
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-6">
-                <button type="submit" class="btn btn-primary">آپلود فایل</button>
-            </div>
-        </div>
-    </form>
+  /* عنوان */
+  .upload-card h3 {
+    font-size: 28px;
+    margin-bottom: 30px;
+    font-weight: 700;
+    color: #357ABD;
+    text-align: center;
+  }
 
-    {% if uploaded %}
-        <div class="alert alert-success">
-            <strong>عکس‌های آپلود شده:</strong>
-            <ul>
-                {% for code in uploaded %}
-                    <li>{{ code }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
+  /* دکمه آپلود */
+  .btn-gradient-primary {
+    background: linear-gradient(45deg, #4a90e2, #357ABD);
+    border: none;
+    color: white;
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 12px 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(53, 122, 189, 0.4);
+    transition: background 0.3s ease;
+  }
 
-    {% if not_found %}
-        <div class="alert alert-danger">
-            <strong>سربازان یافت نشده (کد ملی):</strong>
-            <ul>
-                {% for code in not_found %}
-                    <li>{{ code }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
+  .btn-gradient-primary:hover:not(:disabled) {
+    background: linear-gradient(45deg, #2c5aa0, #1f4070);
+  }
+  .btn-gradient-primary:disabled {
+    background: #a3b8d9;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  /* ورودی فایل */
+  input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1.5px solid #ccc;
+    transition: border-color 0.3s ease;
+  }
+
+  input[type="file"]:focus {
+    border-color: #357ABD;
+    outline: none;
+    box-shadow: 0 0 6px rgba(53, 122, 189, 0.5);
+  }
+
+  /* هشدار اعتبارسنجی */
+  .invalid-feedback {
+    color: #dc3545;
+    font-size: 14px;
+  }
+
+  /* لیست آپلود و خطا */
+  .alert h5 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+  }
+
+  .alert ul {
+    margin-bottom: 0;
+  }
+  .file-upload-box {
+    display: block;
+    border: 2px dashed #357ABD;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    font-size: 18px;
+    color: #357ABD;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .file-upload-box.dragover {
+    background-color: rgba(53, 122, 189, 0.1);
+    border-color: #4a90e2;
+  }
+
+  .file-upload-box:focus {
+    outline: none;
+    box-shadow: 0 0 8px #357ABD;
+  }
+  .needs-validation input {
+    display: none;
+  }
+</style>
+
+<div class="upload-card" id="uploadCard">
+  <h3><span>📁</span> آپلود گروهی عکس بر اساس کد ملی</h3>
+
+  {% if message %}
+    <div class="alert alert-info text-center" role="alert" style="border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+      {{ message }}
+    </div>
+  {% endif %}
+
+  <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate id="uploadForm">
+    {% csrf_token %}
+    <label for="id_zip_file" id="customFileUpload" class="file-upload-box" tabindex="0" aria-label="آپلود فایل ZIP">
+      فایل ZIP را اینجا بکشید یا کلیک کنید
+      {{ form.zip_file }}
+    </label>
+      <button style="width: 100%; margin-top: 10px;" type="submit" class="btn btn-gradient-primary" id="uploadBtn" disabled>
+        آپلود فایل <span style="font-size: 20px;">⬆️</span> 
+      </button>
+  </form>
+
+  {% if uploaded %}
+    <div class="alert alert-success mt-5 rounded shadow-sm" role="alert" style="border-left: 5px solid #28a745;">
+      <h5><span style="font-size: 20px;">✅</span> عکس‌های آپلود شده:</h5>
+      <ul class="mb-0 list-group list-group-flush">
+        {% for code in uploaded %}
+          <li class="list-group-item py-1 px-2">{{ code }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  {% if not_found %}
+    <div class="alert alert-danger mt-4 rounded shadow-sm" role="alert" style="border-left: 5px solid #dc3545;">
+      <h5><span style="font-size: 20px;">❌</span> سربازان یافت نشده (کد ملی):</h5>
+      <ul class="mb-0 list-group list-group-flush">
+        {% for code in not_found %}
+          <li class="list-group-item py-1 px-2">{{ code }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
 </div>
+
+<script>
+  (() => {
+    const forms = document.querySelectorAll('.needs-validation')
+
+    Array.from(forms).forEach(form => {
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+        form.classList.add('was-validated')
+      }, false)
+    })
+  })();
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const input = document.querySelector('input[name="zip_file"]');
+    const uploadBtn = document.getElementById('uploadBtn');
+
+    if (input) {
+      input.classList.add('form-control', 'form-control-lg');
+      input.id = 'id_zip_file';
+
+      // disable button initially
+      uploadBtn.disabled = !input.files.length;
+
+      // Enable/disable دکمه آپلود بر اساس انتخاب فایل
+      input.addEventListener('change', function() {
+        uploadBtn.disabled = !this.files.length;
+      });
+    }
+  });
+
+  const uploadCard = document.getElementById('uploadCard');
+  const fileInput = document.querySelector('input[name="zip_file"]');
+
+  uploadCard.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadCard.classList.add('dragover');
+  });
+
+  uploadCard.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    uploadCard.classList.remove('dragover');
+  });
+
+  uploadCard.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadCard.classList.remove('dragover');
+
+    const files = e.dataTransfer.files;
+    if (files.length) {
+      fileInput.files = files;
+      // فعال کردن دکمه بعد از درگ و دراپ فایل
+      const uploadBtn = document.getElementById('uploadBtn');
+      uploadBtn.disabled = false;
+    }
+  });
+</script>
+
 {% endblock %}
