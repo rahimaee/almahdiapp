@@ -149,7 +149,7 @@
     <div class="modern-table-container">
         <div class="header-tools mb-3">
             <a href="{% url 'health_iodine_letter_create' %}" class="btn btn-create">➕ ایجاد نامه جدید</a>
-               <div class="center-box"> 
+        <div class="center-box"> 
             <ul class="pagination justify-content-center">
                 {% if page_obj.has_previous %}
                     <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ query }}">«</a></li>
