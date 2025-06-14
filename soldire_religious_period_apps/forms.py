@@ -10,7 +10,7 @@ class ReligiousPeriodForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'نام دوره عقیدتی'}),
             'date': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'تاریخ دوره'}),
-            'description': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'توضیحات'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'توضیحات','rows':7}),
         }
 
 
