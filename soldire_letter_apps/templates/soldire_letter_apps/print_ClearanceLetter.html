@@ -1,10 +1,108 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نامه تسویه‌حساب - {{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</title>
+    <style>
+        @media print {
+            body { margin: 0; }
+            .no-print { display: none; }
+        }
+        
+        body {
+            font-family: 'B Nazanin', 'Tahoma', sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 20px;
+            direction: rtl;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+        }
+        
+        .letter-number {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .date {
+            margin-bottom: 20px;
+        }
+        
+        .content {
+            text-align: justify;
+            margin-bottom: 30px;
+        }
+        
+        .signature-section {
+            margin-top: 50px;
+            text-align: left;
+        }
+        
+        .signature-line {
+            border-top: 1px solid #333;
+            width: 200px;
+            margin-top: 30px;
+        }
+        
+        .print-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        
+        .back-button {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+    </style>
 </head>
 <body>
-
+    <div class="no-print">
+        <button class="print-button" onclick="window.print()">چاپ نامه</button>
+        <a href="{% url 'ClearanceLetterListView' %}" class="back-button">بازگشت به لیست</a>
+    </div>
+    
+    <div class="header">
+        <h2>آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه</h2>
+        <div class="letter-number">شماره: {{ letter.letter_number }}</div>
+        <div class="date">تاریخ: {{ letter.issue_date|date:"Y/m/d" }}</div>
+    </div>
+    
+    <div class="content">
+        <p><strong>موضوع:</strong> نامه تسویه‌حساب</p>
+        <br>
+        <p>سرباز {{ letter.soldier.rank }} {{ letter.soldier.first_name }} {{ letter.soldier.last_name }} 
+        فرزند {{ letter.soldier.father_name }} متولد {{ letter.soldier.birth_date|date:"Y/m/d" }} 
+        با کد ملی {{ letter.soldier.national_code }} به علت {{ letter.get_reason_display }} 
+        از خدمت سربازی تسویه‌حساب می‌گردد.</p>
+        
+        {% if letter.description %}
+        <p><strong>توضیحات:</strong> {{ letter.description }}</p>
+        {% endif %}
+        
+        <p>این نامه به مدت ۳۰ روز از تاریخ صدور معتبر می‌باشد.</p>
+    </div>
+    
+    <div class="signature-section">
+        <div class="signature-line"></div>
+        <p>امضاء و مهر مسئول مربوطه</p>
+    </div>
 </body>
 </html>

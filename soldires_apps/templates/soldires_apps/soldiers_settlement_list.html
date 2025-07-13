@@ -53,12 +53,11 @@
                         {% if item.settlement %}
                             <a href="{% url 'payment_receipt_create' %}?settlement_id={{ item.settlement.id }}"
                                class="btn btn-success btn-sm">ثبت فیش واریزی</a>
+                            <a href="{% url 'settlement_payments' settlement_id=item.settlement.id %}"
+                               class="btn btn-success btn-sm">فیش واریزی</a>
                         {% else %}
                             <span class="label label-warning">تسویه‌حساب ندارد</span>
                         {% endif %}
-
-                        <a href="{% url 'settlement_payments' settlement_id=item.settlement.id %}"
-                           class="btn btn-success btn-sm">فیش واریزی</a>
                     </td>
                 </tr>
             {% endfor %}

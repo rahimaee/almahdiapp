@@ -48,7 +48,11 @@ def approved_ClearanceLetter(request, letter_id):
     if letter.status == 'چاپ و درحال بررسی':
         letter.status = 'تایید شده'
         letter.save()
-        return reverse_lazy('ClearanceLetterListView')
+        
+        # Signal خودکار وضعیت سرباز را تغییر می‌دهد
+        soldier = letter.soldier
+        messages.success(request, f"نامه با موفقیت تایید شد و وضعیت سرباز به '{soldier.get_status_display()}' تغییر یافت.")
+    return redirect('ClearanceLetterListView')
 
 
 def print_ClearanceLetter(request, letter_id):
@@ -56,7 +60,28 @@ def print_ClearanceLetter(request, letter_id):
     if letter.status == 'ایجاد شده':
         letter.status = 'چاپ و درحال بررسی'
         letter.save()
-    return render(request, 'soldire_letter_apps/ClearanceLetter_create.html', {'letter': letter})
+        messages.success(request, "وضعیت نامه به 'چاپ و درحال بررسی' تغییر یافت.")
+    return render(request, 'soldire_letter_apps/print_ClearanceLetter.html', {'letter': letter})
+
+
+def delete_ClearanceLetter(request, letter_id):
+    """حذف نامه تسویه‌حساب و بازگرداندن وضعیت سرباز"""
+    letter = get_object_or_404(ClearanceLetter, id=letter_id)
+    
+    if request.method == 'POST':
+        soldier = letter.soldier
+        
+        # حذف نامه (signal خودکار وضعیت سرباز را تغییر می‌دهد)
+        letter.delete()
+        
+        messages.success(request, f"نامه تسویه‌حساب حذف شد و وضعیت سرباز {soldier.first_name} {soldier.last_name} به 'حین خدمت' بازگردانده شد.")
+        return redirect('ClearanceLetterListView')
+    
+    # نمایش صفحه تایید حذف
+    return render(request, 'soldire_letter_apps/delete_ClearanceLetter_confirm.html', {
+        'letter': letter,
+        'soldier': letter.soldier
+    })
 
 
 def normal_letter_list(request):

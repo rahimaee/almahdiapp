@@ -4,6 +4,9 @@ from .views import *
 urlpatterns = [
     path('clearance_letter_create/', ClearanceLetterCreateView.as_view(), name='clearance_letter_create'),
     path('ClearanceLetterListView/', ClearanceLetterListView.as_view(), name='ClearanceLetterListView'),
+    path('clearance_letter/approved/<int:letter_id>/', approved_ClearanceLetter, name='approved_ClearanceLetter'),
+    path('clearance_letter/print/<int:letter_id>/', print_ClearanceLetter, name='print_ClearanceLetter'),
+    path('clearance_letter/delete/<int:letter_id>/', delete_ClearanceLetter, name='delete_ClearanceLetter'),
     path('normal-letters/', normal_letter_list, name='normal_letter_list'),
     path('mental-health/retest/<int:test_id>/', create_new_letter_from_old, name='create_new_letter_from_old'),
     path('mental-health/retest/batch/', create_group_mental_health_letters,

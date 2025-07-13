@@ -7,6 +7,21 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+class LoginForm(forms.Form):
+    username = forms.CharField(
+        widget=forms.TextInput(
+            attrs={'type': 'text', 'class': 'form-control', 'id': 'username',
+                   'placeholder': 'نام کاربری وارد کنید'}),
+        label='ایمیل',
+
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={'type': 'password', 'id': 'password', 'class': 'form-control', 'name': 'password',
+                   'placeholder': 'رمز عبور را وارد کنید', 'required': "ایمیل خود را وارد کنید"}),
+        label='رمز عبور'
+    )
+
 
 class ManagerPermissionForm(forms.ModelForm):
     class Meta:

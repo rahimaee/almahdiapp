@@ -235,15 +235,30 @@
                     </td>
                     <td>{{ soldier.national_code }}</td>
                     <td>
-                    <span class="label
-                          {% if soldier.health_status == 'سالم' %}label-success
-                          {% elif soldier.health_status == 'معاف از رزم' %}label-primary
-                          {% elif soldier.health_status == 'گروه ب' %}label-warning
-                          {% else %}label-danger{% endif %}">
-                        {{ soldier.health_status }}
-                    </span>
+                        <!-- وضعیت سلامت -->
+                        <span class="label
+                              {% if soldier.health_status == 'سالم' %}label-success
+                              {% elif soldier.health_status == 'معاف از رزم' %}label-primary
+                              {% elif soldier.health_status == 'گروه ب' %}label-warning
+                              {% else %}label-danger{% endif %}">
+                            {{ soldier.health_status }}
+                        </span>
+                        
+                        <!-- وضعیت تسویه‌حساب -->
+                        {% if soldier.status %}
+                            <br>
+                            <span class="label
+                                  {% if soldier.status == 'پایان خدمت' %}label-success
+                                  {% elif soldier.status == 'قبولی در دانشگاه' %}label-info
+                                  {% elif soldier.status == 'انتقالی' %}label-warning
+                                  {% elif soldier.status == 'استخدام در نیروهای مسلح' %}label-primary
+                                  {% else %}label-default{% endif %}">
+                                {{ soldier.get_status_display }}
+                            </span>
+                        {% endif %}
+                        
                         {% if soldier.is_fugitive %}
-                            <span class="label label-default">فراری</span>
+                            <br><span class="label label-default">فراری</span>
                         {% endif %}
                     </td>
                     <td>

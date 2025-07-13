@@ -565,6 +565,22 @@ def incomplete_soldiers_list(request):
     return render(request, 'soldires_apps/incomplete_soldiers_list.html', {'soldiers': soldiers})
 
 
+def checked_out_soldiers_list(request):
+    """لیست سربازانی که تسویه‌حساب شده‌اند"""
+    from .models import Soldier
+    soldiers = Soldier.objects.filter(is_checked_out=True).select_related(
+        'residence_province',
+        'residence_city',
+        'current_parent_unit',
+        'current_sub_unit'
+    ).order_by('-status')
+    
+    return render(request, 'soldires_apps/checked_out_soldiers_list.html', {
+        'soldiers': soldiers,
+        'title': 'لیست سربازان تسویه‌حساب شده'
+    })
+
+
 def soldires_new_status_view(request, pk):
     soldier = get_object_or_404(Soldier, pk=pk)
 

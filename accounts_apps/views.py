@@ -1,14 +1,37 @@
 # views.py
 from django.contrib.auth.models import User
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 
 from .models import ManagerPermission, Permission, AccessHistory, MyUser, Feature
-from .forms import UserAccessForm, MyUserProfileForm
+from .forms import UserAccessForm, MyUserProfileForm, LoginForm
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth import update_session_auth_hash, login, logout
 from django.contrib.auth.forms import PasswordChangeForm
 
+def user_login_page(request, *args, **kwargs):
+    login_form = LoginForm(request.POST or None)
+    if login_form.is_valid():
+        username = login_form.cleaned_data.get('username')
+        password = login_form.cleaned_data.get('password')
+        user = User.objects.filter(username=username).first()
+        if user is None:
+            login_form = LoginForm(request.POST or None)
+            cx = {'login_form': login_form, }
+            return render(request, 'accounts_apps/login_page.html', cx)
+        if user.check_password(password) is True:
+            login(request, user)
+            return HttpResponseRedirect(reverse("panel_home"))
+        else:
+            cx = {'login_form': login_form, }
+            return render(request, 'accounts_apps/login_page.html', cx)
 
+    return render(request, 'accounts_apps/login_page.html', context={'login_form': login_form, })
+
+
+def c_logout(request):
+    logout(request)
+    return redirect('home_page')
 # لیست مسئولین
 def manager_list(request):
     managers = User.objects.all()  # استفاده از مدل User برای مسئولین

@@ -3,7 +3,25 @@
 {% load jalali_filters %}
 {% block main %}
     <div class="container">
-        <h3 class="text-center">لیست نامه‌های تسویه‌حساب</h3>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <div class="row">
+            <div class="col-md-8">
+                <h3 class="text-center">لیست نامه‌های تسویه‌حساب</h3>
+            </div>
+            <div class="col-md-4 text-left">
+                <a href="{% url 'clearance_letter_create' %}" class="btn btn-success">
+                    <i class="fa fa-plus"></i> ایجاد نامه جدید
+                </a>
+            </div>
+        </div>
         <form method="get" class="form-inline text-center" style="margin-bottom: 20px;">
             <input type="text" name="q" class="form-control"
                    placeholder="جست‌وجو بر اساس نام، نام خانوادگی، کد ملی یا شماره نامه" value="{{ request.GET.q }}">
@@ -22,6 +40,7 @@
                 <th>علت تسویه</th>
                 <th>تاریخ صدور</th>
                 <th>وضعیت</th>
+                <th>عملیات</th>
             </tr>
             </thead>
             <tbody>
@@ -34,11 +53,49 @@
                     <td>{{ letter.letter_number }}</td>
                     <td>{{ letter.get_reason_display }}</td>
                     <td>{{ letter.issue_date|to_jalali }}</td>
-                    <td>{{ letter.status }}</td>
+                    <td>
+                        {% if letter.status == 'ایجاد شده' %}
+                            <span class="label label-warning">{{ letter.status }}</span>
+                        {% elif letter.status == 'چاپ و درحال بررسی' %}
+                            <span class="label label-info">{{ letter.status }}</span>
+                        {% elif letter.status == 'تایید شده' %}
+                            <span class="label label-success">{{ letter.status }}</span>
+                        {% else %}
+                            <span class="label label-default">{{ letter.status }}</span>
+                        {% endif %}
+                    </td>
+                                        <td>
+                        {% if letter.status == 'ایجاد شده' %}
+                            <a href="{% url 'print_ClearanceLetter' letter_id=letter.id %}"
+                               class="btn btn-primary btn-sm" target="_blank">
+                                <i class="fa fa-print"></i> پرینت
+                            </a>
+                        {% elif letter.status == 'چاپ و درحال بررسی' %}
+                            <a href="{% url 'print_ClearanceLetter' letter_id=letter.id %}"
+                               class="btn btn-info btn-sm" target="_blank">
+                                <i class="fa fa-print"></i> پرینت مجدد
+                            </a>
+                            <a href="{% url 'approved_ClearanceLetter' letter_id=letter.id %}"
+                               class="btn btn-success btn-sm"
+                               onclick="return confirm('آیا از تایید این نامه اطمینان دارید؟')">
+                                <i class="fa fa-check"></i> تایید
+                            </a>
+                        {% elif letter.status == 'تایید شده' %}
+                            <a href="{% url 'print_ClearanceLetter' letter_id=letter.id %}"
+                               class="btn btn-success btn-sm" target="_blank">
+                                <i class="fa fa-print"></i> پرینت نهایی
+                            </a>
+                            <a href="{% url 'delete_ClearanceLetter' letter_id=letter.id %}"
+                               class="btn btn-danger btn-sm"
+                               title="حذف نامه و بازگرداندن وضعیت سرباز به حین خدمت">
+                                <i class="fa fa-trash"></i> حذف
+                            </a>
+                        {% endif %}
+                    </td>
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="7">هیچ نامه‌ای یافت نشد.</td>
+                    <td colspan="8">هیچ نامه‌ای یافت نشد.</td>
                 </tr>
             {% endfor %}
             </tbody>
