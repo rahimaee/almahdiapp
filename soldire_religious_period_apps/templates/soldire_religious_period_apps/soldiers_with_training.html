@@ -3,39 +3,192 @@
 
 {% block header %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
+    <style>
+        .badge-card {
+            padding : 5px;
+            margin :0;
+            text-align:center;
+            font-family: YekanBakh, Yekan, Naskh, sans-serif;
+        }
+        .col-title { 
+        font-weight:bold;
+        margin-bottom:5px;
+    }
+    </style>
+<style>
+    .modern-table-container {
+        margin-top: 2rem;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        background: #fff;
+    }
+
+    .modern-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .modern-table thead {
+        background: linear-gradient(to left, #4e73df, #224abe);
+        color: white;
+        font-weight: bold;
+    }
+
+    .modern-table th,
+    .modern-table td {
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .modern-table tbody tr {
+        transition: background-color 0.3s ease;
+        border-bottom: 1px solid #eee;
+    }
+
+    .modern-table tbody tr:hover {
+        background-color: #f0f4ff;
+    }
+
+    .btn-create {
+        background: linear-gradient(to left, #1cc88a, #17a673);
+        color: white;
+        border-radius: 6px;
+        padding: 8px 20px;
+        font-weight: 500;
+    }
+
+    .btn-create:hover {
+        opacity: 0.95;
+    }
+
+    .header-tools {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        padding:15px;
+        gap:1rem;
+    }
+
+    .search-form {
+        display:flex;
+        align-items:center;
+        border:1px solid gray;
+        border-radius: 6px;
+    }
+
+    .search-form input {
+        border: none;
+        outline: none;
+        border-radius: 6px;
+        padding-right: 6px;
+        width: 200px;
+    }
+
+    .table-actions a {
+        padding: 4px 10px;
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+        color: white !important;
+        border-radius: 6px;
+    }
+
+    .table-actions a.bg-success { background-color: #28a745; }
+    .table-actions a.bg-primary { background-color: #007bff; }
+    .table-actions a.bg-warning { background-color: #ffc107; color: black !important; }
+    .table-actions a.bg-danger  { background-color: #dc3545; }
+
+    .table-actions a:hover {
+        transform: translateY(-1px);
+        opacity: 0.9;
+    }
+    .header-tools .center-box {
+        flex:1;
+        display:flex;
+        align-items:center;
+        justify-content:end;
+    }
+    .pagination .page-link {
+        border-radius: 10px !important;
+    }
+    
+    .pagination {
+        margin:0;
+    }
+
+ 
+    .table-actions {
+        display:flex;
+        flex-direction:column;
+        gap:1;
+    }
+    .table-actions a {
+        display:inline-black;
+        width:100%;
+        margin:1px 0;
+    }
+       .national-card {
+        padding : 5px;
+        margin :0;
+        font-family: YekanBakh, Yekan, Naskh, sans-serif;
+    }
+    .text-truncate {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;  
+        overflow: hidden;
+        font-size:12px;
+    }
+
+   
+    .col-2 {
+        column-span:2;
+    }
+</style>
+
 {% endblock %}
 
 {% block main %}
 <div class="container">
-    <div class="panel panel-default">
-        <div class="panel-heading text-center">
-            <h3 class="panel-title" style="font-size: 20px; font-weight: bold;">
-                <span class="glyphicon glyphicon-list-alt"></span> لیست سربازان و دوره عقیدتی
-            </h3>
-        </div>
-        <div class="panel-body">
-            <div class="text-right" style="margin-bottom: 15px;">
-                <button class="btn btn-success btn-sm" id="download-btn">
-                    <span class="glyphicon glyphicon-download-alt"></span> دانلود اکسل
-                </button>
+    <h2 class="fw-bold text-primary text-center">فهرست سربازان دوره عقیدتی</h2>
+
+    <div class="modern-table-container">
+        <div class="header-tools mb-3">
+            <button class="btn btn-create" id="download-btn">
+                 دانلود اکسل 📁
+            </button>  
+            <div class="center-box"> 
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ query }}">«</a></li>
+                    {% endif %}
+                    {% for num in page_obj.paginator.page_range %}
+                        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}&q={{ query }}">{{ num }}</a>
+                        </li>
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ query }}">»</a></li>
+                    {% endif %}
+                </ul>
             </div>
-            <div class="table-responsive">
-                <table id="soldiers-table" class="table table-bordered table-striped table-hover">
-                    <thead>
+            <form method="get" class="search-form d-flex align-items-center gap-2">
+                <input type="text" name="q" class="form-control" placeholder="عبارت..." value="{{ query }}">
+                <button type="submit" class="btn btn-outline-primary btn-sm">جستجو 🔍</button>
+            </form>
+        </div>
+        <table class="modern-table">
+         <thead>
                         <tr class="active text-center">
                             <th>#</th>
                             <th>کدسازمانی</th>
-                            <th>نام</th>
-                            <th>نام خانوادگی</th>
-                            <th>کد ملی</th>
+                            <th>نام و نام خانوادگی</th>
                             <th>قسمت</th>
-                            <th>زیر قسمت</th>
-                            <th>مدرک</th>
                             <th>درجه</th>
-                            <th>موبایل</th>
-                            <th>نام دوره عقیدتی</th>
-                            <th>تاریخ عقیدتی</th>
-                            <th>توضیحات عقیدتی</th>
+                            <th>دوره عقیدتی</th>
                             <th>عملیات</th>
                         </tr>
                     </thead>
@@ -43,18 +196,26 @@
                     {% for soldier in soldiers %}
                         <tr>
                             <td class="text-center">{{ forloop.counter }}</td>
-                            <td>{{ soldier.organizational_code.code_number }}</td>
-                            <td>{{ soldier.first_name }}</td>
-                            <td>{{ soldier.last_name }}</td>
-                            <td>{{ soldier.national_code }}</td>
-                            <td>{{ soldier.current_parent_unit.name }}</td>
-                            <td>{{ soldier.current_sub_unit.name }}</td>
-                            <td>{{ soldier.degree }}</td>
-                            <td>{{ soldier.rank }}</td>
-                            <td>{{ soldier.phone_mobile }}</td>
-                            <td>{{ soldier.ideological_training_period.name }}</td>
-                            <td>{{ soldier.ideological_training_period.date }}</td>
-                            <td>{{ soldier.ideological_training_period.description }}</td>
+                            <td>
+                                <div class="col-title">{{ soldier.organizational_code.code_number }}</div>
+                                <pre class="badge-card">کد ملی : {{ soldier.national_code }}</pre>
+                            </td>
+                            <td>
+                                <div class="col-title">{{ soldier.first_name }} {{ soldier.last_name }}</div>
+                                <pre class="badge-card">موبایل : {{ soldier.phone_mobile }}</pre>
+                            </td>
+                            <td>
+                                <div class="col-title">{{ soldier.current_parent_unit.name }}</div>
+                                <pre class="badge-card">زیر قسمت : {{ soldier.current_sub_unit.name }}</pre>
+                            </td>
+                            <td>
+                                <div class="col-title">{{ soldier.rank }}</div>
+                                <pre class="badge-card">مدرک : {{ soldier.degree }}</pre>
+                            </td>
+                            <td>
+                                <div class="col-title">{{ soldier.ideological_training_period.name }}</div>
+                                <pre class="badge-card">تاریخ : {{ soldier.ideological_training_period.date }}</pre>
+                            </td>
                             <td class="text-center">
                                 <a href="{% url 'soldier_detail' pk=soldier.id %}" class="btn btn-info btn-xs">
                                     <span class="glyphicon glyphicon-eye-open"></span> مشاهده
@@ -69,7 +230,6 @@
                     </tbody>
                 </table>
             </div>
-        </div>
     </div>
 </div>
 {% endblock %}

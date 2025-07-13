@@ -1,132 +1,233 @@
+
 {% extends 'shared/_PanelMain.html' %}
 {% load static %}
 {% load jalali_filters %}
-
 {% block header %}
-    <style>
-        .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+<style>
+    .modern-table-container {
+        margin-top: 2rem;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        background: #fff;
+    }
 
-        h3 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 30px;
-        }
+    .modern-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+    .modern-table thead {
+        background: linear-gradient(to left, #4e73df, #224abe);
+        color: white;
+        font-weight: bold;
+    }
 
-        label {
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
+    .modern-table th,
+    .modern-table td {
+        padding: 1rem;
+        text-align: center;
+    }
 
-        .btn {
-            background-color: #4CAF50;
-            color: white;
-            border-radius: 4px;
-            padding: 10px 20px;
-            border: none;
-            font-size: 16px;
-        }
+    .modern-table tbody tr {
+        transition: background-color 0.3s ease;
+        border-bottom: 1px solid #eee;
+    }
 
-        .btn:hover {
-            background-color: #45a049;
-        }
+    .modern-table tbody tr:hover {
+        background-color: #f0f4ff;
+    }
 
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-        }
+    .btn-create {
+        background: linear-gradient(to left, #1cc88a, #17a673);
+        color: white;
+        border-radius: 6px;
+        padding: 8px 20px;
+        font-weight: 500;
+    }
 
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
-        }
+    .btn-create:hover {
+        opacity: 0.95;
+    }
 
-        th {
-            background-color: #f8f8f8;
-        }
+    .header-tools {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        padding:15px;
+        gap:1rem;
+    }
 
-        .no-result {
-            text-align: center;
-            color: #999;
-            font-size: 18px;
-        }
+    .search-form {
+        display:flex;
+        align-items:center;
+        border:1px solid gray;
+        border-radius: 6px;
+    }
 
-        .form-control {
-            font-size: 16px;
-            padding: 10px;
-        }
+    .search-form input {
+        border: none;
+        outline: none;
+        border-radius: 6px;
+        padding-right: 6px;
+        width: 200px;
+    }
 
-    </style>
-    <link rel="stylesheet" href="{% static 'dist/css/persian-datepicker-0.4.5.min.css' %}"/>
+    .table-actions a {
+        padding: 4px 10px;
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+        color: white !important;
+        border-radius: 6px;
+    }
 
+    .table-actions a.bg-success { background-color: #28a745; }
+    .table-actions a.bg-primary { background-color: #007bff; }
+    .table-actions a.bg-warning { background-color: #ffc107; color: black !important; }
+    .table-actions a.bg-danger  { background-color: #dc3545; }
 
+    .table-actions a:hover {
+        transform: translateY(-1px);
+        opacity: 0.9;
+    }
+    .header-tools .center-box {
+        flex:1;
+        display:flex;
+        align-items:center;
+        justify-content:end;
+    }
+    .pagination .page-link {
+        border-radius: 10px !important;
+    }
+    
+    .pagination {
+        margin:0;
+    }
+
+ 
+    .table-actions {
+        display:flex;
+        flex-direction:column;
+        gap:1;
+    }
+    .table-actions a {
+        display:inline-black;
+        width:100%;
+        margin:1px 0;
+    }
+       .national-card {
+        padding : 5px;
+        margin :0;
+        font-family: YekanBakh, Yekan, Naskh, sans-serif;
+    }
+    .text-truncate {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;  
+        overflow: hidden;
+        font-size:12px;
+    }
+
+    .full-name { 
+        font-weight:bold;
+    }
+    .col-2 {
+        column-span:2;
+    }
+    .date-filters {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+
+    }
+    .date-group {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+   .date-group label{
+        flex: :1;
+        display: block;
+        min-width: 60px;
+    }
+    .date-group input {
+        border-radius: 5px;
+        padding: 8px 20px;
+    }
+.btn-gradient {
+    background: linear-gradient(45deg, #904ae2, #7A35BD);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding:10px 20px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(122,53 , 189, 0.4);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+        flex:1;
+
+}
+
+.btn-gradient:hover {
+  background: linear-gradient(45deg, #357ABD, #2a5c9e);
+  box-shadow: 0 6px 12px rgba(42, 92, 158, 0.6);
+}
+
+</style>
+<link rel="stylesheet" href="{% static 'dist/css/persian-datepicker-0.4.5.min.css' %}"/>
 {% endblock %}
 
 {% block main %}
+
     <div class="container">
-        <h3>جستجوی سربازان بر اساس تاریخ ورود به یگان</h3>
-
-        <form method="get">
-            <div class="form-group">
-                <label for="from_date_view">از تاریخ:</label>
-                <input type="text" class="form-control" id="from_date_view" placeholder="مثلاً 1403/01/01">
-                <input type="hidden" name="from_date" id="from_date">
-            </div>
-
-            <div class="form-group">
-                <label for="to_date_view">تا تاریخ:</label>
-                <input type="text" class="form-control" id="to_date_view" placeholder="مثلاً 1403/02/01">
-                <input type="hidden" name="to_date" id="to_date">
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-block">جستجو</button>
-        </form>
-
-        {% if soldiers %}
-            <table class="table table-bordered table-striped">
+        <h3 class="fw-bold text-primary text-center">جستجوی سربازان بر اساس تاریخ ورود به یگان</h3>
+        <div  class="modern-table-container">
+            <form  method="get">
+                <div class="header-tools mb-3">
+                        <div class="date-filters">
+                                <div class="date-group">
+                                    <label for="from_date_view">از تاریخ:</label>
+                                    <input type="text" class="form-control" id="from_date_view" placeholder="مثلاً 1403/01/01">
+                                    <input type="hidden" name="from_date" id="from_date">
+                                </div>
+                                <div class="date-group">
+                                    <label for="to_date_view">تا تاریخ:</label>
+                                    <input type="text" class="form-control" id="to_date_view" placeholder="مثلاً 1403/02/01">
+                                    <input type="hidden" name="to_date" id="to_date">
+                                </div>
+                        </div>   
+                    <button type="submit" class="btn btn-gradient btn-block">جستجو</button>
+                </div>
+            </form>
+        
+            <table class="modern-table">
                 <thead>
-                <tr>
-                    <th>کد سازمانی</th>
-                    <th>کد ملی</th>
+                            <tr>
                     <th>نام</th>
-                    <th>نام خانوادگی</th>
-                    <th>نام پدر</th>
-                    <th>تاریخ اعزام</th>
-                    <th>تاریخ ورود به یگان</th>
-                    <th>تاریخ پایان</th>
-                    <th>عملیات</th>
+                    <th>کد ملی</th>
+                    <th>جزئیات</th>
                 </tr>
                 </thead>
-                <tbody>
+                            <tbody>
                 {% for soldier in soldiers %}
                     <tr>
-                        <td>{{ soldier.organizational_code.code_number }}</td>
+                        <td>{{ soldier.first_name }} {{ soldier.last_name }}</td>
                         <td>{{ soldier.national_code }}</td>
-                        <td>{{ soldier.first_name }}</td>
-                        <td> {{ soldier.last_name }}</td>
-                        <td> {{ soldier.father_name }}</td>
-                        <td> {{ soldier.dispatch_date|to_jalali }}</td>
-                        <td> {{ soldier.service_entry_date|to_jalali }}</td>
-                        <td>{{ soldier.service_entry_date|to_jalali }}</td>
-                        <td>{{ soldier.service_end_date|to_jalali }}</td>
-                        <td><a href="{% url 'soldires_new_status_view' pk=soldier.pk %}">a</a></td>
+                        <td>
+                            <a href="{% url 'soldier_escape_details' soldier.id %}" class="btn btn-info btn-sm">مشاهدهسوابق</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-danger">موردی یافت نشد.</td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
-        {% elif from_date and to_date %}
-            <p class="no-result">سربازی در این بازه پیدا نشد.</p>
-        {% endif %}
+       </div>
     </div>
 
 {% endblock %}

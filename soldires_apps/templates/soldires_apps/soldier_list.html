@@ -3,8 +3,147 @@
 {% load jalali_filters %}
 
 {% block header %}
+<style>
+    .modern-table-container {
+        margin-top: 2rem;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        background: #fff;
+    }
 
+    .modern-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .modern-table thead {
+        background: linear-gradient(to left, #4e73df, #224abe);
+        color: white;
+        font-weight: bold;
+    }
+
+    .modern-table th,
+    .modern-table td {
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .modern-table tbody tr {
+        transition: background-color 0.3s ease;
+        border-bottom: 1px solid #eee;
+    }
+
+    .modern-table tbody tr:hover {
+        background-color: #f0f4ff;
+    }
+
+    .btn-create {
+        background: linear-gradient(to left, #1cc88a, #17a673);
+        color: white;
+        border-radius: 6px;
+        padding: 8px 20px;
+        font-weight: 500;
+    }
+
+    .btn-create:hover {
+        opacity: 0.95;
+    }
+
+    .header-tools {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        padding:15px;
+        gap:1rem;
+    }
+
+    .search-form {
+        display:flex;
+        align-items:center;
+        border:1px solid gray;
+        border-radius: 6px;
+    }
+
+    .search-form input {
+        border: none;
+        outline: none;
+        border-radius: 6px;
+        padding-right: 6px;
+        width: 200px;
+    }
+
+    .table-actions a {
+        padding: 4px 10px;
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+        color: white !important;
+        border-radius: 6px;
+    }
+
+    .table-actions a.bg-success { background-color: #28a745; }
+    .table-actions a.bg-primary { background-color: #007bff; }
+    .table-actions a.bg-warning { background-color: #ffc107; color: black !important; }
+    .table-actions a.bg-danger  { background-color: #dc3545; }
+
+    .table-actions a:hover {
+        transform: translateY(-1px);
+        opacity: 0.9;
+    }
+    .header-tools .center-box {
+        flex:1;
+        display:flex;
+        align-items:center;
+        justify-content:end;
+    }
+    .pagination .page-link {
+        border-radius: 10px !important;
+    }
+    
+    .pagination {
+        margin:0;
+    }
+
+ 
+    .table-actions {
+        display:flex;
+        flex-direction:column;
+        gap:1;
+    }
+    .table-actions a {
+        display:inline-black;
+        width:100%;
+        margin:1px 0;
+    }
+       .national-card {
+        padding : 5px;
+        margin :0;
+        font-family: YekanBakh, Yekan, Naskh, sans-serif;
+    }
+    .text-truncate {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;  
+        overflow: hidden;
+        font-size:12px;
+    }
+
+    .full-name { 
+        font-weight:bold;
+    }
+    .col-2 {
+        column-span:2;
+    }
+</style>
     <style>
+       .modern-table tbody .soldier-manage td {
+            padding:0;
+        }
+        .form-control {
+            border-radius:5px;
+        }
         .accordion-toggle {
             cursor: pointer;
         }
@@ -23,7 +162,9 @@
             display: inline-block;
             margin: 2px;
         }
-
+        .dl-horizontal {
+            margin-bottom:0;
+        }
         .dl-horizontal dt {
             width: 90px;
             text-align: right;
@@ -32,74 +173,279 @@
         .dl-horizontal dd {
             margin-right: 100px;
         }
+            .btn-group-vertical {
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                gap:5px;
+                flex-wrap : wrap;
+            padding:5px;
 
+            }
         .btn-group-vertical > .btn {
-            margin-bottom: 5px;
             text-align: right;
             padding: 6px 12px;
+            width:45%;
+            box-sizing:border-box;
         }
+        .manage-col {
+            text-align:center;
+        }
+        .details-row > div {
+            height:100%;
+            padding:5px;
+        }
+        .card-details {
+            border:1px solid #ccc;
+            border-radius:5px;
+            padding: 0;
+            height:100%;
+            min-height:100%;
+
+        }
+        .card-details h5 {
+            margin:0;
+            margin-bottom:10px;
+            text-align:center;
+            background:#efefef;
+            border-radius:4px;
+            padding:10px 2px;
+        }
+        .card-details dl {
+            padding:5px;
+        }
+        .form-switch {
+            display:flex;
+            flex-direction:column;
+        }
+        .wrapper-forms {
+            display:flex;
+            flex-wrap:wrap;
+        }
+        .wrapper-forms > h5 {
+            width:100%;
+        }
+        .form-box {
+            display:flex;
+            align-items:start;
+            justify-content:start;
+            margin-bottom:3px;
+            flex-direction:column;
+            width:45%;
+            margin:0 2px;
+        }
+        .form-box label {
+            flex:3;
+            width:100%;
+        }
+        .form-box label::after {
+            content: ' : ';
+        }
+        .form-box input, .form-box select {
+            flex:7;
+        }
+        .soldiers-search {
+            padding:5px 10px;
+            border-radius:3px;
+        }
+        .box-body {
+            padding:0;
+        }
+        .card-body {
+            padding:10px 20px;
+        }
+        form.card-body .row h5 {
+          font-size:24px;
+          border-right:4px solid red;
+          margin-bottom:10px;
+          padding:0 5px;
+        }
+        .card-body .row > div {
+            padding:5px;
+        }
+        .box-header {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            text-align:right;
+        }
+        .box-header::after,.box-header::before {
+            display:none;
+
+        }
+        .form-check-label {
+            border : 1px solid #aaa;
+            display:block;
+            padding:5px;
+            border-radius:4px;
+        }
+
+ .form-switch {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: sans-serif;
+        direction: rtl;
+        width:45%;
+    }
+
+    .form-switch .label-title {
+        flex: 3;
+        font-weight: bold;
+    }
+     .form-box .label-title::after {
+            content: ' : ';
+        }
+    .form-switch label {
+        flex: 7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        position: relative;
+        cursor: pointer;
+        width:100%;
+        padding:0;
+    }
+
+    .form-switch input[type="checkbox"] {
+        display: none;
+    }
+
+    .form-switch .item {
+        text-align: center;
+        background: #fafafa;
+        padding: 5px 10px;
+        border-radius: 4px;
+        flex: 1;
+        transition: 0.3s ease;
+        pointer-events: none;
+        width:100%;
+    }
+
+    .form-switch input[type="checkbox"]:checked + .item.yes {
+        background: green;
+        color: white;
+        font-weight: bold;
+    }
+
+    .form-switch input[type="checkbox"]:not(:checked) + .item.yes + .item.no {
+        background: red;
+        color: white;
+        font-weight: bold;
+    }
+
+    .form-switch input[type="checkbox"]:checked + .item.yes + .item.no {
+        background: #fafafa;
+        color: #333;
+        font-weight: normal;
+    }
+
+    .form-switch input[type="checkbox"]:not(:checked) + .item.yes {
+        background: #fafafa;
+        color: #333;
+        font-weight: normal;
+    }
+
+    .wrapper-forms .form-box,.wrapper-forms .form-switch {
+        display:none;
+    }
+    .wrapper-forms .form-box:nth-child(2),.wrapper-forms .form-box:nth-child(3) {
+        display: flex;
+    }
+    form[data-filter='true'] .wrapper-forms .form-box , form[data-filter='true'] .wrapper-forms  .form-switch{
+        display: flex;
+    }
+    form[data-filter='false'] filter-btn span::before {
+        content:'کمتر';
+    }
+    
+    form[data-filter='true'] filter-btn span::before {
+        content:'بیشتر';
+    }
     </style>
 
     <script>
         $(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip();
         });
+        function filterClick(){
+            const filterBox = document.getElementById('filters-form')
+            const dataFilter = filterBox.getAttribute('data-filter')
+            console.log({dataFilter})
+            if(dataFilter === "true")
+                filterBox.setAttribute('data-filter','false')
+            else 
+                filterBox.setAttribute('data-filter','true')
+        }
     </script>
 {% endblock %}
 
 {% block main %}
     <div class="box box-warning">
-        <div class="box-header with-border">
-            <h3 class="box-title">لیست سربازان</h3>
-        </div>
+        
         <!-- /.box-header -->
         <div class="box-body">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0" style="text-align: center">جستجوی پیشرفته سربازان</h4>
-            </div>
-            <form method="get" class="card-body">
+            <form id="filters-form" method="get" class="card-body" data-filter="false">
+                <div class="box-header with-border">
+                    <h3 class="box-title">
+                        <span>فهرست سربازان یگان</span> 
+                        <span class="bg-primary text-white p-2 soldiers-search">جستجوی پیشرفته</span>
+                    </h3>
+                    <div class="">
+                        <span onclick="filterClick()" class="btn btn-warning btn-md filter-btn">
+                            <i class="fa fa-filter me-2"></i> 
+                            <span class="mx-2">فیلتر</span>
+                        </span>
+                        <button type="submit" class="btn btn-primary btn-md">
+                            <i class="fa fa-search me-2"></i> <span class="mx-2">جستجو</span>
+                        </button>
+                        <a href="?" class="btn btn-facebook btn-md">
+                            <i class="fa fa-undo me-2"></i> <span class="mx-2">بازنشانی</span>
+                        </a>
+                    </div>
+                </div>
                 <div class="row g-4">
-                    <!-- ستون 1 -->
-                    <div class="col-md-4">
+                    <div class="col-md-4 wrapper-forms">
                         <h5 class="text-primary mb-3">اطلاعات هویتی</h5>
-                        <div class="mb-3">
+                        <div class="mb-3 form-box">
                             <label class="form-label">کد ملی</label>
                             {{ form.national_code }}
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 form-box">
                             <label class="form-label">نام</label>
                             {{ form.first_name }}
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 form-box">
                             <label class="form-label">نام خانوادگی</label>
                             {{ form.last_name }}
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 form-box">
                             <label class="form-label">نام پدر</label>
                             {{ form.father_name }}
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 form-box">
                             <label class="form-label">کد سازمانی</label>
                             {{ form.organizational_code }}
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 form-box">
                             <label class="form-label">کد پاسداری</label>
                             {{ form.id_card_code }}
                         </div>
                     </div>
 
                     <!-- ستون 2 -->
-                    <div class="col-md-4">
-                        <h5 class="text-primary mb-3">اطلاعات خدمت</h5>
-                        <div class="mb-3">
+                    <div class="col-md-4 wrapper-forms">
+                        <h5 class="text-primary mb-3 ">اطلاعات خدمت</h5>
+                        <div class="mb-3 form-box">
                             <label class="form-label">واحد اصلی</label>
                             {{ form.current_parent_unit }}
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 form-box">
                             <label class="form-label">زیرواحد</label>
                             {{ form.current_sub_unit }}
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 form-box">
                             <label class="form-label">درجه</label>
                             <select name="rank" class="form-control">
                                 <option value="">--- انتخاب کنید ---</option>
@@ -111,24 +457,28 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 form-box">
                             <label class="form-label">تاریخ ورود به یگان</label>
                             {{ form.service_entry_date }}
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 form-box">
                             <label class="form-label">تاریخ اعزام</label>
                             {{ form.dispatch_date }}
                         </div>
                         <div class="form-check form-switch">
-                            {{ form.is_guard_duty }}
-                            <label class="form-check-label">پاسدار وظیفه</label>
+                            <span class="label-title">پاسدار وظیفه</span>
+                            <label class="form-check-label">
+                                {{ form.is_guard_duty }}
+                                <span class="item yes">بله</span>
+                                <span class="item no">خیر</span>
+                            </label>
                         </div>
                     </div>
 
                     <!-- ستون 3 -->
-                    <div class="col-md-4">
-                        <h5 class="text-primary mb-3">اطلاعات تکمیلی</h5>
-                        <div class="mb-3">
+                    <div class="col-md-4 wrapper-forms">
+                        <h5 class="text-primary mb-3 ">اطلاعات تکمیلی</h5>
+                        <div class="mb-3 form-box">
                             <label class="form-label">وضعیت سلامت</label>
                             <select name="health_status" class="form-control">
                                 <option value="">--- انتخاب کنید ---</option>
@@ -140,9 +490,9 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 form-box">
                             <label class="form-label">گروه خون</label>
-                            <select name="blood_group" class="form-control">
+                            <select name="blood_group form-box" class="form-control">
                                 <option value="">--- انتخاب کنید ---</option>
                                 {% for value, label in form.blood_group.field.choices %}
                                     <option value="{{ value }}"
@@ -152,7 +502,7 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 form-box">
                             <label class="form-label">مدرک تحصیلی</label>
                             <select name="degree" class="form-control">
                                 <option value="">--- انتخاب کنید ---</option>
@@ -164,7 +514,7 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 form-box">
                             <label class="form-label">گروه مهارتی</label>
                             <select name="skill_group" class="form-control">
                                 <option value="">--- انتخاب کنید ---</option>
@@ -176,7 +526,7 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 form-box">
                             <label class="form-label">وضعیت تأهل</label>
                             <select name="marital_status" class="form-control">
                                 <option value="">--- انتخاب کنید ---</option>
@@ -189,28 +539,24 @@
                             </select>
                         </div>
                         <div class="form-check form-switch">
-                            {{ form.independent_married }}
-                            <label class="form-check-label">متاهل مستقل</label>
+                            <span class="label-title">متاهل مستقل</span>
+                            <label class="form-check-label">
+                                {{ form.independent_married }}
+                                <span class="item yes">بله</span>
+                                <span class="item no">خیر</span>
+                            </label>
                         </div>
                     </div>
                 </div>
 
-                <div class="text-center mt-4">
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="fa fa-search me-2"></i>جستجو
-                    </button>
-                    <a href="?" class="btn btn-facebook btn-lg">
-                        <i class="fa fa-undo me-2"></i>بازنشانی
-                    </a>
-                </div>
+                
             </form>
         </div>
 
     </div>
 
-
-    <div class="table-responsive">
-        <table class="table table-hover table-condensed">
+<div class="modern-table-container">
+        <table class="modern-table">
             <thead>
             <tr>
                 <th>کدسازمانی</th>
@@ -273,14 +619,16 @@
                         {% endif %}
                     </td>
                 </tr>
-                <tr>
+                <tr class="soldier-manage">
                     <td colspan="8" class="hiddenRow">
                         <div class="accordian-body collapse" id="row{{ soldier.id }}">
                             <div class="panel panel-default">
                                 <div class="panel-body">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <h5><i class="fa fa-info-circle text-primary"></i> مشخصات فردی
+                                    <div class="row details-row">
+                                        <div class="col-md-3 ">
+                                            <div class="card-details">
+                                                <h5>
+                                                <i class="fa fa-info-circle text-primary"></i> مشخصات فردی
                                             </h5>
                                             <dl class="dl-horizontal">
                                                 <dt>تاریخ تولد:</dt>
@@ -292,9 +640,12 @@
                                                 <dt>تاهل:</dt>
                                                 <dd>{{ soldier.get_marital_status_display }}</dd>
                                             </dl>
+                                            </div>
                                         </div>
 
                                         <div class="col-md-4">
+                                            <div class="card-details">
+
                                             <h5><i class="fa fa-shield text-success"></i> وضعیت خدمت</h5>
                                             <dl class="dl-horizontal">
                                                 <dt>تاریخ اعزام:</dt>
@@ -315,9 +666,12 @@
                                                 </dd>
                                             </dl>
                                         </div>
+                                        </div>
 
                                         <div class="col-md-5">
-                                            <h5><i class="fa fa-cogs text-danger"></i> مدیریت</h5>
+                                            <div class="card-details">
+
+                                            <h5 class="text-center"><i class="fa fa-cogs text-danger"></i> مدیریت</h5>
                                             <div class="btn-group-vertical btn-block">
                                                 <a href="{% url 'soldier_detail' soldier.pk %}"
                                                    class="btn btn-default btn-sm text-right">
@@ -336,6 +690,7 @@
                                                    class="btn btn-warning btn-sm text-right">
                                                     <i class="fa fa-history"></i>بارگذاری عکس برای سرباز
                                                 </a>
+                                            </div>
                                             </div>
                                         </div>
                                     </div>

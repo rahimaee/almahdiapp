@@ -2,6 +2,47 @@
 {% load static %}
 {% load jalali_filters %}
 {% block main %}
+
+<style>
+
+    .group-details > div{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: bold;
+            cursor: pointer;
+    }
+.group-details > div > label {
+    font-weight: normal;
+    font-size: 12px;
+}
+.col-md-3::after {
+    content: "برای کپی کلیک کنید";
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    font-size: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 10;
+  }
+
+  .col-md-3:hover::after {
+    opacity: 1;
+  }
+  .head-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+</style>
     <div class="container">
         <div class="panel panel-primary">
             <div class="panel-heading text-center">
@@ -11,8 +52,8 @@
             </div>
             <div class="panel-body">
                 <!-- Soldier Photo -->
-                <div class="row">
-                    <div class="col-md-12 text-center">
+                <div class="head-top">
+                    <div class="text-center">
                         {% if soldier.photo_scan %}
                             <img src="{{ soldier.photo_scan.url }}"
                                  class="img-thumbnail"
@@ -22,12 +63,29 @@
                             <p class="text-muted">عکس موجود نیست</p>
                         {% endif %}
                     </div>
+                    <div >
+                        <a href="{% url 'soldier_edit' pk=soldier.pk %}" class="btn btn-primary">
+                            <i class="fa fa-edit"></i> ویرایش اطلاعات
+                        </a>
+                        <a href="#" class="btn btn-default">
+                            <i class="fa fa-print"></i> چاپ پرونده
+                        </a>
+                        <a href="{% url 'manage_soldier_documents' soldier.id %}" class="btn btn-default">
+                            <i class="glyphicon glyphicon-print"></i> مدارک پرونده
+                        </a>
+                        <a href="{% url 'soldier_service_edit' soldier.id %}" class="btn btn-default">
+                            <i class="glyphicon glyphicon-print"></i> کسری یا اضافه خدمت
+                        </a>
+                        <a href="{% url 'soldier_vacation_edit' soldier.id %}" class="btn btn-default">
+                            <i class="glyphicon glyphicon-print"></i> استعلام مرخصی
+                        </a>
+                    </div>
                 </div>
                 <hr>
 
                 <!-- Personal Information -->
                 <h4 class="text-primary">مشخصات شخصی</h4>
-                <div class="row">
+                <div class="row group-details">
                     <div class="col-md-3">
                         <label>کد ملی:</label>
                         <p>{{ soldier.national_code }}</p>
@@ -45,7 +103,7 @@
                         <p>{{ soldier.father_name }}</p>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row group-details">
                     <div class="col-md-3">
                         <label>تاریخ تولد:</label>
                         <p>{{ soldier.birth_date|to_jalali }}</p>
@@ -67,7 +125,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="row">
+                <div class="row group-details">
                     <div class="col-md-3">
                         <label>قد:</label>
                         <p>{{ soldier.height }}</p>
@@ -85,7 +143,7 @@
                         <p>{{ soldier.hair_color }}</p>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row group-details">
                     <div class="col-md-3">
                         <label>وضعیت تاهل:</label>
                         <p>{{ soldier.marital_status }}</p>
@@ -107,7 +165,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="row">
+                <div class="row group-details">
                     <div class="col-md-3">
                         <label>مدرک تحصیلی:</label>
                         <p>{{ soldier.degree }}</p>
@@ -121,7 +179,7 @@
                         <p>{{ soldier.expertise|default_if_none:'-' }}</p>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row group-details">
                     <div class="col-md-3">
                         <label>گواهینامه دارد؟ :</label>
                         <p>{{ soldier.has_driving_license }}</p>
@@ -134,7 +192,7 @@
                 <hr>
                 <!-- Health Info -->
                 <h4 class="text-info">اطلاعات سلامت</h4>
-                <div class="row">
+                <div class="row group-details">
                     <div class="col-md-4">
                         <label>وضعیت سلامت:</label>
                         <p>{{ soldier.get_health_status_display }}</p>
@@ -153,7 +211,7 @@
 
                 <!-- yegan Info -->
                 <h4 class="text-success">اطلاعات یگان خدمتی</h4>
-                <div class="row">
+                <div class="row group-details">
                     <div class="col-md-3">
                         <label>کد سازمانی:</label>
                         <p>{{ soldier.organizational_code.code_number }}</p>
@@ -171,7 +229,7 @@
                         <p>{{ soldier.current_sub_unit.work_type }}</p>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row group-details">
                     <div class="col-md-3">
                         <label>نوع حضور:</label>
                         <p>{{ soldier.traffic_status }}</p>
@@ -197,7 +255,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="row">
+                <div class="row group-details">
                     <div class="col-md-3">
                         <label>فراری:</label>
                         {% if soldier.is_fugitive %}
@@ -219,7 +277,7 @@
                         <p>{{ soldier.card_chip|default_if_none:'-' }}</p>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row group-details">
                     <div class="col-md-3">
                         <label>مقدار خدمت انجام شده:</label>
                         {% if soldier.is_fugitive %}
@@ -243,7 +301,7 @@
                 </div>
                 <!-- Military Info -->
                 <h4 class="text-warning">اطلاعات نظامی</h4>
-                <div class="row">
+                <div class="row group-details">
                     <div class="col-md-3">
                         <label>کد پاسداری:</label>
                         <p>{{ soldier.id_card_code|default_if_none:'-' }}</p>
@@ -261,7 +319,7 @@
                         <p>{{ soldier.service_entry_date|to_jalali }}</p>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row group-details">
                     <div class="col-md-3">
                         <label>نام آموزشگاه رزم مقدماتی:</label>
                         <p>{{ soldier.basic_training_center.name }}</p>
@@ -287,7 +345,7 @@
 
                 <!-- Contact Info -->
                 <h4 class="text-success">اطلاعات تماس</h4>
-                <div class="row">
+                <div class="row group-details">
                     <div class="col-md-3">
                         <label>تلفن همراه:</label>
                         <p>{{ soldier.phone_mobile }}</p>
@@ -305,7 +363,7 @@
                         <p>{{ soldier.phone_home }}</p>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row group-details">
                     <div class="col-md-3">
                         <label>استان:</label>
                         <p>{{ soldier.residence_province.name }}</p>
@@ -327,7 +385,7 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="row">
+                <div class="row group-details">
                     <div class="col-md-6">
                         <label>آدرس:</label>
                         <p>{{ soldier.address }}</p>
@@ -340,7 +398,7 @@
                 <hr>
                 <!-- Nasein Info -->
                 <h4 class="text-success">اطلاعات گروه ناصرین</h4>
-                <div class="row">
+                <div class="row group-details">
                     <div class="col-md-4">
                         <label>نام گروه:</label>
                         {% if soldier.naserin_group %}
@@ -395,7 +453,7 @@
 
                 <hr>
                 <h4 class="text-success">اطلاعات عقیدتی</h4>
-                <div class="row">
+                <div class="row group-details">
                     <div class="col-md-3">
                         <label>نام دوره:</label>
                         <p>{{ soldier.ideological_training_period.name|default_if_none:"-" }}</p>
@@ -410,26 +468,61 @@
                     </div>
                 </div>
 
-                <hr>
-                <!-- Action Buttons -->
-                <div class="text-center">
-                    <a href="{% url 'soldier_edit' pk=soldier.pk %}" class="btn btn-primary">
-                        <i class="fa fa-edit"></i> ویرایش اطلاعات
-                    </a>
-                    <a href="#" class="btn btn-default">
-                        <i class="fa fa-print"></i> چاپ پرونده
-                    </a>
-                    <a href="{% url 'manage_soldier_documents' soldier.id %}" class="btn btn-default">
-                        <i class="glyphicon glyphicon-print"></i> مدارک پرونده
-                    </a>
-                    <a href="{% url 'soldier_service_edit' soldier.id %}" class="btn btn-default">
-                        <i class="glyphicon glyphicon-print"></i> کسری یا اضافه خدمت
-                    </a>
-                    <a href="{% url 'soldier_vacation_edit' soldier.id %}" class="btn btn-default">
-                        <i class="glyphicon glyphicon-print"></i> استعلام مرخصی
-                    </a>
-                </div>
+                
             </div>
         </div>
     </div>
+<div id="copy-toast" style="
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #323232;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    z-index: 9999;
+    font-family: sans-serif;
+">
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const items = document.querySelectorAll('.col-md-3 > p , .col-md-6 > p ');
+
+        items.forEach(el => {
+            el.style.cursor = 'pointer';
+
+            el.addEventListener('click', function () {
+                const text = el.innerText.trim();
+
+                if (!text) return;
+
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(text).then(() => {
+                       showToast(`${text} کپی شد!`);
+                    });
+                } else {
+                    const textarea = document.createElement("textarea");
+                    textarea.value = text;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(textarea);
+                    showToast(`${text} کپی شد!`);
+                }
+            });
+        });
+
+        function showToast(message) {
+            const toast = document.getElementById('copy-toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 2000);
+        }
+    });
+</script>
 {% endblock %}
