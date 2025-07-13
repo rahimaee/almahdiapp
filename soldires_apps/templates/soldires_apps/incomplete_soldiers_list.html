@@ -1,25 +1,197 @@
 {% extends 'shared/_PanelMain.html' %}
 {% load static %}
+{% block header %}
+<style>
+    .modern-table-container {
+        margin-top: 2rem;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        background: #fff;
+    }
+
+    .modern-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .modern-table thead {
+        background: linear-gradient(to left, #4e73df, #224abe);
+        color: white;
+        font-weight: bold;
+    }
+
+    .modern-table th,
+    .modern-table td {
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .modern-table tbody tr {
+        transition: background-color 0.3s ease;
+        border-bottom: 1px solid #eee;
+    }
+
+    .modern-table tbody tr:hover {
+        background-color: #f0f4ff;
+    }
+
+    .btn-create {
+        background: linear-gradient(to left, #1cc88a, #17a673);
+        color: white;
+        border-radius: 6px;
+        padding: 8px 20px;
+        font-weight: 500;
+    }
+
+    .btn-create:hover {
+        opacity: 0.95;
+    }
+
+    .header-tools {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        padding:15px;
+        gap:1rem;
+    }
+
+    .search-form {
+        display:flex;
+        align-items:center;
+        border:1px solid gray;
+        border-radius: 6px;
+    }
+
+    .search-form input {
+        border: none;
+        outline: none;
+        border-radius: 6px;
+        padding-right: 6px;
+        width: 200px;
+    }
+
+    .table-actions a {
+        padding: 4px 10px;
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+        color: white !important;
+        border-radius: 6px;
+    }
+
+    .table-actions a.bg-success { background-color: #28a745; }
+    .table-actions a.bg-primary { background-color: #007bff; }
+    .table-actions a.bg-warning { background-color: #ffc107; color: black !important; }
+    .table-actions a.bg-danger  { background-color: #dc3545; }
+
+    .table-actions a:hover {
+        transform: translateY(-1px);
+        opacity: 0.9;
+    }
+    .header-tools .center-box {
+        flex:1;
+        display:flex;
+        align-items:center;
+        justify-content:end;
+    }
+    .pagination .page-link {
+        border-radius: 10px !important;
+    }
+    
+    .pagination {
+        margin:0;
+    }
+
+ 
+    .table-actions {
+        display:flex;
+        flex-direction:column;
+        gap:1;
+    }
+    .table-actions a {
+        display:inline-black;
+        width:100%;
+        margin:1px 0;
+    }
+       .national-card {
+        padding : 5px;
+        margin :0;
+        font-family: YekanBakh, Yekan, Naskh, sans-serif;
+    }
+    .text-truncate {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;  
+        overflow: hidden;
+        font-size:12px;
+    }
+
+    .full-name { 
+        font-weight:bold;
+    }
+    .col-2 {
+        column-span:2;
+    }
+</style>
+<style>
+  .text-danger li {
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .text-danger li i {
+    color: #dc3545;
+    margin-left: 6px;
+  }
+
+  .label-success {
+    background-color: #28a745;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .label-success i {
+    font-size: 1.2rem;
+  }
+
+  .btn-info.btn-sm {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+  }
+  .btn-info.btn-sm i {
+    font-size: 1.1rem;
+  }
+  .btn-doc {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+</style>
+{% endblock %}
 
 {% block main %}
-    <div class="container">
-        <div class="panel panel-success">
-            <div class="panel-heading text-center">
-                <h3 class="panel-title">
-                    <i class="glyphicon glyphicon-warning-sign"></i>
-                    لیست سربازان با نقص اطلاعات یا مدارک
-                </h3>
-            </div>
-            <div class="panel-body">
-                <table class="table table-bordered table-hover table-striped text-center">
+<div class="container">
+  <h2 class="fw-bold text-primary text-center">📑 فهرست نامه‌های بهداشت</h2>
+
+    <div class="modern-table-container">
+
+        <table class="modern-table">
                     <thead>
                     <tr class="success">
                         <th>ردیف</th>
-                        <th>نام</th>
-                        <th>نام خانوادگی</th>
+                        <th>نام و نام خانوادگی</th>
                         <th>کد ملی</th>
-                        <th>مشخصات ناقص</th>
-                        <th>مدارک ناقص</th>
+                        <th class="text-right">مشخصات ناقص</th>
+                        <th class="text-right">مدارک ناقص</th>
                         <th>عملیات</th>
                     </tr>
                     </thead>
@@ -29,41 +201,39 @@
                             {% if missing_info or missing_docs %}
                                 <tr>
                                     <td>{{ forloop.counter }}</td>
-                                    <td>{{ soldier.first_name }}</td>
-                                    <td>{{ soldier.last_name }}</td>
+                                    <td>{{ soldier.first_name }} {{ soldier.last_name }}</td>
                                     <td>{{ soldier.national_code }}</td>
                                     <td>
-                                        {% if missing_info %}
-                                            <ul class="list-unstyled text-danger">
-                                                {% for field in missing_info %}
-                                                    <li><i class="glyphicon glyphicon-remove-sign"></i> {{ field }}</li>
-                                                {% endfor %}
-                                            </ul>
-                                        {% else %}
-                                            <span class="label label-success">
-                                                <i class="glyphicon glyphicon-ok"></i> کامل
-                                            </span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if missing_docs %}
-                                            <ul class="list-unstyled text-danger">
-                                                {% for doc in missing_docs %}
-                                                    <li><i class="glyphicon glyphicon-file"></i> {{ doc }}</li>
-                                                {% endfor %}
-                                            </ul>
-                                        {% else %}
-                                            <span class="label label-success">
-                                                <i class="glyphicon glyphicon-ok"></i> کامل
-                                            </span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <a href="{% url 'manage_soldier_documents' soldier.id %}"
-                                           class="btn btn-info btn-sm">
-                                            <i class="glyphicon glyphicon-folder-open"></i> مشاهده مدارک
-                                        </a>
-                                    </td>
+            {% if missing_info %}
+              <ul class="list-unstyled text-danger mb-0 text-right">
+                {% for field in missing_info %}
+                  <li>❌ {{ field }}</li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <span class="badge bg-success">
+                ✅ کامل
+              </span>
+            {% endif %}
+          </td>
+          <td>
+            {% if missing_docs %}
+              <ul class="list-unstyled text-danger mb-0 text-right">
+                {% for doc in missing_docs %}
+                  <li>📄 {{ doc }}</li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <span class="badge bg-success">
+                ✅ کامل
+              </span>
+            {% endif %}
+          </td>
+          <td>
+            <a href="{% url 'manage_soldier_documents' soldier.id %}" class="btn btn-info btn-sm btn-doc">
+            <span>مشاهده مدارک</span>   <span>📁</span>
+            </a>
+          </td>
                                 </tr>
                             {% endif %}
                         {% endwith %}
@@ -76,7 +246,6 @@
                     {% endfor %}
                     </tbody>
                 </table>
-            </div>
         </div>
     </div>
 {% endblock %}

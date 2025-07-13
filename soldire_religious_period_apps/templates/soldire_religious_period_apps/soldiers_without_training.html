@@ -1,25 +1,161 @@
 {% extends 'shared/_PanelMain.html' %}
 {% load static %}
+{% load jalali_filters %}
 
 {% block header %}
+<style>
+    .modern-table-container {
+        margin-top: 2rem;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        background: #fff;
+    }
+
+    .modern-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .modern-table thead {
+        background: linear-gradient(to left, #4e73df, #224abe);
+        color: white;
+        font-weight: bold;
+    }
+
+    .modern-table th,
+    .modern-table td {
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .modern-table tbody tr {
+        transition: background-color 0.3s ease;
+        border-bottom: 1px solid #eee;
+    }
+
+    .modern-table tbody tr:hover {
+        background-color: #f0f4ff;
+    }
+
+    .btn-create {
+        background: linear-gradient(to left, #1cc88a, #17a673);
+        color: white;
+        border-radius: 6px;
+        padding: 8px 20px;
+        font-weight: 500;
+    }
+
+    .btn-create:hover {
+        opacity: 0.95;
+    }
+
+    .header-tools {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        padding:15px;
+        gap:1rem;
+    }
+
+    .search-form {
+        display:flex;
+        align-items:center;
+        border:1px solid gray;
+        border-radius: 6px;
+    }
+
+    .search-form input {
+        border: none;
+        outline: none;
+        border-radius: 6px;
+        padding-right: 6px;
+        width: 200px;
+    }
+
+    .table-actions a {
+        padding: 4px 10px;
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+        color: white !important;
+        border-radius: 6px;
+    }
+
+    .table-actions a.bg-success { background-color: #28a745; }
+    .table-actions a.bg-primary { background-color: #007bff; }
+    .table-actions a.bg-warning { background-color: #ffc107; color: black !important; }
+    .table-actions a.bg-danger  { background-color: #dc3545; }
+
+    .table-actions a:hover {
+        transform: translateY(-1px);
+        opacity: 0.9;
+    }
+    .header-tools .center-box {
+        flex:1;
+        display:flex;
+        align-items:center;
+        justify-content:end;
+    }
+    .pagination .page-link {
+        border-radius: 10px !important;
+    }
+    
+    .pagination {
+        margin:0;
+    }
+
+ 
+    .table-actions {
+        display:flex;
+        flex-direction:column;
+        gap:1;
+    }
+    .table-actions a {
+        display:inline-black;
+        width:100%;
+        margin:1px 0;
+    }
+       .national-card {
+        padding : 5px;
+        margin :0;
+        font-family: YekanBakh, Yekan, Naskh, sans-serif;
+    }
+    .text-truncate {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;  
+        overflow: hidden;
+        font-size:12px;
+    }
+
+    .full-name { 
+        font-weight:bold;
+    }
+    .col-2 {
+        column-span:2;
+    }
+</style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
 {% endblock %}
 
 {% block main %}
     <div class="container">
-        <div class="panel panel-danger">
-            <div class="panel-heading text-center">
-                <h3 class="panel-title">
-                    <i class="glyphicon glyphicon-user"></i> لیست سربازان بدون دوره عقیدتی
-                </h3>
-            </div>
-            <div class="panel-body">
-                <button class="btn btn-success" id="download-btn" style="margin-bottom: 15px;">
+        <h2 class="fw-bold text-primary text-center">📄 لیست سربازان بدون دوره عقیدتی</h2>
+    <div class="modern-table-container">
+        
+        <div class="header-tools mb-3">
+                <button class="btn btn-success" id="download-btn" >
                     <i class="glyphicon glyphicon-download-alt"></i> دانلود اکسل
                 </button>
-                <div class="table-responsive">
-                    <table id="soldiers-table" class="table table-bordered table-striped table-hover text-center">
-                        <thead>
+                <form method="get" class="search-form d-flex align-items-center gap-2">
+                    <input type="text" name="q" class="form-control" placeholder="عبارت..." value="{{ query }}">
+                    <button type="submit" class="btn btn-outline-primary btn-sm">جستجو 🔍</button>
+                </form>
+                <table class="modern-table">
+    <thead>
                         <tr class="info">
                             <th>#</th>
                             <th>کد سازمانی</th>
@@ -67,6 +203,7 @@
                     </table>
                 </div>
             </div>
+        </div>
         </div>
     </div>
 {% endblock %}

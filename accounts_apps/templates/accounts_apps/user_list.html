@@ -1,47 +1,168 @@
 {% extends 'shared/_PanelMain.html' %}
 {% load static %}
 
+
 {% block header %}
-    <style>
-        body {
-            background-color: #fff8f0;
-        }
+<style>
+    .modern-table-container {
+        margin-top: 2rem;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        background: #fff;
+    }
 
-        .navbar {
-            background-color: orange;
-        }
+    .modern-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
 
-        .btn-orange {
-            background-color: orange;
-            border-color: orange;
-            color: white;
-        }
+    .modern-table thead {
+        background: linear-gradient(to left, #4e73df, #224abe);
+        color: white;
+        font-weight: bold;
+    }
 
-        .btn-orange:hover {
-            background-color: darkorange;
-        }
-    </style>
+    .modern-table th,
+    .modern-table td {
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .modern-table tbody tr {
+        transition: background-color 0.3s ease;
+        border-bottom: 1px solid #eee;
+    }
+
+    .modern-table tbody tr:hover {
+        background-color: #f0f4ff;
+    }
+
+    .btn-create {
+        background: linear-gradient(to left, #1cc88a, #17a673);
+        color: white;
+        border-radius: 6px;
+        padding: 8px 20px;
+        font-weight: 500;
+    }
+
+    .btn-create:hover {
+        opacity: 0.95;
+    }
+
+    .header-tools {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        padding:15px;
+        gap:1rem;
+    }
+
+    .search-form {
+        display:flex;
+        align-items:center;
+        border:1px solid gray;
+        border-radius: 6px;
+    }
+
+    .search-form input {
+        border: none;
+        outline: none;
+        border-radius: 6px;
+        padding-right: 6px;
+        width: 200px;
+    }
+
+    .table-actions a {
+        padding: 4px 10px;
+        font-weight: 500;
+        transition: all 0.2s ease-in-out;
+        color: white !important;
+        border-radius: 6px;
+    }
+
+    .table-actions a.bg-success { background-color: #28a745; }
+    .table-actions a.bg-primary { background-color: #007bff; }
+    .table-actions a.bg-warning { background-color: #ffc107; color: black !important; }
+    .table-actions a.bg-danger  { background-color: #dc3545; }
+
+    .table-actions a:hover {
+        transform: translateY(-1px);
+        opacity: 0.9;
+    }
+    .header-tools .center-box {
+        flex:1;
+        display:flex;
+        align-items:center;
+        justify-content:end;
+    }
+    .pagination .page-link {
+        border-radius: 10px !important;
+    }
+    
+    .pagination {
+        margin:0;
+    }
+
+ 
+    .table-actions {
+        display:flex;
+        flex-direction:column;
+        gap:1;
+    }
+    .table-actions a {
+        display:inline-black;
+        width:100%;
+        margin:1px 0;
+    }
+       .national-card {
+        padding : 5px;
+        margin :0;
+        font-family: YekanBakh, Yekan, Naskh, sans-serif;
+    }
+    .text-truncate {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;  
+        overflow: hidden;
+        font-size:12px;
+    }
+
+    .full-name { 
+        font-weight:bold;
+    }
+    .col-2 {
+        column-span:2;
+    }
+</style>
+
 {% endblock %}
+
+
 {% block main %}
 
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">مدیریت کاربران</a>
-            </div>
-        </div>
-    </nav>
-
     <div class="container">
-        <h2>لیست کاربران</h2>
-        <a href="{% url 'user_create' %}" class="btn btn-orange">افزودن کاربر جدید</a>
-        <br><br>
-        <table class="table table-bordered table-striped">
+        <h2 class="fw-bold text-primary text-center" style="align-items: center; justify-content: center;">
+            <svg xmlns="http://www.w3.org/2000/svg" style="height:24px; margin-left:8px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>
+            </svg>
+  فهرست مدیران و کاربران
+</h2>
+      <div class="modern-table-container">
+        <div class="header-tools mb-3">
+<a href="{% url 'user_create' %}" class="btn btn-success btn-create" title="افزودن کاربر جدید">
+    افزودن کاربر جدید
+  <svg xmlns="http://www.w3.org/2000/svg" style="height:16px; vertical-align:middle; margin-left:6px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+  </svg>
+</a>       </div>
+        <table class="modern-table">
             <thead>
-            <tr style="background-color: orange; color: white;">
+            <tr>
                 <th>نام کاربری</th>
-                <th>نام</th>
-                <th>نام خانوادگی</th>
+                <th>نام و نام خانوادگی</th>
                 <th>کد ملی</th>
                 <th>شماره تلفن</th>
                 <th>وضعیت شاغل</th>
@@ -52,16 +173,30 @@
             {% for user in users %}
                 <tr>
                     <td>{{ user.username }}</td>
-                    <td>{{ user.first_name }}</td>
-                    <td>{{ user.last_name }}</td>
+                    <td>{{ user.first_name }} {{ user.last_name }}</td>
                     <td>{{ user.national_code }}</td>
                     <td>{{ user.phone_number }}</td>
                     <td>{{ user.get_employment_status }}</td>
-                    <td>
-                        <a href="{% url 'user_update' user.pk %}" class="btn btn-warning btn-xs">ویرایش</a>
-                        <a href="{% url 'user_delete' user.pk %}" class="btn btn-danger btn-xs">حذف</a>
-                        <a href="{% url 'manage_user_access' user.pk %}" class="btn btn-danger btn-xs">دسترسی</a>
-                    </td>
+<td>
+  <a href="{% url 'user_update' user.pk %}" class="btn btn-warning btn-sm" title="ویرایش کاربر">
+    <svg xmlns="http://www.w3.org/2000/svg" style="height:14px; vertical-align:middle; margin-left:4px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 11l6-6 3 3-6 6H9v-3z"/>
+    </svg>
+    ویرایش
+  </a>
+  <a href="{% url 'user_delete' user.pk %}" class="btn btn-danger btn-sm ms-1" title="حذف کاربر">
+    <svg xmlns="http://www.w3.org/2000/svg" style="height:14px; vertical-align:middle; margin-left:4px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19 7L5 7M10 11v6M14 11v6M4 7l1-2h14l1 2M6 7v12a2 2 0 002 2h8a2 2 0 002-2V7"/>
+    </svg>
+    حذف
+  </a>
+  <a href="{% url 'manage_user_access' user.pk %}" class="btn btn-info btn-sm ms-1" title="مدیریت دسترسی‌های کاربر">
+    <svg xmlns="http://www.w3.org/2000/svg" style="height:14px; vertical-align:middle; margin-left:4px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 11c0-1.104.896-2 2-2s2 .896 2 2c0 1.104-.896 2-2 2s-2-.896-2-2zm0 4h6m-6 0H6m6 0v3M7 21v-6a4 4 0 014-4h0a4 4 0 014 4v6"/>
+    </svg>
+    دسترسی‌ها
+  </a>
+</td>
                 </tr>
             {% empty %}
                 <tr>
