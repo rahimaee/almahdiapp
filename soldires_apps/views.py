@@ -8,6 +8,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.utils import timezone
 from datetime import timedelta
+from django.contrib import messages
 
 from accounts_apps.decorators import feature_required
 from accounts_apps.utils import get_accessible_soldiers_for_user
@@ -422,35 +423,69 @@ def bulk_photo_upload(request):
 
 
 def review_settlements(request):
-    # گرفتن همه سربازهایی که نیاز به بررسی دارند
-    settlements = Settlement.objects.filter(need_rights_recheck=True)
+    # فقط settlementهایی که در وضعیت بررسی حقوق هستند نمایش داده شوند
+    settlements = Settlement.objects.filter(status='review').select_related('soldier')
 
     if request.method == 'POST':
-        # دریافت داده‌ها از فرم
         for settlement in settlements:
-            # پیدا کردن سرباز و تغییر وضعیت
             new_debt = request.POST.get(f'debt_{settlement.id}')
             no_review = request.POST.get(f'no_review_{settlement.id}')
+            approve_settlement = request.POST.get(f'approve_{settlement.id}')
 
-            if new_debt:
-                settlement.current_debt_rial = int(new_debt)
-                settlement.updated_at = datetime.datetime.now()
-                settlement.save()
-            if no_review:
+            if new_debt and new_debt.strip():
+                try:
+                    debt_amount = int(new_debt)
+                    settlement.total_debt_rial = debt_amount
+                    settlement.current_debt_rial = debt_amount
+                    settlement.last_rights_check_date = timezone.now().date()
+                    settlement.updated_at = timezone.now()
+                    # اگر بدهی صفر باشد، وضعیت تسویه کامل شود
+                    if debt_amount == 0:
+                        settlement.status = 'cleared'
+                        settlement.need_rights_recheck = False
+                    # اگر تیک نیاز به بررسی ندارد خورده باشد، وضعیت به pending تغییر کند
+                    elif no_review:
+                        settlement.status = 'pending'
+                        settlement.need_rights_recheck = False
+                    # در غیر این صورت، وضعیت همچنان review بماند
+                    else:
+                        settlement.status = 'review'
+                        settlement.need_rights_recheck = True
+                    settlement.save()
+                    messages.success(request, f"بدهی سرباز {settlement.soldier.first_name} {settlement.soldier.last_name} به {debt_amount:,} ریال تنظیم شد.")
+                except ValueError:
+                    messages.error(request, f"مقدار بدهی برای سرباز {settlement.soldier.first_name} {settlement.soldier.last_name} نامعتبر است.")
+            elif no_review:
                 settlement.need_rights_recheck = False
-                settlement.status = 'pending'  # تغییر وضعیت به "در انتظار تسویه"
-                settlement.updated_at = datetime.datetime.now()
-
-            settlement.save()
-
-        return redirect('review_settlements')  # پس از ارسال فرم، مجدداً لیست را نشان می‌دهیم
-
+                settlement.status = 'pending'  # تغییر وضعیت به در انتظار تسویه
+                settlement.updated_at = timezone.now()
+                settlement.save()
+                messages.info(request, f"بررسی سرباز {settlement.soldier.first_name} {settlement.soldier.last_name} لغو شد و به مرحله تسویه منتقل شد.")
+            elif approve_settlement:
+                settlement.need_rights_recheck = False
+                settlement.status = 'pending'
+                settlement.updated_at = timezone.now()
+                settlement.save()
+                messages.success(request, f"تسویه‌حساب سرباز {settlement.soldier.first_name} {settlement.soldier.last_name} تایید شد.")
+        return redirect('review_settlements')
     return render(request, 'soldires_apps/review_settlements.html', {'settlements': settlements})
 
 
 def payment_receipt_create(request):
-    # گرفتن همه سربازهایی که بدهی دارند
-    settlements = Settlement.objects.filter(current_debt_rial__gt=0)
+    # گرفتن settlement_id از URL اگر وجود داشته باشد
+    settlement_id = request.GET.get('settlement_id')
+    
+    if settlement_id:
+        # اگر settlement_id مشخص شده، فقط آن settlement را نمایش بده
+        try:
+            selected_settlement = Settlement.objects.get(id=settlement_id, current_debt_rial__gt=0)
+            settlements = [selected_settlement]
+        except Settlement.DoesNotExist:
+            messages.error(request, "تسویه‌حساب مورد نظر یافت نشد یا بدهی ندارد.")
+            return redirect('soldiers_settlement_list')
+    else:
+        # در غیر این صورت، همه settlementهایی که بدهی دارند را نمایش بده
+        settlements = Settlement.objects.filter(current_debt_rial__gt=0).select_related('soldier')
 
     if request.method == 'POST':
         # گرفتن اطلاعات از فرم
@@ -460,36 +495,81 @@ def payment_receipt_create(request):
         deposit_date = request.POST.get('deposit_date')
         bank_operator_code = request.POST.get('bank_operator_code')
 
-        # پیدا کردن تسویه‌حساب سرباز انتخاب شده
-        settlement = Settlement.objects.get(id=settlement_id)
+        try:
+            # اعتبارسنجی داده‌ها
+            if not all([settlement_id, amount_rial, receipt_number, deposit_date, bank_operator_code]):
+                messages.error(request, "لطفاً تمام فیلدها را پر کنید.")
+                return render(request, 'soldires_apps/payment_receipt_create.html', {'settlements': settlements})
 
-        # ایجاد فیش واریزی
-        PaymentReceipt.objects.create(
-            settlement=settlement,
-            amount_rial=amount_rial,
-            receipt_number=receipt_number,
-            deposit_date=deposit_date,
-            bank_operator_code=bank_operator_code
-        )
-        return redirect('payment_receipt_create')  # پس از ثبت فیش، صفحه را دوباره بارگذاری می‌کنیم
+            amount_rial = int(amount_rial)
+            if amount_rial <= 0:
+                messages.error(request, "مبلغ واریزی باید بیشتر از صفر باشد.")
+                return render(request, 'soldires_apps/payment_receipt_create.html', {'settlements': settlements})
 
-    return render(request, 'soldires_apps/payment_receipt_create.html', {'settlements': settlements})
+            # پیدا کردن تسویه‌حساب سرباز انتخاب شده
+            settlement = Settlement.objects.get(id=settlement_id)
+            
+            # بررسی اینکه مبلغ واریزی از بدهی باقی‌مانده بیشتر نباشد
+            if amount_rial > settlement.current_debt_rial:
+                messages.warning(request, f"مبلغ واریزی ({amount_rial:,} ریال) از بدهی باقی‌مانده ({settlement.current_debt_rial:,} ریال) بیشتر است.")
+
+            # ایجاد فیش واریزی
+            PaymentReceipt.objects.create(
+                settlement=settlement,
+                amount_rial=amount_rial,
+                receipt_number=receipt_number,
+                deposit_date=deposit_date,
+                bank_operator_code=bank_operator_code
+            )
+            
+            messages.success(request, f"فیش واریزی {receipt_number} به مبلغ {amount_rial:,} ریال برای سرباز {settlement.soldier.first_name} {settlement.soldier.last_name} با موفقیت ثبت شد.")
+            
+            # هدایت به صفحه مشاهده فیش‌های سرباز
+            return redirect('settlement_payments', settlement_id=settlement.id)
+            
+        except ValueError:
+            messages.error(request, "مبلغ واریزی باید عدد صحیح باشد.")
+        except Settlement.DoesNotExist:
+            messages.error(request, "تسویه‌حساب مورد نظر یافت نشد.")
+        except Exception as e:
+            messages.error(request, f"خطا در ثبت فیش واریزی: {str(e)}")
+
+    return render(request, 'soldires_apps/payment_receipt_create.html', {
+        'settlements': settlements,
+        'selected_settlement_id': settlement_id,
+        'today_date': timezone.now().date()
+    })
 
 
 def soldiers_settlement_list(request):
-    # گرفتن همه سربازانی که تسویه‌حساب دارند
-    soldiers = Soldier.objects.all()
+    # گرفتن فقط سربازانی که Settlement دارند و وضعیتشان review نیست
+    settlements = Settlement.objects.select_related('soldier').exclude(status='review').order_by('-created_at')
+    
+    # فیلتر بر اساس وضعیت
+    status_filter = request.GET.get('status')
+    if status_filter:
+        settlements = settlements.filter(status=status_filter)
+    
+    # فیلتر بر اساس بدهی
+    debt_filter = request.GET.get('debt')
+    if debt_filter == 'has_debt':
+        settlements = settlements.filter(current_debt_rial__gt=0)
+    elif debt_filter == 'no_debt':
+        settlements = settlements.filter(current_debt_rial=0)
 
     # گرفتن اطلاعات تسویه‌حساب برای هر سرباز
     soldier_data = []
-    for soldier in soldiers:
-        settlement = soldier.settlement if hasattr(soldier, 'settlement') else None
+    for settlement in settlements:
         soldier_data.append({
-            'soldier': soldier,
+            'soldier': settlement.soldier,
             'settlement': settlement
         })
 
-    return render(request, 'soldires_apps/soldiers_settlement_list.html', {'soldier_data': soldier_data})
+    return render(request, 'soldires_apps/soldiers_settlement_list.html', {
+        'soldier_data': soldier_data,
+        'status_filter': status_filter,
+        'debt_filter': debt_filter
+    })
 
 
 def settlement_payments_view(request, settlement_id):

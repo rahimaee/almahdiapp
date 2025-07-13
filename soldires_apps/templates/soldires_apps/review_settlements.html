@@ -1,43 +1,135 @@
 {% extends 'shared/_PanelMain.html' %}
 {% load static %}
 {% load jalali_filters %}
+{% load humanize %}
 {% block main %}
     <div class="container">
-        <h2 class="text-center">لیست سربازانی که نیاز به بررسی دارند</h2>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="text-center">بررسی و تنظیم بدهی‌های سربازان</h2>
+                <div class="alert alert-info">
+                    <i class="fa fa-info-circle"></i>
+                    در این صفحه می‌توانید بدهی‌های سربازان را بررسی و تنظیم کنید. پس از تنظیم بدهی، سرباز وارد مرحله پرداخت می‌شود.
+                </div>
+            </div>
+        </div>
+
         <form method="POST">
             {% csrf_token %}
-            <table class="table table-bordered">
-                <thead>
-                <tr>
-                    <th>نام سرباز</th>
-                    <th>میزان بدهی باقی‌مانده</th>
-                    <th>تاریخ اخرین بررسی حقوق</th>
-                    <th>بدهی جدید</th>
-                    <th>نیاز به بررسی مجدد</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for settlement in settlements %}
-                    <tr>
-                        <td>{{ settlement.soldier.first_name }} {{ settlement.soldier.last_name }}</td>
-                        <td>{{ settlement.current_debt_rial }} ریال</td>
-                        <td>{{ settlement.updated_at|to_jalali}}</td>
-                        <td>
-                            <input type="number" name="debt_{{ settlement.id }}" class="form-control"
-                                   placeholder="میزان بدهی جدید">
-                        </td>
-                        <td>
-                            <label class="checkbox-inline">
-                                <input type="checkbox" name="no_review_{{ settlement.id }}"
-                                       {% if not settlement.need_rights_recheck %}checked{% endif %}> نیازی به بررسی
-                                ندارد
-                            </label>
-                        </td>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                    <tr class="bg-primary text-white">
+                        <th>ردیف</th>
+                        <th>نام و نام خانوادگی</th>
+                        <th>کد ملی</th>
+                        <th>وضعیت فعلی</th>
+                        <th>بدهی فعلی (ریال)</th>
+                        <th>تاریخ آخرین بررسی</th>
+                        <th>تنظیم بدهی جدید</th>
+                        <th>عملیات</th>
                     </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            <button type="submit" class="btn btn-primary btn-block">ثبت تغییرات</button>
+                    </thead>
+                    <tbody>
+                    {% for settlement in settlements %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                <strong>{{ settlement.soldier.first_name }} {{ settlement.soldier.last_name }}</strong>
+                                {% if settlement.soldier.photo_scan %}
+                                    <i class="fa fa-camera text-primary"></i>
+                                {% endif %}
+                            </td>
+                            <td>{{ settlement.soldier.national_code }}</td>
+                            <td>
+                                {% if settlement.status == 'pending' %}
+                                    <span class="label label-warning">در انتظار تسویه</span>
+                                {% elif settlement.status == 'partial' %}
+                                    <span class="label label-info">تسویه ناقص</span>
+                                {% elif settlement.status == 'cleared' %}
+                                    <span class="label label-success">تسویه کامل</span>
+                                {% elif settlement.status == 'review' %}
+                                    <span class="label label-danger">نیاز به بررسی</span>
+                                {% else %}
+                                    <span class="label label-default">{{ settlement.get_status_display }}</span>
+                                {% endif %}
+                                
+                                {% if settlement.need_rights_recheck %}
+                                    <br><span class="label label-danger">نیاز به بررسی حقوق</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="text-{% if settlement.current_debt_rial > 0 %}danger{% else %}success{% endif %}">
+                                    {{ settlement.current_debt_rial|floatformat:0|intcomma }} ریال
+                                </span>
+                            </td>
+                            <td>
+                                {% if settlement.last_rights_check_date %}
+                                    {{ settlement.last_rights_check_date|to_jalali }}
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <input type="number" name="debt_{{ settlement.id }}" 
+                                           class="form-control" 
+                                           placeholder="مقدار بدهی (ریال)"
+                                           value="{{ settlement.total_debt_rial|default:'' }}"
+                                           min="0">
+                                    <span class="input-group-addon">ریال</span>
+                                </div>
+                                <small class="text-muted">صفر = بدون بدهی</small>
+                            </td>
+                            <td>
+                                <div class="btn-group-vertical btn-block">
+                                    <button type="submit" name="approve_{{ settlement.id }}" 
+                                            class="btn btn-success btn-sm" 
+                                            onclick="return confirm('آیا از تنظیم بدهی این سرباز اطمینان دارید؟')">
+                                        <i class="fa fa-check"></i> تایید و تنظیم
+                                    </button>
+                                    
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" name="no_review_{{ settlement.id }}"
+                                               {% if settlement.need_rights_recheck == False %}checked{% endif %}>
+                                        <small>نیاز به بررسی ندارد</small>
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center text-muted">
+                                <i class="fa fa-info-circle"></i>
+                                هیچ سربازی برای بررسی یافت نشد.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fa fa-save"></i>
+                        ثبت تمام تغییرات
+                    </button>
+                    <a href="{% url 'soldiers_settlement_list' %}" class="btn btn-info btn-lg">
+                        <i class="fa fa-list"></i>
+                        مشاهده لیست تسویه‌حساب
+                    </a>
+                </div>
+            </div>
         </form>
     </div>
 {% endblock %}

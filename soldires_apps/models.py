@@ -406,13 +406,13 @@ class Settlement(models.Model):
     status = models.CharField(
         max_length=20,
         choices=[
+            ('review', 'بررسی حقوق'),
             ('pending', 'در انتظار تسویه'),
             ('partial', 'تسویه ناقص'),
             ('cleared', 'تسویه کامل'),
-            ('transitional', 'انتقالی'),
-            ('review', 'بررسی'),
+            ('transferred', 'انتقالی'),
         ],
-        default='pending',
+        default='review',
         verbose_name="وضعیت"
     )
 
@@ -445,7 +445,7 @@ class PaymentReceipt(models.Model):
 
     amount_rial = models.BigIntegerField("مبلغ واریزی (ریال)")
     receipt_number = models.CharField("شماره فیش واریزی", max_length=100)
-    deposit_date = models.DateField("تاریخ فیش واریزی")
+    deposit_date = models.CharField(max_length=120,verbose_name="تاریخ فیش واریزی")
     bank_operator_code = models.CharField("کد متصدی بانک", max_length=50)
 
     receipt_file = models.FileField("فایل فیش", upload_to='receipts/', blank=True, null=True)

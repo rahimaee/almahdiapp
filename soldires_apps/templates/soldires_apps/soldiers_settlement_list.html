@@ -1,67 +1,189 @@
 {% extends 'shared/_PanelMain.html' %}
 {% load static %}
+{% load jalali_filters %}
+{% load humanize %}
 {% block main %}
     <div class="container">
-        <h2 class="text-center">لیست سربازان و وضعیت تسویه‌حساب</h2>
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="text-center">لیست سربازان و وضعیت تسویه‌حساب</h2>
+                <div class="alert alert-info">
+                    <i class="fa fa-info-circle"></i>
+                    این لیست شامل سربازانی است که نامه تسویه‌حساب آن‌ها تایید شده و Settlement دارند.
+                </div>
+            </div>
+        </div>
 
-        <table class="table table-bordered table-striped">
-            <thead>
-            <tr>
-                <th>نام</th>
-                <th>نام خانوادگی</th>
-                <th>مقدار بدهی (ریال)</th>
-                <th>وضعیت تسویه‌حساب</th>
-                <th>تاریخ آخرین بررسی</th>
-                <th>عملیات</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for item in soldier_data %}
-                <tr>
-                    <td>{{ item.soldier.first_name }}</td>
-                    <td>{{ item.soldier.last_name }}</td>
+        <!-- فیلترها -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">فیلترها</h4>
+                    </div>
+                    <div class="panel-body">
+                        <form method="get" class="form-inline">
+                            <div class="form-group">
+                                <label for="status">وضعیت:</label>
+                                <select name="status" id="status" class="form-control">
+                                    <option value="">همه</option>
+                                    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>در انتظار تسویه</option>
+                                    <option value="partial" {% if status_filter == 'partial' %}selected{% endif %}>تسویه ناقص</option>
+                                    <option value="cleared" {% if status_filter == 'cleared' %}selected{% endif %}>تسویه کامل</option>
+                                    <option value="review" {% if status_filter == 'review' %}selected{% endif %}>نیاز به بررسی</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="debt">بدهی:</label>
+                                <select name="debt" id="debt" class="form-control">
+                                    <option value="">همه</option>
+                                    <option value="has_debt" {% if debt_filter == 'has_debt' %}selected{% endif %}>دارای بدهی</option>
+                                    <option value="no_debt" {% if debt_filter == 'no_debt' %}selected{% endif %}>بدون بدهی</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-filter"></i> اعمال فیلتر
+                            </button>
+                            <a href="{% url 'soldiers_settlement_list' %}" class="btn btn-default">
+                                <i class="fa fa-times"></i> پاک کردن
+                            </a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                    <!-- نمایش مقدار بدهی -->
-                    <td>
-                        {% if item.settlement %}
-                            {{ item.settlement.current_debt_rial }}
-                        {% else %}
-                            ندارد
-                        {% endif %}
-                    </td>
-
-                    <!-- نمایش وضعیت تسویه‌حساب -->
-                    <td>
-                        {% if item.settlement %}
-                            {{ item.settlement.status }}
-                        {% else %}
-                            بدون وضعیت
-                        {% endif %}
-                    </td>
-
-                    <!-- نمایش تاریخ آخرین بررسی -->
-                    <td>
-                        {% if item.settlement %}
-                            {{ item.settlement.last_rights_check_date }}
-                        {% else %}
-                            ندارد
-                        {% endif %}
-                    </td>
-
-                    <!-- عملیات -->
-                    <td>
-                        {% if item.settlement %}
-                            <a href="{% url 'payment_receipt_create' %}?settlement_id={{ item.settlement.id }}"
-                               class="btn btn-success btn-sm">ثبت فیش واریزی</a>
-                            <a href="{% url 'settlement_payments' settlement_id=item.settlement.id %}"
-                               class="btn btn-success btn-sm">فیش واریزی</a>
-                        {% else %}
-                            <span class="label label-warning">تسویه‌حساب ندارد</span>
-                        {% endif %}
-                    </td>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                <tr class="bg-primary text-white">
+                    <th>ردیف</th>
+                    <th>نام و نام خانوادگی</th>
+                    <th>کد ملی</th>
+                    <th>وضعیت سرباز</th>
+                    <th>بدهی کل (ریال)</th>
+                    <th>بدهی باقی‌مانده (ریال)</th>
+                    <th>وضعیت تسویه‌حساب</th>
+                    <th>تاریخ ثبت تسویه</th>
+                    <th>عملیات</th>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for item in soldier_data %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <strong>{{ item.soldier.first_name }} {{ item.soldier.last_name }}</strong>
+                            {% if item.soldier.photo_scan %}
+                                <i class="fa fa-camera text-primary"></i>
+                            {% endif %}
+                        </td>
+                        <td>{{ item.soldier.national_code }}</td>
+                        <td>
+                            {% if item.soldier.status == 'پایان خدمت' %}
+                                <span class="label label-success">{{ item.soldier.get_status_display }}</span>
+                            {% elif item.soldier.status == 'قبولی در دانشگاه' %}
+                                <span class="label label-info">{{ item.soldier.get_status_display }}</span>
+                            {% elif item.soldier.status == 'انتقالی' %}
+                                <span class="label label-warning">{{ item.soldier.get_status_display }}</span>
+                            {% else %}
+                                <span class="label label-default">{{ item.soldier.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- نمایش بدهی کل -->
+                        <td>
+                            {% if item.settlement %}
+                                <span class="text-info">
+                                    {{ item.settlement.total_debt_rial|floatformat:0|intcomma }} ریال
+                                </span>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- نمایش بدهی باقی‌مانده -->
+                        <td>
+                            {% if item.settlement %}
+                                <span class="text-{% if item.settlement.current_debt_rial > 0 %}danger{% else %}success{% endif %}">
+                                    {{ item.settlement.current_debt_rial|floatformat:0|intcomma }} ریال
+                                </span>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- نمایش وضعیت تسویه‌حساب -->
+                        <td>
+                            {% if item.settlement %}
+                                {% if item.settlement.status == 'pending' %}
+                                    <span class="label label-warning">در انتظار تسویه</span>
+                                {% elif item.settlement.status == 'partial' %}
+                                    <span class="label label-info">تسویه ناقص</span>
+                                {% elif item.settlement.status == 'cleared' %}
+                                    <span class="label label-success">تسویه کامل</span>
+                                {% elif item.settlement.status == 'review' %}
+                                    <span class="label label-danger">نیاز به بررسی</span>
+                                {% else %}
+                                    <span class="label label-default">{{ item.settlement.get_status_display }}</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="label label-default">بدون وضعیت</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- نمایش تاریخ ثبت تسویه -->
+                        <td>
+                            {% if item.settlement and item.settlement.final_settlement_date %}
+                                {{ item.settlement.final_settlement_date|to_jalali }}
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- عملیات -->
+                        <td>
+                            {% if item.settlement %}
+                                <div class="btn-group-vertical btn-block">
+                                    {% if item.settlement.current_debt_rial > 0 and item.settlement.status != 'review' and item.settlement.status != 'transferred' %}
+                                    <a href="{% url 'payment_receipt_create' %}?settlement_id={{ item.settlement.id }}"
+                                       class="btn btn-success btn-sm">
+                                        <i class="fa fa-plus"></i> ثبت فیش واریزی
+                                    </a>
+                                    {% endif %}
+                                    <a href="{% url 'settlement_payments' settlement_id=item.settlement.id %}"
+                                       class="btn btn-info btn-sm">
+                                        <i class="fa fa-list"></i> مشاهده فیش‌ها
+                                    </a>
+                                </div>
+                            {% else %}
+                                <span class="label label-warning">تسویه‌حساب ندارد</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center text-muted">
+                            <i class="fa fa-info-circle"></i>
+                            هیچ سربازی با تسویه‌حساب یافت نشد.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <a href="{% url 'review_settlements' %}" class="btn btn-primary btn-lg">
+                    <i class="fa fa-calculator"></i>
+                    بررسی و تنظیم بدهی‌ها
+                </a>
+                <a href="{% url 'soldier_list' %}" class="btn btn-info btn-lg">
+                    <i class="fa fa-users"></i>
+                    لیست سربازان
+                </a>
+            </div>
+        </div>
     </div>
 {% endblock %}
