@@ -715,4 +715,6 @@ def print_commitment_letter(request, letter_id):
     return render(request, 'soldire_letter_apps/print_commitment_letter.html', {'letter': letter})
 
 
-
+def main_letters(request):
+    return render(request, 'index.html')
+    

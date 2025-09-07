@@ -42,4 +42,5 @@ urlpatterns = [
     path('commitment_letter/create/', commitment_letter_create, name='commitment_letter_create'),
     path('commitment_letter/<int:pk>/update/', commitment_letter_update, name='commitment_letter_update'),
     path('commitment_letter/<int:pk>/delete/', commitment_letter_delete, name='commitment_letter_delete'),
+    path('letters/index', main_letters, name='main_letters'),
 ]
