@@ -46,14 +46,6 @@
             color: #212529;
         }
 
-        .shadow-card {
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-            padding: 20px;
-            margin-bottom: 25px;
-        }
-
         .quick-access-box {
             background: #ffffff;
             border-radius: 12px;
@@ -119,51 +111,91 @@
             font-style: italic;
         }
 
-        /* وضعیت سربازان */
-        .soldier-status {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 14px;
-            margin-top: 10px;
-        }
+.shadow-card {
+    background: #1f2937; /* خاکستری تیره */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    color: #f9fafb;
+}
 
-        .soldier-item {
-            flex: 1 1 calc(50% - 14px);
-            border-radius: 10px;
-            padding: 10px 18px;
-            color: white;
-            font-weight: 700;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14.5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+.card-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    padding: 0 0 20px;
+    margin: 0;
+}
 
-        .soldier-expired {
-            background-color: #b23cfd;
-        }
+.soldier-status {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 15px;
+}
 
-        .soldier-posti {
-            background-color: #0dcaf0;
-        }
+.soldier-item {
+    border-radius: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.soldier-item  a{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    border-radius: 10px;
+    font-weight: 600;
+    color: #fff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.soldier-item a {
+    color: #fff;
 
-        .soldier-forari {
-            background-color: #dc3545;
-        }
+}
+.soldier-item a:first-child {
+    font-size: 1.4rem;
+}
 
-        .soldier-adari {
-            background-color: #6c757d;
-        }
+.soldier-item a:last-child {
+    font-size: 1.3rem;
+    font-weight: bold;
+}
 
-        .soldier-kart {
-            background-color: #ffc107;
-            color: black;
-        }
+/* رنگ بندی اختصاصی برای هر وضعیت */
+.soldier-total { background-color: #4f46e5; }       /* بنفش */
+.soldier-active { background-color: #10b981; }      /* سبز */
+.soldier-forari { background-color: #ef4444; }      /* قرمز */
+.soldier-adari { background-color: #f59e0b; }       /* نارنجی */
+.soldier-shifti { background-color: #3b82f6; }      /* آبی */
+.soldier-posti { background-color: #6366f1; }       /* بنفش ملایم */
+.soldier-transferred { background-color: #8b5cf6; } /* بنفش روشن */
+.soldier-married { background-color: #22c55e; }     /* سبز روشن */
+.soldier-single { background-color: #14b8a6; }      /* فیروزه‌ای */
+.soldier-with-card { background-color: #facc15; }    /* زرد */
 
-        .soldier-tahvil {
-            background-color: #198754;
-        }
+/* وضعیت سلامت */
+.soldier-healthy { background-color: #16a34a; }     /* سبز تیره */
+.soldier-exempt { background-color: #f87171; }      /* قرمز روشن */
+.soldier-group-b { background-color: #60a5fa; }     /* آبی روشن */
+.soldier-exempt-b { background-color: #fbbf24; }    /* زرد نارنجی */
+
+/* تحصیلات */
+.soldier-education-zirdiplom { background-color: #9ca3af; }      /* خاکستری روشن */
+.soldier-education-diplom { background-color: #3b82f6; }         /* آبی */
+.soldier-education-foghdiplom { background-color: #6366f1; }     /* بنفش ملایم */
+.soldier-education-lisans { background-color: #4f46e5; }          /* بنفش */
+.soldier-education-foghlisans { background-color: #8b5cf6; }      /* بنفش روشن */
+.soldier-education-doctor { background-color: #ef4444; }          /* قرمز */
+
+/* بدهی حقوقی */
+.soldier-financial-debt { background-color: #f59e0b; }           /* نارنجی */
+
+/* انیمیشن hover */
+.soldier-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+}
+
     </style>
 {% endblock %}
 
@@ -172,79 +204,179 @@
     <div class="container">
         <h1 class="text-center my-5">داشبورد</h1>
         <div class="row pt-6">
-            <!-- ستون راست -->
-            <div class="col-md-4">
-                <!-- ورود و خروج -->
-                <div class="shadow-card">
-                    <h5 class="mb-3">ورود و خروج کاربران</h5>
+            <div class="col-md-12">
+    <div class="shadow-card">
+        <h5 class="card-title mb-3">وضعیت سربازان</h5>
+        <div class="soldier-status">
 
-                    <table class="table table-bordered text-center custom-table">
-                        <thead>
-                        <tr>
-                            <th>کاربر</th>
-                            <th>نوع</th>
-                            <th>ساعت</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>کاربر ۱</td>
-                            <td class="entry">ورود</td>
-                            <td>۰۹:۴۵</td>
-                        </tr>
-                        <tr>
-                            <td>کاربر ۲</td>
-                            <td class="entry">ورود</td>
-                            <td>۱۰:۱۰</td>
-                        </tr>
-                        <tr>
-                            <td>کاربر ۱</td>
-                            <td class="exit">خروج</td>
-                            <td>۱۲:۳۰</td>
-                        </tr>
-                        <tr>
-                            <td>کاربر ۲</td>
-                            <td class="exit">خروج</td>
-                            <td>۱۲:۴۵</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+    <!-- کل سربازان -->
+    <div class="soldier-item soldier-total">
+        <a href="{% url 'export_soldiers' %}?category=all" target="_blank">
+            <span>کل سربازان</span>
+            <span>{{ stats.all_soldiers }}</span>
+        </a>
+    </div>
 
-                <!-- وضعیت سربازان -->
-                <div class="shadow-card">
-                    <h5 class="mb-3">وضعیت سربازان</h5>
-                    <div class="soldier-status">
-                        <div class="soldier-item soldier-expired">
-                            <span>منقضی</span>
-                            <span>۸</span>
-                        </div>
-                        <div class="soldier-item soldier-posti">
-                            <span>پستی</span>
-                            <span>۹</span>
-                        </div>
-                        <div class="soldier-item soldier-forari">
-                            <span>فراری</span>
-                            <span>۵</span>
-                        </div>
-                        <div class="soldier-item soldier-adari">
-                            <span>اداری</span>
-                            <span>۷</span>
-                        </div>
-                        <div class="soldier-item soldier-kart">
-                            <span>کارت نگرفته</span>
-                            <span>۴</span>
-                        </div>
-                        <div class="soldier-item soldier-tahvil">
-                            <span>در حال انتقال</span>
-                            <span>۳</span>
-                        </div>
-                    </div>
-                </div>
+    <!-- حاضر -->
+    <div class="soldier-item soldier-active">
+        <a href="{% url 'export_soldiers' %}?category=active" target="_blank">
+            <span>حاضر</span>
+            <span>{{ stats.active_soldiers }}</span>
+        </a>
+    </div>
+
+    <!-- فراری -->
+    <div class="soldier-item soldier-forari">
+        <a href="{% url 'export_soldiers' %}?category=fugitives" target="_blank">
+            <span>فراری</span>
+            <span>{{ stats.fugitives }}</span>
+        </a>
+    </div>
+
+    <!-- اداری -->
+    <div class="soldier-item soldier-adari">
+        <a href="{% url 'export_soldiers' %}?category=administrative" target="_blank">
+            <span>اداری</span>
+            <span>{{ stats.administrative }}</span>
+        </a>
+    </div>
+
+    <!-- شیفتی -->
+    <div class="soldier-item soldier-shifti">
+        <a href="{% url 'export_soldiers' %}?category=shifted" target="_blank">
+            <span>شیفتی</span>
+            <span>{{ stats.shifted }}</span>
+        </a>
+    </div>
+
+    <!-- پستی -->
+    <div class="soldier-item soldier-posti">
+        <a href="{% url 'export_soldiers' %}?category=posted" target="_blank">
+            <span>پستی</span>
+            <span>{{ stats.posted }}</span>
+        </a>
+    </div>
+
+    <!-- انتقالی -->
+    <div class="soldier-item soldier-transferred">
+        <a href="{% url 'export_soldiers' %}?category=transferred" target="_blank">
+            <span>انتقالی</span>
+            <span>{{ stats.transferred }}</span>
+        </a>
+    </div>
+
+    <!-- متاهل -->
+    <div class="soldier-item soldier-married">
+        <a href="{% url 'export_soldiers' %}?category=married" target="_blank">
+            <span>متاهل</span>
+            <span>{{ stats.married }}</span>
+        </a>
+    </div>
+
+    <!-- مجرد -->
+    <div class="soldier-item soldier-single">
+        <a href="{% url 'export_soldiers' %}?category=single" target="_blank">
+            <span>مجرد</span>
+            <span>{{ stats.single }}</span>
+        </a>
+    </div>
+
+    <!-- دارای کارت -->
+    <div class="soldier-item soldier-with-card">
+        <a href="{% url 'export_soldiers' %}?category=with_card" target="_blank">
+            <span>دارای کارت</span>
+            <span>{{ stats.with_card }}</span>
+        </a>
+    </div>
+
+    <!-- وضعیت سلامت -->
+    <div class="soldier-item soldier-healthy">
+        <a href="{% url 'export_soldiers' %}?category=health_salam" target="_blank">
+            <span>سالم</span>
+            <span>{{ stats.health_status.salam }}</span>
+        </a>
+    </div>
+
+    <div class="soldier-item soldier-exempt">
+        <a href="{% url 'export_soldiers' %}?category=health_exempt" target="_blank">
+            <span>معاف از رزم</span>
+            <span>{{ stats.health_status.exempt }}</span>
+        </a>
+    </div>
+
+    <div class="soldier-item soldier-group-b">
+        <a href="{% url 'export_soldiers' %}?category=health_group_b" target="_blank">
+            <span>گروه ب</span>
+            <span>{{ stats.health_status.group_b }}</span>
+        </a>
+    </div>
+
+    <div class="soldier-item soldier-exempt-b">
+        <a href="{% url 'export_soldiers' %}?category=health_exempt_b" target="_blank">
+            <span>معاف + گروه ب</span>
+            <span>{{ stats.health_status.exempt_group_b }}</span>
+        </a>
+    </div>
+
+    <!-- تحصیلات -->
+    <div class="soldier-item soldier-education-zirdiplom">
+        <a href="{% url 'export_soldiers' %}?category=education_zirdiplom" target="_blank">
+            <span>زیر دیپلم</span>
+            <span>{{ stats.education.zir_diplom }}</span>
+        </a>
+    </div>
+
+    <div class="soldier-item soldier-education-diplom">
+        <a href="{% url 'export_soldiers' %}?category=education_diplom" target="_blank">
+            <span>دیپلم</span>
+            <span>{{ stats.education.diplom }}</span>
+        </a>
+    </div>
+
+    <div class="soldier-item soldier-education-foghdiplom">
+        <a href="{% url 'export_soldiers' %}?category=education_foghdiplom" target="_blank">
+            <span>فوق دیپلم</span>
+            <span>{{ stats.education.fogh_diplom }}</span>
+        </a>
+    </div>
+
+    <div class="soldier-item soldier-education-lisans">
+        <a href="{% url 'export_soldiers' %}?category=education_lisans" target="_blank">
+            <span>لیسانس</span>
+            <span>{{ stats.education.lisans }}</span>
+        </a>
+    </div>
+
+    <div class="soldier-item soldier-education-foghlisans">
+        <a href="{% url 'export_soldiers' %}?category=education_foghlisans" target="_blank">
+            <span>فوق لیسانس</span>
+            <span>{{ stats.education.fogh_lisans }}</span>
+        </a>
+    </div>
+
+    <div class="soldier-item soldier-education-doctor">
+        <a href="{% url 'export_soldiers' %}?category=education_doctor" target="_blank">
+            <span>دکترا</span>
+            <span>{{ stats.education.doctor }}</span>
+        </a>
+    </div>
+
+    <!-- بدهی حقوقی -->
+    <div class="soldier-item soldier-financial-debt">
+        <a href="{% url 'export_soldiers' %}?category=financial_debt" target="_blank">
+            <span>بدهی حقوقی</span>
+            <span>{{ stats.financial_debt }}</span>
+        </a>
+    </div>
+
+</div>
+
+    </div>
+
             </div>
 
             <!-- ستون چپ -->
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <div class="quick-access-box">
                     <h5 class="mb-3">🧭 دسترسی سریع</h5>
                     <div class="letters-container">

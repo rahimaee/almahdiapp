@@ -1,0 +1,87 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/analystics_style.css' %}">
+<style>
+  table { font-size: 14px; }
+  .table th.bg-title { background-color: #f0f0f0; }
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="container-fluid">
+  {% include '../layout/AnalysticsNavbar.html' %}
+  
+  <div class="row">
+     <!-- فرم -->
+     <div class="col-md-4">
+       <h3 class="mb-3">گزارش مهارت‌آموزی سربازان</h3>
+        <table class="table table-bordered text-center">
+            <thead class="table-light">
+               <tr>
+                  <th>مهارت‌های پایه</th>
+                  <th>تعداد</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr>
+                  <td>سربازان فاقد مهارت 5 گانه</td>
+                  <td>{{ skills_summary.no_basic_skills }}</td>
+               </tr>
+               <tr>
+                  <td>سربازان فاقد مدرک مهارتی</td>
+                  <td>{{ skills_summary.no_skill_cert }}</td>
+               </tr>
+            </tbody>
+
+               <thead class="table-light">
+               <tr>
+                  <th >مدارک مهارتی</th>
+                  <th>تعداد</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr>
+                  <td>سربازان دارای مهارت 5 گانه</td>
+                  <td>{{ skills_summary.with_basic_skills }}</td>
+               </tr>
+               <tr>
+                  <td>سربازان دارای مدرک مهارتی</td>
+                  <td>{{ skills_summary.with_skill_cert }}</td>
+               </tr>
+               <tr>
+                  <td >سربازان دارای 1 مدرک مهارتی</td>
+                  <td >{{ skills_summary.with_one_cert }}</td>
+               </tr>
+            </tbody>
+         </table>
+    </div>
+
+    <!-- جدول -->
+    <div class="col-md-8">
+      <h3 class="mt-4">گروه‌های مهارتی</h3>
+      <table class="table table-bordered text-center">
+        <thead class="table-light">
+          <tr>
+            <th>گروه</th>
+            <th>الزام به آموزش</th>
+            <th>تعداد</th>
+            <th>آموزش دیده</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for g in skill_groups %}
+          <tr>
+            <td>{{ g.group }}</td>
+            <td>{{ g.requirement }}</td>
+            <td>{{ g.count }}</td>
+            <td>{{ g.trained }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

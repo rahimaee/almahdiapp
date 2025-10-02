@@ -1,0 +1,108 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% load jalali_filters %}
+
+{% block main %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="box box-danger">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">
+                            <i class="fa fa-exclamation-triangle text-danger"></i>
+                            تایید حذف نامه تسویه‌حساب
+                        </h3>
+                    </div>
+                    <div class="box-body">
+                        <div class="alert alert-warning">
+                            <h4><i class="fa fa-warning"></i> هشدار!</h4>
+                            <p>آیا از حذف این نامه تسویه‌حساب اطمینان دارید؟</p>
+                            <p><strong>توجه:</strong> با حذف این نامه، وضعیت سرباز به "حین خدمت" بازگردانده خواهد شد.</p>
+                            <p><strong>این عملیات قابل بازگشت نیست!</strong></p>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">اطلاعات نامه</h4>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <dl class="dl-horizontal">
+                                            <dt>سرباز:</dt>
+                                            <dd>{{ soldier.first_name }} {{ soldier.last_name }}</dd>
+                                            
+                                            <dt>کد ملی:</dt>
+                                            <dd>{{ soldier.national_code }}</dd>
+                                            
+                                            <dt>شماره نامه:</dt>
+                                            <dd>{{ letter.letter_number }}</dd>
+                                        </dl>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <dl class="dl-horizontal">
+                                            <dt>علت تسویه:</dt>
+                                            <dd>{{ letter.get_reason_display }}</dd>
+                                            
+                                            <dt>تاریخ صدور:</dt>
+                                            <dd>{{ letter.issue_date|to_jalali }}</dd>
+                                            
+                                            <dt>وضعیت فعلی:</dt>
+                                            <dd>
+                                                <span class="label label-success">{{ letter.get_status_display }}</span>
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                                
+                                {% if letter.description %}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <dt>توضیحات:</dt>
+                                        <dd>{{ letter.description }}</dd>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">تغییرات پس از حذف</h4>
+                            </div>
+                            <div class="panel-body">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <i class="fa fa-check text-success"></i>
+                                        نامه تسویه‌حساب حذف خواهد شد
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fa fa-check text-success"></i>
+                                        وضعیت سرباز به "حین خدمت" تغییر خواهد یافت
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fa fa-check text-success"></i>
+                                        سرباز دوباره در لیست سربازان فعال نمایش داده خواهد شد
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        <form method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="fa fa-trash"></i>
+                                بله، حذف کن
+                            </button>
+                        </form>
+                        <a href="{% url 'ClearanceLetterListView' %}" class="btn btn-default btn-lg">
+                            <i class="fa fa-times"></i>
+                            انصراف
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

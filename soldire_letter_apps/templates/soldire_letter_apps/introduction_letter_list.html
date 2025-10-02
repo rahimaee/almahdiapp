@@ -169,7 +169,7 @@
                         <td>{{ letter.get_letter_type_display }}</td>
                         <td><span class="badge bg-info text-dark d-block w-full">{{ letter.get_status_display }}</span></td>
 <td class="table-actions">
-    <a href="{% url 'print_health_iodine' letter.id %}" class="btn  bg-success">
+    <a href="{% url 'print_introduction_letter' letter.id %}" class="btn  bg-success">
         🖨 <span>چاپ</span>
     </a>
     <a href="{% url 'approved_introduction_letter' letter_id=letter.id %}" class="btn bg-primary">

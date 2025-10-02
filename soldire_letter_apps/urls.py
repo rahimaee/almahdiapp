@@ -1,9 +1,15 @@
 from django.urls import path
 from .views import *
 
+
 urlpatterns = [
     path('clearance_letter_create/', ClearanceLetterCreateView.as_view(), name='clearance_letter_create'),
     path('ClearanceLetterListView/', ClearanceLetterListView.as_view(), name='ClearanceLetterListView'),
+    path('clearance_letter/approved/<int:letter_id>/', approved_ClearanceLetter, name='approved_ClearanceLetter'),
+    path('clearance_letter/print/<int:letter_id>/', print_ClearanceLetter, name='print_ClearanceLetter'),
+    path('clearance_letter/excel', print_ClearanceLetter, name='clearance_letter_excel'),
+    path('clearance_letter/delete/<int:letter_id>/', delete_ClearanceLetter, name='delete_ClearanceLetter'),
+    
     path('normal-letters/', normal_letter_list, name='normal_letter_list'),
     path('mental-health/retest/<int:test_id>/', create_new_letter_from_old, name='create_new_letter_from_old'),
     path('mental-health/retest/batch/', create_group_mental_health_letters,
@@ -12,6 +18,7 @@ urlpatterns = [
     path('judicial/create/', judicial_inquiry_create, name='judicial_inquiry_create'),
     path('judicial/edit/<int:pk>/', judicial_inquiry_edit, name='judicial_inquiry_edit'),
     path('judicial/delete/<int:pk>/', judicial_inquiry_delete, name='judicial_inquiry_delete'),
+    path('judicial/print/<int:pk>/', judicial_inquiry_print, name='judicial_inquiry_print'),
     path('domestic_settlement/', domestic_settlement_list, name='domestic_settlement_list'),
     path('domestic_settlement/create/', domestic_settlement_create, name='domestic_settlement_create'),
     path('domestic_settlement/delete/<int:pk>/', domestic_settlement_delete, name='domestic_settlement_delete'),
@@ -30,6 +37,7 @@ urlpatterns = [
     path('certificates/create/', membership_certificate_create, name='membership_certificate_create'),
     path('certificates/<int:pk>/edit/', membership_certificate_edit, name='membership_certificate_edit'),
     path('certificates/<int:pk>/delete/', membership_certificate_delete, name='membership_certificate_delete'),
+    path('certificates/<int:pk>/print/', membership_certificate_print, name='membership_certificate_print'),
     path('health_iodine_letter/', health_iodine_letter_list, name='health_iodine_letter_list'),
     path('health_iodine_letter/create/', health_iodine_letter_create, name='health_iodine_letter_create'),
     path('health_iodine_letter/<int:pk>/update/', health_iodine_letter_update, name='health_iodine_letter_update'),
@@ -39,4 +47,18 @@ urlpatterns = [
     path('commitment_letter/create/', commitment_letter_create, name='commitment_letter_create'),
     path('commitment_letter/<int:pk>/update/', commitment_letter_update, name='commitment_letter_update'),
     path('commitment_letter/<int:pk>/delete/', commitment_letter_delete, name='commitment_letter_delete'),
+    path('commitment_letter/<int:pk>/print/', commitment_letter_print, name='print_commitment_letter'),
+    path('letters/index', main_letters, name='main_letters'),
+    
+    #  NEZSA : "Essential Forms for Issuing Cards"
+    # show all of forms  
+    path('forms/essential/list/',                 form_essential_list, name='forms_essential_list'),
+    #  remove form
+    path('forms/essential/remove/<int:form_id>',  form_essential_delete, name='forms_essential_delete'),
+    # مسیر ایجاد فرم جدید
+    path('forms/essential/<str:form_type>/create/', form_essential_create, name='form_essential_create'),
+    # مسیر مشاهده/ویرایش فرم موجود
+    path('forms/essential/<int:form_id>/view/', form_essential_view, name='form_essential_view'),
+
+    
 ]

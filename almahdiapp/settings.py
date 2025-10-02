@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'django_jalali',
     'soldires_apps',
     'training_center_apps',
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
     'soldire_letter_apps',
     'soldire_runaway_apps',
     'apps_settings',
+    'analystics',
 ]
 
 MIDDLEWARE = [
@@ -129,7 +131,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "assets")
+    os.path.join(BASE_DIR, "assets"),
+    os.path.join(BASE_DIR, "analystics/static"), 
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, "static_cdn", "static_root")
 MEDIA_ROOT = os.path.join(BASE_DIR, "static_cdn", "media_root")

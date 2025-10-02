@@ -1,10 +1,202 @@
+{% load static %}
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <title>فرم تعهدنامه کارت/تراشه</title>
+  <style>
+        @font-face {
+        font-family: YekanBakh;
+        src: url("{% static '/fonts/YekanBakh-Regular.woff2' %}") format("woff2"),
+            url("{% static '/fonts/YekanBakh-Regular.woff' %}") format("woff"),
+            url("{% static '/fonts/YekanBakh-Regular.ttf' %}") format("truetype");
+        font-weight: normal;
+        font-style: normal;
+    }
+
+
+    html *,
+    body * {
+        font-family: YekanBakh, sans-serif;
+    }
+    @page {
+      size: A5;
+       margin: 0;
+       padding:5px;
+    }
+    body {
+      font-family: yekanbakh, sans-serif;
+      font-size: 13px;
+      line-height: 1.9;
+      direction: rtl;
+      background: #f9f9f9;
+      margin:0;
+      
+    }
+    .form-container {
+      background: #fff;
+      border: 2px solid #000;
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin:10px;
+      box-sizing:border-box;
+    }
+    .header {
+      text-align: center;
+      border-bottom: 2px solid #000;
+      padding-bottom: 8px;
+      margin-bottom: 15px;
+    }
+    .header h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+    .content {
+      text-align: justify;
+    }
+    .content p {
+      margin: 6px 0;
+    }
+    .page-break {
+      page-break-after: always;
+    }
+    .info-box {
+      margin-top: 15px;
+      border: 1px dashed #444;
+      padding: 10px;
+      border-radius: 6px;
+    }
+    .info-box p {
+      margin: 4px 0;
+    }
+.signature-box {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.signature-col {
+  flex: 1;
+  text-align: center;
+  border: 1px solid #000;
+  border-radius: 6px;
+  padding: 25px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+    background: #f1f1f1;  /* بک‌گراند ملایم */
+  border: 1px dashed #999;
+}
+
+.signature-sign {
+  flex: 2; /* کمی بزرگ‌تر برای جا شدن امضاء و اثر انگشت */
+}
+
+.signature-date {
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    .time-box {
+  background: #f1f1f1;  /* بک‌گراند ملایم */
+  border: 1px dashed #999;
+  padding: 8px 10px;
+  margin: 8px 0;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.time-box p {
+  margin: 0;
+  text-align: justify;
+}
+
+  </style>
 </head>
 <body>
+  <div class="form-container page-break">
+    <div class="header">
+      <h2>فرم تعهدنامه نگهداشت و بکارگیری صحیح از تراشه/کارت ثبت ساعت</h2>
+    </div>
+
+    <div class="content">
+      <p>1 – تراشه/کارت تحویلی به هر فرد منحصراً متعلّق به آن فرد بوده و از در اختیار قراردادن آن به غیر (به هر دلیل) باید خودداری نماید.</p>
+      <p>2 – هر فرد مکلّف است که خود نسبت به ثبت ساعت اقدام نموده و در صورت انجام این کار توسط غیر ، با هر دو نفر برخورد قانونی صورت خواهد پذیرفت.</p>
+      <p>3 – هر فرد ضامن حفظ سلامت تراشه/کارت بوده و باید در نگهداری از آن حداکثر تلاش خود را به کار بندد.</p>
+      <p>3 – 1 : فرد باید در صورت آسیب دیدن تراشه مبلغ 700.000 ریال و کارت مبلغ 1.500.000 ریال به عنوان جریمه پرداخت نماید.</p>
+      <p>3 – 2 : فرد باید در صورت مفقودی تراشه مبلغ 1.000.000 ریال و کارت مبلغ 2.000.000 ریال به عنوان جریمه پرداخت نماید.</p>
+      <p>4 – فرد باید در زمانهای مقرر و تعیین شده توسط کارگزینی وظیفه نسبت به ثبت ساعت اقدام نماید و هرگونه ثبت ساعت در غیر از زمانهای تعیین شده مورد تائید برنامه نبوده و برای شخص غیبت لحاظ خواهد گردید.</p>
+      <p>4 – 1 : در صورت بروز مشکل در ثبت ساعت در زمانهای مقرر ، نهایتا تا دو مرتبه در هر ماه ، از طریق نامه نگاری توسط مسئول قسمت مربوطه نسبت به ثبت ساعت در سامانه اقدام خواهد شد و موارد بیشتر از آن توسط کارگزینی وظیفه مورد تائید قرار نخواهد گرفت.</p>
+      <p>5 – ساعت ورود همه روزه 6:45 تا 7 صبح می باشد.</p>
+      <p>6 – ساعت خروج به شرح ذیل می باشد :</p>
+      <p>6 – 1 : سربازان اداری همه روزه (غیر از پنجشنبه ها) بعد از ساعت 14:15 و پنجشنبه ها بعد از ساعت 12:30 می باشد.</p>
+      <p>6 – 2 : سربازان شیفتی و پستی بعد از ساعت 07:00 می باشد.</p>
+      <p>7 – تعداد ثبت ساعت برای سربازان شیفتی و پستی طبق زمانبندی ابلاغی می باشد.</p>
+      <div class="time-box">
+        <p>
+            <strong>روز اول (ورود):</strong> ثبت اولین ساعت نهایتاً تا ساعت 7 صبح (یک مرتبه) – 
+            ثبت دومین ساعت در محدوده 14 تا 16 (دو مرتبه با فاصله یک دقیقه) – 
+            ثبت سومین ساعت در محدوده 19 تا 22 (یک مرتبه).<br>
+            <strong>روز دوم و سوم (روز حضور):</strong> ثبت اولین ساعت در محدوده 5 تا 8 صبح (یک مرتبه) – 
+            ثبت دومین ساعت در محدوده 14 تا 16 (دو مرتبه با فاصله یک دقیقه) – 
+            ثبت سومین ساعت در محدوده 19 تا 22 (یک مرتبه).
+        </p>
+        </div>
+
+    </div>
+  </div>
+  <div class="form-container ">
+    <div class="content">
+      <p>8 – تغییرات هر روز (اعم از ثبت انواع مرخصی ، ماموریت اداری  و ...) نهایتا باید تا پایان ساعت اداری روز بعد از تغییرات ، در سامانه ثبت گردد ، در صورت تاخیر در ثبت ، تغییرات تایید نخواهد گردید.</p>
+      <p>9 – تائید ماموریت اداری در ازای تحویل برگه گزارش ماموریت (با ذکر جزئیات کامل) در زمان تعیین شده در بند 8 ، به کارگزینی وظیفه صورت خواهد پذیرفت. (امضای تائید مسئول مربوطه در ذیل برگه الزامی می باشد)</p>
+      <p>10 – مسئول هر قسمت به اطلاعات سامانه ی ثامن سربازان مجموعه ی خود دسترسی داشته و سربازان باید جهت انجام امور و پیگیری های لازم از طریق مسئول مربوطه اقدامات لازم را به عمل آورند.</p>
+      <p>11 – افراد باید با توجه به شیفت های تعیین شده برای آنها ، نسبت به ثبت ساعت اقدام نموده و از جابجایی شیفت جداً پرهیز نمایند.</p>
+      <p>11 – 1 : در صورت جابجایی شیفت ، عواقب ناشی از ثبت غیبت در سامانه بر عهده ی خود فرد می باشد. لذا لازم است پیگیری های لازم از طریق مسئول خود جهت نامه نگاری در خصوص تغییر شیفت انجام گردد و یا موارد را به اطلاع منابع انسانی سرباز برسانند.</p>
+      <p>12 – سربازانی که دارای سابقه فرار می باشند باید در هنگام تحویل گرفتن تراشه ، مبلغ 1.000.000 ریال و کارت مبلغ 2.000.000 ریال به عنوان ودیعه در اختیار کارگزینی وظیفه قرار دهند تا پس از پایان زمان خدمتشان ، در ازای تحویل دادن تراشه ، مبلغ به آنها عودت داده شود.</p>
+      <p>13 – صدور برگه تسویه حساب کل (هنگام پایان خدمت ) سربازان در ازای تحویل دادن تراشه/کارت صورت خواهد پذیرفت.</p>
+
+       <div class="info-box">
+        <div style="display:flex;align-items:center;justify-content:space-around;">
+            <p><strong>تاریخ اعزام:</strong> {{ letter.activities_start_date_shamsi }}</p>
+            <p><strong>تاریخ ورود به یگان:</strong> {{ letter.service_entry_date_shamsi }}</p>
+        </div>
+        
+
+        <p>
+          اینجانب <strong>{{ letter.normal_letter.soldier.first_name }} {{ letter.normal_letter.soldier.last_name }}</strong> فرزند <strong>{{ letter.normal_letter.soldier.father_name }}</strong>
+          با کد ملی <strong>{{ letter.normal_letter.soldier.national_code }}</strong> و کد سازمانی <strong>{{ letter.normal_letter.soldier.org_code }}</strong>  
+          ضمن مطالعه دقیق موارد 13 گانه، متعهد می‌گردم تمامی موارد فوق را رعایت نمایم و در صورت عدم رعایت، هرگونه برخورد قانونی و انضباطی را می‌پذیرم.
+        </p>
+        <p>به شماره {{ letter.normal_letter.letter_number }} تحویل اینجانب گردیده است.</p>
+      </div>
+
+      <div class="signature-box">
+        <div class="signature-col signature-sign">
+            <div>امضاء و اثر انگشت</div>
+        </div>
+        <div class="signature-col signature-date">
+            تاریخ: {{ letter.normal_letter.signature_date }}
+        </div>
+      </div>
+      <div class="footer">
+        منابع انسانی سرباز - آموزشگاه رزم مقدماتی المهدی(عج) نیروی زمینی سپاه
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>

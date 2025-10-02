@@ -1,0 +1,125 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% load jalali_filters %}
+
+{% block main %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h3 class="text-center">{{ title }}</h3>
+                <div class="alert alert-info">
+                    <i class="fa fa-info-circle"></i>
+                    این لیست شامل سربازانی است که نامه تسویه‌حساب آن‌ها تایید شده و از خدمت خارج شده‌اند.
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                <tr class="bg-primary text-white">
+                    <th>ردیف</th>
+                    <th>کد سازمانی</th>
+                    <th>نام و نام خانوادگی</th>
+                    <th>کد ملی</th>
+                    <th>وضعیت</th>
+                    <th>علت تسویه‌حساب</th>
+                    <th>واحد آخر</th>
+                    <th>تاریخ پایان خدمت</th>
+                    <th>عملیات</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for soldier in soldiers %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            {% if soldier.organizational_code %}
+                                {{ soldier.organizational_code.code_number }}
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ soldier.first_name }} {{ soldier.last_name }}
+                            {% if soldier.photo_scan %}
+                                <i class="fa fa-camera text-primary"></i>
+                            {% endif %}
+                        </td>
+                        <td>{{ soldier.national_code }}</td>
+                        <td>
+                            {% if soldier.status == 'پایان خدمت' %}
+                                <span class="label label-success">{{ soldier.get_status_display }}</span>
+                            {% elif soldier.status == 'قبولی در دانشگاه' %}
+                                <span class="label label-info">{{ soldier.get_status_display }}</span>
+                            {% elif soldier.status == 'انتقالی' %}
+                                <span class="label label-warning">{{ soldier.get_status_display }}</span>
+                            {% elif soldier.status == 'استخدام در نیروهای مسلح' %}
+                                <span class="label label-primary">{{ soldier.get_status_display }}</span>
+                            {% else %}
+                                <span class="label label-default">{{ soldier.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if soldier.settlement %}
+                                {{ soldier.settlement.get_reason_display }}
+                            {% else %}
+                                <span class="text-muted">نامشخص</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if soldier.current_parent_unit %}
+                                {{ soldier.current_parent_unit.name }}
+                                {% if soldier.current_sub_unit %}
+                                    <br><small class="text-muted">{{ soldier.current_sub_unit.name }}</small>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if soldier.service_end_date %}
+                                {{ soldier.service_end_date|to_jalali }}
+                            {% else %}
+                                <span class="text-muted">نامشخص</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'soldier_detail' soldier.pk %}" 
+                               class="btn btn-info btn-sm" title="مشاهده جزئیات">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                            {% if soldier.settlement %}
+                                <a href="{% url 'settlement_payments' settlement_id=soldier.settlement.id %}" 
+                                   class="btn btn-success btn-sm" title="مشاهده فیش‌های واریزی">
+                                    <i class="fa fa-money"></i>
+                                </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center text-muted">
+                            <i class="fa fa-info-circle"></i>
+                            هیچ سرباز تسویه‌حساب شده‌ای یافت نشد.
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <a href="{% url 'soldier_list' %}" class="btn btn-primary">
+                    <i class="fa fa-arrow-left"></i>
+                    بازگشت به لیست سربازان
+                </a>
+                <a href="{% url 'ClearanceLetterListView' %}" class="btn btn-success">
+                    <i class="fa fa-file-text"></i>
+                    مشاهده نامه‌های تسویه‌حساب
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

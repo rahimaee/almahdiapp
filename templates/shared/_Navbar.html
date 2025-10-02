@@ -30,12 +30,7 @@
                     </span>
             </div>
         </form>
-        <!-- /.search form -->
-
-        <!-- Sidebar Menu -->
         <ul class="sidebar-menu" data-widget="tree">
-            <li class="header">تیتر</li>
-            <!-- Optionally, you can add icons to the links -->
             <li class="active"><a href="{% url 'panel_home' %}"><i class="fa fa-home"></i> <span>صفحه اصلی</span></a>
             </li>
 
@@ -48,56 +43,19 @@
                 <ul class="treeview-menu">
                     <li><a href="{% url 'soldier_list' %}">لیست سربازان</a></li>
                     <li><a href="{% url 'soldier_create' %}">سرباز جدید</a></li>
+                    <li><a href="{% url 'organizational_codes_list' %}">کد سازمانی</a></li>
                     <li><a href="{% url 'bulk_photo_upload' %}">آپلود گروهی عکس بر اساس کد ملی</a></li>
                     <li><a href="{% url 'due_mental_health_letters' %}">تست مجدد روان پس از 6 ماه</a></li>
                     <li><a href="{% url 'escaped_soldiers' %}">فراری ها</a></li>
                     <li><a href="{% url 'soldiers_by_entry_date' %}">ورودی های جدید</a></li>
                     <li><a href="{% url 'incomplete_soldiers_list' %}">نواقص پرونده</a></li>
-                </ul>
-            </li>
-            <li class="treeview">
-                <a href="#"><i class="fa fa-user-plus"></i> <span>مدیریت مدیران</span>
-                    <span class="pull-left-container">
-                        <i class="fa fa-angle-right pull-left"></i>
-                      </span>
-                </a>
-                <ul class="treeview-menu">
-                    <li><a href="{% url 'user_list' %}">لیست مدیران</a></li>
-                    <li><a href="{% url 'user_create' %}">مدیر جدید</a></li>
-                </ul>
-            </li>
-            <li class="treeview">
-                <a href="#"><i class="fa fa-user-plus"></i> <span>مدیریت عقیدتی</span>
-                    <span class="pull-left-container">
-                        <i class="fa fa-angle-right pull-left"></i>
-                      </span>
-                </a>
-                <ul class="treeview-menu">
-                    <li><a href="{% url 'religious_period_list' %}">لیست</a></li>
-                    <li><a href="{% url 'religious_period_add' %}">ایجاد دوره</a></li>
-                    <li><a href="{% url 'soldiers_with_training' %}">لیست سربازان و دوره عقیدتی</a></li>
-                    <li><a href="{% url 'soldiers_without_training' %}">سربازان بدون دوره عقیدتی</a></li>
-                    <li><a href="{% url 'upload-excel' %}">آپلود فایل اکسل دوره عقیدتی</a></li>
-                </ul>
-            </li>
-            <li class="treeview">
-                <a href="#"><i class="fa fa-user-plus"></i> <span>مدیریت ناصرین</span>
-                    <span class="pull-left-container">
-                        <i class="fa fa-angle-right pull-left"></i>
-                      </span>
-                </a>
-                <ul class="treeview-menu">
-                    <li><a href="{% url 'naserin_list' %}">لیست گروه های ناصرین</a></li>
-                    <li><a href="{% url 'naserin_create' %}">ایجاد گروه ناصرین</a></li>
-                    <li><a href="{% url 'soldire_naserin_list' %}">لیست سربازان و گروه های ناصرین</a></li>
-                    <li><a href="{% url 'bulk_edit_naserin' %}">تخصیص گروه به سربازان فاقد گروه</a></li>
+                    <li><a href="{% url 'checked_out_soldiers_list' %}">سربازان تسویه‌حساب شده</a></li>
                 </ul>
             </li>
             {% if request.user.is_staff == True %}
-                <li class="treeview">
-                    <a href="#"><i class="fa fa-envelope"></i> <span>مدیریت نامه</span>
+                <li>
+                    <a href="{% url 'main_letters' %}"><i class="fa fa-envelope"></i> <span>نامه ها</span>
                         <span class="pull-left-container">
-                        <i class="fa fa-angle-right pull-left"></i>
                       </span>
                     </a>
                     <ul class="treeview-menu">
@@ -120,56 +78,8 @@
                     </ul>
                 </li>
             {% endif %}
-
-            {% if request.user.is_staff == True %}
-                <li class="treeview">
-                    <a href="#"><i class="fa fa-envelope"></i> <span>مدیریت قسمت</span>
-                        <span class="pull-left-container">
-                        <i class="fa fa-angle-right pull-left"></i>
-                      </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li><a href="{% url 'parent_unit_list' %}">لیست قسمت اصلی</a></li>
-                        <li><a href="{% url 'parent_unit_create' %}">افزودن قسمت اصلی</a></li>
-
-                        <li><a href="{% url 'sub_unit_list' %}">لیست زیر قسمت</a></li>
-                        <li><a href="{% url 'sub_unit_create' %}">افزودن زیر قسمت</a></li>
-                    </ul>
-                </li>
-            {% endif %}
-
-            {% if request.user.is_staff == True %}
-                <li class="treeview">
-                    <a href="#"><i class="fa fa-envelope"></i> <span>مدیریت استان و شهر</span>
-                        <span class="pull-left-container">
-                        <i class="fa fa-angle-right pull-left"></i>
-                      </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li><a href="{% url 'province_list' %}">لیست استان ها</a></li>
-                        <li><a href="{% url 'province_create' %}">افزودن استان</a></li>
-
-                        <li><a href="{% url 'city_list' %}">لیست شهرها</a></li>
-                        <li><a href="{% url 'city_create' %}">افزودن شهر</a></li>
-                    </ul>
-                </li>
-            {% endif %}
-
-            {% if request.user.is_staff == True %}
-                <li class="treeview">
-                    <a href="#"><i class="fa fa-envelope"></i> <span>مدیریت مراکز آموزش</span>
-                        <span class="pull-left-container">
-                        <i class="fa fa-angle-right pull-left"></i>
-                      </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li><a href="{% url 'training_center_list' %}">لیست آموزشگاها</a></li>
-                        <li><a href="{% url 'training_center_create' %}">افزودن آموزشگاه</a></li>
-                    </ul>
-                </li>
-            {% endif %}
-            <li class="treeview">
-                <a href="#"><i class="fa fa-area-chart"></i> <span>اطلاعات تسویه حساب و کارت</span>
+                        <li class="treeview">
+                <a href="#"><i class="fa fa-area-chart"></i> <span>تسویه حساب و کارت</span>
                     <span class="pull-left-container">
                         <i class="fa fa-angle-right pull-left"></i>
                       </span>
@@ -185,13 +95,47 @@
                 </ul>
             </li>
             <li class="treeview">
-                <a href="#"><i class="fa fa-area-chart"></i> <span>آمار</span>
+                <a href="#"><i class="fa fa-user-plus"></i> <span>کارکنان</span>
                     <span class="pull-left-container">
                         <i class="fa fa-angle-right pull-left"></i>
                       </span>
                 </a>
                 <ul class="treeview-menu">
+                    <li><a href="{% url 'user_list' %}">لیست کارکنان</a></li>
+                    <li><a href="{% url 'user_create' %}">کارمند جدید</a></li>
                 </ul>
+            </li>
+            <li class="treeview">
+                <a href="#"><i class="fa fa-user-plus"></i> <span>عقیدتی</span>
+                    <span class="pull-left-container">
+                        <i class="fa fa-angle-right pull-left"></i>
+                      </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="{% url 'religious_period_list' %}">لیست</a></li>
+                    <li><a href="{% url 'religious_period_add' %}">ایجاد دوره</a></li>
+                    <li><a href="{% url 'soldiers_with_training' %}">لیست سربازان و دوره عقیدتی</a></li>
+                    <li><a href="{% url 'soldiers_without_training' %}">سربازان بدون دوره عقیدتی</a></li>
+                    <li><a href="{% url 'upload-excel' %}">آپلود فایل اکسل دوره عقیدتی</a></li>
+                </ul>
+            </li>
+            <li class="treeview">
+                <a href="#"><i class="fa fa-user-plus"></i> <span>ناصرین</span>
+                    <span class="pull-left-container">
+                        <i class="fa fa-angle-right pull-left"></i>
+                      </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="{% url 'naserin_list' %}">لیست گروه های ناصرین</a></li>
+                    <li><a href="{% url 'naserin_create' %}">ایجاد گروه ناصرین</a></li>
+                    <li><a href="{% url 'soldire_naserin_list' %}">لیست سربازان و گروه های ناصرین</a></li>
+                    <li><a href="{% url 'bulk_edit_naserin' %}">تخصیص گروه به سربازان فاقد گروه</a></li>
+                </ul>
+            </li>
+            <li>
+                <a  href="{% url 'analystics:index' %}">
+                    <i class="fa fa-area-chart"></i> <span>آمار</span>
+                </a>
             </li>
             {#                    {% if request.user.is_staff == True %}#}
             {#                        <li><a href="{% url 'CreateOrUpdateSettings' %}"><i class="fa fa-gears"></i> <span>تنظیمات</span></a>#}
@@ -208,7 +152,15 @@
             {#                            </ul>#}
             {#                        </li>#}
             {#                    {% endif %}#}
-            <li><a href="#"><i class="fa fa-support"></i> <span>درباره سامانه</span></a>
+            {% if request.user.is_staff == True %}
+                <li>
+                    <a href="{% url 'manages_app' %}">
+                        <i class="fa fa-cog"></i> 
+                        <span>مدیریت و تنظیمات</span>
+                    </a>
+                </li>
+            {% endif %}
+                <li><a href="#"><i class="fa fa-support"></i> <span>درباره سامانه</span></a>
             <li><a href="#"><i class="fa fa-sign-out"></i> <span>خروج</span></a>
         </ul>
         <!-- /.sidebar-menu -->

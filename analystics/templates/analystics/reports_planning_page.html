@@ -1,0 +1,71 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/analystics_style.css' %}">
+<style>
+  table {
+    font-size: 14px;
+  }
+  thead th {
+    background: #f7f7f7;
+    text-align: center;
+  }
+  tbody td, tbody th {
+    text-align: center;
+    vertical-align: middle;
+  }
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="container-fluid">
+  {% include '../layout/AnalysticsNavbar.html' %}
+
+  <h3 class="mt-4 mb-3">گزارش برنامه‌ریزی</h3>
+
+  <div class="table-responsive">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>نام قسمت</th>
+          <th>استعداد</th>
+          <th>عادی</th>
+          <th>درجه‌دار</th>
+          <th>افسر</th>
+          <th>جمع</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for unit in units %}
+        <tr>
+          <td name="name">{{ unit.name }}</td>
+          <td name="estehdad" >0</td>
+          <td name="adi" >0</td>
+          <td name="darajehdar" >0</td>
+          <td name="afsar" >0</td>
+          <td name="jam" >0</td>
+        </tr>
+        {% endfor %}
+
+        <tr>
+          <td name="name" >مامور</td>
+          <td name="estehdad" >0</td>
+          <td name="adi" >0</td>
+          <td name="darajehdar" >0</td>
+          <td name="afsar" >0</td>
+          <td name="jam" >0</td>
+        </tr>
+        <tr class="table-dark text-white fw-bold total">
+          <td name="name">جمع کل</td>
+          <td name="estehdad">0</td>
+          <td name="adi">0</td>
+          <td name="darajehdar">0</td>
+          <td name="afsar">0</td>
+          <td name="jam">0</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock%}

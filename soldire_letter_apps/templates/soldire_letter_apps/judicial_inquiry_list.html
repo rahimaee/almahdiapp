@@ -38,6 +38,7 @@
                     <td>{{ inquiry.normal_letter.get_status_display }}</td>
                     <td>
                         <a href="{% url 'judicial_inquiry_edit' inquiry.pk %}" class="btn btn-xs btn-primary">ویرایش</a>
+                        <a href="{% url 'judicial_inquiry_print' inquiry.pk %}" class="btn btn-xs btn-primary">چاپ</a>
                         <a href="{% url 'judicial_inquiry_delete' inquiry.pk %}" class="btn btn-xs btn-danger">حذف</a>
                     </td>
                 </tr>

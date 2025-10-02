@@ -140,6 +140,82 @@
 {% endblock %}
 {% block main %}
     <div class="container">
+
+<div class="panel panel-info shadow-sm" style="margin-bottom: 25px; border-radius: 8px; overflow: hidden;">
+    <div class="panel-heading bg-info text-white" style="padding: 12px 15px;">
+        <h3 class="panel-title" style="margin: 0; font-size: 16px;">
+            <i class="fa-solid fa-layer-group"></i> اطلاعات سری کارت
+        </h3>
+    </div>
+    <div class="panel-body" style="background-color: #fdfdfd; padding: 15px;">
+        <div class="row" style="margin-bottom: 12px;">
+            <div class="col-md-3"><strong>نام سری:</strong> <span class="text-primary">{{ series.title }}</span></div>
+            <div class="col-md-3"><strong>تاریخ ارسال:</strong> {{ series.send_date }}</div>
+            <div class="col-md-3">
+                <strong>وضعیت:</strong>
+                {% if series.status == "preparing" %}
+                    <span class="badge badge-secondary"><i class="fa fa-cogs"></i> در حال آماده‌سازی</span>
+                {% elif series.status == "sent" %}
+                    <span class="badge badge-info"><i class="fa fa-paper-plane"></i> ارسال شده</span>
+                {% elif series.status == "checking" %}
+                    <span class="badge badge-warning"><i class="fa fa-search"></i> در حال بررسی</span>
+                {% elif series.status == "completed" %}
+                    <span class="badge badge-success"><i class="fa fa-check-circle"></i> تکمیل شده</span>
+                {% endif %}
+            </div>
+            <div class="col-md-3"><strong>تاریخ ایجاد:</strong> {{ series.created_at|date:"Y-m-d H:i" }}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-12"><strong>توضیحات:</strong> {{ series.description|default:"-" }}</div>
+        </div>
+    </div>
+    <div class="panel-footer text-left" style="background-color: #f7f9fb; padding: 10px 15px;">
+        <!-- همیشه نمایش داده می‌شود -->
+        <a href="#" class="btn btn-sm btn-primary">
+            <i class="fa fa-edit"></i> ویرایش سری
+        </a>
+
+ 
+    <!-- وقتی وضعیت preparing هست -->
+    {% if series.status == "preparing" %}
+        <a href="{% url 'change_series_status' series.id 'sent' %}" class="btn btn-sm btn-success">
+            <i class="fa fa-check"></i> تایید برای ارسال
+        </a>
+    {% endif %}
+
+    <!-- وقتی وضعیت sent هست -->
+    {% if series.status == "sent" %}
+        <a href="{% url 'change_series_status' series.id 'checking' %}" class="btn btn-sm btn-warning">
+            <i class="fa fa-search"></i> شروع بررسی
+        </a>
+    {% endif %}
+
+    <!-- وقتی وضعیت checking هست -->
+    {% if series.status == "checking" %}
+        <a href="{% url 'change_series_status' series.id 'completed' %}" class="btn btn-sm btn-success">
+            <i class="fa fa-check-circle"></i> تایید نهایی
+        </a>
+        <a href="{% url 'change_series_status' series.id 'sent' %}" class="btn btn-sm btn-danger">
+            <i class="fa fa-times"></i> عدم تایید (بازگشت به ارسال شده)
+        </a>
+    {% endif %}
+
+ <!-- وقتی وضعیت completed هست -->
+    {% if series.status == "completed" %}
+        <span class="btn btn-sm btn-secondary disabled">
+            <i class="fa fa-lock"></i> سری تکمیل شده
+        </span>
+
+        <!-- دکمه دریافت خروجی -->
+        <a href="{% url 'export_series_nzsa' series.id %}" class="btn btn-sm btn-info">
+            <i class="fa fa-download"></i> دریافت خروجی (.Nzsa)
+        </a>
+    {% endif %}
+
+ 
+    </div>
+</div>
+
         <h3 class="fw-bold text-primary text-center">لیست کارت‌های صادر شده</h3>
         <div class="modern-table-container">
             <div class="header-tools mb-3">
@@ -209,6 +285,8 @@
                     <td>{{ card.note|default_if_none:'-' }}</td>
                     <td>
                         <a href="{% url 'card_send_update' card.pk %}" class="btn btn-xs btn-info">ویرایش</a>
+                        <a href="{% url 'soldier_edit' pk=card.soldier.pk %}" class="btn btn-xs btn-info">ویرایش سرباز</a>
+                        <a href="{% url 'review_card_send' pk=card.soldier.pk %}" class="btn btn-xs btn-info">بررسی</a>
                     </td>
                 </tr>
             {% empty %}

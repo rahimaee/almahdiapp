@@ -1,0 +1,250 @@
+{% extends "shared/_PanelMain.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/analystics_style.css' %}">
+<script src="{% static 'bower_components/chart.js/Chart.min.js' %}"></script>
+<style>
+.stats-card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+.stats-card .card {
+  flex: 1 1 250px;
+  padding: 15px 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #4b6cb7, #182848);
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.stats-card .card-title {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  margin: 3px 0;
+}
+.stat-key { font-weight: 500; }
+.stat-value { font-weight: bold; font-size: 16px; }
+
+
+</style>
+<style id="cahrt">
+.chart-container {
+  margin-top: 30px;
+}
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.chart-card {
+  background: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* ارتفاع ثابت برای همه چارت‌ها */
+.chart-card canvas {
+  height: 300px;
+}
+
+/* چارت دایره‌ای یک ستون */
+.circle-chart {
+  grid-column: span 1;
+}
+
+/* چارت ستونی/خطی دو ستون */
+.wide-chart {
+  grid-column: span 2;
+}
+/* چارت ستونی/خطی دو ستون */
+.wide3-chart {
+  grid-column: span 3;
+}
+
+</style>
+{% endblock %}
+
+{% block main %}
+        {% include './layout/AnalysticsNavbar.html' %}
+
+<div class="container-fluid">
+  <!-- کارت‌های آماری -->
+  <div class="stats-card">
+    <div class="card">
+      <h4 class="card-title">کل سربازان</h4>
+      <div class="stat-row"><span class="stat-key">تعداد کل</span><span class="stat-value">261</span></div>
+    </div>
+    <div class="card">
+      <h4 class="card-title">سربازان حاضر</h4>
+      <div class="stat-row"><span class="stat-key">حاضر</span><span class="stat-value">200</span></div>
+    </div>
+    <div class="card">
+      <h4 class="card-title">فراری</h4>
+      <div class="stat-row"><span class="stat-key">تعداد</span><span class="stat-value">30</span></div>
+    </div>
+    <div class="card">
+      <h4 class="card-title">اعلام حضور نشده</h4>
+      <div class="stat-row"><span class="stat-key">تعداد</span><span class="stat-value">10</span></div>
+    </div>
+    <div class="card">
+      <h4 class="card-title">پایان خدمت</h4>
+      <div class="stat-row"><span class="stat-key">تعداد</span><span class="stat-value">15</span></div>
+    </div>
+    <div class="card">
+      <h4 class="card-title">کارت صادر نشده</h4>
+      <div class="stat-row"><span class="stat-key">تعداد</span><span class="stat-value">5</span></div>
+    </div>
+    <div class="card">
+      <h4 class="card-title">بدهی حقوقی</h4>
+      <div class="stat-row"><span class="stat-key">تعداد</span><span class="stat-value">8</span></div>
+    </div>
+    <div class="card">
+      <h4 class="card-title">جذبی</h4>
+      <div class="stat-row"><span class="stat-key">تعداد</span><span class="stat-value">3</span></div>
+    </div>
+  </div>
+
+<div class="chart-grid">
+
+
+  <!-- چارت دایره‌ای -->
+  <div class="chart-card circle-chart">
+      <h5 class="text-center">وضعیت حضور سربازان</h5>
+      <canvas id="presenceChart"></canvas>
+  </div>
+
+  <!-- چارت ستونی یا خطی -->
+  <div class="chart-card wide3-chart">
+      <h5 class="text-center">وضعیت حضور ماهانه</h5>
+      <canvas id="serviceStatusChart"></canvas>
+  </div>
+
+  <!-- چارت ستونی -->
+  <div class="chart-card wide-chart">
+      <h5 class="text-center">تحصیلات</h5>
+      <canvas id="educationChart"></canvas>
+  </div>
+
+  <!-- سایر چارت‌ها -->
+ 
+
+  <div class="chart-card circle-chart">
+      <h5 class="text-center">وضعیت کارت‌ها و بدهی</h5>
+      <canvas id="statusChart"></canvas>
+  </div>
+
+  <div class="chart-card circle-chart">
+      <h5 class="text-center">شیفت‌ها</h5>
+      <canvas id="shiftChart"></canvas>
+  </div>
+
+  <div class="chart-card circle-chart">
+      <h5 class="text-center">بومی/غیربومی</h5>
+      <canvas id="localityChart"></canvas>
+  </div>
+  <!-- چارت دایره‌ای -->
+  <div class="chart-card circle-chart">
+      <h5 class="text-center">تراکم سربازان در قسمت‌ها</h5>
+      <canvas id="unitDensityChart"></canvas>
+  </div>
+  <div class="chart-card wide-chart">
+      <h5 class="text-center">پایان خدمت تا ۶ ماه آینده</h5>
+      <canvas id="upcomingServiceChart"></canvas>
+  </div>
+   <div class="chart-card wide-chart">
+      <h5 class="text-center">تقسیم‌بندی بر اساس درجه</h5>
+      <canvas id="rankChart"></canvas>
+  </div>
+</div>
+
+
+
+
+</div>
+<script src="{% static 'dist/js/chart.js' %}"></script>
+<script>
+const unitDensityCtx = document.getElementById('unitDensityChart').getContext('2d');
+new Chart(unitDensityCtx,{
+    type:'doughnut',
+    data:{
+        labels:['خدمات کارکنان','آموزشگاه','سرباز فروشگاه','سرباز بوفه','خدمات دفتر'],
+        datasets:[{data:[16,48,2,13,1], backgroundColor:['#4b6cb7','#ff758c','#f7b500','#6fcf97','#9b59b6'] }]
+    },
+    options:{responsive:true, plugins:{legend:{position:'right'}, title:{display:true,text:'تراکم سربازان در قسمت‌ها'}}}
+});
+
+const serviceStatusCtx = document.getElementById('serviceStatusChart').getContext('2d');
+new Chart(serviceStatusCtx,{
+    type:'line',
+    data:{
+        labels:['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'],
+        datasets:[
+            {label:'فراری', data:[5,3,6,4,2,1,0,2,3,1,0,2], borderColor:'#ff4d4d', backgroundColor:'rgba(255,77,77,0.2)', fill:false, tension:0.4},
+            {label:'ورود', data:[10,12,9,15,14,10,11,9,12,13,10,12], borderColor:'#4da6ff', backgroundColor:'rgba(77,166,255,0.2)', fill:false, tension:0.4},
+            {label:'خروج', data:[2,3,1,4,2,3,1,2,2,1,3,1], borderColor:'#33cc33', backgroundColor:'rgba(51,204,51,0.2)', fill:false, tension:0.4},
+            {label:'کمیسیون', data:[1,0,2,1,3,0,1,0,1,0,2,1], borderColor:'#ffb84d', backgroundColor:'rgba(255,184,77,0.2)', fill:false, tension:0.4}
+        ]
+    },
+    options:{responsive:true, plugins:{legend:{position:'top'}}, scales:{y:{beginAtZero:true, title:{display:true,text:'تعداد'}}, x:{title:{display:true,text:'ماه'}}}}
+});
+
+const rankCtx = document.getElementById('rankChart').getContext('2d');
+new Chart(rankCtx,{
+    type:'bar',
+    data:{labels:['افسر','درجه دار','عادی','پاسدار وظیفه'], datasets:[{label:'تعداد', data:[25,81,155,5], backgroundColor:'#4b6cb7'}]},
+    options:{responsive:true}
+});
+
+const educationCtx = document.getElementById('educationChart').getContext('2d');
+new Chart(educationCtx,{
+    type:'bar',
+    data:{labels:['زیر دیپلم','دیپلم','فوق دیپلم','لیسانس','فوق لیسانس','دکتری'], datasets:[{label:'تعداد', data:[6,20,17,100,10,8], backgroundColor:'#ff758c'}]},
+    options:{responsive:true}
+});
+
+const presenceCtx = document.getElementById('presenceChart').getContext('2d');
+new Chart(presenceCtx,{
+    type:'doughnut',
+    data:{labels:['حاضر','فراری','اعلام حضور نشده','پایان خدمت'], datasets:[{data:[200,30,10,15], backgroundColor:['#4b6cb7','#ff758c','#f7b500','#6fcf97']}]}
+});
+
+const statusCtx = document.getElementById('statusChart').getContext('2d');
+new Chart(statusCtx,{
+    type:'pie',
+    data:{labels:['کارت صادر نشده','بدهی حقوقی','جذبی'], datasets:[{data:[5,8,3], backgroundColor:['#ff758c','#f7b500','#6fcf97']}]}
+});
+
+const shiftCtx = document.getElementById('shiftChart').getContext('2d');
+new Chart(shiftCtx,{
+    type:'doughnut',
+    data:{labels:['شیفت صبح','شیفت عصر','شیفت شب'], datasets:[{data:[100,120,41], backgroundColor:['#4b6cb7','#ff758c','#f7b500']}]}
+});
+
+const localityCtx = document.getElementById('localityChart').getContext('2d');
+new Chart(localityCtx,{
+    type:'doughnut',
+    data:{labels:['بومی','غیربومی'], datasets:[{data:[150,111], backgroundColor:['#4b6cb7','#ff758c']}]}
+});
+
+const upcomingCtx = document.getElementById('upcomingServiceChart').getContext('2d');
+new Chart(upcomingCtx,{
+    type:'line',
+    data:{labels:['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور'], datasets:[{label:'پایان خدمت', data:[3,5,4,2,6,1], borderColor:'#33cc33', backgroundColor:'rgba(51,204,51,0.2)', fill:false, tension:0.4}]},
+    options:{responsive:true, plugins:{legend:{position:'top'}}, scales:{y:{beginAtZero:true, title:{display:true,text:'تعداد'}}, x:{title:{display:true,text:'ماه'}}}}
+});
+</script>
+{% endblock %}

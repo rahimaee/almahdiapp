@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import CardSeries, CardSend
 from .forms import CardSeriesForm, CardSendReviewForm, CardSendForm
+from django.db.models import Count
 
 
 # Create your views here.
@@ -16,7 +17,8 @@ def soldiers_ready_for_card(request):
 
 
 def card_series_list(request):
-    series = CardSeries.objects.all()
+    series = CardSeries.objects.annotate(num_cards=Count('card_sends'))
+
     return render(request, 'soldire_end_card/card_series_list.html', {'series': series})
 
 
@@ -66,9 +68,24 @@ def card_send_list_n(request):
 
 
 def card_send_list_series(request, series_id):
+    series = CardSeries.objects.filter(pk=series_id).first()
     cards = CardSend.objects.filter(series_id=series_id).all().order_by('-created_at')
-    return render(request, 'soldire_end_card/card_send_list_n.html', {'cards': cards})
+    
+    print(series)
+    return render(request, 'soldire_end_card/card_send_list_n.html', {'cards': cards,'series':series})
 
+def change_series_status(request, series_id, status):
+    series = get_object_or_404(CardSeries, id=series_id)
+
+    valid_status = ["preparing", "sent", "checking", "completed"]
+
+    if status not in valid_status:
+        return redirect("card_send_list_series", series_id=series.id)
+
+    series.status = status
+    series.save()
+
+    return redirect("card_send_list_series", series_id=series.id)
 
 def card_send_create(request):
     if request.method == 'POST':
@@ -111,3 +128,25 @@ def card_send_create_for_soldier(request, soldier_id):
         'form': form,
         'title': f'اختصاص کارت به سرباز: {soldier}'
     })
+
+from django.conf import settings
+from .exports import *
+from django.http import HttpResponse
+
+def export_series_nzsa(request, series_id):
+    # دریافت سری کارت
+    series = get_object_or_404(CardSeries, id=series_id)
+    
+    # دریافت همه کارت‌ها همراه با سرباز و سرویس
+    card_sends = CardSend.objects.filter(series=series).select_related('soldier', 'soldier__soldierservice')
+
+    # مسیر پوشه تصاویر سربازان (با فرض ذخیره شدن تصاویر با نام کد ملی)
+    pic_folder = os.path.join(settings.MEDIA_ROOT, "soldier_pics")
+
+    zip_buffer = generate_series_zip(series, card_sends, pic_folder)
+
+    filename = f"{series.title}_{series.send_date}.zip"  # پسوند ZIP واقعی
+
+    response = HttpResponse(zip_buffer, content_type="application/zip")
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response

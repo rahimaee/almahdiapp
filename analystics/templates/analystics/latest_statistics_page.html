@@ -1,0 +1,343 @@
+{% extends "shared/_PanelMain.html" %}
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/analystics_style.css' %}">
+{% endblock %}
+
+{% block main %}
+<div >
+    <div>
+        {% include '../layout/AnalysticsNavbar.html' %}
+    </div>
+
+    <div class="row">
+        <div class="col-md-7"  >
+            <h3 class="font-semibold text-lg mb-2">استعداد حاضر به خدمت</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">عنوان</th>
+                            <th colspan="4">استعداد حاضر به خدمت</th>
+                            <th rowspan="2">PY</th>
+                            <th colspan="2">وضعیت موجودی</th>
+                        </tr>
+                        <tr>
+                            <th>ستاد</th>
+                            <th>عده</th>
+                            <th>گردان</th>
+                            <th>جمع</th>
+                            <th>بومی</th>
+                            <th>غیر بومی</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>عادی (1-4)</td>
+                            <td>71</td>
+                            <td>84</td>
+                            <td>0</td>
+                            <td>155</td>
+                            <td>155</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>درجه دار (5-9)</td>
+                            <td>47</td>
+                            <td>34</td>
+                            <td>0</td>
+                            <td>81</td>
+                            <td>79</td>
+                            <td>2</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>افسر (10-12)</td>
+                            <td>20</td>
+                            <td>5</td>
+                            <td>0</td>
+                            <td>25</td>
+                            <td>25</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr class="total">
+                            <td><b>مجموع</b></td>
+                            <td>138</td>
+                            <td>123</td>
+                            <td>0</td>
+                            <td>261</td>
+                            <td>259</td>
+                            <td>2</td>
+                            <td>2</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <h3 class="font-semibold text-lg mb-2">قبولی دانشگاه / معافیت / فراری / انتقالی</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">قبولی دانشگاه</th>
+                            <th colspan="2">معافیت</th>
+                            <th rowspan="2">فراری</th>
+                            <th rowspan="2">انتقالی</th>
+                            <th rowspan="2">جمع</th>
+                        </tr>
+                        <tr>
+                            <th>پزشکی</th>
+                            <th>غیرپزشکی</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>31</td>
+                            <td>0</td>
+                            <td>31</td>
+                        </tr>
+                        <tr>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>1</td>
+                            <td>0</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                        <tr class="total">
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>32</td>
+                            <td>0</td>
+                            <td><b>32</b></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+    <!-- جدول 1: نگهداری کارکنان -->
+    <div class="col-md-6">
+        <h3 class="font-semibold text-lg mb-2"> نگهداری کارکنان</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>عنوان</th>
+                        <th>ترخیص ماه آینده</th>
+                        <th colspan="2">کارت صادر شده</th>
+                        <th>نگهداری کارکنان</th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th>شیفتی</th>
+                        <th>اداری</th>
+                        <th>مجموع</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>عادی (1-4)</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">126</td>
+                        <td class="body-cell">29</td>
+                        <td class="body-cell">155</td>
+                    </tr>
+                    <tr>
+                        <td>درجه دار (5-9)</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">55</td>
+                        <td class="body-cell">26</td>
+                        <td class="body-cell">81</td>
+                    </tr>
+                    <tr>
+                        <td>افسر (10-12)</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">8</td>
+                        <td class="body-cell">17</td>
+                        <td class="body-cell">25</td>
+                    </tr>
+                    <tr class="total total">
+                        <td>مجموع</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">189</td>
+                        <td class="body-cell">72</td>
+                        <td class="body-cell">261</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- جدول 2: استعداد حاضر به خدمت (فرماندهی) -->
+    <div class="col-md-6">
+        <h3 class="font-semibold text-lg mb-2"> استعداد حاضر به خدمت (فرماندهی)</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>عنوان</th>
+                        <th>فرماندهی بدون فراری</th>
+                        <th>فرماندهی با فراری</th>
+                        <th>حوزه</th>
+                        <th>حفا</th>
+                        <th>جمع</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>عادی (1-4)</td>
+                        <td class="body-cell">152</td>
+                        <td class="body-cell">183</td>
+                        <td class="body-cell">3</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">186</td>
+                    </tr>
+                    <tr>
+                        <td>درجه دار (5-9)</td>
+                        <td class="body-cell">78</td>
+                        <td class="body-cell">79</td>
+                        <td class="body-cell">3</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">82</td>
+                    </tr>
+                    <tr>
+                        <td>افسر (10-12)</td>
+                        <td class="body-cell">23</td>
+                        <td class="body-cell">23</td>
+                        <td class="body-cell">2</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">25</td>
+                    </tr>
+                    <tr class="total total">
+                        <td>مجموع</td>
+                        <td class="body-cell">253</td>
+                        <td class="body-cell">285</td>
+                        <td class="body-cell">8</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">293</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <!-- وضعیت جسمانی و روانی -->
+    <div class="col-md-6 mb-4">
+        <h3 class="font-semibold text-lg mb-2">وضعیت جسمانی و روانی</h3>
+        <table class="table table-bordered text-center">
+            <thead class="thead-dark">
+                <tr>
+                    <th>وضعیت جسمانی</th>
+                    <th>تعداد</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>سالم</td><td>209</td></tr>
+                <tr><td>معاف از رزم</td><td>38</td></tr>
+                <tr class="total"><td>جمع</td><td>261</td></tr>
+            </tbody>
+            <thead class="thead-dark">
+                <tr>
+                    <th>وضعیت روانی</th>
+                    <th>تعداد</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>گروه الف</td><td>209</td></tr>
+                <tr><td>گروه ب</td><td>10</td></tr>
+                <tr class="total"><td>جمع</td><td>261</td></tr>
+            </tbody>
+            <thead class="thead-dark">
+                <tr>
+                    <th>کمیسیون</th>
+                    <th>0</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+    <!-- موجودی رده -->
+    <div class="col-md-6 mb-4">
+            <h3 class="font-semibold text-lg mb-2">موجودی رده</h3>
+            <table class="table table-bordered text-center">
+                <thead class="thead-dark">
+                    <tr><th>رده</th><th>تعداد</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>افسر</td><td>25</td></tr>
+                    <tr><td>درجه‌دار</td><td>81</td></tr>
+                    <tr><td>عادی</td><td>155</td></tr>
+                    <tr class="total"><td>جمع کل</td><td>261</td></tr>
+                </tbody>
+            </table>
+    </div>
+</div>
+
+<div class="row">
+    <!-- مذهب -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm p-3">
+            <h3 class="card-title text-center">مذهب</h3>
+            <table class="table table-bordered text-center">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>مذهب</th>
+                        <th>تعداد</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>شیعه</td><td>261</td></tr>
+                    <tr><td>اهل تسنن</td><td>0</td></tr>
+                    <tr class="total"><td>جمع کل</td><td>261</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- سایر -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm p-3">
+            <h3 class="card-title text-center">سایر</h3>
+            <table class="table table-bordered text-center">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>عنوان</th>
+                        <th>تعداد</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>آمار پاسدار وظیفه یگان</td><td>5</td></tr>
+                    <tr><td>آمار کارکنان وظیفه معتاد یگان</td><td>0</td></tr>
+                    <tr class="total"><td>جمع کل</td><td>261</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+</div>
+{% endblock %}

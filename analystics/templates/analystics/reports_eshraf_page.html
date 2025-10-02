@@ -1,0 +1,303 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% load jalali_filters %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/analystics_style.css' %}">
+<style>
+/* ====== فرم بالای صفحه (ایجاد + جستجو) ====== */
+.top-panel-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f4f5f7;
+    padding: 10px 15px;
+    border-radius: 12px;
+    gap: 15px;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.top-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    flex: 1 1 auto;
+}
+
+.top-form .form-control {
+    height: 32px;
+    padding: 0 8px;
+    border-radius: 6px;
+    border: 1px solid #cfd3da;
+    font-size: 13px;
+    transition: border-color 0.2s;
+}
+
+.top-form select {
+    height: 32px;
+    border-radius: 6px;
+    border: 1px solid #cfd3da;
+    font-size: 13px;
+}
+
+.top-form textarea {
+    height: 32px;
+    resize: none;
+    padding: 0 8px;
+    border-radius: 6px;
+    border: 1px solid #cfd3da;
+    font-size: 13px;
+}
+
+.top-form .btn-create {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    background: linear-gradient(135deg,#6a11cb,#8b4dff);
+    border: none;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    height: 32px;
+}
+
+.top-form .btn-create:hover {
+    transform: scale(1.05);
+}
+
+.search-box {
+    flex: 0 0 180px;
+}
+
+.search-box input {
+    width: 100%;
+    height: 32px;
+    border-radius: 6px;
+    border: 1px solid #cfd3da;
+    padding: 0 8px;
+    font-size: 13px;
+    transition: border-color 0.2s;
+}
+
+.search-box input:focus {
+    border-color: #6a11cb;
+    outline: none;
+}
+
+/* ====== کارت‌های اشراف ====== */
+.eshraf-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.eshraf-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.eshraf-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px 15px;
+    background: #f8f9fa;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.eshraf-card-header:hover {
+    background: #eceef3;
+}
+
+.expand-btn {
+    background: linear-gradient(135deg,#6a11cb,#2575fc);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 16px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s;
+    margin-right: 10px;
+}
+
+.expand-btn.rotate {
+    transform: rotate(180deg);
+}
+
+.eshraf-card-body {
+    display: none;
+    flex-direction: column;
+    padding: 10px 15px;
+    border-top: 1px solid #eee;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    padding: 6px 10px;
+    background: #f9f9f9;
+    border-radius: 6px;
+}
+
+.file-item a {
+    font-size: 12px;
+    padding: 3px 8px;
+    background: linear-gradient(135deg,#43e97b,#38f9d7);
+    border-radius: 4px;
+    color: white;
+    text-decoration: none;
+}
+
+.card-action-btn {
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: none;
+    color: white;
+    font-weight: 600;
+    margin-left: 5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.card-action-btn:hover {
+    transform: scale(1.05);
+}
+
+.btn-zip {
+    background: linear-gradient(135deg,#f7971e,#ffd200);
+}
+
+.btn-delete {
+    background: linear-gradient(135deg,#ff512f,#dd2476);
+}
+
+.no-data-card {
+    background: #f9f9f9;
+    border: 2px dashed #ccc;
+    color: #555;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+}
+</style>
+{% endblock %}
+
+{% block main %}
+{% include '../layout/AnalysticsNavbar.html' %}
+
+<div class="eshraf-page">
+
+    <!-- بخش بالایی: فرم ایجاد + جستجو -->
+    <div class="top-panel-card">
+        <!-- فرم ایجاد -->
+        <form method="POST" action="{% url 'analystics:reports_eshraf_create' %}" class="top-form">
+            {% csrf_token %}
+            <input type="text" name="title" class="form-control" placeholder="عنوان..." required>
+            <input type="date" name="date" class="form-control" required>
+            <select name="period" class="form-control">
+                <option value="سه ماهه اول">سه ماهه اول</option>
+                <option value="سه ماهه دوم">سه ماهه دوم</option>
+                <option value="سه ماهه سوم">سه ماهه سوم</option>
+                <option value="سه ماهه چهارم">سه ماهه چهارم</option>
+            </select>
+            <textarea name="description" class="form-control" placeholder="توضیحات ..." rows="1">{{ request.POST.description }}</textarea>
+            <button type="submit" class="btn-create"><span>&#43;</span> ایجاد</button>
+        </form>
+
+        <!-- جستجو -->
+        <div class="search-box">
+            <input type="text" id="eshrafSearch" placeholder="جستجو...">
+        </div>
+    </div>
+
+    <!-- کارت‌های اشراف -->
+    <div class="eshraf-cards">
+        {% for eshraf in eshraf_list %}
+        <div class="eshraf-card">
+            <div class="eshraf-card-header">
+                <div style="display:flex; align-items:center;">
+                    <button class="expand-btn">&#9660;</button>
+                    <span>{{ eshraf.title }} - {{ eshraf.period }} - {{ eshraf.date|to_jalali }}</span>
+                </div>
+                <div>
+                  <a href="{% url 'analystics:reports_eshraf_download_zip' eshraf.id %}" class="card-action-btn btn-zip">
+                     <span>&#128190;</span> ZIP
+                  </a>
+                  <a href="{% url 'analystics:reports_eshraf_delete' eshraf.id %}" class="card-action-btn btn-delete">
+                     <span>&#128465;</span> حذف
+                  </a>
+               </div>
+            </div>
+            <div class="eshraf-card-body">
+                {% for file in eshraf.files_list %}
+                  <div class="file-item">
+                     <span>{{  forloop.counter }} - </span>
+                     <span style="flex:1;">{{ file.label }}</span>
+                     <span  style="flex:1;">
+                        <span dir="ltr">{{ file.name }}.{{ file.ext }}</span>
+                        
+                     </span>
+                     <a href="{{ file.url }}" target="_blank" class="btn btn-success btn-sm">دانلود</a>
+                  </div>
+                  {% endfor %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-data-card">
+            <p>📭 هیچ موردی یافت نشد</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Expand/Collapse کارت‌ها
+    document.querySelectorAll('.eshraf-card-header').forEach(header => {
+        const btn = header.querySelector('.expand-btn');
+        const body = header.nextElementSibling;
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            body.style.display = (body.style.display === 'flex') ? 'none' : 'flex';
+            btn.classList.toggle('rotate');
+        });
+        header.addEventListener('click', function() {
+            body.style.display = (body.style.display === 'flex') ? 'none' : 'flex';
+            btn.classList.toggle('rotate');
+        });
+    });
+
+    // جستجوی زنده
+    document.getElementById('eshrafSearch').addEventListener('keyup', function() {
+        const filter = this.value.toLowerCase();
+        document.querySelectorAll('.eshraf-card').forEach(card => {
+            const text = card.querySelector('.eshraf-card-header span').innerText.toLowerCase();
+            card.style.display = text.includes(filter) ? '' : 'none';
+        });
+    });
+});
+</script>
+{% endblock %}

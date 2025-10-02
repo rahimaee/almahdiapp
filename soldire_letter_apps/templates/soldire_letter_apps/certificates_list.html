@@ -144,11 +144,11 @@
 
 
 <div class="container">
-    <h2 class="fw-bold text-primary text-center">📄 فهرست نامه‌های بهداشت</h2>
+    <h2 class="fw-bold text-primary text-center"> فهرست نامه‌های گواهی عضویت</h2>
 
     <div class="modern-table-container">
         <div class="header-tools mb-3">
-            <a href="{% url 'health_iodine_letter_create' %}" class="btn btn-create">➕ ایجاد نامه جدید</a>
+            <a href="{% url 'membership_certificate_create' %}" class="btn btn-create">➕ ایجاد نامه جدید</a>
         <div class="center-box"> 
             <ul class="pagination justify-content-center">
                 {% if page_obj.has_previous %}
@@ -203,7 +203,7 @@
                                 <td><span class="text-truncate">{{ c.description }}</span></td>
                                 <td>{{ c.normal_letter.date|to_jalali }}</td>
                                 <td class="table-actions">
-                                    <a href="{% url 'print_certificate_letter' c.id %}" class="btn btn-success btn-xs">چاپ</a>
+                                    <a href="{% url 'membership_certificate_print' c.id %}" class="btn btn-success btn-xs">چاپ</a>
                                     <a href="{% url 'membership_certificate_edit' c.id %}" class="btn btn-primary btn-xs">ویرایش</a>
                                     <a href="{% url 'membership_certificate_delete' c.id %}" class="btn btn-danger btn-xs">حذف</a>
                                 </td>

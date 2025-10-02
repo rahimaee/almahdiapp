@@ -137,6 +137,38 @@
         column-span:2;
     }
 </style>
+<style>
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: white;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.status-badge.preparing {
+    background: #3498db; /* آبی */
+}
+
+.status-badge.sent {
+    background: #28a745; /* سبز */
+}
+
+.status-badge.checking {
+    background: #f39c12; /* نارنجی */
+}
+
+.status-badge.completed {
+    background: #7f8c8d; /* خاکستری */
+}
+
+.status-badge:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+</style>
 
 {% endblock %}
 {% block main %}
@@ -171,6 +203,7 @@
                     <th>نام سری</th>
                     <th>تاریخ ارسال</th>
                     <th>وضعیت</th>
+                    <th>تعداد کارت</th>
                     <th>عملیات</th>
                 </tr>
                 </thead>
@@ -179,10 +212,14 @@
                     <tr>
                         <td>{{ item.title }}</td>
                         <td>{{ item.send_date|to_jalali }}</td>
-                        <td>{{ item.get_status_display }}</td>
+                        <td>
+                            <span class="status-badge {{ item.status }}">{{ item.get_status_display }}</span>
+                        </td>
+                        <td> {{item.num_cards}} </td>
                         <td>
                             <a href="{% url 'card_series_edit' item.pk %}" class="btn btn-primary btn-sm">ویرایش</a>
-                            <a href="{% url 'card_send_list_series' item.pk %}" class="btn btn-primary btn-sm">لیست سربازان</a>
+                            <a href="{% url 'card_send_list_series' item.pk %}" class="btn btn-primary btn-sm">مشاهده سری</a>
+                            <a href="{% url 'card_send_list_series' item.pk %}" class="btn btn-primary btn-sm">فایل خروجی</a>
                         </td>
                     </tr>
                 {% empty %}

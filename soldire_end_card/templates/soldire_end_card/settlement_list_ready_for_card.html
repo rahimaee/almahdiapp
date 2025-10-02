@@ -143,8 +143,8 @@
     <div class="container">
         <h2 class="text-center">سربازان آماده برای ارسال کارت</h2>
         <div class="modern-table-container">
-<div class="header-tools mb-3">
-                    <a href="{% url 'province_create' %}" class="btn btn-create">➕ ایجاد استان جدید</a>
+        <div class="header-tools mb-3">
+                    {% comment %} <a href="{% url 'card_send_create_for_soldier' %}" class="btn btn-create">➕ سرباز جدید در سری</a> {% endcomment %}
                     <div class="center-box"> 
                         <ul class="pagination justify-content-center">
                             {% if page_obj.has_previous %}

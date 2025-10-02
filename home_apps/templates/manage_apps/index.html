@@ -1,0 +1,164 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+  body {
+    font-family: 'Tahoma', sans-serif;
+    background: #f0f2f5;
+  }
+
+  .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 15px;
+  }
+
+  .section-title {
+    font-size: 18px;
+    font-weight bold;
+    margin: 10px 0;
+    text-align: right;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #333;
+    background:#fff;
+    padding:10px 20px;
+    border-radius:10px;
+  }
+  .section-title i {
+    font-size: 24px;
+    color: #555;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
+  }
+
+  .card-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 22px 15px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    text-align: center;
+    color: #fff;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+
+  .card-link i {
+    font-size: 30px;
+    margin-bottom: 12px;
+    transition: transform 0.3s, color 0.3s;
+  }
+
+  .card-link span {
+    font-size: 15px;
+    transition: color 0.3s;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+
+  .card-link:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  }
+
+  .card-link:hover span {
+    color: #000;
+  }
+
+  .card-link:hover i {
+    transform: rotate(12deg) scale(1.2);
+  }
+
+/* رنگ‌بندی حرفه‌ای با کنتراست مناسب */
+.training { background: linear-gradient(135deg, #4e54c8, #8f94fb); } /* بنفش آرام */
+.province { background: linear-gradient(135deg, #f9a825, #fbc02d); } /* طلایی ملایم */
+.city { background: linear-gradient(135deg, #00c6ff, #0072ff); } /* آبی شفاف */
+.parent-unit { background: linear-gradient(135deg, #ff416c, #ff4b2b); } /* قرمز-صورتی */
+.sub-unit { background: linear-gradient(135deg, #1e3c72, #2a5298); } /* آبی تیره ملایم */
+
+</style>
+
+<div class="page-container">
+
+  <!-- مدیریت مراکز آموزش -->
+  <h3 class="section-title">
+    <i class="fa fa-graduation-cap"></i>  مراکز آموزش
+  </h3>
+  <div class="grid">
+    <a href="{% url 'training_center_list' %}" class="card-link training">
+      <i class="fa fa-list"></i>
+      <span>لیست آموزشگاه‌ها</span>
+    </a>
+    <a href="{% url 'training_center_create' %}" class="card-link training">
+      <i class="fa fa-plus-circle"></i>
+      <span>افزودن آموزشگاه</span>
+    </a>
+  </div>
+
+  <!-- مدیریت استان و شهر -->
+  <h3 class="section-title">
+    <i class="fa fa-map"></i>  استان و شهر
+  </h3>
+  <div class="grid">
+    <a href="{% url 'province_list' %}" class="card-link province">
+      <i class="fa fa-list"></i>
+      <span>لیست استان‌ها</span>
+    </a>
+    <a href="{% url 'province_create' %}" class="card-link province">
+      <i class="fa fa-plus-circle"></i>
+      <span>افزودن استان</span>
+    </a>
+    <a href="{% url 'city_list' %}" class="card-link city">
+      <i class="fa fa-list"></i>
+      <span>لیست شهرها</span>
+    </a>
+    <a href="{% url 'city_create' %}" class="card-link city">
+      <i class="fa fa-plus-circle"></i>
+      <span>افزودن شهر</span>
+    </a>
+  </div>
+
+  <!-- مدیریت قسمت -->
+  <h3 class="section-title">
+    <i class="fa fa-sitemap"></i>  قسمت
+  </h3>
+  <div class="grid">
+    <a href="{% url 'parent_unit_list' %}" class="card-link parent-unit">
+      <i class="fa fa-list"></i>
+      <span>لیست قسمت اصلی</span>
+    </a>
+    <a href="{% url 'parent_unit_create' %}" class="card-link parent-unit">
+      <i class="fa fa-plus-circle"></i>
+      <span>افزودن قسمت اصلی</span>
+    </a>
+    <a href="{% url 'sub_unit_list' %}" class="card-link sub-unit">
+      <i class="fa fa-list"></i>
+      <span>لیست زیر قسمت</span>
+    </a>
+    <a href="{% url 'sub_unit_create' %}" class="card-link sub-unit">
+      <i class="fa fa-plus-circle"></i>
+      <span>افزودن زیر قسمت</span>
+    </a>
+  </div>
+  <h3 class="section-title">
+    <i class="fa fa-sitemap"></i>  سرباز
+  </h3>
+    <div class="grid">
+    <a href="{% url 'soldiers_group_submit' %}" class="card-link parent-unit">
+      <i class="fa fa-list"></i>
+      <span>ثبت اطلاعات گروهی سرباز</span>
+    </a>
+  </div>
+</div>
+
+{% endblock %}

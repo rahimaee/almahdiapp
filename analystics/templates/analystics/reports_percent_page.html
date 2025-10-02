@@ -1,0 +1,76 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/analystics_style.css' %}">
+<style>
+  .row-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .row-flex .table-container {
+    flex: 1 1 48%;
+  }
+  table {
+    font-size: 14px;
+  }
+  .table th.bg-title {
+    background-color: #f0f0f0;
+  }
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="container-fluid">
+  {% include '../layout/AnalysticsNavbar.html' %}
+
+  <div class="row-flex">
+    <!-- جدول مدرک تحصیلی -->
+    <div class="table-container">
+      <h3 class="mb-2">مدرک تحصیلی</h3>
+      <table class="table table-bordered text-center">
+        <thead class="table-light">
+          <tr>
+            <th>مدرک</th>
+            <th>درصد از کل سربازان</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td data-label="مدرک">زیردیپلم</td><td data-label="درصد">{{ degree_percent_zirdiplom }}</td></tr>
+          <tr><td data-label="مدرک">دیپلم</td><td data-label="درصد">{{ degree_percent_diplom }}</td></tr>
+          <tr><td data-label="مدرک">فوق دیپلم</td><td data-label="درصد">{{ degree_percent_foghdiplom }}</td></tr>
+          <tr><td data-label="مدرک">لیسانس</td><td data-label="درصد">{{ degree_percent_lisans }}</td></tr>
+          <tr><td data-label="مدرک">فوق لیسانس</td><td data-label="درصد">{{ degree_percent_foghlisans }}</td></tr>
+          <tr><td data-label="مدرک">دکترا</td><td data-label="درصد">{{ degree_percent_doctor }}</td></tr>
+          <tr><td data-label="مدرک">دکتری</td><td data-label="درصد">{{ degree_percent_doctori }}</td></tr>
+          <tr><td data-label="مدرک">دکترا پزشکی</td><td data-label="درصد">{{ degree_percent_doctor_med }}</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- جدول وضعیت سلامت -->
+    <div class="table-container">
+      <h3 class="mb-2">وضعیت سلامت</h3>
+      <table class="table table-bordered text-center">
+        <thead class="table-light">
+          <tr>
+            <th>وضعیت</th>
+            <th>درصد از کل سربازان</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td data-label="وضعیت">سالم</td><td data-label="درصد">{{ health_percent_healthy }}</td></tr>
+          <tr><td data-label="وضعیت">معاف از رزم</td><td data-label="درصد">{{ health_percent_exempt }}</td></tr>
+          <tr><td data-label="وضعیت">گروه ب</td><td data-label="درصد">{{ health_percent_group_b }}</td></tr>
+          <tr><td data-label="وضعیت">معاف+گروه ب</td><td data-label="درصد">{{ health_percent_exempt_group_b }}</td></tr>
+          <tr><td data-label="وضعیت">فراری</td><td data-label="درصد">{{ fugitive_percent }}</td></tr>
+          <tr><td data-label="وضعیت">بومی</td><td data-label="درصد">{{ local_percent }}</td></tr>
+          <tr><td data-label="وضعیت">غیربومی</td><td data-label="درصد">{{ nonlocal_percent }}</td></tr>
+          <tr><td data-label="وضعیت">کمیسیون</td><td data-label="درصد">{{ commission_percent }}</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

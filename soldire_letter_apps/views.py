@@ -11,7 +11,7 @@ from .models import ClearanceLetter, NormalLetter, NormalLetterMentalHealthAsses
     NormalLetterJudicialInquiry, NormalLetterDomesticSettlement, IntroductionLetter, MembershipCertificate, \
     NormalLetterHealthIodine, NormalLetterCommitmentLetter
 from .forms import ClearanceLetterForm, NormalLetterJudicialInquiryForm, NormalLetterDomesticSettlementForm, \
-    IntroductionLetterForm, MembershipCertificateForm, HealthIodineForm, CommitmentLetterForm
+    IntroductionLetterForm, MembershipCertificateForm, HealthIodineForm, CommitmentLetterForm , EssentialFormCardLetter
 from django.db.models import Q
 from django.utils import timezone
 from datetime import timedelta
@@ -48,15 +48,53 @@ def approved_ClearanceLetter(request, letter_id):
     if letter.status == 'چاپ و درحال بررسی':
         letter.status = 'تایید شده'
         letter.save()
-        return reverse_lazy('ClearanceLetterListView')
+        
+        # Signal خودکار وضعیت سرباز را تغییر می‌دهد
+        soldier = letter.soldier
+        messages.success(request, f"نامه با موفقیت تایید شد و وضعیت سرباز به '{soldier.get_status_display()}' تغییر یافت.")
+    return redirect('ClearanceLetterListView')
 
+import jdatetime
+
+def to_shamsi(gregorian_date):
+    if gregorian_date:
+        shamsi_date = jdatetime.date.fromgregorian(date=gregorian_date)
+        return shamsi_date.strftime("%Y/%m/%d")
+    return ""
 
 def print_ClearanceLetter(request, letter_id):
     letter = ClearanceLetter.objects.get(id=letter_id)
     if letter.status == 'ایجاد شده':
         letter.status = 'چاپ و درحال بررسی'
         letter.save()
-    return render(request, 'soldire_letter_apps/ClearanceLetter_create.html', {'letter': letter})
+        messages.success(request, "وضعیت نامه به 'چاپ و درحال بررسی' تغییر یافت.")
+    letter.issue_date_shamsi = to_shamsi(letter.issue_date)
+    letter.activities_start_date_shamsi = to_shamsi(letter.soldier.dispatch_date)
+    letter.activities_end_date_shamsi = to_shamsi(letter.soldier.dispatch_date)
+    letter.service_end_date_shamsi = to_shamsi(letter.soldier.service_end_date)
+    letter.service_entry_date_shamsi = to_shamsi(letter.soldier.service_entry_date)
+    print(letter.soldier.service_end_date,letter.service_end_date_shamsi)
+    return render(request, 'soldire_letter_apps/print_ClearanceLetter.html', {'letter': letter})
+
+    
+def delete_ClearanceLetter(request, letter_id):
+    """حذف نامه تسویه‌حساب و بازگرداندن وضعیت سرباز"""
+    letter = get_object_or_404(ClearanceLetter, id=letter_id)
+    
+    if request.method == 'POST':
+        soldier = letter.soldier
+        
+        # حذف نامه (signal خودکار وضعیت سرباز را تغییر می‌دهد)
+        letter.delete()
+        
+        messages.success(request, f"نامه تسویه‌حساب حذف شد و وضعیت سرباز {soldier.first_name} {soldier.last_name} به 'حین خدمت' بازگردانده شد.")
+        return redirect('ClearanceLetterListView')
+    
+    # نمایش صفحه تایید حذف
+    return render(request, 'soldire_letter_apps/delete_ClearanceLetter_confirm.html', {
+        'letter': letter,
+        'soldier': letter.soldier
+    })
 
 
 def normal_letter_list(request):
@@ -232,7 +270,22 @@ def judicial_inquiry_delete(request, pk):
         inquiry.delete()
         messages.success(request, "نامه با موفقیت حذف شد.")
         return redirect('judicial_inquiry_list')
+    
     return render(request, 'soldire_letter_apps/judicial_inquiry_confirm_delete.html', {'object': inquiry})
+
+def judicial_inquiry_print(request, pk):
+    inquiry = get_object_or_404(NormalLetterJudicialInquiry, pk=pk)
+    
+    return render(request, 'soldire_letter_apps/print_judicial_inquiry.html', {
+        'inquiry': inquiry,
+        'letter':inquiry.normal_letter,
+        'signature':{
+            "name": "میثم گل بابا زاده",
+            "degree": "ستوان دوم پاسدار",
+            "duty": "کارشناس منابع سرباز",
+        }
+       
+    })
 
 
 def approved_judicial_inquiry(request, letter_id):
@@ -440,22 +493,27 @@ def introduction_letter_delete(request, pk):
 
 
 def approved_introduction_letter(request, letter_id):
-    introduction_letter = IntroductionLetter.objects.get(id=letter_id)
-    find_soldire = Soldier.objects.get(pk=introduction_letter.soldier.id)
+    # اگر رکورد وجود نداشت، 404 نشان داده می‌شود
+    introduction_letter = get_object_or_404(IntroductionLetter, pk=letter_id)
+    soldier = introduction_letter.soldier
+
     if introduction_letter.status == 'چاپ و درحال بررسی':
         introduction_letter.status = 'تأیید نهایی'
         introduction_letter.save()
-        find_soldire.current_parent_unit = introduction_letter.part
-        find_soldire.current_sub_unit = introduction_letter.sub_part
-        find_soldire.save()
-    return redirect('introduction_letter_list')
 
+        soldier.current_parent_unit = introduction_letter.part
+        soldier.current_sub_unit = introduction_letter.sub_part
+        soldier.save()
+
+    return redirect('introduction_letter_list')
 
 def print_introduction_letter(request, letter_id):
     letter = IntroductionLetter.objects.get(id=letter_id)
     if letter.status == 'ایجاد شده':
         letter.status = 'چاپ و درحال بررسی'
         letter.save()
+        
+    letter.destination = f'به :  {letter.part}'
     return render(request, 'soldire_letter_apps/print_introduction_letter.html', {'letter': letter})
 
 
@@ -535,6 +593,11 @@ def membership_certificate_delete(request, pk):
         certificate.delete()
         return redirect('membership_certificate_list')
     return render(request, 'soldire_letter_apps/certificates_delete_confirm.html', {'certificate': certificate})
+
+def membership_certificate_print(request, pk):
+    certificate = get_object_or_404(MembershipCertificate, pk=pk)
+
+    return render(request, 'soldire_letter_apps/print_membership_certificate.html', {'certificate': certificate,'letter':certificate.normal_letter})
 
 
 def health_iodine_letter_list(request):
@@ -671,6 +734,13 @@ def commitment_letter_delete(request, pk):
     return render(request, 'soldire_letter_apps/commitment_letter_form.html', )
 
 
+def commitment_letter_print(request, pk):
+    letter = get_object_or_404(NormalLetterCommitmentLetter, pk=pk)
+    letter.activities_start_date_shamsi = to_shamsi(letter.normal_letter.soldier.dispatch_date)
+    letter.service_entry_date_shamsi = to_shamsi(letter.normal_letter.soldier.service_entry_date)
+    return render(request, 'soldire_letter_apps/print_commitment_letter.html', {'letter':letter})
+
+
 def approved_commitment_letter(request, letter_id):
     commitment_letter = NormalLetterCommitmentLetter.objects.get(id=letter_id)
     find_soldire = Soldier.objects.get(pk=commitment_letter.normal_letter.soldier.id)
@@ -690,4 +760,50 @@ def print_commitment_letter(request, letter_id):
     return render(request, 'soldire_letter_apps/print_commitment_letter.html', {'letter': letter})
 
 
+def main_letters(request):
+    return render(request, 'index.html')
+    
 
+from .forms import EssentialFormCardLetterForm
+
+
+def form_essential_list(request):
+    forms = EssentialFormCardLetter.objects.all()
+    letter_types = EssentialFormCardLetter.LETTER_TYPES
+    ctx = {
+        'letter_types':letter_types,
+        'forms':forms
+    }
+    return render(request,'essential_forms_nezsa/form_essential_list.html',ctx)
+
+def form_essential_delete(request,form_id=None): 
+    
+    return redirect('form_essential_list')
+
+def form_essential_view(request, form_id=None):
+    # find form_essential in database
+    essential_form = None
+    page = '404'
+    if essential_form:  # این شرط هیچ وقت True نمی‌شود چون همیشه None است
+        page = f'form_essential_{essential_form.letter_type}'
+
+    template = f'essential_forms_nezsa/{page}.html'
+
+    if request.method == "PUT":
+        pass
+
+    if request.method == "GET":
+        pass
+
+    return render(request, template)
+
+def form_essential_create(request, form_type):
+    if request.method == "POST":
+        form = EssentialFormCardLetterForm(request.POST, form_type=form_type)
+        if form.is_valid():
+            form.save()
+            return redirect('form_essential_list')
+    else:
+        form = EssentialFormCardLetterForm(form_type=form_type)
+    
+    return render(request, "essential_forms_nezsa/form_essential_form.html", {"form": form, "form_type": form_type})

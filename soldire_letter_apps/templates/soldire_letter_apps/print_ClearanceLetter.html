@@ -1,10 +1,496 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% comment %}  {% endcomment %}
 
-</body>
-</html>
+{% load static %}
+{% load jalali_filters %}
+
+{% block header %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نامه تسویه‌حساب - {{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</title>
+<style>
+    @font-face {
+        font-family: YekanBakh;
+        src: url("{% static '/fonts/YekanBakh-Regular.woff2' %}") format("woff2"),
+            url("{% static '/fonts/YekanBakh-Regular.woff' %}") format("woff"),
+            url("{% static '/fonts/YekanBakh-Regular.ttf' %}") format("truetype");
+        font-weight: normal;
+        font-style: normal;
+    }
+
+
+    html *,
+    body * {
+        font-family: YekanBakh, sans-serif;
+    }
+
+    body {
+        direction: rtl;
+        background-color: #f5f5f5;
+        margin:0;
+        padding:0;
+    }
+    .print-page {
+        width: 210mm;
+        height: 297mm;
+        padding: 20px;
+        box-sizing: border-box;
+        background-color: #fff;
+        margin:5px;
+        border:1px dashed black;
+        border-radius: 5px;
+    }
+    .A4 {
+        width: 100%;
+        height: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+        background-color: #fff;
+        border: 2px solid black;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    @media print {
+        /* مخفی کردن همه عناصر غیر از print-page */
+        body * {
+            visibility: hidden;
+        }
+        .print-page, .print-page * {
+            visibility: visible;
+        }
+
+        /* حذف margin و padding و border */
+        .print-page {
+            margin: 0 !important;
+            border: none !important;
+            page-break-after: always;
+        }
+
+            /* حذف header/footer مرورگر */
+            @page {
+                margin: 0;
+            }
+
+            /* اطمینان از RTL و فونت */
+            html, body {
+                direction: rtl;
+                font-family: YekanBakh, sans-serif;
+            }
+
+            /* جلوگیری از شکستن layout در Firefox */
+            .print-page {
+                overflow: visible !important;
+            }
+}
+
+    header.A4-header {
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid black;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+    }
+    main{
+        flex:1;
+    }
+    .header-left, .header-right { flex: 1; }
+    .header-center { text-align: center; }
+    .main-title { text-align: center; margin: 2px 0 5px; font-size: 12px; }
+    .form-title-container { display: flex; align-items: center; justify-content: center; margin-bottom: 5px; }
+    .form-title-container h2 { color: red; margin: 0 10px; }
+    .status { flex:1; text-align: left; font-weight: bold; }
+    .details { font-size: 12px; margin: 5px 0; }
+    .settlement-info { display: flex; justify-content: space-between; margin-bottom: 0; }
+    .settlement-info div h5 { margin: 0 0 5px 0; }
+    #signature { text-align: center; }
+    #signature p { font-size: 10px; margin: 0; }
+    table { width: 100%; border-collapse: collapse; text-align: center; font-size: 12px; font-weight:bold; margin-bottom: 10px; }
+    th, td { border: 1px solid #000; padding:  3px; }
+    th { background-color: #f0f0f0; }
+    .declaration { font-size: 12px; margin: 5px 0; }
+    footer.A4-footer { display: flex; justify-content: space-between; border-top: 1px solid #666; padding: 5px; gap: 5px; font-size: 12px; }
+
+    .nazarie {
+       padding:0;
+        margin:0; 
+    }
+    .nazarie ol {
+        display:flex;
+        align-items:center;
+        padding:0;
+        margin:0;
+    }
+    .nazarie ol span {
+        flex:1;
+    }
+    .nazarie ol input {
+        width:28px;
+        height:28px;
+        border-radius:16px;
+        border: 4px solid black;
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="print-page" page="صفحه یک">
+<section class="A4">
+<header class="A4-header">
+    <div class="header-left">
+        <img src="{% static 'img/Sepah.png' %}" alt="آرم سپاه" width="60">
+    </div>
+    <div class="header-center">
+        <img src="{% static 'img/allah-placeholder.png' %}" alt="الله" width="60">
+    </div>
+    <div class="header-right" style="text-align:left;">
+        <h5 style="margin:0;">شماره نامه : {{ letter.letter_number }}</h5>
+        <h5 style="margin:10px 0 0;">تاریخ نامه : {{ letter.issue_date_shamsi }}</h5>
+    </div>
+</header>
+
+<main>
+<h6 class="main-title">« افزایش توان دفاع همه جانبه در سال جهش تولید با مشارکت مردم »</h6>
+
+<div class="form-title-container">
+    <span style="flex:1;"></span>
+    <h2 class="form-title">« برگه تسویه کل »</h2>
+    <span class="status">وضعیت : {{ letter.soldier.health_status }}</span>
+</div>
+
+<p class="details">
+    بدینوسیله سرباز وظیفه « {{ letter.soldier.first_name }} {{ letter.soldier.last_name }} » با مشخصات ذیل برای تسویه حساب به علت « {{ letter.get_reason_display }} » حضورتان معرفی می‌گردد.
+</p>
+<p class="details">
+    نام پدر: {{ letter.soldier.father_name }} ، شماره ملی: {{ letter.soldier.national_code }} ، تاریخ شروع خدمت: {{ letter.service_entry_date_shamsi }} ، صادره از: {{ letter.soldier.issuance_place }} ، نوع عضویت: {{ letter.soldier.status }} و محل خدمت: {{ letter.soldier.current_parent_unit }}
+</p>
+
+<div class="settlement-info">
+    <div>
+        <h5>تاریخ تسویه به دلیل پایان خدمت: {{ letter.service_end_date_shamsi }}</h5>
+        <h5>کد پاسداری: {{ letter.soldier.id_card_code }}</h5>
+    </div>
+    <div id="signature">
+        <h5>ستوان دوم پاسدار       میثم گل بابازاده</h5>
+        <p>کارشناس منابع انسانی سرباز آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه</p>
+    </div>
+</div>
+
+<h6 class="main-title">مراجع مسئول برای انجام تسویه حساب</h6>
+        <table>
+            <thead>
+                <tr>
+                    <th>اولویت</th>
+                    <th colspan="2">مرجع</th>
+                    <th>تاریخ</th>
+                    <th>نام و امضا مسئول</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td colspan="2">مسئول مستقیم</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td colspan="2">گردان قرارگاه</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td rowspan="2">3</td>
+                    <td colspan="2">حوزه محترم نمایندگی ولی فقیه</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td colspan="2">تاید و نظارت و صلاحیت</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td colspan="2">مالی و فرهنگی</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td colspan="2">مالی و ذیحسابی</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td rowspan="4">6</td>
+                    <td colspan="1" rowspan="4">پشتیبانی</td>
+                    <td>کنترل اموال</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>ملزومات انفرادی</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>ترابری</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>تسلیحات</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td colspan="2">مهندسی</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td colspan="2">خدمات درمانی نیروهای مسلح</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>بهداری</td>
+                    <td>درمان</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td colspan="2">فاوا</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>11</td>
+                    <td>تربیت بدنی</td>
+                    <td>آمادگی جسمانی</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>12</td>
+                    <td colspan="2">ایمنی و اقدامات تامینی</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>13</td>
+                    <td>خدمات کارکنان</td>
+                    <td>فروشگاه</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>14</td>
+                    <td>آموزش</td>
+                    <td>سرگروه ناصرین</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td rowspan="3">15</td>
+                    <td rowspan="3">نیروی انسانی</td>
+                    <td>کاگ رسمی - امور گذرنامه</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>مهارت آموزی</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>قضایی</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>16</td>
+                    <td colspan="2">حفاظت و اطلاعات</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+
+
+<h6 class="main-title">اعلام تعهد توسط سرباز</h6>
+<p class="declaration">
+اینجانب {{ letter.soldier.first_name }} {{ letter.soldier.last_name }} فرزند {{ letter.soldier.father_name }} کلیه اقلام، اسناد و مدارک که در طول خدمت به آنها دسترسی داشته‌ام را به مبادی ذیربط تحویل داده‌ام. در صورتی که خلاف آن ثابت شود، فرماندهی محترم مجاز به هرگونه برخورد قانونی با بنده می‌باشد؛ همچنین در صورتی که حقوقی پس از تاریخ تسویه حساب به حساب بنده واریز گردید، ملزم به عودت حقوق مازاد به سازمان می‌باشم.
+</p>
+</main>
+
+<footer class="A4-footer">
+<div>
+    <div>شماره پرونده منقضی از خدمت: {{ letter.soldier.expired_file_number }}</div>
+    <div>کد سازمانی: {{ letter.soldier.organizational_code }}</div>
+</div>
+<div style="padding:0 100px;">
+    <div>امضا و اثر انگشت سرباز وظیفه</div>
+    <div>تاریخ: </div>
+</div>
+</footer>
+</section>
+</div>
+{% comment %} ناصرین {% endcomment %}
+<div class="print-page" page="صفحه یک">
+    <section class="A4">
+<header class="A4-header">
+    <div class="header-left">
+        <h3 style="margin:0;">( فرم شماره چهار )</h3>
+        <h3 style="margin:10px 0 0;">گواهی فعالیت اعضای گروه ناصرین</h3>
+    </div>
+    <div class="header-center"></div>
+    <div class="header-right" style="text-align:left;">
+        <h5 style="margin:0;">شماره نامه : {{ letter.letter_number }}</h5>
+        <h5 style="margin:10px 0 0;">تاریخ نامه : {{ letter.issue_date_shamsi }}</h5>
+    </div>
+</header>
+
+<main>
+    <div>به : معاونت تربیت و آموزش نیروی زمینی سپاه</div>
+    <div>از : آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه</div>
+    <div>موضوع : گواهی فعالیت</div>
+    <h4>سلام علیکم</h4>
+    <div>
+            <p style="font-weight:normal; margin:5px 0; font-size:12px;">با صلوات بر محمّد و آل محمّد ، با احترام در اجرای دستورالعمل طرح ناصرین موضوع ابلاغیه شماره 102/1983 مورخ 1394/04/18</p> 
+            <p style="font-weight:bold; margin:5px 0;">و به استناد حکم مسئولیت گروه ناصرین به شماره مورخ بدین وسیله گواهی می شود :</p> 
+            <p style="font-weight:normal; margin:5px 0; font-size:12px;">
+                سرباز وظیفه {{ letter.soldier.first_name }} {{ letter.soldier.last_name }} فرزند {{ letter.soldier.father_name }} با کد ملی {{ letter.soldier.national_code }}
+                شاغل در قسمت {{ letter.soldier.current_parent_unit }} آموزشگاه رزم مقدماتی المهدی(عج) نیروی زمینی سپاه
+            </p>
+        <p style="font-weight:bold; margin:5px 0;">
+            از تاریخ {{ letter.activities_start_date_shamsi }} تا تاریخ {{ letter.activities_end_date_shamsi }} بر اساس جدول ذیل در گروه ناصرین فعالیت نموده است.
+        </p>
+    </div>
+            <h3>الف) جدول فعالت ها</h3>
+<table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; width: 100%; text-align: center; font-size: 13px;">
+    <thead>
+        <tr>
+            <th rowspan="2">ردیف</th>
+            <th rowspan="2">میزان فعالیت موضوعات</th>
+            <th colspan="4">میزان حضور در برنامه</th>
+            <th colspan="4">میزان فعالیت در برنامه</th>
+            <th colspan="4">میزان بهره مندی از برنامه</th>
+            <th rowspan="2">جمع</th>
+        </tr>
+        <tr>
+            <th>عالی</th>
+            <th>خوب</th>
+            <th>متوسط</th>
+            <th>ضعیف</th>
+
+            <th>عالی</th>
+            <th>خوب</th>
+            <th>متوسط</th>
+            <th>ضعیف</th>
+
+            <th>عالی</th>
+            <th>خوب</th>
+            <th>متوسط</th>
+            <th>ضعیف</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>فعالیت های قرآنی</td>
+            <td></td><td></td><td></td><td></td>
+            <td></td><td></td><td></td><td></td>
+            <td></td><td></td><td></td><td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>فعالیت های فرهنگی</td>
+            <td></td><td></td><td></td><td></td>
+            <td></td><td></td><td></td><td></td>
+            <td></td><td></td><td></td><td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>فعالیت های آموزشی</td>
+            <td></td><td></td><td></td><td></td>
+            <td></td><td></td><td></td><td></td>
+            <td></td><td></td><td></td><td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>فعالیت های مطالعاتی</td>
+            <td></td><td></td><td></td><td></td>
+            <td></td><td></td><td></td><td></td>
+            <td></td><td></td><td></td><td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>فعالیت های ورزشی</td>
+            <td></td><td></td><td></td><td></td>
+            <td></td><td></td><td></td><td></td>
+            <td></td><td></td><td></td><td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>فعالیت های اردویی</td>
+            <td></td><td></td><td></td><td></td>
+            <td></td><td></td><td></td><td></td>
+            <td></td><td></td><td></td><td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>سایر فعالیت ها</td>
+            <td></td><td></td><td></td><td></td>
+            <td></td><td></td><td></td><td></td>
+            <td></td><td></td><td></td><td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td colspan="2">جمع کل</td>
+            <td></td><td></td><td></td><td></td>
+            <td></td><td></td><td></td><td></td>
+            <td></td><td></td><td></td><td></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+            <h3>ب ) نظریه : با توجه به موارد مندرج در جدول فوق الذکر :</h3>
+            <ul class="nazarie">
+                <ol>
+                    <span>1 - مشارالیه به صورت فعال و در حد عالی در گروه شرکت نموده است</span>
+                    <input type="checkbox" />
+                </ol>
+                <ol>
+                    <span>2 - مشارالیه به صورت فعال و در حد خوب در گروه شرکت نموده است</span>
+                    <input type="checkbox" />
+                </ol>
+                <ol>
+                    <span>3 - مشارالیه به صورت نیمه فعال و در حد متوسط در گروه شرکت نموده است</span>
+                    <input type="checkbox" />
+                </ol>
+                <ol>
+                    <span>4 - مشارالیه به صورت غیر فعال و در حد ضعیف در گروه شرکت نموده است</span>
+                    <input type="checkbox" />
+                </ol>
+            </ul>
+        </main>
+        <footer class="A4-footer">
+            <div style="flex:1; text-align: center;">کد سازمانی: {{ letter.soldier.organizational_code }}</div>
+            <div style="flex:1; text-align: center;">امضا</div>
+        </footer>
+    </section>
+</div>
+{% endblock %}

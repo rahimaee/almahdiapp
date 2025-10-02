@@ -1,0 +1,18 @@
+{% extends 'shared/_LetterA5.html' %}
+{% load static %}
+{% load jalali_filters %}
+
+{% block title %}نامه گواهی عضویت حساب{% endblock %}
+
+{% block content %}
+
+
+      <div  >
+        بدین‌وسیله به اطلاع می‌رساند سرباز وظیفه
+        <strong>{{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</strong>
+        فرزند <strong>{{ letter.soldier.father_name }}</strong> با شماره ملی
+        <strong>{{ letter.soldier.national_code }}</strong> و تاریخ اعزام
+        <strong>{{ letter.soldier.enlistment_date|to_jalali }}</strong>
+        به عضویت سپاه پاسداران درامده و هم اکنون در این آموزشگاه مشغول به خدمت مقدس سربازی می باشد.
+      </div>
+{% endblock %}

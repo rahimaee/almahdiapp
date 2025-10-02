@@ -14,5 +14,6 @@ urlpatterns = [
     path('cards/<int:pk>/edit/', views.card_send_update, name='card_send_update'),
     path('cards/create/soldier/<int:soldier_id>/', views.card_send_create_for_soldier,
          name='card_send_create_for_soldier'),
-
+    path("series/<int:series_id>/<str:status>/", views.change_series_status, name="change_series_status"),
+    path("export_series/<int:series_id>/nzsa", views.export_series_nzsa, name="export_series_nzsa"),
 ]

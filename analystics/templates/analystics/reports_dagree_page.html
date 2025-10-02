@@ -1,0 +1,106 @@
+{% extends "shared/_PanelMain.html" %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/analystics_style.css' %}">
+{% endblock %}
+
+{% block main %}
+<div class="container-fluid">
+   {% include '../layout/AnalysticsNavbar.html' %}
+    
+   <div class="table-responsive mb-4">
+      <table class="table table-bordered table-sm text-center">
+      <thead>
+         <tr>
+               <th rowspan="2">نام قسمت</th>
+               <th colspan="4">افسر</th>
+               <th colspan="4">درجه دار</th>
+               <th colspan="6">عادی</th>
+               <th rowspan="2">مجموع کل</th>
+         </tr>
+         <tr>
+               <!-- افسر -->
+               <th>ستوان یکم(12)</th>
+               <th>ستوان دوم(11)</th>
+               <th>ستوان سوم(10)</th>
+               <th>مجموع افسر</th>
+
+               <!-- درجه دار -->
+               <th>رزمدار یکم(9)</th>
+               <th>رزمدار دوم(8)</th>
+               <th>رزم آور یکم(7)</th>
+               <th>مجموع درجه دار</th>
+
+               <!-- عادی -->
+               <th>رزم آور دوم(6)</th>
+               <th>رزم آور سوم(5)</th>
+               <th>رزمیار(4)</th>
+               <th>سرباز یکم(3)</th>
+               <th>سرباز دوم(2)</th>
+               <th>سرباز(1)</th>
+         </tr>
+      </thead>
+      <tbody>
+         {% for r in reports %}
+         <tr>
+               <td>{{ r.unit.name }}</td>
+
+               <!-- افسر -->
+               <td>{{ r.officer.officer_1 }}</td>
+               <td>{{ r.officer.officer_2 }}</td>
+               <td>{{ r.officer.officer_3 }}</td>
+               <td>{{ r.officer.officer_total }}</td>
+
+               <!-- درجه دار -->
+               <td>{{ r.ranked.ranked_1 }}</td>
+               <td>{{ r.ranked.ranked_2 }}</td>
+               <td>{{ r.ranked.ranked_3 }}</td>
+               <td>{{ r.ranked.ranked_total }}</td>
+
+               <!-- عادی -->
+               <td>{{ r.normal.normal_1 }}</td>
+               <td>{{ r.normal.normal_2 }}</td>
+               <td>{{ r.normal.normal_3 }}</td>
+               <td>{{ r.normal.normal_4 }}</td>
+               <td>{{ r.normal.normal_5 }}</td>
+               <td>{{ r.normal.normal_6 }}</td>
+
+               <!-- مجموع کل -->
+               <td>{{ r.total }}</td>
+         </tr>
+         {% endfor %}
+
+         <!-- ردیف مجموع کل -->
+         <tr class="table-primary total">
+               <td><b>مجموع</b></td>
+
+               <!-- افسر -->
+               <td>{{ totals.officer.officer_1 }}</td>
+               <td>{{ totals.officer.officer_2 }}</td>
+               <td>{{ totals.officer.officer_3 }}</td>
+               <td>{{ totals.officer.officer_total }}</td>
+
+               <!-- درجه دار -->
+               <td>{{ totals.ranked.ranked_1 }}</td>
+               <td>{{ totals.ranked.ranked_2 }}</td>
+               <td>{{ totals.ranked.ranked_3 }}</td>
+               <td>{{ totals.ranked.ranked_total }}</td>
+
+               <!-- عادی -->
+               <td>{{ totals.normal.normal_1 }}</td>
+               <td>{{ totals.normal.normal_2 }}</td>
+               <td>{{ totals.normal.normal_3 }}</td>
+               <td>{{ totals.normal.normal_4 }}</td>
+               <td>{{ totals.normal.normal_5 }}</td>
+               <td>{{ totals.normal.normal_6 }}</td>
+
+               <!-- مجموع کل -->
+               <td>{{ totals.total }}</td>
+         </tr>
+      </tbody>
+      </table>
+
+   </div>
+</div>
+{% endblock %}

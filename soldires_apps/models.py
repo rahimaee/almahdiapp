@@ -135,6 +135,7 @@ class Soldier(models.Model):
     health_status_description = models.TextField(
         blank=True, null=True, verbose_name="توضیحات وضعیت سلامت"
     )
+    
     blood_group = models.CharField(
         max_length=3,
         choices=blood_group_choices,
@@ -193,6 +194,7 @@ class Soldier(models.Model):
     service_duration_completed = models.PositiveIntegerField(
         verbose_name="مقدار خدمت انجام شده", blank=True, null=True,
     )
+
     service_entry_date = models.DateField(null=True, blank=True, verbose_name='تاریخ ورود به یگان')
 
     total_service_adjustment = models.IntegerField(verbose_name="مجموع (کسری/اضافه خدمت)", null=True, blank=True)
@@ -341,10 +343,8 @@ class Soldier(models.Model):
             self.has_driving_license = 'ندارد'
 
     def update_is_seyed(self):
-        if re.search(r'(^|[\s‌])سید', self.first_name):
-            self.is_sayyed = True
-        else:
-            self.is_sayyed = False
+        first_name = self.first_name or ""
+        self.is_sayyed = bool(re.search(r'(^|[\s‌])سید', first_name))
 
     def update_absorption(self):
         if self.referral_person is not None:
@@ -406,13 +406,13 @@ class Settlement(models.Model):
     status = models.CharField(
         max_length=20,
         choices=[
+            ('review', 'بررسی حقوق'),
             ('pending', 'در انتظار تسویه'),
             ('partial', 'تسویه ناقص'),
             ('cleared', 'تسویه کامل'),
-            ('transitional', 'انتقالی'),
-            ('review', 'بررسی'),
+            ('transferred', 'انتقالی'),
         ],
-        default='pending',
+        default='review',
         verbose_name="وضعیت"
     )
 
@@ -439,13 +439,12 @@ class Settlement(models.Model):
     def __str__(self):
         return f"تسویه - {self.soldier}"
 
-
 class PaymentReceipt(models.Model):
     settlement = models.ForeignKey(Settlement, on_delete=models.CASCADE, related_name="payments")
 
     amount_rial = models.BigIntegerField("مبلغ واریزی (ریال)")
     receipt_number = models.CharField("شماره فیش واریزی", max_length=100)
-    deposit_date = models.DateField("تاریخ فیش واریزی")
+    deposit_date = models.CharField(max_length=120,verbose_name="تاریخ فیش واریزی")
     bank_operator_code = models.CharField("کد متصدی بانک", max_length=50)
 
     receipt_file = models.FileField("فایل فیش", upload_to='receipts/', blank=True, null=True)
@@ -458,3 +457,6 @@ class PaymentReceipt(models.Model):
 
     def __str__(self):
         return f"{self.receipt_number} - {self.amount_rial} ریال"
+
+
+

@@ -1,0 +1,376 @@
+{% extends "shared/_PanelMain.html" %}
+{% load static %}
+{% load jalali_filters %}
+{% load render_partial %}
+
+{% block header %}
+<style id="print-style">
+.page {
+    direction:rtl !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    padding: 5mm !important;
+    box-sizing: border-box !important;
+    background: #fff !important;
+    font-family: YekanBakh !important;
+    font-size: 13px !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+}
+.page > * {
+    font-family: YekanBakh !important;
+
+}
+@media print {
+  .info-table td:empty {
+    background-color:#fff !important;
+    
+   .info-table td {
+      font-size:13px !important;
+   }
+}  
+}
+.info-table td:empty {
+    background-color: #ff0000ff;
+}
+.page-title{
+   text-align:center !important;
+   margin:0 !important; 
+   padding:0 0 10px !important;
+    font-size:20px !important;
+}
+/* ستون‌بندی */
+.columns {
+    display: flex !important;
+    gap: 20px !important;
+}
+
+/* هر ستون نصف صفحه */
+.column.col1 {
+    flex: 2 !important;
+}
+.column.col2 {
+    flex: 3 !important;
+}
+.column.col2 .info-table {
+   margin-bottom: 10px !important;
+}
+
+/* جدول‌ها */
+.info-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+}
+
+.info-table td {
+    border: 1px solid #ddd !important;
+    padding: 2px 10px !important;
+    word-wrap: break-word !important;
+    padding:3px 5px ;
+    font-size:13px !important;
+    font-family: YekanBakh !important;
+}
+
+.info-table tr td:nth-child(odd) {
+    background-color: #f9f9f9 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+}
+
+.info-table tr td:nth-child(even) {
+    text-align: center !important;
+}
+
+.info-table td:first-child {
+    font-weight: bold !important;
+    width: 55% !important;
+}
+
+.info-table td:last-child {
+    width: 45% !important;
+}
+
+.main-container {
+   display: flex ;
+}
+.main-container .view-segment {
+   flex: 1 ;
+}
+.main-container > div {
+   padding: 0 50px ;
+}
+</style>
+<style>
+   .card-box {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    text-align: center;
+    margin-bottom:10px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.card-content {
+    display: flex;
+    align-items: center;
+    gap:10px;
+}
+
+.soldier-select-box {
+   flex:1;
+}
+
+.print-btn {
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.print-btn:hover {
+    background: #0d47a1;
+}
+.guide-box {
+    background: #f9f9fc;
+    border-right: 4px solid #3f51b5;
+}
+
+.guide-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.guide-content li {
+    padding: 6px 0;
+    font-size: 13px;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.guide-content li::before {
+    content: "✔️";
+    color: #3f51b5;
+    font-size: 12px;
+}
+
+</style>
+
+{% endblock %}
+{% block main %}
+<!-- انتخاب سرباز -->
+<div class="main-container">
+   <div class="view-segment">
+      <div class="card-box">
+         <h3 class="card-title">📋 گزارش انفرادی سربازان وظیفه</h3>
+         <div class="card-content">
+               <div class="soldier-select-box ">
+                  {% include 'components/soldier_select.html' with soldier=soldier placeholder="انتخاب سرباز:" %}
+               </div>
+               <button onclick="printPage()" class="print-btn">
+                  🖨️ پرینت گزارش
+               </button>
+         </div>
+      </div>
+      <div class="card-box guide-box">
+         <h3 class="card-title">❓ راهنمای استفاده از صفحه</h3>
+         <div class="card-content guide-content">
+            <ul>
+                  <li>ابتدا از منوی بالا سرباز مورد نظر خود را انتخاب کنید.</li>
+                  <li>پس از انتخاب، اطلاعات کامل سرباز در جدول نمایش داده می‌شود.</li>
+                  <li>برای گرفتن نسخه چاپی، روی دکمه <b>🖨️ پرینت گزارش</b> کلیک کنید.</li>
+                  <li>در صورت خالی بودن برخی فیلدها، آن‌ها با رنگ صورتی نمایش داده می‌شوند.</li>
+                  <li>برای ذخیره نسخه PDF در مرورگر، در پنجره پرینت گزینه <b>Save as PDF</b> را انتخاب کنید.</li>
+            </ul>
+         </div>
+      </div>
+   </div>
+
+   <div class="print-segment print-only">
+      <div class="page A4">
+         <h3 class="page-title" >گزارش انفرادی</h3>
+  <div class="columns">
+    <!-- ستون سمت چپ -->
+    <div class="column col1">
+      <table class="info-table">
+         <tbody>
+            <tr><td>کد سازمانی</td><td>246</td></tr>
+         </tbody>
+      </table>
+      <table class="info-table">
+         <tbody>
+            <tr><td>نام</td><td>عادل</td></tr>
+            <tr><td>نام خانوادگی</td><td>شعبانی</td></tr>
+            <tr><td>شماره ملی</td><td>2130646336</td></tr>
+            <tr><td>نام پدر</td><td>محمود</td></tr>
+            <tr><td>کد پاسداری</td><td>75137809</td></tr>
+            <tr><td>حکم کارگزینی</td><td>*</td></tr>
+            <tr><td>تاریخ تولد</td><td>1378/05/17</td></tr>
+            <tr><td>محل صدور</td><td>آمل</td></tr>
+            <tr><td>وضعیت تاهل</td><td>مجرد</td></tr>
+            <tr><td>تعداد اولاد</td><td>-</td></tr>
+            <tr><td>وضعیت سلامت</td><td>سالم</td></tr>
+            <tr><td>توضیحات وضعیت سلامت</td><td>-</td></tr>
+            <tr><td>محل سکونت</td><td>آمل</td></tr>
+            <tr><td>وضعیت سکونت</td><td>بومی</td></tr>
+            <tr><td>مسافت (کیلومتر)</td><td>49</td></tr>
+            <tr><td>مدرک</td><td>دیپلم</td></tr>
+            <tr><td>درجه</td><td>سرباز(1)</td></tr>
+            <tr><td>پاسدار وظیفه</td><td>خیر</td></tr>
+            <tr><td>فراری</td><td>خیر</td></tr>
+            <tr><td>سابقه فرار</td><td>خیر</td></tr>
+            <tr><td>سابقه اعتیاد</td><td>خیر</td></tr>
+            <tr><td>رشته تحصیلی</td><td>دیپلم</td></tr>
+            <tr><td>معرف</td><td>صدقانی</td></tr>
+            <tr><td>تاریخ اعزام</td><td>1402/06/01</td></tr>
+            <tr><td>مدت آموزش (روز)</td><td>0</td></tr>
+            <tr><td>مقدار خدمت انجام شده</td><td>1 سال و 8 ماه و 15 روز</td></tr>
+            <tr><td>ورود به یگان</td><td>1402/07/30</td></tr>
+            <tr><td>پایان خدمت</td><td>1404/01/25</td></tr>
+            <tr><td>نام قسمت</td><td>آماد</td></tr>
+            <tr><td>زیرقسمت</td><td>سرباز آشپزخانه</td></tr>
+            <tr><td>تردد</td><td>شیفتی</td></tr>
+            <tr><td>مدت خدمت ضرورت</td><td>21</td></tr>
+            <tr><td>موبایل</td><td>09115695164</td></tr>
+            <tr><td>منزل</td><td>01144220028</td></tr>
+            <tr><td>کدپستی</td><td>4615875839</td></tr>
+            <tr><td>آخرین استعلام تست روان</td><td>1403/07/15</td></tr>
+            <tr><td>گواهینامه دارد؟</td><td>ندارد</td></tr>
+            <tr><td>نوع گواهینامه</td><td>ندارد</td></tr>
+            <tr><td>وضعیت پرونده</td><td>نقص دارد</td></tr>
+            <tr><td>توضیحات</td><td>0</td></tr>
+         </tbody>
+      </table>
+    </div>
+
+    <!-- ستون سمت راست -->
+    <div class="column col2">
+     <table class="info-table">
+         <tbody>
+         <!-- تاریخ -->
+            <tr><td>تاریخ</td><td>1404/02/23</td></tr>
+         </tbody>
+      </table>
+      <table class="info-table">
+         <tbody>
+            <!-- مرخصی استفاده شده -->
+            <tr><td>استحقاقی</td><td>44</td></tr>
+            <tr><td>تشویقی</td><td>2</td></tr>
+            <tr><td>استعلاجی</td><td>0</td></tr>
+            <tr><td>طلب استحقاقی تا قبل از توضیحات</td><td>0</td></tr>
+         </tbody>
+      </table>
+      <table class="info-table">
+         <tbody>
+            <!-- کسری و اضافه خدمت -->
+            <tr><td>مجموع کسری+اضافه</td><td>1 ماه و 6 روز کسری خدمت</td></tr>
+            <tr><td>کسری</td><td>مجموع:60؛ بسیج:60؛ همسر:0</td></tr>
+            <tr><td>اضافه خدمت</td><td>مجموع:24؛ انضباطی:16؛ خلاء:8</td></tr>
+         </tbody>
+      </table>
+      <table class="info-table">
+         <tbody>
+            <!-- جایگاه و ثبت -->
+            <tr><td>جایگاه سازمانی</td><td>متصدي حفاظت فیزیکی</td></tr>
+            <tr><td>کد جایگاه</td><td>2011263366261000000000354</td></tr>
+            <tr><td>تاریخ ثبت</td><td>1403/03/07</td></tr>
+            <tr><td>نقص پرونده</td><td>پرونده تکمیل است</td></tr>
+         </tbody>
+      </table>
+      <table class="info-table">
+         <tbody>
+            <!-- پایان خدمت -->
+            <tr><td>پایان خدمت با احتساب 24 ماه</td><td></td></tr>
+            <tr><td>پایان خدمت با احتساب 21 ماه</td><td></td></tr>
+            <tr><td>پایان خدمت واقعی</td><td></td></tr>
+            <tr><td>مدت خدمت انجام شده</td><td>ماه / روز</td></tr>
+         </tbody>
+      </table>
+    <!-- مسئولین -->
+      <div style="margin:20px 0;" class="text-center">
+         <h4 class="font-bold">ستوان دوم پاسدار     میثم گلبابازاده</h4>
+         <h6>کارشناس منابع انسانی  سرباز آموزشگاه رزم مقدماتی المهدی(عج) نزسا</h6>
+      </div>
+      <table class="info-table">
+         <tbody>
+            <!-- تسویه و کارت -->
+            <tr><td>تاریخ ثبت تسویه در سامانه</td><td></td></tr>
+            <tr><td>تحویل مدارک مهارت آموزی</td><td></td></tr>
+            <tr><td>وضعیت صدور کارت</td><td></td></tr>
+            <tr><td>تاریخ فعالسازی</td><td></td></tr>
+            <tr><td>بررسی حقوق ماه</td><td>عودت</td></tr>
+            <tr><td>حقوق عودتی (ریال)</td><td></td></tr>
+            <tr><td>شماره حساب عودت حقوق</td><td>1051-36-9997770-2</td></tr>
+            <tr><td>تحویل برگه تسویه</td><td>تحویل</td></tr>
+            <tr><td>حذف از ثامن</td><td>تسویه داخلی</td></tr>
+            <tr><td>صدور کارتکس</td><td></td></tr>
+         </tbody> 
+      </table>
+    </div>
+  </div>
+</div>
+
+
+   </div>
+</div>
+<div id="header-partial" style="display:none;">
+    {% render_partial 'header_references_partial_view' %}
+</div>
+{% endblock %}
+
+
+{% block footer %}
+<script>
+     onChangeSelectedSoldier = (soldierId,soldierText)=>{
+        if (soldierId) {
+            window.location.href = "{% url 'single_reports_soldier' soldier_id=0 %}".replace("0", soldierId);
+        }
+    }
+</script>
+<script>
+function printPage() {
+    const content = document.querySelector('.page').innerHTML;
+    const styles = document.getElementById('print-style').outerHTML;
+    const headerPartial = document.getElementById('header-partial').innerHTML;
+
+    const printWindow = window.open('', '_blank', 'width=1200,height=1400');
+    const writeContent = `
+        <html>
+        <head>
+            <title>پرینت گزارش</title>
+            ${headerPartial}
+            ${styles}
+        </head>
+        <body>
+            <div class="page">
+                ${content}
+            </div>
+        </body>
+        </html>
+    `
+    console.log(writeContent)
+    printWindow.document.write(writeContent);
+
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+}
+</script>
+
+{% endblock %}

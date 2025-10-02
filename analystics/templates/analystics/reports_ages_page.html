@@ -1,0 +1,103 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/analystics_style.css' %}">
+<style>
+  /* کارت‌ها */
+  .stats-card {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+  .stats-card .card {
+    flex: 1 1 360px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #4b6cb7, #182848);
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    text-align: right;
+  }
+  .stats-card .card-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding:4px 10px;
+    font-size: 16px;
+  }
+  .stat-key {
+    font-weight: 500;
+  }
+  .stat-value {
+    font-weight: bold;
+    font-size: 18px;
+  }
+  table {
+    font-size: 14px;
+  }
+  .table th.bg-title {
+    background-color: #f0f0f0;
+  }
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="container-fluid">
+    {% include '../layout/AnalysticsNavbar.html' %}
+
+    <!-- 🔹 متولدین به تفکیک سال -->
+    <h3 class="mt-4 mb-2">متولدین به تفکیک سال</h3>
+    <table class="table table-bordered table-sm text-center">
+        <thead class="table-light">
+            <tr>
+                {% for year in years_data.keys %}
+                <th data-label="{{ year }}">{{ year }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                {% for count in years_data.values %}
+                <td>{{ count }}</td>
+                {% endfor %}
+            </tr>
+        </tbody>
+        <tbody>
+            <tr class="total">
+                <td colspan="{{ years_data|length|divisibleby:2 }}">مجموع کل: {{ total_soldiers }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 🔹 میانگین سنی -->
+    <h3 class="mt-4 mb-2">سال کنونی و میانگین سنی</h3>
+    <table class="table table-bordered table-sm text-center">
+        <thead class="table-light">
+            <tr>
+                {% for age in age_data.keys %}
+                <th data-label="{{ age }}">{{ age }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                {% for count in age_data.values %}
+                <td>{{ count }}</td>
+                {% endfor %}
+            </tr>
+        </tbody>
+        <tbody>
+            <tr class="total">
+                <td colspan="{{ age_data|length|divisibleby:2 }}">میانگین سنی: {{ avg_age }}</td>
+                <td colspan="{{ age_data|length|divisibleby:2 }}">مجموع سربازان: {{ total_soldiers }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

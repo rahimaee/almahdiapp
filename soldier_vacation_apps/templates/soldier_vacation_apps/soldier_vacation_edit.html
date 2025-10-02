@@ -4,7 +4,15 @@
 {% block main %}
 
     <div class="container">
-        <h2 class="text-center">فرم مدیریت مرخصی</h2>
+        <h2 class="text-center mb-5">
+            <span>فرم مدیریت مرخصی</span>
+            <span class="badge" style="padding: 10px 20px;">
+               کد ملی : {{soldier.national_code}} , {{ soldier.first_name }} {{ soldier.last_name }} - [{{ soldier.organizational_code }}]
+            </span>
+        </h2>
+        <div  style="margin:20px auto;">
+            {% include 'components/soldier_select.html' with soldier=soldier placeholder="انتخاب سرباز:" %}
+        </div>
         <form method="post" class="form-horizontal">
             {% csrf_token %}
 
@@ -88,4 +96,14 @@
             </div>
         </form>
     </div>
+{% endblock %}
+
+{% block footer %}
+<script>
+     onChangeSelectedSoldier = (soldierId,soldierText)=>{
+        if (soldierId) {
+            window.location.href = "{% url 'soldier_vacation_edit' soldier_id=0 %}".replace("0", soldierId);
+        }
+    }
+</script>
 {% endblock %}

@@ -1,0 +1,186 @@
+{% extends 'shared/_PanelMain.html' %}
+{% block main %}
+<!-- دکمه‌های ایجاد فرم جدید -->
+<div class="create-buttons">
+  {% for type, label in letter_types %}
+    <a href="{% url 'form_essential_create' form_type=type %}" class="btn btn-create">
+     ایجاد {{ label }} ➕
+    </a>
+  {% endfor %}
+</div>
+<div class="forms-container">
+  <h2>📋 فرم‌های ضروری صدور کارت نزسا</h2>
+
+
+  <!-- جدول لیست فرم‌ها -->
+  <table class="forms-table">
+    <thead>
+      <tr>
+        <th>شماره</th>
+        <th>عنوان نامه</th>
+        <th>نوع فرم</th>
+        <th>تاریخ ایجاد</th>
+        <th>عملیات</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in forms %}
+      <tr>
+        <td>{{ f.number|default:"-" }}</td>
+        <td>
+          <a href="{% url 'essential_form_view' form_id=f.pk %}" class="link">
+            {{ f.title|default:"بدون عنوان" }}
+          </a>
+        </td>
+        <td>{{ f.get_letter_type_display }}</td>
+        <td>{{ f.created_at|date:"Y/m/d H:i" }}</td>
+        <td>
+          <a href="{% url 'essential_form_view' form_id=f.pk %}" class="btn btn-view">👁 مشاهده</a>
+          <form method="post" onsubmit="return confirm('آیا مطمئن هستید؟')" style="display:inline;">
+            {% csrf_token %}
+            <input type="hidden" name="delete_form_id" value="{{ f.id }}">
+            <button type="submit" class="btn btn-delete">🗑 حذف</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" class="empty">🚫 هیچ فرمی ثبت نشده است</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<style>
+/* کانتینر اصلی */
+.forms-container {
+  background: #1f2937;
+  color: #f1f1f1;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 1400px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  margin: 20px auto;
+  direction: rtl;
+}
+
+/* عنوان */
+.forms-container h2 {
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* بخش دکمه‌های ایجاد */
+.create-buttons {
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 1200px;
+  margin: 20px auto;
+
+}
+
+
+
+/* جدول */
+.forms-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #2d3748;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.forms-table th, .forms-table td {
+  padding: 12px;
+  text-align: center;
+}
+
+.forms-table thead {
+  background: #374151;
+}
+
+.forms-table th {
+  font-weight: bold;
+  color: #e5e7eb;
+}
+
+.forms-table tr:nth-child(even) {
+  background: #2d3748;
+}
+
+.forms-table tr:nth-child(odd) {
+  background: #1f2937;
+}
+
+.forms-table tr:hover {
+  background: #4b5563;
+  transition: 0.3s;
+}
+
+/* دکمه‌ها */
+.btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+}
+.btn.btn-create {
+  background: #16a34a;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 18px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.btn.btn-create:hover {
+  background: #15803d;
+}
+.btn-view {
+  background: #2563eb;
+  color: #fff;
+}
+
+.btn-view:hover {
+  background: #1d4ed8;
+}
+
+.btn-delete {
+  background: #dc2626;
+  color: #fff;
+}
+
+.btn-delete:hover {
+  background: #b91c1c;
+}
+
+/* لینک عنوان */
+.link {
+  color: #60a5fa;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* empty state */
+.empty {
+  text-align: center;
+  padding: 20px;
+  color: #9ca3af;
+  font-style: italic;
+}
+</style>
+{% endblock %}

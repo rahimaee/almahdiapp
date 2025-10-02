@@ -1,0 +1,273 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+<style>
+/* =======================
+   کل صفحه
+======================= */
+body {
+    font-family: 'Tahoma', sans-serif;
+    background: #12121f;
+    color: #f5f5f5;
+}
+
+.container-custom {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* =======================
+   کارت‌ها
+======================= */
+.card-custom {
+    background: linear-gradient(145deg, #1e1e2f, #252538);
+    color: #f5f5f5;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    padding: 25px;
+    margin-bottom: 30px;
+    transition: transform 0.2s ease;
+}
+
+.card-custom:hover {
+    transform: translateY(-3px);
+}
+
+.card-title {
+    font-weight: bold;
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+}
+
+/* =======================
+   فرم آپلود
+======================= */
+.upload-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
+}
+
+.upload-form .file-input-wrapper {
+    flex-grow: 1;
+}
+
+.upload-form input[type="file"] {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #555;
+    background: #2a2a40;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.btn-custom {
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-upload {
+    background: linear-gradient(135deg, #56ab2f, #a8e063);
+    color: #fff;
+    border: none;
+}
+
+.btn-upload:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+
+.btn-download {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: #fff;
+    border: none;
+}
+
+.btn-download:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+
+/* =======================
+   جدول سفارشی
+======================= */
+.table-wrapper {
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid #333;
+}
+
+.table-custom {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    direction: rtl;
+    text-align: center;
+    font-size: 14px;
+    min-width: 1000px;
+}
+
+.table-custom thead {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: #fff;
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.table-custom th, .table-custom td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #333;
+}
+
+.table-custom tbody tr:nth-child(even) {
+    background: #2c2c44;
+}
+
+.table-custom tbody tr:nth-child(odd) {
+    background: #262638;
+}
+
+.table-custom tbody tr:hover {
+    background: #3f3f66;
+    transform: scale(1.01);
+    transition: all 0.2s ease;
+}
+
+/* =======================
+   جستجو ساده
+======================= */
+#searchInput {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: 1px solid #555;
+    background: #2a2a40;
+    color: #fff;
+    font-size: 0.95rem;
+}
+
+/* =======================
+   ریسپانسیو
+======================= */
+@media (max-width: 768px) {
+    .upload-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .table-custom th, .table-custom td {
+        padding: 8px;
+        font-size: 12px;
+    }
+}
+</style>
+
+<div class="container-custom">
+    <!-- فرم آپلود -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-custom">
+                <h4 class="card-title">➕ آپلود اکسل</h4>
+                <form method="post" enctype="multipart/form-data" class="upload-form">
+                    {% csrf_token %}
+                    <div class="file-input-wrapper">
+                        {{ form.excel_file.label_tag }}
+                        {{ form.excel_file }}
+                    </div>
+                    <button type="submit" name="action" value="preview" class="btn-custom btn-upload">بارگذاری</button>
+                    <a href="{% url 'download_soldiers_template' %}" class="btn-custom btn-download">دانلود نمونه اکسل</a>
+                    {% if soldiers %}
+                    <button type="submit" name="action" value="update" class="btn-custom btn-upload">بروزرسانی پایگاه داده</button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- جدول سربازان -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-custom">
+                <h4 class="card-title">📋 لیست سربازان آپلود شده</h4>
+                <input type="text" id="searchInput" placeholder="🔍 جستجو در جدول...">
+                <div class="table-wrapper">
+                    <table class="table-custom">
+    <thead>
+        <tr>
+            <th>ردیف</th>
+            <th>کد سازمانی</th>
+            <th>کد ملی</th>
+            <th>نام</th>
+            <th>نام خانوادگی</th>
+            <th>نام پدر</th>
+            <th>تاریخ تولد</th>
+            <th>وضعیت تاهل</th>
+            <th>درجه</th>
+            <th>وضعیت سلامت</th>
+            <th>تحصیلات</th>
+            <th>آدرس</th>
+            <th>موبایل</th>
+            <th>شیعه</th>
+            <th>قسمت</th>
+            <th>زیرقسمت</th>
+            <th>وضعیت تردد</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in soldiers %}
+<tr>
+    <td>{{ forloop.counter }}</td>
+    <td>{% if s.org_code %}{{ s.org_code }}{% endif %}</td>
+    <td>{% if s.national_code %}{{ s.national_code }}{% endif %}</td>
+    <td>{% if s.first_name %}{{ s.first_name }}{% endif %}</td>
+    <td>{% if s.last_name %}{{ s.last_name }}{% endif %}</td>
+    <td>{% if s.father_name %}{{ s.father_name }}{% endif %}</td>
+    <td>{% if s.birth_date %}{{ s.birth_date }}{% endif %}</td>
+    <td>{% if s.marital_status %}{{ s.marital_status }}{% endif %}</td>
+    <td>{% if s.rank %}{{ s.rank }}{% endif %}</td>
+    <td>{% if s.health_status %}{{ s.health_status }}{% endif %}</td>
+    <td>{% if s.degree %}{{ s.degree }}{% endif %}</td>
+    <td>{% if s.address %}{{ s.address }}{% endif %}</td>
+    <td>{% if s.phone_mobile %}{{ s.phone_mobile }}{% endif %}</td>
+    <td>{% if s.shiite %}{{ s.shiite }}{% endif %}</td>
+    <td>{% if s.section %}{{ s.section }}{% endif %}</td>
+    <td>{% if s.sub_section %}{{ s.sub_section }}{% endif %}</td>
+    <td>{% if s.traffic_status %}{{ s.traffic_status }}{% endif %}</td>
+</tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- جستجوی جدول ساده با JS -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', function () {
+        const filter = this.value.toLowerCase();
+        document.querySelectorAll('.table-custom tbody tr').forEach(row => {
+            let text = row.textContent.toLowerCase();
+            row.style.display = text.includes(filter) ? '' : 'none';
+        });
+    });
+});
+</script>
+{% endblock %}

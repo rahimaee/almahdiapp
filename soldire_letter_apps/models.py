@@ -1,5 +1,4 @@
 import uuid
-
 from django.db import models
 from django.utils import timezone
 from datetime import timedelta
@@ -285,3 +284,45 @@ class NormalLetterCommitmentLetter(models.Model):
     def __str__(self):
         return f"{self.normal_letter} - {self.type_card_chip}"
 
+from django.db import models
+from django.utils import timezone
+
+class EssentialFormCardLetter(models.Model):
+    # انتخاب نوع فرم / نامه
+    LETTER_TYPES = [
+        ('clearance_letter', 'فرم شماره 3'),
+        ('officer_card', 'صدور کارت پایور'),
+        ('soldier_card', 'صدور کارت سرباز'),
+        ('checkout_3plus', 'فرم تسویه حساب 3 فرزندی و بالاتر'),
+        ('activate_old_staff', 'فعال سازی اعزام کارکنان قدیمی'),
+        ('certificate_two_guard', 'گواهی دو پاسدار'),
+        ('permanent_exemption', 'معافیت دائم کارکنان وظیفه'),
+    ]
+
+    # فیلدهای عمومی همه فرم‌ها
+    number = models.CharField(max_length=50, help_text="شماره نامه", blank=True, null=True)
+    return_number = models.CharField(max_length=50, help_text="شماره ارجاع/بازگشت", blank=True, null=True)
+    sender = models.CharField(max_length=200, help_text="از", blank=True, null=True)
+    receiver = models.CharField(max_length=200, help_text="به", blank=True, null=True)
+    title = models.CharField(max_length=200, help_text="عنوان نامه", blank=True)
+    letter_type = models.CharField(
+        max_length=50,
+        choices=LETTER_TYPES,
+        null=False,
+        blank=False,
+        help_text="نوع فرم/نامه"
+    )
+    description = models.TextField(blank=True, null=True, help_text="توضیحات اضافی نامه")
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    # اطلاعات اختصاصی هر فرم به صورت JSON
+    form_data = models.JSONField(blank=True, null=True, help_text="ذخیره داده‌های فرم به صورت JSON")
+
+    class Meta:
+        verbose_name = "فرم ضروری صدور کارت"
+        verbose_name_plural = "فرم‌های ضروری صدور کارت"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.get_letter_type_display()} - {self.title or 'بدون عنوان'}"

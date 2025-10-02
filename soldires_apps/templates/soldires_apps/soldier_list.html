@@ -365,28 +365,54 @@
     }
     </style>
 
-    <script>
-        $(document).ready(function () {
-            $('[data-toggle="tooltip"]').tooltip();
-        });
-        function filterClick(){
-            const filterBox = document.getElementById('filters-form')
-            const dataFilter = filterBox.getAttribute('data-filter')
-            console.log({dataFilter})
-            if(dataFilter === "true")
-                filterBox.setAttribute('data-filter','false')
-            else 
-                filterBox.setAttribute('data-filter','true')
-        }
-    </script>
+
 {% endblock %}
 
 {% block main %}
+<style>
+.pagination-wrapper {
+    direction: rtl;
+    font-family: 'Tahoma', sans-serif;
+    flex-wrap: wrap;
+}
+
+.pagination-btn {
+    padding: 6px 12px;
+    margin: 2px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.pagination-btn:hover {
+    background: linear-gradient(135deg, #556cd6, #5b3a99);
+}
+
+.pagination-btn.active {
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    cursor: default;
+}
+
+.pagination-btn.disabled {
+    background: #555;
+    cursor: not-allowed;
+}
+
+.pagination-ellipsis {
+    padding: 6px 10px;
+    margin: 2px;
+    color: #ccc;
+}
+</style>
     <div class="box box-warning">
         
         <!-- /.box-header -->
         <div class="box-body">
-            <form id="filters-form" method="get" class="card-body" data-filter="false">
+            <form id="filters-form" method="POST"  class="card-body" data-filter="false">
+                {% csrf_token %}
                 <div class="box-header with-border">
                     <h3 class="box-title">
                         <span>فهرست سربازان یگان</span> 
@@ -397,17 +423,50 @@
                             <i class="fa fa-filter me-2"></i> 
                             <span class="mx-2">فیلتر</span>
                         </span>
-                        <button type="submit" class="btn btn-primary btn-md">
+                        <button  onclick="setFormAction('search')" type="submit" name="action"  value="search" class="btn btn-primary btn-md">
                             <i class="fa fa-search me-2"></i> <span class="mx-2">جستجو</span>
                         </button>
                         <a href="?" class="btn btn-facebook btn-md">
                             <i class="fa fa-undo me-2"></i> <span class="mx-2">بازنشانی</span>
                         </a>
+                        <a href="{% url 'soldier_create' %}" class="btn btn-danger btn-md">
+                            <i class="fa fa-plus me-2"></i> <span class="mx-2">سرباز جدید</span>
+                        </a>
+                        <button  onclick="setFormAction('exportexcel')" type="submit" name="action" value="exportexcel" class="btn btn-success btn-md">
+                            <i class="fa fa-file-excel me-2"></i> <span class="mx-2">دانلود اکسل</span>
+                        </button>
                     </div>
+                    
                 </div>
+                    <div style="margin:10px 0;" class="pagination-wrapper mt-4 flex justify-center items-center gap-2">
+                        {% if page_obj.has_previous %}
+                            <a href="?page={{ page_obj.previous_page_number }}" 
+                            class="pagination-btn">&laquo; قبلی</a>
+                        {% else %}
+                            <span class="pagination-btn disabled">&laquo; قبلی</span>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if num == page_obj.number %}
+                                <span class="pagination-btn active">{{ num }}</span>
+                            {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+                                <a href="?page={{ num }}" class="pagination-btn">{{ num }}</a>
+                            {% elif num == 1 or num == page_obj.paginator.num_pages %}
+                                <a href="?page={{ num }}" class="pagination-btn">{{ num }}</a>
+                            {% elif num == page_obj.number|add:-3 or num == page_obj.number|add:3 %}
+                                <span class="pagination-ellipsis">...</span>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}" 
+                            class="pagination-btn">بعدی &raquo;</a>
+                        {% else %}
+                            <span class="pagination-btn disabled">بعدی &raquo;</span>
+                        {% endif %}
+                    </div>
                 <div class="row g-4">
                     <div class="col-md-4 wrapper-forms">
-                        <h5 class="text-primary mb-3">اطلاعات هویتی</h5>
                         <div class="mb-3 form-box">
                             <label class="form-label">کد ملی</label>
                             {{ form.national_code }}
@@ -436,7 +495,6 @@
 
                     <!-- ستون 2 -->
                     <div class="col-md-4 wrapper-forms">
-                        <h5 class="text-primary mb-3 ">اطلاعات خدمت</h5>
                         <div class="mb-3 form-box">
                             <label class="form-label">واحد اصلی</label>
                             {{ form.current_parent_unit }}
@@ -477,7 +535,6 @@
 
                     <!-- ستون 3 -->
                     <div class="col-md-4 wrapper-forms">
-                        <h5 class="text-primary mb-3 ">اطلاعات تکمیلی</h5>
                         <div class="mb-3 form-box">
                             <label class="form-label">وضعیت سلامت</label>
                             <select name="health_status" class="form-control">
@@ -560,11 +617,11 @@
             <thead>
             <tr>
                 <th>کدسازمانی</th>
-                <th>نام</th>
+                <th>نام و نام خانوادگی</th>
                 <th>کد ملی</th>
                 <th>وضعیت</th>
+                <th>فراری</th>
                 <th>قسمت</th>
-                <th>زیرقسمت</th>
                 <th>تلفن</th>
                 <th>پایان خدمت</th>
             </tr>
@@ -581,35 +638,51 @@
                     </td>
                     <td>{{ soldier.national_code }}</td>
                     <td>
-                    <span class="label
-                          {% if soldier.health_status == 'سالم' %}label-success
-                          {% elif soldier.health_status == 'معاف از رزم' %}label-primary
-                          {% elif soldier.health_status == 'گروه ب' %}label-warning
-                          {% else %}label-danger{% endif %}">
-                        {{ soldier.health_status }}
-                    </span>
-                        {% if soldier.is_fugitive %}
-                            <span class="label label-default">فراری</span>
+                        <!-- وضعیت سلامت -->
+                        <span class="label
+                              {% if soldier.health_status == 'سالم' %}label-success
+                              {% elif soldier.health_status == 'معاف از رزم' %}label-primary
+                              {% elif soldier.health_status == 'گروه ب' %}label-warning
+                              {% else %}label-danger{% endif %}">
+                            {{ soldier.health_status }}
+                        </span>
+                        
+                        <!-- وضعیت تسویه‌حساب -->
+                        {% if soldier.status %}
+                            <span class="label
+                                  {% if soldier.status == 'پایان خدمت' %}label-success
+                                  {% elif soldier.status == 'قبولی در دانشگاه' %}label-info
+                                  {% elif soldier.status == 'انتقالی' %}label-warning
+                                  {% elif soldier.status == 'استخدام در نیروهای مسلح' %}label-primary
+                                  {% else %}label-default{% endif %}">
+                                {{ soldier.get_status_display }}
+                            </span>
+                        {% else %}
                         {% endif %}
+                    </td>
+                    <td>
+                        {% if soldier.is_fugitive %}
+                            <span class="label label-default">بله</span>
+                            {% endif %}
                     </td>
                     <td>
                         {% if soldier.current_parent_unit %}
                             <span data-toggle="tooltip" title="{{ soldier.current_parent_unit }}">
-                        {{ soldier.current_parent_unit|truncatechars:12 }}
-                    </span>
+                                {{ soldier.current_parent_unit }}
+                            </span>
                         {% else %}
                             <span class="text-muted">-</span>
                         {% endif %}
-                    </td>
-                    <td>
+
                         {% if soldier.current_sub_unit %}
-                            <span data-toggle="tooltip" title="{{ soldier.current_sub_unit }}">
-                        {{ soldier.current_sub_unit|truncatechars:12 }}
-                    </span>
+                        <span data-toggle="tooltip" title="{{ soldier.current_sub_unit }}"> 
+                        ( {{ soldier.current_sub_unit }} )
+                            </span>
                         {% else %}
                             <span class="text-muted">-</span>
                         {% endif %}
                     </td>
+  
                     <td>{{ soldier.phone_mobile }}</td>
                     <td>
                         {% if soldier.service_end_date %}
@@ -622,7 +695,7 @@
                 <tr class="soldier-manage">
                     <td colspan="8" class="hiddenRow">
                         <div class="accordian-body collapse" id="row{{ soldier.id }}">
-                            <div class="panel panel-default">
+                            <div class="">
                                 <div class="panel-body">
                                     <div class="row details-row">
                                         <div class="col-md-3 ">
@@ -705,5 +778,28 @@
     </div>
     </div>
     </div>
-{% endblock %}
 
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+        function filterClick(){
+            const filterBox = document.getElementById('filters-form')
+            const dataFilter = filterBox.getAttribute('data-filter')
+            console.log({dataFilter})
+            if(dataFilter === "true")
+                filterBox.setAttribute('data-filter','false')
+            else 
+                filterBox.setAttribute('data-filter','true')
+        }
+function setFormAction(action) {
+    const form = document.getElementById('filters-form');
+
+    if (action === 'exportexcel') {
+        form.method = 'POST';  // دانلود اکسل با POST
+    } else {
+        form.method = 'GET';   // جستجو با GET
+    }
+}
+</script>
+{% endblock %}

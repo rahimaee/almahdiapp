@@ -215,3 +215,46 @@ class CommitmentLetterForm(forms.ModelForm):
             'soldier': forms.Select(attrs={'class': 'form-control'}),
             'type_card_chip': forms.Select(attrs={'class': 'form-control'}),
         }
+
+
+from django import forms
+import json
+from .models import EssentialFormCardLetter
+from .dataclass import FORM_CLASSES  # همان dict که dataclass ها را نگه می‌دارد
+
+class EssentialFormCardLetterForm(forms.ModelForm):
+    # فیلد type را برای انتخاب یا مشخص شدن فرم داریم
+    letter_type = forms.ChoiceField(choices=EssentialFormCardLetter.LETTER_TYPES, label="نوع فرم")
+
+    class Meta:
+        model = EssentialFormCardLetter
+        fields = ['number', 'return_number', 'sender', 'receiver', 'title', 'letter_type', 'description']
+
+    def __init__(self, *args, **kwargs):
+        # فرم_type برای ساخت فیلدهای داینامیک
+        form_type = kwargs.pop('form_type', None)
+        super().__init__(*args, **kwargs)
+
+        # اگر form_type مشخص شد، فیلدهای داینامیک اضافه می‌کنیم
+        if form_type:
+            cls = FORM_CLASSES.get(form_type)
+            if cls:
+                for field_name, field_type in cls.__annotations__.items():
+                    # نوع فیلد را بر اساس type annotation انتخاب می‌کنیم
+                    if field_type == int:
+                        self.fields[field_name] = forms.IntegerField(label=field_name.replace("_", " ").title())
+                    else:
+                        self.fields[field_name] = forms.CharField(label=field_name.replace("_", " ").title())
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # همه فیلدهای داینامیک را جدا می‌کنیم
+        form_type = cleaned_data.get('letter_type')
+        cls = FORM_CLASSES.get(form_type)
+        if cls:
+            dynamic_data = {}
+            for field_name in cls.__annotations__.keys():
+                dynamic_data[field_name] = cleaned_data.pop(field_name, None)
+            # تبدیل به JSON و ذخیره در form_data
+            cleaned_data['form_data'] = json.dumps(dynamic_data, ensure_ascii=False)
+        return cleaned_data

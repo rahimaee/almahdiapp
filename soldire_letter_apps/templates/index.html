@@ -1,0 +1,212 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+
+<!-- Font Awesome 4.7.0 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+  body {
+    font-family: 'Tahoma', sans-serif;
+    background: #f4f7fb;
+  }
+
+  .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 25px 15px;
+  }
+
+  /* عنوان بخش */
+  .section-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 30px 0 20px 0;
+    text-align: right;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title i {
+    font-size: 20px;
+  }
+  .title-list { color: #007bff; }
+  .title-create { color: #28a745; }
+
+  /* گرید کارت‌ها */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 18px;
+  }
+
+  /* کارت‌ها */
+  .card-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 15px;
+    background: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  }
+  .card-link:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  }
+
+  .card-link i {
+    font-size: 28px;
+    margin-bottom: 12px;
+    transition: transform 0.3s, color 0.3s;
+  }
+  .card-link:hover i {
+    transform: rotate(8deg) scale(1.1);
+  }
+
+  .card-link span {
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* رنگ‌بندی آیکون‌ها */
+  .blue i { color: #007bff; }
+  .green i { color: #28a745; }
+  .red i { color: #dc3545; }
+  .orange i { color: #fd7e14; }
+  .purple i { color: #6f42c1; }
+  .teal i { color: #20c997; }
+</style>
+
+<div class="page-container">
+
+  <!-- بخش فهرست -->
+  <h3 class="section-title title-list">
+    <i class="fa fa-folder-open"></i> فهرست نامه‌ها
+  </h3>
+  <div class="grid">
+    <a href="{% url 'ClearanceLetterListView' %}" class="card-link blue">
+      <i class="fa fa-list"></i>
+      <span>تسویه‌حساب اصلی</span>
+    </a>
+    <a href="{% url 'normal_letter_list' %}" class="card-link orange">
+      <i class="fa fa-file-text-o"></i>
+      <span>نامه‌های عادی</span>
+    </a>
+    <a href="{% url 'judicial_inquiry_list' %}" class="card-link red">
+      <i class="fa fa-balance-scale"></i>
+      <span>استعلام قضایی</span>
+    </a>
+    <a href="{% url 'domestic_settlement_list' %}" class="card-link teal">
+      <i class="fa fa-home"></i>
+      <span>تسویه حساب داخلی</span>
+    </a>
+    <a href="{% url 'introduction_letter_list' %}" class="card-link purple">
+      <i class="fa fa-id-card"></i>
+      <span>نامه معرفی</span>
+    </a>
+    <a href="{% url 'membership_certificate_list' %}" class="card-link green">
+      <i class="fa fa-certificate"></i>
+      <span>گواهی</span>
+    </a>
+    <a href="{% url 'health_iodine_letter_list' %}" class="card-link red">
+      <i class="fa fa-heartbeat"></i>
+      <span>تائیدیه سلامت</span>
+    </a>
+    <a href="{% url 'commitment_letter_list' %}" class="card-link blue">
+      <i class="fa fa-pencil-square-o"></i>
+      <span>تعهد نامه</span>
+    </a>
+  </div>
+
+  <!-- بخش ایجاد -->
+  <h3 class="section-title title-create">
+    <i class="fa fa-plus-square"></i> ایجاد نامه‌
+  </h3>
+  <div class="grid">
+    <a href="{% url 'clearance_letter_create' %}" class="card-link green">
+      <i class="fa fa-plus-circle"></i>
+      <span>تسویه‌حساب اصلی</span>
+    </a>
+    <a href="{% url 'judicial_inquiry_create' %}" class="card-link green">
+      <i class="fa fa-plus-circle"></i>
+      <span>استعلام قضایی</span>
+    </a>
+    <a href="{% url 'domestic_settlement_create' %}" class="card-link green">
+      <i class="fa fa-plus-circle"></i>
+      <span>تسویه حساب داخلی</span>
+    </a>
+    <a href="{% url 'introduction_letter_create' %}" class="card-link green">
+      <i class="fa fa-plus-circle"></i>
+      <span>نامه معرفی</span>
+    </a>
+    <a href="{% url 'membership_certificate_create' %}" class="card-link green">
+      <i class="fa fa-plus-circle"></i>
+      <span>گواهی</span>
+    </a>
+    <a href="{% url 'health_iodine_letter_create' %}" class="card-link green">
+      <i class="fa fa-plus-circle"></i>
+      <span>تائیدیه سلامت</span>
+    </a>
+    <a href="{% url 'commitment_letter_create' %}" class="card-link green">
+      <i class="fa fa-plus-circle"></i>
+      <span>تعهد نامه</span>
+    </a>
+  </div>
+  <!-- بخش ایجاد -->
+  <h3 class="section-title title-create">
+    <i class="fa fa-plus-square"></i> فرم های ضروری صدور کارت نزسا
+  </h3>
+  <div class="grid">
+    <a href="{% url 'forms_essential_list' %}" class="card-link green">
+        <i class="fa fa-list"></i>
+        <span>فهرست فرم ها</span>
+    </a>
+    <a href="{% url 'form_essential_create' form_type='clearance_letter' %}" class="card-link green">
+        <i class="fa fa-plus-circle"></i>
+        <span>فرم شماره 3</span>
+    </a>
+
+    <!-- صدور کارت پایور -->
+    <a href="{% url 'form_essential_create' form_type='officer_card' %}" class="card-link blue">
+        <i class="fa fa-id-card"></i>
+        <span>صدور کارت پایور</span>
+    </a>
+
+    <!-- صدور کارت سرباز -->
+    <a href="{% url 'form_essential_create' form_type='soldier_card' %}" class="card-link orange">
+        <i class="fa fa-id-card-o"></i>
+        <span>صدور کارت سرباز</span>
+    </a>
+
+    <!-- فرم تسویه حساب 3 فرزندی و بالاتر -->
+    <a href="{% url 'form_essential_create' form_type='checkout_3plus' %}" class="card-link purple">
+        <i class="fa fa-file-text"></i>
+        <span>فرم تسویه حساب 3 فرزندی و بالاتر</span>
+    </a>
+
+    <!-- فرم فعال سازی اعزام کارکنان قدیمی متولدین قبل از سال 1365 -->
+    <a href="{% url 'form_essential_create' form_type='activate_old_staff' %}" class="card-link teal">
+        <i class="fa fa-user-plus"></i>
+        <span>فعال سازی اعزام کارکنان قدیمی (قبل از 1365)</span>
+    </a>
+
+    <!-- گواهی دو پاسدار -->
+    <a href="{% url 'form_essential_create' form_type='certificate_two_guard' %}" class="card-link pink">
+        <i class="fa fa-certificate"></i>
+        <span>گواهی دو پاسدار</span>
+    </a>
+
+    <!-- معافیت دائم کارکنان وظیفه -->
+    <a href="{% url 'form_essential_create' form_type='permanent_exemption' %}" class="card-link red">
+        <i class="fa fa-shield"></i>
+        <span>معافیت دائم کارکنان وظیفه</span>
+    </a>
+</div>
+
+{% endblock %}

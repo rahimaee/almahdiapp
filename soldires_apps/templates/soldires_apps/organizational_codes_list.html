@@ -1,0 +1,150 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% load jalali_filters %}
+
+{% block main %}
+<style>
+    .page-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1f2937;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .card-custom {
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        background-color: #fff;
+        transition: transform 0.2s ease-in-out;
+    }
+    .card-custom:hover {
+        transform: translateY(-3px);
+    }
+    .card-header {
+        font-weight: 600;
+        background-color: #f3f4f6;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 12px 16px;
+        border-radius: 12px 12px 0 0;
+        font-size: 1rem;
+    }
+    .card-body-form {
+        box-sizing:border-box;
+        padding:16px;
+    }
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        padding: 6px 12px;
+    }
+    .form-check-label {
+        margin-left: 8px;
+    }
+    .btn-primary {
+        background: #3b82f6;
+        border: none;
+        border-radius: 8px;
+        transition: background 0.2s ease-in-out;
+    }
+    .btn-primary:hover {
+        background: #2563eb;
+    }
+    .btn-info {
+        background: #06b6d4;
+        color: #fff;
+        border-radius: 6px;
+    }
+    .btn-info:hover { background: #0e7490; }
+    .btn-danger { border-radius: 6px; }
+    .table th, .table td {
+        vertical-align: middle !important;
+        text-align: center;
+        padding: 12px;
+    }
+    .table thead th {
+        background: #3b82f6;
+        color: #fff;
+        border: none;
+    }
+    .table tbody tr:hover {
+        background-color: #f3f4f6;
+    }
+    .badge-status {
+        padding: 5px 12px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+    }
+    .badge-active { background-color: #ef4444; color: #fff; }
+    .badge-inactive { background-color: #10b981; color: #fff; }
+</style>
+<div>
+        <div class="row g-4">
+            <!-- فرم افزودن -->
+            <div class="col-lg-5 col-md-12">
+                <div class="card card-custom">
+                    <div class="card-header">➕ افزودن کد جدید</div>
+                    <div class="card-body card-body-form">
+                        <form method="post" class="row g-3" style="padding:10px;">
+                            {% csrf_token %}
+                            <div class="col-12">
+                                {{ form.code_number.label_tag }}
+                                {{ form.code_number }}
+                            </div>
+                            <div class="col-12 d-flex align-items-center mt-2">
+                                {{ form.is_active }}
+                                <span class="form-check-label">{{ form.is_active.label }}</span>
+                            </div>
+                            <div class="col-12 mt-3 text-left" >
+                                <button type="submit" class="btn btn-primary w-100">ذخیره</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- لیست کدها -->
+            <div class="col-lg-7 col-md-12">
+                <div class="card card-custom">
+                    <div class="card-header">📋 لیست کدهای سازمانی</div>
+                    <div class="card-body">
+                        <table class="table table-hover mb-0 m-0">
+                            <thead>
+                                <tr>
+                                    <th>ردیف</th>
+                                    <th>کد سازمانی</th>
+                                    <th>وضعیت</th>
+                                    <th>عملیات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if codes.exists %}
+                                    {% for code in codes %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td class="fw-bold">{{ code.code_number }}</td>
+                                        <td>
+                                            {% if code.is_active %}
+                                                <span class="badge-status badge-active">غیرآزاد</span>
+                                            {% else %}
+                                                <span class="badge-status badge-inactive">آزاد</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-sm btn-info">تغییر وضعیت</a>
+                                            <a class="btn btn-sm btn-danger" onclick="return confirm('آیا مطمئن هستید؟')">حذف</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-muted">⚠️ هیچ کدی ثبت نشده است</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+{% endblock %}

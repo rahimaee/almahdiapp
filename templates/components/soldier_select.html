@@ -1,0 +1,79 @@
+{% load static %}
+
+<!-- Select2 CSS -->
+<link href="{% static 'bower_components/select2/dist/css/select2.min.css' %}" rel="stylesheet" />
+
+<style>
+
+/* استایل Select2 برای سلکت اصلی */
+.select2-container--default .select2-selection--single {
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    height: 40px;
+    padding: 5px 12px;
+    color: #212529;
+    font-size: 14px;
+    line-height: 1.5;
+    width: 100% !important; /* سلکت تمام عرض */
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+</style>
+
+<div class="soldier-select-container mb-3">
+    <select defaultValue="{{ soldier.id }}" id="soldier-select-{{ soldier.id }}" class="form-select soldier-select">
+      <option value="" selected>{{ placeholder|default:"--- انتخاب کنید ---" }}</option>
+        {% if soldier %}
+            <option value="{{ soldier.id }}" selected>
+             کد ملی : {{soldier.national_code}} , {{soldier.first_name}} {{soldier.last_name}} [{{soldier.organizational_code}}]  
+            </option>
+        {% endif %}
+    </select>
+</div>
+
+<!-- jQuery -->
+<script src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap JS -->
+<script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- Select2 JS -->
+<script src="{% static 'bower_components/select2/dist/js/select2.full.min.js' %}"></script>
+
+<script>
+  let onChangeSelectedSoldier = null
+$(document).ready(function() {
+    const sel = $('#soldier-select-{{ soldier.id }}')
+    // بررسی اگر سرباز انتخاب شده وجود ندارد، آن را اضافه کن
+    const selectedId = '{{ soldier.id }}';
+    const selectedText = '{{ soldier.first_name }} {{ soldier.last_name }} - {{ soldier.organizational_code }}';
+    const option = { id: selectedId,text: selectedText }
+    sel.select2({
+        placeholder: '{{ placeholder|default:"--- انتخاب کنید ---" }}',
+        allowClear: true,
+        ajax: {
+            url: '{% url "soldiers_search" %}',
+            dataType: 'json',
+            delay: 250,
+            data: function(params) {
+                return { q: params.term };
+            },
+            processResults: function(data) {
+                return { results: data.results };
+            },
+
+            cache: true
+        },
+        width: '100%' 
+    });
+
+
+    // وقتی سرباز انتخاب شد
+    sel.on('change', function(e) {
+        const id = $(this).val();
+        const text = $(this).find("option:selected").text();
+        if (typeof onChangeSelectedSoldier === "function") {
+            onChangeSelectedSoldier(id, text);
+        }
+    });
+});
+</script>

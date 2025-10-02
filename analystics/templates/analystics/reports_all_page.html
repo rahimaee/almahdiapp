@@ -1,0 +1,128 @@
+{% extends "shared/_PanelMain.html" %}
+{% load static %}
+
+{% block header %}
+    <link rel="stylesheet" href="{% static 'css/analystics_style.css' %}">
+{% endblock %}
+
+{% block main %}
+<div class="container-fluid">
+    {% include '../layout/AnalysticsNavbar.html' %}
+    <div class="table-responsive mb-4">
+        <table class="table table-bordered table-striped table-sm text-center">
+            <thead class="thead-dark">
+                <tr>
+                    <th colspan="3" rowspan="2">نام قسمت</th>
+                    <th colspan="6">تحصیلات</th>
+                    <th colspan="4">وضعیت جسمانی و روانی</th>
+                    <th rowspan="2">کمیسیون</th>
+                    <th colspan="2">تاهل</th>
+                    <th colspan="3">اداری / شیفتی / پستی</th>
+                    <th colspan="2">بومی / غیر بومی</th>
+                    <th colspan="5">مجموع و سقف</th>
+                </tr>
+                <tr>
+                    <th>زیر دیپلم</th>
+                    <th>دیپلم</th>
+                    <th>فوق دیپلم</th>
+                    <th>لیسانس</th>
+                    <th>فوق لیسانس</th>
+                    <th>دکتری</th>
+
+                    <th>سالم</th>
+                    <th>معاف از رزم</th>
+                    <th>گروه ب</th>
+                    <th>معاف+گروه ب</th>
+
+                    <th>مجرد</th>
+                    <th>متاهل</th>
+
+                    <th>اداری</th>
+                    <th>شیفتی</th>
+                    <th>پستی</th>
+
+                    <th>بومی</th>
+                    <th>غیر بومی</th>
+
+                    <th>مجموع</th>
+                    <th>سقف اصلی</th>
+                    <th>اختلاف</th>
+                    <th>سقف 70%</th>
+                    <th>اختلاف</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in reports %}
+                <tr>
+                    <td colspan="3">{{ r.unit.name }}</td>
+                    <td>{{ r.edu.under_diploma }}</td>
+                    <td>{{ r.edu.diploma }}</td>
+                    <td>{{ r.edu.associate }}</td>
+                    <td>{{ r.edu.bachelor }}</td>
+                    <td>{{ r.edu.master }}</td>
+                    <td>{{ r.edu.doctor }}</td>
+
+                    <td>{{ r.health.healthy }}</td>
+                    <td>{{ r.health.exempt_from_service }}</td>
+                    <td>{{ r.health.group_b }}</td>
+                    <td>{{ r.health.exempt_plus_group_b }}</td>
+
+                    <td>{{ r.commission }}</td>
+
+                    <td>{{ r.marital.single }}</td>
+                    <td>{{ r.marital.married }}</td>
+
+                    <td>{{ r.admin }}</td>
+                    <td>{{ r.shift }}</td>
+                    <td>{{ r.post }}</td>
+
+                    <td>{{ r.native }}</td>
+                    <td>{{ r.non_native }}</td>
+
+                    <td>{{ r.total }}</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                {% endfor %}
+
+                <!-- ردیف مجموع کل -->
+                <tr class="table-primary total">
+                    <td colspan="3"><b>مجموع</b></td>
+
+                    <td>{{ totals.edu.under_diploma }}</td>
+                    <td>{{ totals.edu.diploma }}</td>
+                    <td>{{ totals.edu.associate }}</td>
+                    <td>{{ totals.edu.bachelor }}</td>
+                    <td>{{ totals.edu.master }}</td>
+                    <td>{{ totals.edu.doctor }}</td>
+
+                    <td>{{ totals.health.healthy }}</td>
+                    <td>{{ totals.health.exempt_from_service }}</td>
+                    <td>{{ totals.health.group_b }}</td>
+                    <td>{{ totals.health.exempt_plus_group_b }}</td>
+
+                    <td>{{ totals.commission }}</td>
+
+                    <td>{{ totals.marital.single }}</td>
+                    <td>{{ totals.marital.married }}</td>
+
+                    <td>{{ totals.admin }}</td>
+                    <td>{{ totals.shift }}</td>
+                    <td>{{ totals.post }}</td>
+
+                    <td>{{ totals.native }}</td>
+                    <td>{{ totals.non_native }}</td>
+
+                    <td>{{ totals.total }}</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

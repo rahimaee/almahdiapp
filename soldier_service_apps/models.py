@@ -149,3 +149,47 @@ class SoldierService(models.Model):
 
     def __str__(self):
         return f"خدمت سربازی {self.start_date} - {self.service_end_date}"
+
+
+
+
+def get_service(soldier):
+        """
+        دریافت یا ایجاد رکورد SoldierService به صورت ایمن.
+        اگر رکورد از قبل وجود داشته باشد آن را برمی‌گرداند،
+        در غیر این صورت رکورد جدید می‌سازد.
+        """
+        services = SoldierService.objects.filter(soldier=soldier).select_related('soldier')
+        ser_c = services.count()
+        service = None
+        if ser_c > 1:
+            services[1:].delete()
+            
+        
+        if ser_c > 0:
+            print(soldier)
+            services[0].soldier = soldier
+            services[0].save()
+            return services[0]
+        
+        try:
+            service = SoldierService()
+            service.soldier = soldier
+            service.save()
+
+            # کسری بر اساس وضعیت تأهل
+            if soldier.marital_status == 'متاهل':
+                service.reduction_spouse = 60
+                children = soldier.number_of_children
+                if children >= 1:
+                    service.reduction_children = 90
+                if children >= 2:
+                    service.reduction_children += 120
+                if children >= 3:
+                    service.reduction_children += 150
+                service.save()
+        except Exception as e:
+            print(f"Error creating SoldierService: {str(e)}")
+            raise
+        return service
+ 

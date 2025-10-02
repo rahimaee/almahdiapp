@@ -1,11 +1,152 @@
 {% extends 'shared/_PanelMain.html' %}
 
 {% block main %}
-    <div class="container mt-5">
-        <h1 class="text-center mb-4">مدیریت مدارک سرباز</h1>
+<style>
+/* مخفی کردن چک‌باکس */
+.checkbox input[type="checkbox"] {
+    display: none;
+}
+
+/* استایل برچسب به شکل دکمه */
+.checkbox label {
+    display: block;
+    padding: 10px 15px;
+    border: 1px solid #007bff;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: #f8f9fa;
+    color: #007bff;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    user-select: none;
+    user-select: none;
+    position: relative;
+
+}
+
+/* هاور */
+.checkbox label:hover {
+    background-color: #e9f2ff;
+}
+
+/* وقتی تیک خورده */
+.checkbox label:has(input:checked) {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #0056b3;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+/* مربع قبل از متن */
+.checkbox label::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    border: 2px solid #007bff;
+    border-radius: 4px;
+    background: #fff;
+    transition: all 0.2s ease;
+}
+
+/* وقتی تیک خورد */
+.checkbox label:has(input:checked)::before {
+    background: #007bff;
+    border-color: #0056b3;
+    box-shadow: 0 0 4px rgba(0,0,0,0.2);
+    content: "✔";   /* علامت تیک */
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    line-height: 18px;
+}
+.panel-heading {
+    font-size:20px;
+    font-weight:bold;
+}
+.panel {
+    margin:5px 0;
+}
+</style>
+<style>
+/* کانتینر کارت‌ها */
+.stats-container {
+    main-top:20px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* کارت‌ها */
+.stats-card {
+    background-color: #f5f5f5;
+    border-radius: 6px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: default;
+    padding:5px 10px;
+    flex:1;
+    font-size: 2rem;
+
+}
 
 
-        <form method="post">
+/* عنوان کارت */
+.stats-card h5 {
+    margin: 0;
+    font-weight: bold;
+}
+
+/* عدد بزرگ */
+.stats-card .count {
+    font-weight: bold;
+}
+
+/* رنگ‌بندی کارت‌ها */
+.stats-card.completed {
+    color: #28a745; /* سبز */
+    background-color: #e6f4ea;
+}
+
+.stats-card.incomplete {
+    color: #dc3545; /* قرمز */
+    background-color: #fde6e6;
+}
+</style>
+
+
+
+<h1 class="text-center fw-bold text-primary">
+    مدیریت مدارک سرباز
+</h1>
+<div class="container" style="margin:20px auto;">
+    {% include 'components/soldier_select.html' with soldier=soldier placeholder="انتخاب سرباز:" %}
+</div>
+
+<div class="container stats-container mt-5">
+
+    <!-- مدارک تکمیل شده -->
+    <div class="stats-card completed">
+        <h5>مدارک تکمیل شده</h5>
+        <div class="count">{{ completed_docs }}</div>
+    </div>
+
+    <!-- مدارک ناقص -->
+    <div class="stats-card incomplete">
+        <h5>مدارک ناقص</h5>
+        <div class="count">{{ incomplete_docs }}</div>
+    </div>
+
+</div>
+
+<div class="container mt-5">
+        <form method="post" style="margin:10px 0 0;">
             {% csrf_token %}
             <div class="panel panel-primary">
                 <div class="panel-heading">فرم های اصلی</div>
@@ -165,4 +306,62 @@
             <button type="submit" class="btn btn-primary btn-block">ذخیره</button>
         </form>
     </div>
+{% endblock %}
+
+{% block footer %}
+<script>
+    onChangeSelectedSoldier = (soldierId,soldierText)=>{
+        if (soldierId) {
+            window.location.href = "{% url 'manage_soldier_documents' soldier_id=0 %}".replace("0", soldierId);
+        }
+    }
+document.addEventListener("DOMContentLoaded", function () {
+    // همه panel-heading ها رو پیدا کن
+    const headings = document.querySelectorAll(".panel-heading");
+
+    headings.forEach(function (heading) {
+        // دکمه بساز
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn btn-sm btn-default select-all";
+        btn.style.float = "left";
+        btn.textContent = "انتخاب همه";
+
+        // به heading اضافه کن
+        heading.appendChild(btn);
+
+        // رویداد کلیک برای دکمه
+        btn.addEventListener("click", function () {
+            const panel = btn.closest(".panel");
+            if (!panel) return;
+
+            const checkboxes = panel.querySelectorAll("input[type='checkbox']");
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+
+            checkboxes.forEach(cb => cb.checked = !allChecked);
+
+            btn.textContent = allChecked ? "انتخاب همه" : "لغو انتخاب همه";
+        });
+    });
+});
+</script>
+<script>
+$(document).ready(function() {
+    // فعال‌سازی select2 برای جستجو در بین سربازها
+    $('#soldier-select').select2({
+        placeholder: "جستجو و انتخاب سرباز...",
+        allowClear: true,
+        width: '100%'
+    });
+
+    // تغییر سرباز انتخابی
+    $('#soldier-select').on('change', function() {
+        var soldierId = $(this).val();
+        if (soldierId) {
+            window.location.href = "/soldier/" + soldierId + "/documents/";
+        }
+    });
+});
+</script>
+
 {% endblock %}

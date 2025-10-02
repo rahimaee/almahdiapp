@@ -16,4 +16,6 @@ urlpatterns = [
     path('profile/', views.profile_view, name='profile'),
     path('import_feature/', views.import_feature, name='import_feature'),
     path('access-denied/', views.access_denied_view, name='access_denied'),
+    path('login/', views.user_login_page, name='login'),
+    path('logout/', views.c_logout, name='logout'),
 ]

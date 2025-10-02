@@ -657,3 +657,20 @@ class SoldierFormUpdate(forms.ModelForm):
                 return True
             if is_guard_duty == "خیر":
                 return False
+
+
+class OrganizationalCodeForm(forms.ModelForm):
+    class Meta:
+        model = OrganizationalCode
+        fields = ['code_number', 'is_active']
+        widgets = {
+            'code_number': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'کد سازمانی'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+
+class SoldierUploadForm(forms.Form):
+    excel_file = forms.FileField(
+        label="بارگذاری فایل اکسل سربازان",
+        widget=forms.ClearableFileInput(attrs={'accept': '.xlsx,.xls'})
+    )

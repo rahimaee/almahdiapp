@@ -50,6 +50,9 @@
                     مشخصات و اطلاعات کامل سرباز
                 </h3>
             </div>
+            <div  style="margin:5px;">
+                {% include 'components/soldier_select.html' with soldier=soldier placeholder="انتخاب سرباز:" %}
+            </div>
             <div class="panel-body">
                 <!-- Soldier Photo -->
                 <div class="head-top">
@@ -69,6 +72,9 @@
                         </a>
                         <a href="#" class="btn btn-default">
                             <i class="fa fa-print"></i> چاپ پرونده
+                        </a>
+                         <a href="{% url 'single_reports_soldier' soldier.id %}" class="btn btn-default">
+                            <i class="fa fa-print"></i> گزارش انفرادی
                         </a>
                         <a href="{% url 'manage_soldier_documents' soldier.id %}" class="btn btn-default">
                             <i class="glyphicon glyphicon-print"></i> مدارک پرونده

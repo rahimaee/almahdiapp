@@ -1,0 +1,113 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/analystics_style.css' %}">
+
+<style>
+  table {
+    font-size: 14px;
+  }
+  .table th.bg-title {
+    background-color: #f0f0f0;
+  }
+
+  /* فرم */
+  .form-card {
+    padding: 20px;
+    border-radius: 12px;
+    background: #f8f9fa;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  }
+  .form-card .form-label {
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .form-card .form-control,
+  .form-card .form-select {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+  }
+  .form-card .btn {
+    margin-top: 10px;
+    font-weight: 600;
+  }
+
+  /* جدول */
+  .table th, .table td {
+    vertical-align: middle;
+  }
+
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="container-fluid">
+  {% include '../layout/AnalysticsNavbar.html' %}
+  <h3 class="mb-3">گزارش سربازان نزدیک به پایان خدمت</h3>
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="form-card">
+         <h4 class="text-center font-bold">فیلر ها</h4>
+        <form method="get" class="g-3">
+          <div class="form-group">
+            <label>تاریخ روز</label>
+            <input type="date" name="report_date" value="{{ report_date }}" class="form-control">
+         </div>
+          <div class="form-group">
+            <label class="form-label">پایان خدمت تا</label>
+            <select name="end_service" class="form-select">
+               <option value="1" {% if end_service == "1" %}selected{% endif %}>1 ماه</option>
+               <option value="2" {% if end_service == "2" %}selected{% endif %}>2 ماه</option>
+               <option value="3" {% if end_service == "3" %}selected{% endif %}>3 ماه</option>
+               <option value="4" {% if end_service == "4" %}selected{% endif %}>4 ماه</option>
+               <option value="5" {% if end_service == "5" %}selected{% endif %}>5 ماه</option>
+               <option value="6" {% if end_service == "6" %}selected{% endif %}>6 ماه</option>
+               <option value="7" {% if end_service == "7" %}selected{% endif %}>7 ماه</option>
+               <option value="8" {% if end_service == "8" %}selected{% endif %}>8 ماه</option>
+               <option value="9" {% if end_service == "9" %}selected{% endif %}>9 ماه</option>
+               <option value="10" {% if end_service == "10" %}selected{% endif %}>10 ماه</option>
+               <option value="11" {% if end_service == "11" %}selected{% endif %}>11 ماه</option>
+               <option value="12" {% if end_service == "12" %}selected{% endif %}>12 ماه</option>
+               </select>
+            </select>
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">نمایش</button>
+         </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <table class="table table-bordered text-center">
+        <thead class="table-light">
+          <tr>
+            <th>نام قسمت</th>
+            <th>تعداد</th>
+            <th>واحد</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in units %}
+          <tr>
+            <td>{{ u.name }}</td>
+            <td label="{{ u.name }}_count">{{ u.count }}</td>
+            <td>{{ u.unit }}</td>
+          </tr>
+          {% endfor %}
+          <tr class="table-secondary fw-bold">
+            <td>مجموع</td>
+            <td label="total_count">{{ total_count }}</td>
+            <td>نفر</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

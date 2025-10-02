@@ -2,81 +2,265 @@
 {% load static %}
 {% load jalali_filters %}
 
-
-
 {% block main %}
-    <div class="container">
-        <h2>لیست تعهد نامه</h2>
+<div class="commitment-container">
 
-        <form method="get" class="form-inline mb-3">
-            <input type="text" name="q" class="form-control mr-2" placeholder="جستجو..." value="{{ query }}">
-            <button type="submit" class="btn btn-primary">جستجو</button>
-            <a href="{% url 'commitment_letter_create' %}" class="btn btn-success ml-3">ایجاد نامه جدید</a>
+    <h2 class="page-title">📄 لیست تعهدنامه‌ها</h2>
+
+    <!-- فرم جستجو و ایجاد نامه -->
+    <div class="controls">
+        <form method="get" class="search-form">
+            <input type="text" name="q" placeholder="جستجو..." value="{{ query }}">
+            <button type="submit">🔍 جستجو</button>
         </form>
+        <a href="{% url 'commitment_letter_create' %}" class="btn-create">➕ ایجاد نامه جدید</a>
+    </div>
 
-        <table class="table table-bordered table-striped">
+    <!-- جدول لیست -->
+    <div class="table-wrapper">
+        <table class="custom-table">
             <thead>
-            <tr>
-                <th>شماره نامه</th>
-                <th>تاریخ</th>
-                <th>نام سرباز</th>
-                <th>کد ملی</th>
-                <th>نوع نامه</th>
-                <th>وضعیت</th>
-                <th>تراشه/کارت</th>
-                <th>عملیات</th>
-            </tr>
+                <tr>
+                    <th>شماره نامه</th>
+                    <th>تاریخ</th>
+                    <th>نام سرباز</th>
+                    <th>کد ملی</th>
+                    <th>نوع نامه</th>
+                    <th>تراشه/کارت</th>
+                    <th>وضعیت</th>
+                    <th>عملیات</th>
+                </tr>
             </thead>
             <tbody>
             {% for letter in page_obj %}
                 <tr>
                     <td>{{ letter.normal_letter.letter_number }}</td>
                     <td>{{ letter.normal_letter.date|to_jalali }}</td>
-                    <td>{{ letter.normal_letter.soldier.first_name }} {{ letter.soldier.last_name }}</td>
+                    <td>{{ letter.normal_letter.soldier.first_name }} {{ letter.normal_letter.soldier.last_name }}</td>
                     <td>{{ letter.normal_letter.soldier.national_code }}</td>
                     <td>{{ letter.normal_letter.letter_type }}</td>
-                    <td>{{ letter.type_card_chip }}</td>
-                    <td>{{ letter.normal_letter.status }}</td>
                     <td>
-                        <a href="{% url 'print_introduction_letter' letter.id %}"
-                           class="btn btn-sm btn-success">چاپ</a>
-                        <a href="{% url 'approved_introduction_letter' letter_id=letter.id %}"
-                           class="btn btn-sm btn-facebook">تایید</a>
-                        <a href="{% url 'commitment_letter_update' pk=letter.id %}"
-                           class="btn btn-sm btn-warning">ویرایش</a>
-                        <a href="{% url 'introduction_letter_delete' letter.id %}" class="btn btn-sm btn-danger">حذف</a>
+                        {% if letter.type_card_chip %}
+                            <span class="badge badge-info">{{ letter.type_card_chip }}</span>
+                        {% else %}
+                            <span class="badge badge-secondary">نامشخص</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if letter.normal_letter.status == "تایید شده" %}
+                            <span class="badge badge-success">{{ letter.normal_letter.status }}</span>
+                        {% elif letter.normal_letter.status == "در انتظار" %}
+                            <span class="badge badge-warning">{{ letter.normal_letter.status }}</span>
+                        {% else %}
+                            <span class="badge badge-secondary">{{ letter.normal_letter.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="actions">
+                        <a href="{% url 'print_commitment_letter' letter.id %}" class="btn-action print" title="چاپ">🖨️</a>
+                        <a href="{% url 'commitment_letter_update' pk=letter.id %}" class="btn-action edit" title="ویرایش">✏️</a>
+                        <a href="{% url 'commitment_letter_delete' letter.id %}" class="btn-action delete" title="حذف">🗑️</a>
                     </td>
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="7">موردی یافت نشد.</td>
+                    <td colspan="8" class="no-data">موردی یافت نشد.</td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
-
-        <nav>
-            <ul class="pagination">
-                {% if page_obj.has_previous %}
-                    <li class="page-item"><a class="page-link"
-                                             href="?page={{ page_obj.previous_page_number }}&q={{ query }}">قبلی</a>
-                    </li>
-                {% endif %}
-
-                {% for num in page_obj.paginator.page_range %}
-                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-                        <a class="page-link" href="?page={{ num }}&q={{ query }}">{{ num }}</a>
-                    </li>
-                {% endfor %}
-
-                {% if page_obj.has_next %}
-                    <li class="page-item"><a class="page-link"
-                                             href="?page={{ page_obj.next_page_number }}&q={{ query }}">بعدی</a></li>
-                {% endif %}
-            </ul>
-        </nav>
-
     </div>
 
-{% endblock %}
+    <!-- صفحه بندی -->
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}" class="page-link">« قبلی</a>
+        {% endif %}
 
+        {% for num in page_obj.paginator.page_range %}
+            <a href="?page={{ num }}&q={{ query }}" class="page-link {% if page_obj.number == num %}active{% endif %}">{{ num }}</a>
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&q={{ query }}" class="page-link">بعدی »</a>
+        {% endif %}
+    </div>
+
+</div>
+
+<style>
+    /* Container اصلی */
+    .commitment-container {
+        max-width: 1000px;
+        margin: auto;
+        padding: 20px;
+        font-family: YekanBakh, sans-serif;
+        direction: rtl;
+        background: #fdfdfd;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .page-title {
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    /* فرم جستجو و دکمه ایجاد نامه */
+    .controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        gap: 10px;
+    }
+
+    .search-form {
+        display: flex;
+        gap: 10px;
+        flex-grow: 1;
+    }
+
+    .search-form input {
+        flex-grow: 1;
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+
+    .search-form button {
+        padding: 8px 16px;
+        background: #007bff;
+        border: none;
+        color: #fff;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .search-form button:hover {
+        background: #0056b3;
+    }
+
+    .btn-create {
+        background: #28a745;
+        color: #fff;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: bold;
+        transition: background 0.3s;
+    }
+
+    .btn-create:hover {
+        background: #1e7e34;
+    }
+
+    /* جدول */
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .custom-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+    }
+
+    .custom-table th, .custom-table td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .custom-table th {
+        background: #333;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    .custom-table tbody tr:nth-child(even) {
+        background: #f9f9f9;
+    }
+
+    .custom-table tbody tr:hover {
+        background: #e6f7ff;
+    }
+
+    /* Badge */
+    .badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .badge-info { background: #17a2b8; color: #fff; }
+    .badge-success { background: #28a745; color: #fff; }
+    .badge-warning { background: #ffc107; color: #333; }
+    .badge-secondary { background: #6c757d; color: #fff; }
+
+    /* دکمه‌های عملیات */
+    .actions a {
+        display: inline-block;
+        margin: 2px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        text-decoration: none;
+        color: #fff;
+        font-weight: bold;
+        transition: transform 0.2s;
+    }
+
+    .actions a:hover {
+        transform: scale(1.1);
+    }
+
+    .btn-action.print { background: #28a745; }
+    .btn-action.approve { background: #007bff; }
+    .btn-action.edit { background: #ffc107; color: #333; }
+    .btn-action.delete { background: #dc3545; }
+
+    /* No data */
+    .no-data {
+        text-align: center;
+        font-style: italic;
+        color: #999;
+        padding: 15px 0;
+    }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+    }
+
+    .pagination .page-link {
+        padding: 6px 12px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+        transition: background 0.3s;
+    }
+
+    .pagination .page-link:hover {
+        background: #f0f0f0;
+    }
+
+    .pagination .active {
+        background: #007bff;
+        color: #fff;
+        border-color: #007bff;
+    }
+</style>
+{% endblock %}

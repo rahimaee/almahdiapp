@@ -1,0 +1,54 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/analystics_style.css' %}">
+<style>
+  .chip-table td, .chip-table th {
+    text-align: center;
+    vertical-align: middle;
+    font-size: 14px;
+  }
+  .chip-table .bg-orange {
+    background-color: #f8cbad !important; /* نارنجی کم‌رنگ */
+    font-weight: bold;
+  }
+  .chip-table .bg-green {
+    background-color: #c6efce !important; /* سبز کم‌رنگ */
+    font-weight: bold;
+  }
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="container-fluid">
+  {% include '../layout/AnalysticsNavbar.html' %}
+  <h3 class="mb-3">گزارش آمار تراشه سربازان</h3>
+
+  <div class="row">
+    <div class="col-md-8">
+      <table class="table table-bordered chip-table">
+        <tbody>
+          <tr>
+            <td>تعداد تراشه‌های تحویلی</td>
+            <td>{{ chip_stats.delivered_chips }}</td>
+            <td class="bg-orange">تعداد کل تحویلی</td>
+            <td class="bg-orange">تعداد کل حاضر به خدمت</td>
+          </tr>
+          <tr>
+            <td>تعداد کارت‌های تحویلی</td>
+            <td >{{ chip_stats.delivered_cards }}</td>
+            <td class="bg-green" rowspan="2">0</td>
+            <td class="bg-green" rowspan="2">0</td>
+          </tr>
+          <tr>
+            <td>افراد فاقد تراشه یا کارت</td>
+            <td>{{ chip_stats.without_chip_or_card }}</td>
+          </tr>
+           
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

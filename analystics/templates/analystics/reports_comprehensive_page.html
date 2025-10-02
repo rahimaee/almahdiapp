@@ -1,0 +1,198 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/analystics_style.css' %}">
+<style>
+
+  table {
+    font-size: 14px;
+  }
+  .table th.bg-title {
+    background-color: #f0f0f0;
+  }
+</style>
+{% endblock %}
+
+{% block main %}
+{% include '../layout/AnalysticsNavbar.html' %}
+<div class="container-fluid">
+
+  <!-- 🔹 سکشن 1: آمار کل و کارت‌ها -->
+  <div class="stats-card">
+  <!-- کارت کل -->
+  <div class="card">
+    <h4 class="card-title">کل : 0</h4>
+    <div class="stat-row"><span class="stat-key">عادی</span><span class="stat-value">0</span></div>
+    <div class="stat-row"><span class="stat-key">پاسدار وظیفه</span><span class="stat-value">0</span></div>
+    <div class="stat-row"><span class="stat-key">فراری</span><span class="stat-value">0</span></div>
+  </div>
+
+  <!-- کارت مذهب -->
+  <div class="card">
+    <h4 class="card-title">مذهب : 0</h4>
+    <div class="stat-row"><span class="stat-key">اهل تسنن</span><span class="stat-value">0</span></div>
+    <div class="stat-row"><span class="stat-key">شیعه</span><span class="stat-value">0</span></div>
+  </div>
+   
+   <!-- کارت سربازان سید -->
+   <div class="card">
+      <div class="stat-row"><span class="stat-key">مامور</span><span class="stat-value">0</span></div>
+    <div class="stat-row"><span class="stat-key">سربازان سید</span><span class="stat-value">20</span></div>
+  </div>
+
+  <!-- کارت وضعیت تاهل -->
+  <div class="card">
+    <h4 class="card-title">وضعیت تاهل : 0</h4>
+    <div class="stat-row"><span class="stat-key">مجرد</span><span class="stat-value">5</span></div>
+    <div class="stat-row"><span class="stat-key">متاهل</span><span class="stat-value">5</span></div>
+    <div class="stat-row"><span class="stat-key">متاهل مستقل</span><span class="stat-value">5</span></div>
+  </div>
+
+  <!-- کارت فرار -->
+  <div class="card">
+    <h4 class="card-title">فرار : 0</h4>
+    <div class="stat-row"><span class="stat-key">دارای سابقه</span><span class="stat-value">24</span></div>
+    <div class="stat-row"><span class="stat-key">بدون سابقه فرار</span><span class="stat-value">8</span></div>
+    <div class="stat-row"><span class="stat-key">دارای سابقه و حاضر</span><span class="stat-value">8</span></div>
+  </div>
+</div>
+  <!-- 🔹 سکشن 3: جدول درجه‌ها -->
+  <h3 class="mt-4 mb-2">تقسیم‌بندی بر اساس درجه</h3>
+  <table class="table table-bordered table-sm text-center align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>بخش</th>
+        <th>ستوان یکم(12)</th>
+        <th>ستوان دوم(11)</th>
+        <th>ستوان سوم(10)</th>
+        <th>رزمدار یکم(9)</th>
+        <th>رزمدار دوم(8)</th>
+        <th>رزم‌آور یکم(7)</th>
+        <th>رزم‌آور دوم(6)</th>
+        <th>رزم‌آور سوم(5)</th>
+        <th>رزمیار(4)</th>
+        <th>سرباز یکم(3)</th>
+        <th>سرباز دوم(2)</th>
+        <th>سرباز(1)</th>
+        <th>مجموع</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>فراری</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>3</td><td>10</td><td>17</td><td>32</td></tr>
+      <tr><td>اداری</td><td>4</td><td>4</td><td>9</td><td>2</td><td>8</td><td>3</td><td>9</td><td>4</td><td>5</td><td>0</td><td>11</td><td>13</td><td>72</td></tr>
+      <tr><td>شیفتی</td><td>4</td><td>0</td><td>3</td><td>0</td><td>3</td><td>3</td><td>17</td><td>3</td><td>7</td><td>4</td><td>29</td><td>19</td><td>92</td></tr>
+      <tr><td>پستی</td><td>0</td><td>0</td><td>1</td><td>1</td><td>4</td><td>3</td><td>17</td><td>4</td><td>4</td><td>7</td><td>32</td><td>24</td><td>97</td></tr>
+      <tr><td>مامور</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+      <tr><td>بومی</td><td>8</td><td>4</td><td>13</td><td>3</td><td>15</td><td>9</td><td>41</td><td>11</td><td>16</td><td>11</td><td>72</td><td>56</td><td>259</td></tr>
+      <tr><td>غیر بومی</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2</td></tr>
+    </tbody>
+  </table>
+
+
+  <!-- 🔹 سکشن 6: تحصیلات و وضعیت جسمی -->
+  <h3 class="mt-4 mb-2">تحصیلات و وضعیت جسمی</h3>
+  <table class="table table-bordered text-center table-sm">
+    <thead class="table-light">
+      <tr>
+        <th rowspan="2">عنوان</th>
+        <th colspan="6">مدرک تحصیلی</th>
+        <th colspan="5">وضعیت سلامت و کمیسیون</th>
+      </tr>
+      <tr>
+        <th>زیر دیپلم</th>
+        <th>دیپلم</th>
+        <th>فوق دیپلم</th>
+        <th>لیسانس</th>
+        <th>فوق لیسانس</th>
+        <th>دکتری</th>
+        <th>سالم</th>
+        <th>معاف از رزم</th>
+        <th>گروه ب</th>
+        <th>معاف+گروه ب</th>
+        <th>کمیسیون</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>تعداد کل بدون احتساب فراری</td><td>73</td><td>81</td><td>17</td><td>71</td><td>11</td><td>8</td><td>209</td><td>38</td><td>4</td><td>10</td><td>0</td></tr>
+      <tr><td>تعداد کل با احتساب فراری</td><td>93</td><td>92</td><td>17</td><td>72</td><td>11</td><td>8</td><td>225</td><td>46</td><td>8</td><td>14</td><td>0</td></tr>
+      <tr><td>تعداد کل بدون احتساب فراری</td><td colspan="6"></td><td colspan="5">261</td></tr>
+      <tr><td>تعداد کل با احتساب فراری</td><td colspan="6"></td><td colspan="5">293</td></tr>
+    </tbody>
+  </table>
+<h3 class="mt-4 mb-2">نوع شرایط پست</h3>
+
+      <table class="table table-bordered text-center table-sm">
+      <thead class="table-light">
+         <tr>
+            <th colspan="2">شرایط پست + معاف از رزم</th>
+            <th colspan="3">شرایط پست + پستی</th>
+            <th colspan="2">شرایط پست + اداری/شیفتی</th>
+            <th rowspan="2">مجموع کل</th>
+         </tr>
+         <tr>
+            <th>اداری</th>
+            <th>شیفتی</th>
+            <th>پستی</th>
+            <th>سفیدپر</th>
+            <th>دژبانی</th>
+            <th>اداری</th>
+            <th>شیفتی</th>
+         </tr>
+      </thead>
+      <tbody>
+         <tr>
+            <td>10</td>
+            <td>7</td>
+            <td>71</td>
+            <td>0</td>
+            <td>0</td>
+            <td>31</td>
+            <td>27</td>
+            <td>146</td>
+         </tr>
+         
+      </tbody>
+      </table>
+ 
+
+   <div>
+            <div class="col-md-4">
+               <h3 class="mt-4 mb-2">شرایط پست</h3>
+                  <table class="table table-bordered text-center">
+                     <tbody>
+                        <tr><th class="bg-title">سربازان فاقد شرایط پست</th><td>132</td></tr>
+                        <tr><th class="bg-title">سربازانی که شرایط پست را دارند</th><td>155</td></tr>
+                        <tr><th class="bg-title">مجموع (با احتساب فراری‌ها)</th><td>287</td></tr>
+                        <tr><th class="bg-title">مجموع (بدون احتساب فراری‌ها)</th><td>255</td></tr>
+                     </tbody>
+                  </table>
+            </div>
+            <div class="col-md-4">
+                <h3 class="mt-4 mb-2">کسری و شرایط ویژه</h5>
+                     <table class="table table-bordered text-center">
+                        <tbody>
+                           <tr><th class="bg-title">واجد شرایط کسری غیربومی</th><td>0</td></tr>
+                           <tr><th class="bg-title">شرایط پذیرفته‌اند</th><td>0</td></tr>
+                           <tr><th class="bg-title">فراری</th><td>127</td></tr>
+                           <tr><th class="bg-title">شرایط نپذیرفته‌اند</th><td>1</td></tr>
+                           <tr><th class="bg-title">شرایط هفتگی پذیرفته‌اند</th><td>0</td></tr>
+                        </tbody>
+                     </table>
+            </div>
+            <div class="col-md-4">
+                 <h3 class="mt-4 mb-2">سایر آمار</h5>
+                     <table class="table table-bordered text-center">
+                        <tbody>
+                           <tr><th class="bg-title">فاقد قسمت</th><td>0</td></tr>
+                           <tr><th class="bg-title">فاقد شناسه سربازی</th><td>3 / 151</td></tr>
+                           <tr><th class="bg-title">فاقد شیفت</th><td>0</td></tr>
+                           <tr><th class="bg-title">دارای سابقه اعتیاد</th><td>0</td></tr>
+                        </tbody>
+                     </table>
+            </div>
+
+   </div>
+
+</div>
+{% endblock %}

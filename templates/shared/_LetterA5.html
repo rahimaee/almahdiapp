@@ -305,12 +305,12 @@
               <div class="signature">
                 <div class="signature-box signature-shape"></div>
                 <div class="signature-name">
-                    <span class="manager-dagre">سرهنگ دوم پاسدار</span>
+                    <span class="manager-dagre">{{ signature.degree|default:"سرهنگ دوم پاسدار" }}</span>
                     <span style="margin:0 20px;"></span>
-                    <span class="manager-name">رضا سروی</span>
+                    <span class="manager-name">{{ signature.name|default:"رضا سروی" }}</span>
                 </div>
                 <div class="manager-title">
-                    مدیر نیروی انسانی آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه
+                    {{ signature.duty|default:"مدیر نیروی انسانی" }} آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه
                 </div>
               </div>
               </div>

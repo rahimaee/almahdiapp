@@ -1,37 +1,222 @@
 {% extends 'shared/_PanelMain.html' %}
 {% load static %}
+{% load humanize %}
+{% load jalali_filters %}
 {% block main %}
     <div class="container">
-        <h2 class="text-center">ثبت فیش واریزی برای سربازان</h2>
-        <form method="POST">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="settlement_id">انتخاب سرباز:</label>
-                <select name="settlement_id" class="form-control">
-                    {% for settlement in settlements %}
-                        <option value="{{ settlement.id }}">{{ settlement.soldier.first_name }} {{ settlement.soldier.last_name }}
-                            - بدهی: {{ settlement.current_debt_rial }} ریال
-                        </option>
-                    {% endfor %}
-                </select>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="text-center">
+                    <i class="fa fa-money"></i>
+                    ثبت فیش واریزی
+                </h2>
+                <div class="alert alert-info">
+                    <i class="fa fa-info-circle"></i>
+                    در این صفحه می‌توانید فیش واریزی برای سرباز ثبت کنید. پس از ثبت، به صفحه مشاهده فیش‌های سرباز هدایت خواهید شد.
+                </div>
             </div>
-            <div class="form-group">
-                <label for="amount_rial">مبلغ واریزی (ریال):</label>
-                <input type="number" name="amount_rial" class="form-control" required>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <i class="fa fa-plus"></i>
+                            ثبت فیش واریزی جدید
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <form method="POST" class="form-horizontal">
+                            {% csrf_token %}
+                            {% if settlements|length == 1 and selected_settlement_id %}
+                                {# فقط اطلاعات سرباز و بدهی نمایش داده شود #}
+                                <input type="hidden" name="settlement_id" value="{{ settlements.0.id }}">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label"><i class="fa fa-user"></i> سرباز:</label>
+                                    <div class="col-sm-9">
+                                        <p class="form-control-static">
+                                            <strong>{{ settlements.0.soldier.first_name }} {{ settlements.0.soldier.last_name }}</strong>
+                                            ({{ settlements.0.soldier.national_code }})
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label"><i class="fa fa-money"></i> بدهی باقی‌مانده:</label>
+                                    <div class="col-sm-9">
+                                        <p class="form-control-static text-danger">
+                                            {{ settlements.0.current_debt_rial|floatformat:0|intcomma }} ریال
+                                        </p>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="form-group">
+                                    <label for="settlement_id" class="col-sm-3 control-label">
+                                        <i class="fa fa-user"></i>
+                                        انتخاب سرباز:
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <select name="settlement_id" id="settlement_id" class="form-control" required>
+                                            <option value="">-- انتخاب سرباز --</option>
+                                            {% for settlement in settlements %}
+                                                <option value="{{ settlement.id }}"
+                                                        {% if selected_settlement_id == settlement.id|stringformat:"s" %}selected{% endif %}
+                                                        data-debt="{{ settlement.current_debt_rial }}">
+                                                    {{ settlement.soldier.first_name }} {{ settlement.soldier.last_name }}
+                                                    ({{ settlement.soldier.national_code }})
+                                                    - بدهی باقی‌مانده: {{ settlement.current_debt_rial|floatformat:0|intcomma }} ریال
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            <!-- مبلغ واریزی -->
+                            <div class="form-group">
+                                <label for="amount_rial" class="col-sm-3 control-label">
+                                    <i class="fa fa-money"></i>
+                                    مبلغ واریزی (ریال):
+                                </label>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <input type="number" name="amount_rial" id="amount_rial" 
+                                               class="form-control" required min="1" 
+                                               placeholder="مبلغ واریزی را وارد کنید">
+                                        <span class="input-group-addon">ریال</span>
+                                    </div>
+                                    <small class="text-muted">حداکثر مبلغ قابل واریز: <span id="max-amount">{% if settlements|length == 1 and selected_settlement_id %}{{ settlements.0.current_debt_rial|floatformat:0|intcomma }}{% else %}0{% endif %}</span> ریال</small>
+                                </div>
+                            </div>
+
+                            <!-- شماره فیش -->
+                            <div class="form-group">
+                                <label for="receipt_number" class="col-sm-3 control-label">
+                                    <i class="fa fa-hashtag"></i>
+                                    شماره فیش واریزی:
+                                </label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="receipt_number" id="receipt_number" 
+                                           class="form-control" required 
+                                           placeholder="شماره فیش واریزی را وارد کنید">
+                                </div>
+                            </div>
+
+                            <!-- تاریخ فیش -->
+                            <div class="form-group">
+                                <label for="deposit_date" class="col-sm-3 control-label">
+                                    <i class="fa fa-calendar"></i>
+                                    تاریخ فیش واریزی:
+                                </label>
+                                <div class="col-sm-9">
+                                    <input type="date" name="deposit_date" id="deposit_date" 
+                                           class="form-control" required 
+                                           value="{{ today_date|date:'Y-m-d' }}">
+                                </div>
+                            </div>
+
+                            <!-- کد متصدی بانک -->
+                            <div class="form-group">
+                                <label for="bank_operator_code" class="col-sm-3 control-label">
+                                    <i class="fa fa-id-card"></i>
+                                    کد متصدی بانک:
+                                </label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="bank_operator_code" id="bank_operator_code" 
+                                           class="form-control" required 
+                                           placeholder="کد متصدی بانک را وارد کنید">
+                                </div>
+                            </div>
+
+                            <!-- دکمه‌های عملیات -->
+                            <div class="form-group">
+                                <div class="col-sm-offset-3 col-sm-9">
+                                    <button type="submit" class="btn btn-success btn-lg">
+                                        <i class="fa fa-save"></i>
+                                        ثبت فیش واریزی
+                                    </button>
+                                    <a href="{% url 'soldiers_settlement_list' %}" class="btn btn-info btn-lg">
+                                        <i class="fa fa-list"></i>
+                                        بازگشت به لیست
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="receipt_number">شماره فیش واریزی:</label>
-                <input type="text" name="receipt_number" class="form-control" required>
+        </div>
+
+        <!-- اطلاعات راهنما -->
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <i class="fa fa-question-circle"></i>
+                            راهنمای ثبت فیش واریزی
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-unstyled">
+                            <li><i class="fa fa-check text-success"></i> ابتدا سرباز مورد نظر را انتخاب کنید{% if settlements|length == 1 and selected_settlement_id %} (این مرحله به صورت خودکار انجام شده){% endif %}</li>
+                            <li><i class="fa fa-check text-success"></i> مبلغ واریزی را وارد کنید (نباید از بدهی باقی‌مانده بیشتر باشد)</li>
+                            <li><i class="fa fa-check text-success"></i> شماره فیش واریزی را دقیق وارد کنید</li>
+                            <li><i class="fa fa-check text-success"></i> تاریخ فیش واریزی را مشخص کنید</li>
+                            <li><i class="fa fa-check text-success"></i> کد متصدی بانک را وارد کنید</li>
+                            <li><i class="fa fa-check text-success"></i> پس از ثبت، به صفحه مشاهده فیش‌های سرباز هدایت خواهید شد</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="deposit_date">تاریخ فیش واریزی:</label>
-                <input type="date" name="deposit_date" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="bank_operator_code">کد متصدی بانک:</label>
-                <input type="text" name="bank_operator_code" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary">ثبت فیش واریزی</button>
-        </form>
+        </div>
     </div>
+
+    <script>
+        // نمایش حداکثر مبلغ قابل واریز
+        {% if settlements|length == 1 and selected_settlement_id %}
+            document.addEventListener('DOMContentLoaded', function() {
+                var maxAmount = {{ settlements.0.current_debt_rial }};
+                document.getElementById('max-amount').textContent = maxAmount.toLocaleString();
+                document.getElementById('amount_rial').max = maxAmount;
+            });
+        {% else %}
+            document.getElementById('settlement_id').addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const maxAmount = selectedOption.getAttribute('data-debt');
+                document.getElementById('max-amount').textContent = parseInt(maxAmount).toLocaleString();
+                document.getElementById('amount_rial').max = maxAmount;
+            });
+        {% endif %}
+
+        // اعتبارسنجی مبلغ واریزی
+        document.getElementById('amount_rial').addEventListener('input', function() {
+            {% if settlements|length == 1 and selected_settlement_id %}
+                const maxAmount = {{ settlements.0.current_debt_rial }};
+            {% else %}
+                const maxAmount = parseInt(document.getElementById('settlement_id').options[document.getElementById('settlement_id').selectedIndex].getAttribute('data-debt'));
+            {% endif %}
+            const amount = parseInt(this.value);
+            if (amount > maxAmount) {
+                this.setCustomValidity(`مبلغ واریزی نمی‌تواند بیشتر از ${maxAmount.toLocaleString()} ریال باشد`);
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+
+        // تنظیم تاریخ امروز به صورت پیش‌فرض
+        if (!document.getElementById('deposit_date').value) {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('deposit_date').value = today;
+        }
+    </script>
 {% endblock %}

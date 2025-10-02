@@ -141,9 +141,9 @@
 {% block main %}
     <div class="container">
         <h2 class="text-center">لیست سربازانی که نیاز به بررسی دارند</h2>
-        <form class="modern-table-container">
+        <form method="post" class="modern-table-container">
         <div class="header-tools mb-3">
-                    <a href="{% url 'province_create' %}" class="btn btn-create"> ثبت تغییرات</a>
+                    <button  class="btn btn-create"> ثبت تغییرات</button>
                     <div class="center-box"> 
                         <ul class="pagination justify-content-center">
                             {% if page_obj.has_previous %}

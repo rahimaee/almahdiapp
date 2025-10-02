@@ -1,0 +1,52 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% block main %}
+<style>
+  .not-found-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    text-align: center;
+    font-family: Vazirmatn, sans-serif;
+    color: #333;
+  }
+
+  .not-found-container h1 {
+    font-size: 8rem;
+    margin: 0;
+    color: #e74c3c;
+  }
+
+  .not-found-container h2 {
+    font-size: 2rem;
+    margin: 10px 0;
+  }
+
+  .not-found-container p {
+    font-size: 1.2rem;
+    margin: 5px 0 20px 0;
+  }
+
+  .not-found-container a {
+    text-decoration: none;
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+  }
+
+  .not-found-container a:hover {
+    background-color: #2980b9;
+  }
+</style>
+
+<div class="not-found-container">
+  <h1>404</h1>
+  <h2>صفحه مورد نظر یافت نشد!</h2>
+  <p>به نظر می‌رسد صفحه‌ای که دنبال آن هستید وجود ندارد یا حذف شده است.</p>
+  <a href="{% url 'forms_essential_list' %}">بازگشت به صفحه اصلی</a>
+</div>
+{% endblock %}

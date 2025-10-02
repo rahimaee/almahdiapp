@@ -1,0 +1,151 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/analystics_style.css' %}">
+{% endblock %}
+
+{% block main %}
+{% include '../layout/AnalysticsNavbar.html' %}
+<div class="container-fluid">
+<div class="stats-card">
+    <div class="card form-card">
+     <form method="get" class="row">
+        <div class="col-md-6 ">
+            {{ form.unit.label_tag }} {{ form.unit }}
+        </div>
+        <div class="col-md-6 ">
+            {{ form.month.label_tag }} {{ form.month }}
+        </div>
+        <div class="col-md-6">
+            {{ form.base_date.label_tag }} {{ form.base_date }}
+        </div>
+        <div class="col-md-6">
+            <button type="submit" class="btn btn-light w-100">نمایش گزارش</button>
+        </div>
+     </form>
+  </div>
+
+ <div class="card">
+    <div class="stat-row">
+      <span class="stat-key">ترخیصی‌های قسمت 
+         {% if data and data.unit %}
+            {{ data.unit.name }}
+        {% else %}
+            نامشخص
+        {% endif %}: 
+      </span>
+      <span class="stat-value">
+      0 نفر
+      </span>
+    </div>
+
+    <div class="stat-row">
+      <span class="stat-key">ترخیصی‌های آموزشگاه:</span>
+      <span class="stat-value">{{ academy_discharged_count|default:"0" }} نفر</span>
+    </div>
+
+    <div class="stat-row">
+      <span class="stat-key">درصد سربازان موجود در قسمت نسبت به کل سربازان:</span>
+      <span class="stat-value">{{ percentage_in_unit|default:"0.0" }}%</span>
+    </div>
+
+    <div class="stat-row">
+      <span class="stat-key">تعداد کل سربازان حاضر:</span>
+      <span class="stat-value">{{ total_soldiers|default:"0" }} نفر</span>
+    </div>
+  </div>
+</div>
+
+
+
+  {% if data %}
+ 
+
+  <!-- جدول زیرواحدها -->
+  <h5>جزئیات زیرواحدها ({{ data.unit.name }})</h5>
+  <div class="table-responsive">
+    <table class="table table-bordered table-sm text-center">
+      <thead class="table-light">
+        <tr>
+            <th colspan="2">نام قسمت</th>
+            <th>تعداد</th>
+            <th>سالم</th>
+            <th>معاف از رزم</th>
+            <th>گروه ب</th>
+            <th>معاف+گروه ب</th>
+            <th>کمیسیون</th>
+            <th>اداری</th>
+            <th>شیفتی</th>
+            <th>بومی</th>
+            <th>غیربومی</th>
+            <th>افسر</th>
+            <th>درجه دار</th>
+            <th>عادی</th>
+            <th>پاسدار وظیفه</th>
+            <th>زیر دیپلم</th>
+            <th>دیپلم</th>
+            <th>فوق دیپلم</th>
+            <th>لیسانس</th>
+            <th>فوق لیسانس</th>
+            <th>دکتری</th>
+            <th>پایان تا ... ماه بعد</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="total">
+            <td colspan="2">{{ data.unit.name }}</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>یک ماه</td>
+        </tr>
+        {% for sub in data.sub_units %}
+        <tr >
+            <td colspan="2">{{ sub.name }}</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>یک ماه</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
