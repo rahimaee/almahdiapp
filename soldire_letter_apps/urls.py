@@ -50,15 +50,12 @@ urlpatterns = [
     path('commitment_letter/<int:pk>/print/', commitment_letter_print, name='print_commitment_letter'),
     path('letters/index', main_letters, name='main_letters'),
     
-    #  NEZSA : "Essential Forms for Issuing Cards"
-    # show all of forms  
-    path('forms/essential/list/',                 form_essential_list, name='forms_essential_list'),
-    #  remove form
-    path('forms/essential/remove/<int:form_id>',  form_essential_delete, name='forms_essential_delete'),
-    # مسیر ایجاد فرم جدید
-    path('forms/essential/<str:form_type>/create/', form_essential_create, name='form_essential_create'),
-    # مسیر مشاهده/ویرایش فرم موجود
-    path('forms/essential/<int:form_id>/view/', form_essential_view, name='form_essential_view'),
+    # forms segment  
+    path('forms/essential/list/',                 forms_essential_list, name='forms_essential_list'),
+    path('forms/essential/<str:form_id>/remove/',  form_essential_delete, name='forms_essential_delete'),
+    path('forms/essential/<str:form_type>/create/', form_essential_form, name='form_essential_create'),
+    path('forms/essential/<str:form_type>/edit/<str:form_id>/', form_essential_form, name='form_essential_edit'),
+    path('forms/essential/<str:form_id>/view/', form_essential_view, name='form_essential_view'),
 
     
 ]

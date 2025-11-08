@@ -1,0 +1,187 @@
+{% extends "layouts/expired_soldiers_layout.html" %}
+{% load jalali_filters %}
+{% block page %}
+<style>
+/* --- فرم فیلتر --- */
+
+.filter-form div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 0.5rem;
+}
+
+.filter-form div label {
+    flex: 0 0 150px;
+    font-weight: 500;
+}
+
+.filter-form div input,
+.filter-form div select {
+    flex: 1;
+    min-width: 150px;
+    height: 40px;
+    padding: 0 10px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+}
+
+.filter-form .form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* --- جدول --- */
+.table-container {
+    overflow-y: auto;        /* vertical scroll only */
+    height: 60svh;
+}
+
+.table {
+    border-radius: 6px;
+    border-collapse: collapse;
+}
+
+.table thead {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f1f3f5;
+    transition: 0.2s;
+}
+.table   thead th {
+    position: sticky;        /* makes the header stick */
+    top: 0;                  /* stick to top */
+    z-index: 2;              /* ensure above tbody */
+    background-color: #f8f9fa;
+}
+.table td, .table th {
+    vertical-align: middle;
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+}
+
+
+/* --- pagination --- */
+.pagination {
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.pagination .page-link {
+    border-radius: 4px;
+    min-width: 40px;
+    text-align: center;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: #fff;
+}
+
+/* --- پیام خالی --- */
+.text-danger {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+/* --- ریسپانسیو --- */
+@media (max-width: 768px) {
+    .table {
+        font-size: 12px;
+    }
+    .filter-form p {
+        flex-direction: column;
+    }
+    .filter-form p label {
+        flex: none;
+    }
+}
+
+.filter-form-as {
+    list-style: none;       /* حذف بولت‌های ul */
+    padding: 0;
+    margin: 0;
+    display: flex;          /* چینش افقی */
+    flex-wrap: wrap;        /* اگر فیلدها زیاد باشند، به ردیف بعد می‌روند */
+    gap: 1rem;              /* فاصله بین فیلدها */
+    flex: 1;
+}
+
+.filter-form-as div {
+    flex: 0 0 calc(33.333% - 1rem);  /* هر آیتم یک سوم عرض ردیف */
+    box-sizing: border-box;
+    margin-bottom: 0.5rem;           /* فاصله پایین هر فیلد */
+    display: flex;
+    align-items: center;
+}
+.filter-form  {
+    display: flex;
+    gap: 10px;
+}
+</style>
+
+<div class="py-3 expired-card shadow-sm">
+
+    <!-- فرم فیلتر -->
+    <form method="get" class="filter-form mb-3">
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">جستجو</button>
+            <a href="{% url 'expired_soldiers' %}" class="btn btn-secondary">بازنشانی</a>
+        </div>
+        <div class="filter-form-as">
+            {{ filter_form.as_div }}
+        </div>
+    </form>
+    <div style="margin: 10px 0;">
+        {% include "components/pagination.html" with page_obj=page_obj %}
+    </div>
+    <!-- جدول داده‌ها -->
+    <div class="table-container">
+        <table class="table table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th># ردیف</th>
+                    <th>کد ملی</th>
+                    <th>نام و نام خانوادگی</th>
+                    <th>تاریخ شروع خدمت</th>
+                    <th>تاریخ فرار</th>
+                    <th>تاریخ پایان خدمت</th>
+                    <th>تاریخ تسویه</th>
+                    <th>دلیل تسویه</th>
+                    <th>وضعیت</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in soldiers %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ s.national_code }}</td>
+                    <td>{{ s.full_name }}</td>
+                    <td>{{ s.start_service_date|to_jalali_date }}</td>
+                    <td>{{ s.runaway_date|to_jalali_date }}</td>
+                    <td>{{ s.end_service_date|to_jalali_date }}</td>
+                    <td>{{ s.settlement_date|to_jalali_date }}</td>
+                    <td>
+                        <span class="badge bg-{{ s.expired_reason_color }}">
+                            {{ s.expired_reason_label }}
+                        </span>
+                    </td>
+                    <td>{{ s.status|default:"" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-danger">اطلاعاتی یافت نشد</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+</div>
+{% endblock %}

@@ -142,10 +142,57 @@
     border-radius: 8px;
     border: none;
     padding: 6px 10px;
-    font-size: 14px;
+    font-size: 22px;
     outline: none;
     background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    text-align: left;
+}
+.stats-card .card.form-card select option {
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    color: white;
+}
+/* Basic styling for Select2 inputs */
+.stats-card .card.form-card .select2-container {
+    width: 100%;
+    border-radius: 8px;
+    border: none;
+    font-size: 18px;
+    box-sizing: border-box;
+    color: white;
+}
 
+/* Styling for the select box itself */
+.stats-card .card.form-card .select2-selection {
+    border-radius: 8px;
+    border: none;
+    padding: 6px 10px;
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    color: white;
+    font-size: 22px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+}
+
+/* Styling for the dropdown part of Select2 */
+.stats-card .card.form-card .select2-dropdown {
+    border-radius: 8px;
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+}
+
+/* Styling for individual options in the dropdown */
+.stats-card .card.form-card .select2-results__option {
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    color: white;
+    font-size: 18px;
+}
+.stats-card .card.form-card .select2-selection__rendered {
+    color: white;
+}
+/* Hover effect for the options */
+.stats-card .card.form-card .select2-results__option--highlighted {
+    background-color: #ff7eb3;
+    color: white;
 }
 
 .stats-card .card.form-card button {
@@ -157,6 +204,7 @@
     padding: 8px 0;
     transition: 0.3s ease;
     margin-top:20px;
+    font-size: 22px;
 }
 
 .stats-card .card.form-card button:hover {

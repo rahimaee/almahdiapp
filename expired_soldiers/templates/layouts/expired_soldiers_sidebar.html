@@ -1,0 +1,183 @@
+<style>
+    .disabled-link {
+        pointer-events: none;
+        opacity: 0.4;
+        background: #e9ecef !important;
+        color: #6c757d !important;
+    }
+
+    .active-link {
+        background-color: #e6fdffff !important;
+        color: white !important;
+        font-weight: bold;
+    } 
+    .active-link > * {
+        color: #178a92ff !important;
+    }
+    .active-link > * {
+        color: white;
+        transition: 0.5s;
+    }
+    .tab-list-group .list-group-item span {
+        padding: 0;
+        border-right: 2px solid transparent;
+        
+    }
+    .tab-list-group .list-group-item.active-link span {
+        padding:0 4px;
+        text-align: center;
+    }
+
+</style>
+<div class="sidebar-card shadow-sm">
+    <div class="sidebar-card-header">مدیریت سربازان منقضی از خدمت</div>
+    <div class="list-group list-group-flush tab-list-group">
+        <a href="{% url 'expired_soldiers' %}" 
+           class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'expired_soldiers' %}active-link{% endif %}">
+            <span>فهرست اطلاعات</span>
+            <i class="fa fa-list"></i>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action disabled-link">
+            <span>گزارشات و آمار</span>
+            <i class="fa fa-line-chart"></i>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action disabled-link">
+            <span>فرم‌های آماده</span>
+            <i class="fa fa-file"></i>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action disabled-link">
+            <span>پایان‌خدمت</span>
+            <i class="fa fa-id-card"></i>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action disabled-link">
+            <span>ثبت اطلاعات</span>
+            <i class="fa fa-user-plus"></i>
+        </a>
+        <a href="{% url 'expired_soldiers_import_group' %}" 
+           class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'expired_soldiers_import_group' %}active-link{% endif %}">
+            <span>بارگذاری گروهی اطلاعات</span>
+            <i class="fa fa-users"></i>
+        </a>
+         <a href="{% url 'expired_soldiers_manage_database' %}" 
+           class="list-group-item list-group-item-action {% if request.resolver_match.url_name == 'expired_soldiers_manage_database' %}active-link{% endif %}">
+            <span>مدیریت بانک اطلاعات</span>
+            <i class="fa fa-database"></i>
+        </a>
+    </div>
+</div>
+
+
+
+
+<div class="sidebar-card shadow-sm">
+    <div class="sidebar-card-header">عملیات فردی سرباز منقضی از خدمت</div>
+    <div class="list-group list-group-flush">
+        <select  class="select2" id="expired_soldier" name="expired_soldier">
+            <option value="">--- انتخاب سرباز ---</option>
+        </select>
+        <div style="padding: 5px; font-size: 10px; color: red;">
+            <span id="det-soldier">برای فعال شدن ابزار ها باید یک سرباز انتخاب کنید.</span>
+            <span id="det-all">برای مدیریت سربازان باید حالت انتخاب را بردارید.</span>
+        </div>
+
+        <a href="#" class="list-group-item list-group-item-action soldier-action disabled-link">
+            <span>اطلاعات سرباز</span>
+            <i class="fa  fa-id-badge"></i>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action soldier-action disabled-link">
+            <span>ویرایش اطلاعات</span>
+            <i class="fa fa-pencil-square"></i>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action soldier-action disabled-link">
+            <span>ثبت پایان خدمت</span>
+            <i class="fa  fa-id-card"></i>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action soldier-action disabled-link">
+            <span>پرونده الکترونیک</span>
+            <i class="fa fa-folder-open"></i>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action soldier-action disabled-link">
+            <span>گزارش وضعیت</span>
+            <i class="fa fa-pie-chart"></i>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action soldier-action disabled-link">
+            <span>نامه‌ها</span>
+            <i class="fa fa-envelope"></i>
+        </a>
+        <a href="#" class="list-group-item list-group-item-action soldier-action disabled-link">
+            <span>فرم ها</span>
+            <i class="fa fa-file"></i>
+        </a>
+
+    </div>
+</div>
+{% block footer %}
+<script>
+    $(document).ready(function () {
+        // مقدار اولیه Select2
+        const $select = $('#expired_soldier').select2({
+            width: '100%',
+            placeholder: '--- انتخاب سرباز ---',
+            allowClear: true,
+            ajax: {
+                url: "{%url "api_expired_soldiers_search" %}",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        query: params.term || '', // اگر خالی بود، لیست اولیه
+                        count: 20
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.map(function (item) {
+                            return {
+                                id: item.id,
+                                text: `${item.first_name} ${item.last_name} \n فرزند ${item.father_name} \n (کدملی : ${item.national_code})`
+                            };
+                        })
+                    };
+                },
+                cache: true
+            }
+        });
+
+        // تابع فعال/غیرفعال کردن آیتم‌ها
+        function toggleActions() {
+            const selected = $select.val() === "";
+            if (selected) {
+                $('.soldier-action').addClass('disabled-link');
+                $('#det-soldier').show();
+                $('#det-all').hide();
+            } else {
+                $('.soldier-action').removeClass('disabled-link');
+                $('#det-soldier').hide();
+                $('#det-all').hide();
+            }
+        }
+
+        // بارگذاری اولیه (بدون جستجو)
+        $.ajax({
+            url: "{%url "api_expired_soldiers_search" %}",
+            data: { count: 20 },
+            success: function (data) {
+                data.forEach(function (item) {
+                    const label = `${item.first_name} ${item.last_name} \n فرزند ${item.father_name} \n (کدملی : ${item.national_code})`
+                    const option = new Option(label, item.id, false, false);
+                    $select.append(option);
+                });
+                $select.trigger('change'); // برای آپدیت select2
+            },
+            error: function () {
+                console.error('خطا در بارگذاری اولیه لیست سربازان.');
+            }
+        });
+
+        // بررسی انتخاب کاربر
+        $select.on('change', toggleActions);
+        toggleActions(); // حالت اولیه
+    });
+</script>
+
+{% endblock %}

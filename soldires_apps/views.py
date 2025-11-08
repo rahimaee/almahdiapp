@@ -1,9 +1,5 @@
-# views.py
-import datetime
 import jdatetime
-
 import traceback
-
 from django.db import transaction, IntegrityError
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
@@ -11,7 +7,6 @@ from django.utils import timezone
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib import messages
-
 from accounts_apps.decorators import feature_required
 from accounts_apps.utils import get_accessible_soldiers_for_user
 from soldier_vacation_apps.models import LeaveBalance
@@ -27,7 +22,6 @@ from soldier_service_apps.models import SoldierService
 from apps_settings.models import AppsSettings
 import zipfile
 import os
-from io import BytesIO
 from django.shortcuts import render
 from django.core.files.base import ContentFile
 from .models import Soldier
@@ -46,7 +40,12 @@ from .forms import SoldierUploadForm
 from openpyxl.styles import Alignment
 from openpyxl.utils import get_column_letter
 from .utils import create_soldiers_excel
-
+from datetime import datetime
+import jdatetime
+def jalali_to_gregorian(jdate_str):
+    # jdate_str looks like "1404/10/01"
+    y, m, d = map(int, jdate_str.split('/'))
+    return jdatetime.date(y, m, d).togregorian()
 
 @feature_required('لیست سربازان')
 def soldier_list(request):
@@ -59,7 +58,9 @@ def soldier_list(request):
         'current_sub_unit',
         'basic_training_center'
     )
-
+    all_soldiers_counts= len(soldiers) 
+    remaining_filter = None
+    
     if form.is_valid():
         print("isvald  form")
         data = form.cleaned_data
@@ -127,8 +128,41 @@ def soldier_list(request):
             if value := data.get(field):
                 query &= Q(**{field: value})
 
+        # ---------------- فیلتر تاریخ پایان خدمت ----------------
+        end_from = data.get("end_service_from_date")
+        end_to   = data.get("end_service_to_date")
+
+        if end_from:
+            query &= Q(service_end_date__gte=end_from)
+        if end_to:
+            query &= Q(service_end_date__lte=end_to)
+        # ---------------- فیلتر روز باقی‌مانده تا پایان خدمت ----------------
+
+        if remaining_filter == "unknown":
+            query &= Q(remaining_days__isnull=True)
+
+        elif remaining_filter == "end":
+            query &= Q(remaining_days=0)
+
+        elif remaining_filter == "remaining":
+            query &= Q(remaining_days__gt=45)
+
+        elif remaining_filter == "remaining45":
+            query &= Q(remaining_days__lte=45)
+
+        elif remaining_filter == "remaining30":
+            query &= Q(remaining_days__lte=30)
+
+        elif remaining_filter == "remaining15":
+            query &= Q(remaining_days__lte=15)
+
+        elif remaining_filter == "remaining5":
+            query &= Q(remaining_days__lte=5)
+
+
         # اعمال فیلتر
         soldiers = soldiers.filter(query)
+
 
     action = request.POST.get("action")
     print(action)
@@ -151,6 +185,30 @@ def soldier_list(request):
         'soldiers': page_obj,  # لیست سربازان برای صفحه جاری
         'paginator': paginator,
         'page_obj': page_obj,
+        'soldiers_counts' : len(soldiers),
+        'all_soldiers_counts':all_soldiers_counts,
+        'remainingFilter':remaining_filter,
+    })
+
+
+def soldiers_date_to_end(request):
+    """
+    نمایش سربازانی که تا پایان خدمتشان روز مشخصی مانده
+    """
+    days_filter = request.GET.get("days")  # مقدار روز از کوئری استرینگ
+
+    soldiers = Soldier.objects.filter(is_checked_out=False)
+
+    if days_filter:
+        try:
+            days = int(days_filter)
+            soldiers = Soldier.date_to_ends(days)  # استفاده از متد کلاس
+        except ValueError:
+            pass  # اگر مقدار غیر عددی بود نادیده گرفته شود
+
+    return render(request, "soldires_apps/soldiers_date_to_ends.html", {
+        "soldiers": soldiers,
+        "days_filter": days_filter or "",
     })
 
 def convert_jalali_to_gregorian_string(jalali_str):
@@ -501,13 +559,13 @@ def review_settlements(request):
 def payment_receipt_create(request):
     # گرفتن settlement_id از URL اگر وجود داشته باشد
     settlement_id = request.GET.get('settlement_id')
-    
     if settlement_id:
         # اگر settlement_id مشخص شده، فقط آن settlement را نمایش بده
         try:
             selected_settlement = Settlement.objects.get(id=settlement_id, current_debt_rial__gt=0)
             settlements = [selected_settlement]
         except Settlement.DoesNotExist:
+            print(Settlement.DoesNotExist)
             messages.error(request, "تسویه‌حساب مورد نظر یافت نشد یا بدهی ندارد.")
             return redirect('soldiers_settlement_list')
     else:
@@ -707,10 +765,11 @@ def soldires_new_status_view(request, pk):
 
     return render(request, 'soldires_apps/soldires_new_status_view.html', context)
 
-
 def organizational_codes_list(request):
-    codes = OrganizationalCode.objects.all()
-    print(codes)
+    codes = OrganizationalCode.objects.annotate(
+        soldiers_count=Count('soldiers')
+    ).order_by('code_number')
+
     if request.method == "POST":
         form = OrganizationalCodeForm(request.POST)
         if form.is_valid():
@@ -729,7 +788,6 @@ from django.shortcuts import render, redirect
 from django.db import transaction
 import openpyxl
 from .models import Soldier, OrganizationalCode
-import calendar
 
 
 def download_soldiers_template(request):

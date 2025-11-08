@@ -20,36 +20,20 @@
       apply the skin class to the body tag so the changes take effect. -->
 <link rel="stylesheet" href="{% static 'dist/css/skins/skin-yellow-light.min.css' %}">
 
+<!-- Select2 CSS -->
+<link href="{% static 'bower_components/select2/dist/css/select2.min.css' %}" rel="stylesheet" />
+<!-- jQuery -->
+<script src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap JS -->
+<script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- Select2 JS -->
+<script src="{% static 'bower_components/select2/dist/js/select2.full.min.js' %}"></script>
+
+<link href="{% static 'dist/css/fonts.css' %}" rel="stylesheet" />
 
 <style>
-    @font-face {
-        font-family: YekanBakh;
-        src: url("/assets/fonts/YekanBakh-Regular.woff2") format("woff2"),
-        url("/assets/fonts/YekanBakh-Regular.woff") format("woff"),
-        url("/assets/fonts/YekanBakh-Regular.ttf") format("truetype");
-        font-weight: normal;
-        font-style: normal;
-    }
-
-    @font-face {
-        font-family: YekanBakhBold;
-        src: url("/assets/fonts/YekanBakh-Bold.woff2") format("woff2"),
-        url("/assets/fonts/YekanBakh-Bold.woff") format("woff"),
-        url("/assets/fonts/YekanBakh-Bold.ttf") format("truetype");
-        font-weight: bold;
-        font-style: normal;
-    }
-
     html *,
     body * {
-        font-family: YekanBakh, sans-serif;
+        font-family: Vazir, sans-serif;
     }
-
 </style>
-<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-<!--[if lt IE 9]>
-{#<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>#}
-{#<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>#}
-<![endif]-->
-

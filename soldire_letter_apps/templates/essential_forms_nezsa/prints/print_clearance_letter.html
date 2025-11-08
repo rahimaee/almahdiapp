@@ -1,0 +1,393 @@
+{% load static %}
+{% load jalali_filters %}
+{% block header %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نامه تسویه‌حساب - {{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</title>
+<link href="{% static 'dist/css/fonts.css' %}" rel="stylesheet" />
+<style>
+    html *,
+    body * {
+        font-family: Vazir, sans-serif;
+    }
+
+    body {
+        direction: rtl;
+        background-color: #f5f5f5;
+        margin:0;
+        padding:0;
+    }
+    .print-page {
+        width: 210mm !important;
+        min-height: 297mm !important;
+        max-height: 297mm !important;
+        padding: 5mm !important; /* کنترل واقعی فضای داخلی */
+        margin: 5px auto !important;
+        box-sizing: border-box !important;
+        background-color: #fff !important;
+        border:1px dashed black !important; border-radius: 5px !important;
+    }
+    .A4 {
+        width: 100% !important;
+        height: 100% !important;
+        padding: 3mm !important;
+        box-sizing: border-box !important;
+        background-color: #fff !important;
+        border: 2px solid black !important;
+        border-radius: 10px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        overflow: hidden !important;
+    }
+    @media print {
+        body * {
+            visibility: hidden !important;
+            margin:0 !important;
+            padding:0 !important;
+        }
+        * {
+             page-break-after: avoid !important;
+            page-break-before: avoid !important;
+            page-break-inside: avoid !important;
+        }
+
+        .print-page, .print-page * {
+            visibility: visible !important;
+        }
+
+        /* کاملاً مخفی کردن صفحه کنترل و جلوگیری از اشغال فضا */
+        .control-page {
+            display: none !important;
+        }
+        .print-page main {
+            flex: 1 !important;
+        }
+        .print-page {
+            margin: 0 auto !important;
+            border: none !important;
+        }
+        @page {
+            size: A4 portrait;
+            margin: 0;
+        }
+    }
+
+
+    header.A4-header {
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid black;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+    }
+    main{
+        flex:1 ;
+    }
+
+    .header-left, .header-right { flex: 1; }
+    .header-center { text-align: center; }
+    .main-title { text-align: center; margin: 2px 0 5px !important; font-size: 12px; }
+    .form-title-container { display: flex; align-items: center; justify-content: center; margin-bottom: 5px !important; }
+    .form-title-container h2, .form-title-container h4 { color: red; margin: 0 10px; }
+    .status { flex:1; text-align: left; font-weight: bold; }
+    .details { font-size: 12px; margin: 5px 0; }
+    .settlement-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0 !important; }
+    .settlement-info div h5 { margin: 0 0 5px 0 !important; }
+    #signature { text-align: center; }
+    #signature p { font-size: 10px; margin: 0 !important; }
+    table { width: 100%; border-collapse: collapse; text-align: center; font-size: 12px; font-weight:bold; margin-bottom: 20px !important; }
+    th, td { border: 1px solid #000; padding:  3px !important; }
+    th { background-color: #f0f0f0; }
+    .declaration { font-size: 12px; margin: 5px 0 !important; }
+    footer.A4-footer {  border-top: 1px solid #666; padding: 5px !important; gap: 5px; font-size: 12px; }
+
+    .nazarie {
+       padding:0;
+        margin:0; 
+    }
+    .nazarie ol {
+        display:flex;
+        align-items:center;
+        padding:0 !important;
+        margin:0 !important;
+    }
+    .nazarie ol span {
+        flex:1;
+    }
+    .nazarie ol input {
+        width:28px;
+        height:28px;
+        border-radius:16px;
+        border: 4px solid black;
+    }
+    .settlement-info .line {
+        padding: 0;
+        margin: 0;
+    }
+    .form-table {
+    }
+    .form-table h4 {
+        padding: 0 !important;
+        margin: 0 !important;
+        font-size: 13px;
+        font-weight: bold;
+        text-align: right;
+    }
+    .form-table h4::after{
+        content: ' : ';
+    }
+    .form-table p {
+        padding: 0 !important;
+        margin: 0 !important;
+        font-size: 16px;
+        font-weight: normal;
+    }
+    .main-page {
+        display: flex;
+    }
+    .control-page {
+        flex: 1;
+    }
+</style>
+
+{% endblock %}
+
+{% block main %}
+<div class="main-page">
+    <div class="print-page" page="صفحه یک">
+        <section class="A4">
+            <header class="A4-header">
+                <div class="header-left">
+                    <img src="{% static 'img/Sepah.png' %}" alt="آرم سپاه" width="60">
+                </div>
+                <div class="header-center">
+                    <img src="{% static 'img/allah-placeholder.png' %}" alt="الله" width="60">
+                </div>
+                <div class="header-right" style="text-align:left;font-size: 14px;">
+                    <div dir="rtl" style="margin:0 !important;">
+                        <strong>شماره نامه :</strong> 
+                        {{ letter.number }}
+                        <span>/512/106/6ز</span> 
+                    </div>
+                    <div style="margin:10px 0 0 !important;">
+                        <strong>تاریخ نامه :</strong> 
+                        <span>{{ letter.created_at|to_jalali_to }}</span>
+                    </div>
+                </div>
+            </header>
+
+            <main>
+                <h6 class="main-title">« افزایش توان دفاع همه جانبه در سال جهش تولید با مشارکت مردم »</h6>
+                <div class="form-title-container">
+                    <span style="flex:1;"></span>
+                    <h4 class="form-title">« (برگه شماره 3) برگ اطلاعات و تایید انجام خدمت دوره ضرورت توسط یگان خدمتی سرباز »</h4>
+                    <span class="status"></span>
+                </div>
+                <div class="settlement-info">
+                    <div>
+                            <p class="line"><strong>از  :</strong>  {{ letter.sender |default:"------"}}</p>
+                            <p class="line"><strong>به  :</strong>  {{ letter.receiver |default:"------"}}</p>
+                            <p class="line"><strong>موضوع  :</strong>  {{ letter.title }}   <strong>{{form_data.first_name}} {{form_data.last_name}}</strong></p>
+                    </div>
+                    <div>
+                            {% if form_data and form_data.main_image %}
+                                    <img alt="محل اطلاق عکس" src={{form_data.main_image.url}} style="width: 210px;width: 280px;"   />
+                            {% else %}
+                                    <div style="font-style: italic;width: 90px;height: 120px; text-align: center;display: flex;align-items: center;justify-content: center; border: 1px solid black;">
+                                        محل اطلاق عکس
+                                    </div>
+                            {% endif %}
+                    </div>
+                </div>
+                <div style="margin:0 20px 10px ;">
+                    <p style="font-style:italic; padding: 0px !important;margin: 0 !important;">سلام علیکم؛</p>    
+                    <p style="text-align: justify; padding: 0px !important;margin: 0 !important;">
+                        با احترام بدینوسیله مشخصات کارت پایان خدمت صادره از سوی این یگان جهت سرباز منقضی خدمت 
+                        <strong>{{form_data.first_name}} {{form_data.last_name}}</strong>
+                        فرزند 
+                        <strong>{{form_data.father_name}}</strong>
+                        به شرح ذیل میباشد:
+                    </p>    
+                </div>
+                    <table class="form-table">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <h4>{{FIELD_LABELS.first_name}}</h4>
+                                    <p>{{form_data.first_name|default:"------"}}</p>
+                                </td>
+                                <td>
+                                    <h4>{{FIELD_LABELS.last_name}}</h4>
+                                    <p>{{form_data.last_name|default:"------"}}</p>
+                                </td>
+                                <td>
+                                    <h4>{{FIELD_LABELS.father_name}}</h4>
+                                    <p>{{form_data.father_name|default:"------"}}</p>
+                                </td>
+                           
+                                <td>
+                                    <h4>{{FIELD_LABELS.national_code}}</h4>
+                                    <p>{{form_data.national_code|default:"------"}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h4>{{FIELD_LABELS.birth_certificate_number}}</h4>
+                                    <p>{{form_data.birth_certificate_number|default:"------"}}</p>
+                                </td>
+                                <td>
+                                    <h4>{{FIELD_LABELS.birth_date}} و {{FIELD_LABELS.birth_place}}</h4>
+                                    <p>{{form_data.birth_date}} ({{form_data.birth_place}})</p>
+                                </td>
+                                <td>
+                                    <h4>{{FIELD_LABELS.eye_color}}</h4>
+                                    <p>{{form_data.eye_color|default:"------"}}</p>
+                                </td>
+                                <td>
+                                    <h4>{{FIELD_LABELS.blood_group}}</h4>
+                                    <p>{{form_data.blood_group|default:"------"}}</p>
+                                </td>
+                               
+                            </tr>
+                            <tr>
+                                
+                                <td>
+                                    <h4>{{FIELD_LABELS.height}}</h4>
+                                    <p>{{form_data.height|default:"------"}}</p>
+                                </td>
+                                
+                                <td>
+                                    <h4>{{FIELD_LABELS.education_level}}</h4>
+                                    <p>{{form_data.education_level|default:"------"}}</p>
+                                </td>
+                               
+                                <td>
+                                    <h4>{{FIELD_LABELS.specialty_code}}</h4>
+                                    <p>{{form_data.specialty_code|default:"------"}}</p>
+                                </td>
+                                 <td>
+                                    <h4>{{FIELD_LABELS.rank}}</h4>
+                                    <p>{{form_data.rank|default:"------"}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h4>{{FIELD_LABELS.legal_service_duration}}</h4>
+                                    <p>{{form_data.legal_service_duration|default:"------"}}</p>
+                                </td>
+                                <td>
+                                    <h4>{{FIELD_LABELS.served_duration}}</h4>
+                                    <p>{{form_data.served_duration|default:"------"}}</p>
+                                </td>
+                                <td>
+                                    <h4>{{FIELD_LABELS.service_start_date}}</h4>
+                                    <p>{{form_data.service_start_date|default:"------"}}</p>
+                                </td>
+                                <td>
+                                    <h4>{{FIELD_LABELS.service_end_date}}</h4>
+                                    <p>{{form_data.service_end_date|default:"------"}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                 <td colspan="1">
+                                    <h4>{{FIELD_LABELS.card_issue_date}}</h4>
+                                    <p>{{form_data.card_issue_date|default:"------"}}</p>
+                                </td>
+                                <td colspan="1">
+                                    <h4>{{FIELD_LABELS.military_education_status}}</h4>
+                                    <p>{{form_data.military_education_status|default:"------"}}</p>
+                                </td>
+                                <td colspan="2">
+                                    <h4>{{FIELD_LABELS.deployment_area}}</h4>
+                                    <p>{{form_data.deployment_area|default:"------"}}</p>
+                                </td>
+                                
+                                 
+                            </tr>
+                            <tr>
+                                
+                                <td colspan="2">
+                                    <h4>{{FIELD_LABELS.unit_name}}</h4>
+                                    <p>{{form_data.unit_name|default:"------"}}</p>
+                                </td>
+                                <td colspan="2">
+                                    <h4>{{FIELD_LABELS.discharge_unit}}</h4>
+                                    <p>{{form_data.discharge_unit|default:"------"}}</p>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td>
+                                    <h4>{{FIELD_LABELS.service_branch}}</h4>
+                                    <p>{{form_data.service_branch|default:"------"}}</p>
+                                </td>
+                                 <td>
+                                    <h4>{{FIELD_LABELS.personal_code}}</h4>
+                                    <p>{{form_data.personal_code|default:"------"}}</p>
+                                </td>
+                                <td>
+                                    <h4>{{FIELD_LABELS.main_office_number}}</h4>
+                                    <p>{{form_data.main_office_number|default:"------"}}</p>
+                                </td>
+                                <td>
+                                    <h4>{{FIELD_LABELS.detailed_office_number}}</h4>
+                                    <p>{{form_data.detailed_office_number|default:"------"}}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="1">
+                                    <h4>{{FIELD_LABELS.employee_type}}</h4>
+                                    <p>{{form_data.employee_type|default:"------"}}</p>
+                                </td>
+                                <td colspan="3">
+                                    <h4>{{FIELD_LABELS.description}}</h4>
+                                    <p>{{form_data.description|default:"------"}}</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                <p style="padding: 0px !important;margin: 0 !important;text-align: center;">
+                    مراتب انجام خدمت دوره ضرورت نامبرده فوق از 
+                    <strong>{{form_data.service_start_date}}</strong>
+                    تا 
+                    <strong>{{form_data.service_end_date}}</strong>
+                    به مدت 
+                    <strong>{{form_data.served_duration}}</strong>
+                    ماه مورد تایید میباشد.
+                </p>    
+            </main>
+            <div id="signature">
+                    <h5 style="margin:20px 0 10px !important;padding: 0 !important;">
+                        و من ا... التوفیق
+                    </h5>
+                    <h2 style="margin: 0;padding: 0 !important;">
+                        سرهنگ پاسدار       علی متولی طاهر
+                    </h2>
+                    <h4 style="margin: 0;padding: 0 !important;margin-bottom: 10px !important;">
+                        فرمانده آموزشگاه رزم مقدماتی المهدی (عج) بابل، نیروی زمینی سپاه
+                    </h4>
+            </div>
+            <footer style="margin: 0 !important;padding: 0 !important;" class="A4-footer">
+                <h4 style="text-align: center; padding: 5px !important;margin: 0 !important;" class="text-center">
+                    مدارک مورد نیاز به ترتیب اولویت
+                </h4>
+                <ul style="padding: 0 !important;margin: 0 !important;">
+                    <ol>
+                        ارائه فرم تائیدیه درخواست کارت المثنی از پلیس +10 ( توسط متقاضی )
+                    </ol>
+                    <ol>
+                        فرم شماره 3 با پر کردن تمامی موارد خواسته شده در فرم (توسط رده خدمتی)
+                    </ol>
+                    <ol>
+                        ارسال مدارک فوق الذکر در پیام اتوماسیون اداری برای منابع سرباز نزسا-قسمت صدور کارت
+                    </ol>
+                </ul>
+            </footer>
+        </section>
+    </div>
+    <div class="control-page">
+        ssd
+    </div>
+</div>
+    {% endblock %}

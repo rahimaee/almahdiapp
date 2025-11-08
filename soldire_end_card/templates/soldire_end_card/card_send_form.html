@@ -96,7 +96,7 @@
         }
 .submit-box {
     display: flex;
-    justify-content: center;  /* وسط چین کردن کل باکس دکمه‌ها */
+    justify-content: end;  /* وسط چین کردن کل باکس دکمه‌ها */
     gap: 15px;               /* فاصله بین دکمه‌ها */
     margin-top: 1.5rem;
 }
@@ -173,7 +173,7 @@
 
             <div class="submit-box col-md-12">
                     <button type="submit" class="btn btn-primary form-btn">
-                        کارت جدید
+                        ذخیره و ادامه
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M8 5a.5.5 0 0 1 .5.5V8h2.5a.5.5 0 0 1 0 1H8.5v2.5a.5.5 0 0 1-1 0V9H5a.5.5 0 0 1 0-1h2.5V5.5A.5.5 0 0 1 8 5z"/>
                             <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h7.5L14 4.5zm-1 0L10.5 1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/>
@@ -190,4 +190,12 @@
         </form>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({
+            placeholder: "انتخاب کنید",
+        });
+    });
+</script>
 {% endblock %}

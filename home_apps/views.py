@@ -13,7 +13,7 @@ from soldires_apps.utils import create_soldiers_excel
 def home(request):
     soldires = Soldier.objects.filter(is_checked_out=False)
     allCount = Soldier.objects.all().count()
-    
+    soldiers_45_to_end = Soldier.date_to_ends(45).count() 
     stats = {
         'all_soldiers': allCount,
         'active_soldiers': soldires.count(),
@@ -41,6 +41,7 @@ def home(request):
         },
         'financial_debt': soldires.filter(file_shortage__isnull=False).exclude(file_shortage='').count(),
         'skill_groups': soldires.values('skill_group').annotate(count=Count('id')),
+        'soldiers_45_to_end':soldiers_45_to_end,
     }
 
     context = {

@@ -1,6 +1,8 @@
 {% extends 'shared/_PanelMain.html' %}
 {% load static %}
 {% block main %}
+  {% include "../letter_types_nav_layout.html" %}
+
     <div class="container">
         <h3 class="text-danger">آیا مطمئن هستید که می‌خواهید این استعلام قضایی را حذف کنید؟</h3>
         <form method="post" class="form-inline">

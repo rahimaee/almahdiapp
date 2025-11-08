@@ -39,8 +39,18 @@ class CardSendForm(forms.ModelForm):
         model = CardSend
         fields = ['series', 'soldier', 'is_checked', 'is_issued', 'review_date', 'note']
         widgets = {
-            'review_date': forms.DateInput(attrs={'type': 'date'}),
-            'note': forms.Textarea(attrs={'rows': 3}),
+            'series': forms.Select(attrs={'class': 'form-control select2'}),
+            'soldier': forms.Select(attrs={'class': 'form-control select2'}),
+            'review_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'note': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+        }
+        labels = {
+            'series': 'سری کارت',
+            'soldier': 'سرباز',
+            'is_checked': 'بررسی شده',
+            'is_issued': 'تحویل شده',
+            'review_date': 'تاریخ بررسی',
+            'note': 'توضیحات',
         }
 
     def __init__(self, *args, **kwargs):

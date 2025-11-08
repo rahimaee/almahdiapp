@@ -3,6 +3,8 @@ from django import forms
 
 from soldires_apps.models import Soldier
 from units_apps.models import SubUnit
+import json
+from .models import EssentialFormCardLetter
 
 
 # Create your views here.
@@ -19,7 +21,8 @@ class ClearanceLetterForm(forms.ModelForm):
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
 
-
+        first_choice_value = ClearanceLetter.CLEARANCE_REASON_CHOICES[0][0]
+        self.fields['reason'].initial = first_choice_value
 class NormalLetterJudicialInquiryForm(forms.ModelForm):
     soldier = forms.ModelChoiceField(
         queryset=Soldier.objects.all(),
@@ -215,46 +218,147 @@ class CommitmentLetterForm(forms.ModelForm):
             'soldier': forms.Select(attrs={'class': 'form-control'}),
             'type_card_chip': forms.Select(attrs={'class': 'form-control'}),
         }
-
-
-from django import forms
-import json
-from .models import EssentialFormCardLetter
-from .dataclass import FORM_CLASSES  # همان dict که dataclass ها را نگه می‌دارد
+        
+import random
+from .constants import *
 
 class EssentialFormCardLetterForm(forms.ModelForm):
-    # فیلد type را برای انتخاب یا مشخص شدن فرم داریم
-    letter_type = forms.ChoiceField(choices=EssentialFormCardLetter.LETTER_TYPES, label="نوع فرم")
+    # فقط این فیلد hidden است
+    letter_id = forms.CharField(widget=forms.HiddenInput(),required=False)
+    letter_type = forms.CharField(widget=forms.HiddenInput(), required=True)  # required=True
 
+    # فیلدهای پیش‌فرض فرم (نه مدل)
+    title = forms.CharField(
+        label="موضوع",
+        initial="تایید انجام دوره ضرورت سرباز منقضی خدمت",
+        help_text="نام سرباز در انتهای موضوع قرار میگیرد.",
+    )
+    receiver = forms.CharField(
+        label="گیرنده",
+        initial="معاونت نیروی انسانی نزسا – مدیریت منابع انسانی سرباز – دایره صدور کارت",
+        help_text="به",
+    )
+    sender = forms.CharField(
+        label="فرستنده",
+        initial="آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه - نیروی انسانی - منابع انسانی سرباز",
+        help_text="از",
+    )
+ 
+
+    number = forms.CharField(
+        label="شماره نامه",
+        required=False,
+        disabled=True,
+        help_text="شماره نامه اتوماتیک"
+    )
     class Meta:
         model = EssentialFormCardLetter
-        fields = ['number', 'return_number', 'sender', 'receiver', 'title', 'letter_type', 'description']
+        fields = ['number', 'return_number', 'title',  'receiver','sender',  'description']
+        labels = {
+            "return_number": "شماره عطف",
+            "description": "توضیحات",
+        }
+        widgets = {
+            "description": forms.Textarea(attrs={"rows": 3}),
+        }
+
 
     def __init__(self, *args, **kwargs):
-        # فرم_type برای ساخت فیلدهای داینامیک
         form_type = kwargs.pop('form_type', None)
         super().__init__(*args, **kwargs)
 
-        # اگر form_type مشخص شد، فیلدهای داینامیک اضافه می‌کنیم
+        # تولید شماره نامه 10 رقمی فقط برای فرم جدید
+        if not self.instance.pk:
+            self.fields['number'].initial = str(random.randint(10**9, 10**10-1))
+
+        # اگر instance موجود باشد یا initial، نوع فرم از آن گرفته شود
+        if not form_type:
+            if self.instance and self.instance.letter_type:
+                form_type = self.instance.letter_type
+            elif 'initial' in kwargs:
+                form_type = kwargs['initial'].get('letter_type')
+
+        self.fields['letter_type'].initial = form_type
+
+        # بارگذاری مقادیر داینامیک
+        form_data_dict = {}
+        if self.instance:
+            self.fields['letter_id'].initial = self.instance.id
+            if self.instance.form_data:
+                try:
+                    form_data_dict = json.loads(self.instance.form_data)
+                except json.JSONDecodeError:
+                    pass
+
         if form_type:
             cls = FORM_CLASSES.get(form_type)
-            if cls:
-                for field_name, field_type in cls.__annotations__.items():
-                    # نوع فیلد را بر اساس type annotation انتخاب می‌کنیم
-                    if field_type == int:
-                        self.fields[field_name] = forms.IntegerField(label=field_name.replace("_", " ").title())
-                    else:
-                        self.fields[field_name] = forms.CharField(label=field_name.replace("_", " ").title())
+            for field_name, field_type in cls.__annotations__.items():
+                if field_name in self.fields:
+                    continue
+                label = FIELD_LABELS.get(field_name, field_name.replace("_", " "))
+                default_value = form_data_dict.get(field_name, getattr(cls(), field_name))
+                
+                if field_name in FIELD_CHOICES:
+                    self.fields[field_name] = forms.ChoiceField(
+                        label=label,
+                        required=False,
+                        choices=FIELD_CHOICES[field_name],
+                        initial=default_value,
+                    )
+                elif field_name in ['main_image', 'normal_image']:
+                    self.fields[field_name] = forms.ImageField(
+                        label=label,
+                        required=False,
+                        initial=default_value if default_value else None
+                    )
+                elif field_type == int:
+                    self.fields[field_name] = forms.IntegerField(
+                        label=label,
+                        required=False,
+                        initial=default_value,
+                        widget=forms.NumberInput(attrs={"dir": "ltr"})
+                    )
+                elif field_type == float:
+                    self.fields[field_name] = forms.FloatField(
+                        label=label,
+                        required=False,
+                        initial=default_value,
+                        widget=forms.NumberInput(attrs={"dir": "ltr"})
+                    )
+                else:
+                    self.fields[field_name] = forms.CharField(
+                        label=label,
+                        required=False,
+                        initial=default_value
+                    )
 
+                self.fields[field_name].help_text = FIELD_LABELS_HELPER.get(field_name, "")
+    
     def clean(self):
         cleaned_data = super().clean()
-        # همه فیلدهای داینامیک را جدا می‌کنیم
         form_type = cleaned_data.get('letter_type')
         cls = FORM_CLASSES.get(form_type)
+
         if cls:
             dynamic_data = {}
             for field_name in cls.__annotations__.keys():
                 dynamic_data[field_name] = cleaned_data.pop(field_name, None)
-            # تبدیل به JSON و ذخیره در form_data
             cleaned_data['form_data'] = json.dumps(dynamic_data, ensure_ascii=False)
+
         return cleaned_data
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        print(instance)
+        # ست کردن letter_type
+        instance.letter_type = self.cleaned_data.get('letter_type') or instance.letter_type
+        # ست کردن فرم داینامیک
+        instance.form_data = self.cleaned_data.get('form_data')
+        # ست کردن تصاویر
+        for img_field in ['main_image', 'normal_image']:
+            file = self.cleaned_data.get(img_field)
+            if file:
+                setattr(instance, img_field, file)
+
+        if commit:
+            instance.save()
+        return instance

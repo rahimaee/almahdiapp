@@ -2,6 +2,7 @@
 {% load static %}
 {% load jalali_filters %}
 
+
 {% block header %}
 <style>
     .modern-table-container {
@@ -32,9 +33,9 @@
 
     .modern-table tbody tr {
         transition: background-color 0.3s ease;
-        border-bottom: 1px solid #eee;
     }
-
+    .modern-table .accordion-toggle {
+    }
     .modern-table tbody tr:hover {
         background-color: #f0f4ff;
     }
@@ -120,7 +121,7 @@
        .national-card {
         padding : 5px;
         margin :0;
-        font-family: YekanBakh, Yekan, Naskh, sans-serif;
+        font-family: Vazir, Yekan, Naskh, sans-serif;
     }
     .text-truncate {
         display: -webkit-box;
@@ -137,7 +138,7 @@
         column-span:2;
     }
 </style>
-    <style>
+<style>
        .modern-table tbody .soldier-manage td {
             padding:0;
         }
@@ -268,6 +269,7 @@
             align-items:center;
             justify-content:space-between;
             text-align:right;
+            padding: 10px 0;
         }
         .box-header::after,.box-header::before {
             display:none;
@@ -366,6 +368,8 @@
     </style>
 
 
+    <link rel="stylesheet" href="{% static 'bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css' %}">
+
 {% endblock %}
 
 {% block main %}
@@ -406,6 +410,27 @@
     margin: 2px;
     color: #ccc;
 }
+.remaining {
+}
+
+.remaining.end {
+    color: gray;        /* خدمت تمام شده */
+    font-weight: bold;
+}
+
+
+.remaining.remaining45 {
+    color: orange;      /* بین 31 تا 45 روز مانده */
+}
+
+.remaining.remaining30 {
+    color: red;  /* بین 16 تا 30 روز مانده */
+}
+
+.remaining.remaining15 {
+    color: red;         /* کمتر از 15 روز مانده */
+    font-weight: bold;
+}
 </style>
     <div class="box box-warning">
         
@@ -415,8 +440,13 @@
                 {% csrf_token %}
                 <div class="box-header with-border">
                     <h3 class="box-title">
-                        <span>فهرست سربازان یگان</span> 
-                        <span class="bg-primary text-white p-2 soldiers-search">جستجوی پیشرفته</span>
+                        <span>جستجوی پیشرفته سربازان</span> 
+                        <span
+                            style="font-size: 14px;" 
+                            class="bg-primary text-white p-2 soldiers-search"
+                        >
+                            {{soldiers_counts}} نفر از {{all_soldiers_counts}} سربازان فعال (فراری،حاظر)
+                        </span>
                     </h3>
                     <div class="">
                         <span onclick="filterClick()" class="btn btn-warning btn-md filter-btn">
@@ -438,33 +468,81 @@
                     </div>
                     
                 </div>
-                    <div style="margin:10px 0;" class="pagination-wrapper mt-4 flex justify-center items-center gap-2">
-                        {% if page_obj.has_previous %}
-                            <a href="?page={{ page_obj.previous_page_number }}" 
-                            class="pagination-btn">&laquo; قبلی</a>
-                        {% else %}
-                            <span class="pagination-btn disabled">&laquo; قبلی</span>
-                        {% endif %}
-
-                        {% for num in page_obj.paginator.page_range %}
-                            {% if num == page_obj.number %}
-                                <span class="pagination-btn active">{{ num }}</span>
-                            {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
-                                <a href="?page={{ num }}" class="pagination-btn">{{ num }}</a>
-                            {% elif num == 1 or num == page_obj.paginator.num_pages %}
-                                <a href="?page={{ num }}" class="pagination-btn">{{ num }}</a>
-                            {% elif num == page_obj.number|add:-3 or num == page_obj.number|add:3 %}
-                                <span class="pagination-ellipsis">...</span>
+               <div style="display: flex; align-items: center;justify-content: space-between; ">
+                    <div style="margin:10px 0;" class="pagination-wrapper mt-4 flex justify-center items-center gap-2 flex-1">
+                            {% if page_obj.has_previous %}
+                                <a href="?page={{ page_obj.previous_page_number }}" 
+                                class="pagination-btn">&laquo; قبلی</a>
+                            {% else %}
+                                <span class="pagination-btn disabled">&laquo; قبلی</span>
                             {% endif %}
-                        {% endfor %}
 
-                        {% if page_obj.has_next %}
-                            <a href="?page={{ page_obj.next_page_number }}" 
-                            class="pagination-btn">بعدی &raquo;</a>
-                        {% else %}
-                            <span class="pagination-btn disabled">بعدی &raquo;</span>
-                        {% endif %}
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if num == page_obj.number %}
+                                    <span class="pagination-btn active">{{ num }}</span>
+                                {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+                                    <a href="?page={{ num }}" class="pagination-btn">{{ num }}</a>
+                                {% elif num == 1 or num == page_obj.paginator.num_pages %}
+                                    <a href="?page={{ num }}" class="pagination-btn">{{ num }}</a>
+                                {% elif num == page_obj.number|add:-3 or num == page_obj.number|add:3 %}
+                                    <span class="pagination-ellipsis">...</span>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if page_obj.has_next %}
+                                <a href="?page={{ page_obj.next_page_number }}" 
+                                class="pagination-btn">بعدی &raquo;</a>
+                            {% else %}
+                                <span class="pagination-btn disabled">بعدی &raquo;</span>
+                            {% endif %}
+                        </div>
+                        <div style="flex: 1;"></div>
+                        <div style="margin: 0 5px;"> 
+                            <label style="min-width: 100px;">تا پایان خدمت : </label>
+                            <select name="remainingFilter" id="remainingFilter" class="form-control" onchange="filterByRemaining()">
+                                <option  selected value=""  {% if not remainingFilter or remainingFilter == ""   %}selected{% endif %}  >همه</option>
+                                <option value="unknown"     {% if remainingFilter == "unknown" %}selected{% endif %}  >نامشخص</option>
+                                <option value="end"         {% if remainingFilter == "end" %}selected{% endif %}  >پایان خدمت</option>
+                                <option value="remaining"   {% if remainingFilter == "remaining" %}selected{% endif %} >بیش از 45 روز مانده</option>
+                                <option value="remaining45" {% if remainingFilter == "remaining45" %}selected{% endif %}  >کمتر از 45 روز</option>
+                                <option value="remaining30" {% if remainingFilter == "remaining30" %}selected{% endif %}  >کمتر از 30 روز</option>
+                                <option value="remaining15" {% if remainingFilter == "remaining15" %}selected{% endif %}  >کمتر از 15 روز</option>
+                                <option value="remaining5"  {% if remainingFilter == "remaining5" %}selected{% endif %}  >کمتر از 5 روز</option>
+                            </select>
+                        </div>
+                        <div  style="margin: 0 5px;"> 
+                            <label >پایان خدمت از تاریخ: </label>
+                            <input  
+                                dir="ltr"
+                                autocomplete="off" 
+                                class="form-control" 
+                                id="end_service_from_date" 
+                                name="end_service_from_date" 
+                                type="text"
+                                maxlength="10"
+                                placeholder="YYYY/MM/DD"
+                                oninput="formatDateInput(this)"
+                                style="flex: 1;"
+                            />
+                        </div>
+                        <div style=""> 
+                            <label >پایان خدمت تا تاریخ: </label>
+                            <input  
+                                dir="ltr"
+                                autocomplete="off" 
+                                class="form-control" 
+                                id="end_service_to_date" 
+                                name="end_service_to_date" 
+                                type="text"
+                                maxlength="10"
+                                placeholder="YYYY/MM/DD"
+                                oninput="formatDateInput(this)"
+                                style="flex: 1;"
+                            />
+                        </div>
+
                     </div>
+                
                 <div class="row g-4">
                     <div class="col-md-4 wrapper-forms">
                         <div class="mb-3 form-box">
@@ -617,86 +695,110 @@
             <thead>
             <tr>
                 <th>کدسازمانی</th>
-                <th>نام و نام خانوادگی</th>
-                <th>کد ملی</th>
+                <th>سرباز</th>
                 <th>وضعیت</th>
-                <th>فراری</th>
                 <th>قسمت</th>
                 <th>تلفن</th>
-                <th>پایان خدمت</th>
+                <th>ورود به خدمت</th>
+                <th>ترخیص</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
             {% for soldier in soldiers %}
-                <tr data-toggle="collapse" data-target="#row{{ soldier.id }}" class="accordion-toggle">
+                <tr data-toggle="expand" aria-expanded="false" data-target="#row{{ soldier.id }}" class="accordion-toggle" style="font-size: 14px;font-weight: bold;">
                     <td>{{ soldier.organizational_code.code_number }}</td>
                     <td>
-                        {{ soldier.first_name }} {{ soldier.last_name }}
+                        <div>
+                             <a href="{% url 'soldier_detail' soldier.pk %}">
+                                {{ soldier.first_name }} {{ soldier.last_name }}
+                             </a>
+                        </div>
                         {% if soldier.photo_scan %}
                             <i class="fa fa-camera text-primary"></i>
                         {% endif %}
+                        <div class="badge badge-default" style="padding: 4px 8px;border-radius: 4px;">
+                            کد ملی : {{ soldier.national_code }}
+                        </div>
                     </td>
-                    <td>{{ soldier.national_code }}</td>
                     <td>
-                        <!-- وضعیت سلامت -->
-                        <span class="label
-                              {% if soldier.health_status == 'سالم' %}label-success
-                              {% elif soldier.health_status == 'معاف از رزم' %}label-primary
-                              {% elif soldier.health_status == 'گروه ب' %}label-warning
-                              {% else %}label-danger{% endif %}">
-                            {{ soldier.health_status }}
-                        </span>
-                        
-                        <!-- وضعیت تسویه‌حساب -->
-                        {% if soldier.status %}
-                            <span class="label
-                                  {% if soldier.status == 'پایان خدمت' %}label-success
-                                  {% elif soldier.status == 'قبولی در دانشگاه' %}label-info
-                                  {% elif soldier.status == 'انتقالی' %}label-warning
-                                  {% elif soldier.status == 'استخدام در نیروهای مسلح' %}label-primary
-                                  {% else %}label-default{% endif %}">
-                                {{ soldier.get_status_display }}
+                        <div style="display: flex;align-items: center;font-weight: bold;">
+                                <!-- وضعیت سلامت -->
+                            <span  style="font-size: 16px;flex: 1;font-weight: bold;" class="label
+                                {% if soldier.health_status == 'سالم' %}label-success
+                                {% elif soldier.health_status == 'معاف از رزم' %}label-primary
+                                {% elif soldier.health_status == 'گروه ب' %}label-warning
+                                {% else %}label-warning{% endif %}
+                                "
+                            >
+                                {{ soldier.health_status }}
                             </span>
-                        {% else %}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if soldier.is_fugitive %}
-                            <span class="label label-default">بله</span>
+                            {% if soldier.is_fugitive %}
+                                <span class="label label-danger" style="font-size: 16px;flex: 1;font-weight: bold;">فراری</span>
+                                {% endif %}
+                            <!-- وضعیت تسویه‌حساب -->
+                            {% if soldier.status %}
+                                <span  style="font-size: 16px;flex: 1;font-weight: bold;" class="label
+                                    {% if soldier.status == 'پایان خدمت' %}label-success
+                                    {% elif soldier.status == 'قبولی در دانشگاه' %}label-info
+                                    {% elif soldier.status == 'انتقالی' %}label-warning
+                                    {% elif soldier.status == 'استخدام در نیروهای مسلح' %}label-primary
+                                    {% else %}label-default{% endif %}">
+                                    {{ soldier.get_status_display }}
+                                </span>
+                            {% else %}
                             {% endif %}
+                        </div>
                     </td>
+                    
                     <td>
-                        {% if soldier.current_parent_unit %}
-                            <span data-toggle="tooltip" title="{{ soldier.current_parent_unit }}">
-                                {{ soldier.current_parent_unit }}
-                            </span>
-                        {% else %}
-                            <span class="text-muted">-</span>
-                        {% endif %}
-
-                        {% if soldier.current_sub_unit %}
-                        <span data-toggle="tooltip" title="{{ soldier.current_sub_unit }}"> 
-                        ( {{ soldier.current_sub_unit }} )
-                            </span>
-                        {% else %}
-                            <span class="text-muted">-</span>
-                        {% endif %}
+                            <div style="display: flex;align-items: center;justify-content: space-between;">
+                                {% if soldier.current_parent_unit %}
+                                    <span data-toggle="tooltip" title="{{ soldier.current_parent_unit }}">
+                                        {{ soldier.current_parent_unit }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                                {% if soldier.current_sub_unit %}
+                                    <span  class="badge bade-default" data-toggle="tooltip" title="{{ soldier.current_sub_unit }}"> 
+                                        {{ soldier.current_sub_unit }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </div>
                     </td>
   
                     <td>{{ soldier.phone_mobile }}</td>
                     <td>
-                        {% if soldier.service_end_date %}
-                            {{ soldier.service_end_date|to_jalali }}
-                        {% else %}
-                            <span class="text-muted">نامشخص</span>
-                        {% endif %}
+                        <div style="display: flex;justify-content: space-between;align-items: center;">
+                            <span style="font-weight: normal; font-size: 12px;">تاریخ اعزام :</span>
+                            {% if soldier.dispatch_date %}{{ soldier.dispatch_date|to_jalali }}{% else %}<span class="badge badge-default text-muted">نامشخص</span>{% endif %}
+                        </div>
+                        <div style="display: flex;justify-content: space-between;align-items: center;">
+                            <span style="font-weight: normal;font-size: 12px;">ورود به یگان :</span>
+                            {% if soldier.service_entry_date %}{{ soldier.service_entry_date|to_jalali }}{% else %}<span class="badge badge-default text-muted">نامشخص</span>{% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex;justify-content: space-between;align-items: center;">
+                            <span style="font-weight: normal;font-size: 12px;">پایان خدمت :</span>
+                            {% if soldier.service_end_date %}{{ soldier.service_end_date|to_jalali }}{% else %}<span class="badge badge-default text-muted">نامشخص</span>{% endif %}
+                        </div>
+                        <div style="display: flex;justify-content: space-between;align-items: center;">
+                            <span style="font-weight: normal;font-size: 12px;">تا پایان :</span>
+                            <span class="remaining {{ soldier.remaining_str_type }}"> {{ soldier.remaining_str }}</span>   
+                        </div>
+                    </td>
+                    <td>
+                        <i class="fa fa-sort-down"></i>
                     </td>
                 </tr>
                 <tr class="soldier-manage">
                     <td colspan="8" class="hiddenRow">
-                        <div class="accordian-body collapse" id="row{{ soldier.id }}">
-                            <div class="">
-                                <div class="panel-body">
+                        <div  class="accordian-body collapse" id="row{{ soldier.id }}">
+                                <div style="padding:0 20px;" class="panel-body">
                                     <div class="row details-row">
                                         <div class="col-md-3 ">
                                             <div class="card-details">
@@ -768,7 +870,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                         </div>
                     </td>
                 </tr>
@@ -779,27 +880,48 @@
     </div>
     </div>
 
-    <script>
-        $(document).ready(function () {
-            $('[data-toggle="tooltip"]').tooltip();
-        });
-        function filterClick(){
-            const filterBox = document.getElementById('filters-form')
-            const dataFilter = filterBox.getAttribute('data-filter')
-            console.log({dataFilter})
-            if(dataFilter === "true")
-                filterBox.setAttribute('data-filter','false')
-            else 
-                filterBox.setAttribute('data-filter','true')
-        }
-function setFormAction(action) {
-    const form = document.getElementById('filters-form');
 
-    if (action === 'exportexcel') {
-        form.method = 'POST';  // دانلود اکسل با POST
-    } else {
-        form.method = 'GET';   // جستجو با GET
+{% endblock %}
+
+{% block footer %}
+<script src="{% static 'bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script>
+
+<script>
+    $(document).ready(function () {
+        $('.accordion-toggle').click(function() {
+            var targetId = $(this).data('target'); // مثلا "#row1"
+            $(targetId).collapse('toggle'); // استفاده از bootstrap collapse
+        });
+    });
+    function formatDateInput(input) {
+        let value = input.value.replace(/\D/g, ""); // حذف تمام حروف غیر عددی
+
+        if (value.length > 4) {
+            value = value.slice(0, 4) + "/" + value.slice(4);
+        }
+        if (value.length > 7) {
+            value = value.slice(0, 7) + "/" + value.slice(7, 9);
+        }
+
+        input.value = value;
     }
-}
+    function filterClick(){
+        const filterBox = document.getElementById('filters-form')
+        const dataFilter = filterBox.getAttribute('data-filter')
+        console.log({dataFilter})
+        if(dataFilter === "true")
+            filterBox.setAttribute('data-filter','false')
+        else 
+            filterBox.setAttribute('data-filter','true')
+    }
+    function setFormAction(action) {
+        const form = document.getElementById('filters-form');
+
+        if (action === 'exportexcel') {
+            form.method = 'POST';  // دانلود اکسل با POST
+        } else {
+            form.method = 'GET';   // جستجو با GET
+        }
+    }
 </script>
 {% endblock %}

@@ -63,15 +63,18 @@ def review_card_send(request, pk):
 
 
 def card_send_list_n(request):
-    cards = CardSend.objects.select_related('series', 'soldier').all().order_by('-created_at')
-    return render(request, 'soldire_end_card/card_send_list_n.html', {'cards': cards})
+    series = CardSeries.objects.filter()
+    cards = CardSend.objects.select_related('series', 'soldier').all().order_by('-cfreated_at')
+    return render(request, 'soldire_end_card/card_send_list_n.html', {'cards': cards,'series':series})
 
+
+def card_send_list(request):
+    series = CardSeries.objects.filter()
+    return render(request, 'soldire_end_card/card_send_list.html', {'series':series})
 
 def card_send_list_series(request, series_id):
     series = CardSeries.objects.filter(pk=series_id).first()
     cards = CardSend.objects.filter(series_id=series_id).all().order_by('-created_at')
-    
-    print(series)
     return render(request, 'soldire_end_card/card_send_list_n.html', {'cards': cards,'series':series})
 
 def change_series_status(request, series_id, status):

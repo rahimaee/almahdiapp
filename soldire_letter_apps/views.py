@@ -4,17 +4,17 @@ from django.views.generic import ListView
 from django.contrib import messages
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
-
 from soldires_apps.models import Soldier
 from units_apps.models import SubUnit
 from .models import ClearanceLetter, NormalLetter, NormalLetterMentalHealthAssessmentAndEvaluation, \
     NormalLetterJudicialInquiry, NormalLetterDomesticSettlement, IntroductionLetter, MembershipCertificate, \
     NormalLetterHealthIodine, NormalLetterCommitmentLetter
 from .forms import ClearanceLetterForm, NormalLetterJudicialInquiryForm, NormalLetterDomesticSettlementForm, \
-    IntroductionLetterForm, MembershipCertificateForm, HealthIodineForm, CommitmentLetterForm , EssentialFormCardLetter
+    IntroductionLetterForm, MembershipCertificateForm, HealthIodineForm, CommitmentLetterForm , EssentialFormCardLetter,EssentialFormCardLetterForm  
 from django.db.models import Q
 from django.utils import timezone
 from datetime import timedelta
+from .constants import *
 
 
 class ClearanceLetterCreateView(CreateView):
@@ -765,45 +765,131 @@ def main_letters(request):
     
 
 from .forms import EssentialFormCardLetterForm
+from django.db.models import Q
+from django.utils.dateparse import parse_date
+from django.db.models.functions import Cast
+from django.db.models.expressions import RawSQL
+from django.db.models import TextField
 
+def forms_essential_list(request):
+    search = request.GET.get("search", "")
+    page = int(request.GET.get("page", 1))
+    per_page = int(request.GET.get("per_page", 5))
 
-def form_essential_list(request):
-    forms = EssentialFormCardLetter.objects.all()
+    start_date = request.GET.get("start_date")
+    end_date = request.GET.get("end_date")
+
+    # همه رکوردها قبل از فیلتر
+    full_queryset = EssentialFormCardLetter.objects.all()
+    total_items = full_queryset.count()  # ✅ تعداد کل رکوردها
+
+    query = full_queryset
+
+    # فیلتر جستجو
+    if search:
+        query = query.filter(
+            Q(title__icontains=search) |
+            Q(number__icontains=search) |
+            Q(form_data__first_name__icontains=search) |
+            Q(form_data__last_name__icontains=search) |
+            Q(form_data__national_code__icontains=search)
+        )
+
+    # فیلتر تاریخ
+    if start_date:
+        query = query.filter(created_at__date__gte=parse_date(start_date))
+
+    if end_date:
+        query = query.filter(created_at__date__lte=parse_date(end_date))
+
+    # ✅ تعداد نتایج بعد از جستجو
+    filtered_items_count = query.count()
+
+    # صفحه‌بندی + convert json
+    forms = query.loads_data().paginate(page=page, per_page=per_page)
+
+    # ✅ تعداد آیتم‌هایی که همین صفحه نمایش داده
+    current_page_items = len(forms)
+
     letter_types = EssentialFormCardLetter.LETTER_TYPES
-    ctx = {
-        'letter_types':letter_types,
-        'forms':forms
-    }
-    return render(request,'essential_forms_nezsa/form_essential_list.html',ctx)
+
+    return render(request, 'essential_forms_nezsa/forms_essential_list.html', {
+        'letter_types': letter_types,
+        'forms': forms,
+        'search': search,
+        'start_date': start_date,
+        'end_date': end_date,
+
+        # ✅ آمار نمایش به قالب
+        'total_items': total_items,
+        'filtered_items_count': filtered_items_count,
+        'current_page_items': current_page_items,
+    })
+
 
 def form_essential_delete(request,form_id=None): 
-    
-    return redirect('form_essential_list')
+    instance = get_object_or_404(EssentialFormCardLetter, pk=form_id)
+    print(instance)
+    if instance:
+        instance.delete()
+    return redirect('forms_essential_list')
 
 def form_essential_view(request, form_id=None):
-    # find form_essential in database
-    essential_form = None
-    page = '404'
-    if essential_form:  # این شرط هیچ وقت True نمی‌شود چون همیشه None است
-        page = f'form_essential_{essential_form.letter_type}'
+    instance = get_object_or_404(EssentialFormCardLetter, pk=form_id)
 
-    template = f'essential_forms_nezsa/{page}.html'
+    # انتخاب template بر اساس letter_type
+    template = 'essential_forms_nezsa/404.html'
+    ltype = None
+    if instance:
+        ltype = instance.letter_type
+        page = ltype
+        template = f'essential_forms_nezsa/prints/print_{page}.html'
 
-    if request.method == "PUT":
-        pass
+    # تبدیل JSON به dataclass
+    form_class = FORM_CLASSES.get(ltype)
+    form_data_obj = None
+    if form_class and instance.form_data:
+        try:
+            data_dict = json.loads(instance.form_data)
+            form_data_obj = form_class(**data_dict)
+        except Exception as e:
+            print("Error deserializing form_data:", e)
+            form_data_obj = None
 
-    if request.method == "GET":
-        pass
+    context = { 
+        'letter': instance,
+        'form_data': form_data_obj, 
+        'FIELD_LABELS':FIELD_LABELS,
+    }
 
-    return render(request, template)
+    return render(request, template, context)
+from django.shortcuts import get_object_or_404
 
-def form_essential_create(request, form_type):
+def form_essential_form(request, form_type, form_id=None):
+    if form_id:
+        instance = get_object_or_404(EssentialFormCardLetter, pk=form_id)
+    else:
+        instance = None
+
     if request.method == "POST":
-        form = EssentialFormCardLetterForm(request.POST, form_type=form_type)
+        form = EssentialFormCardLetterForm(
+            request.POST, request.FILES, 
+            instance=instance, 
+            form_type=form_type
+        )
         if form.is_valid():
             form.save()
-            return redirect('form_essential_list')
+            return redirect('forms_essential_list')
     else:
-        form = EssentialFormCardLetterForm(form_type=form_type)
+        form = EssentialFormCardLetterForm(instance=instance, form_type=form_type)
+
     
-    return render(request, "essential_forms_nezsa/form_essential_form.html", {"form": form, "form_type": form_type})
+    form_title = FORM_TYPE_TITLES.get(form_type, "فرم")
+    
+    context = {
+        "form": form,
+        "form_type": form_type,
+        "form_title": form_title,
+        'FORM_TYPE_TITLES': FORM_TYPE_TITLES
+    }
+    return render(request, "essential_forms_nezsa/form_essential_form.html", context)

@@ -1,8 +1,0 @@
-Django>=5.1,<6.0
-django-jalali
-django-render-partial
-# Add any other apps you're using, like:
-pillow
-gunicorn
-
-

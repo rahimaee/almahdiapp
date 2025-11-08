@@ -2,8 +2,9 @@
 {% load static %}
 
 {% block main %}
-    <div class="container">
-        <h3>فرم تعهد نامه</h3>
+  {% include "../letter_types_nav_layout.html" %}
+  <h3>فرم تعهد نامه</h3>
+    <div class="container card">
         <form method="post">
             {% csrf_token %}
             {{ form.soldier.label }}
@@ -13,4 +14,12 @@
             <button type="submit" class="btn btn-primary">ثبت</button>
         </form>
     </div>
+{% endblock %}
+
+{% block footer %}
+    <script>
+        $('select').select2({
+            allowClear:true,
+        })
+    </script>
 {% endblock %}

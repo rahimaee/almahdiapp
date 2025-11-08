@@ -1,0 +1,26 @@
+{% comment %}
+Partial برای نمایش وضعیت کارت/تسویه به فارسی
+ورودی: status (رشته)
+{% endcomment %}
+
+{% if status %}
+    {% if status == 'preparing' %}
+        در حال آماده‌سازی
+    {% elif status == 'sent' %}
+        ارسال شده
+    {% elif status == 'checking' %}
+        در حال بررسی
+    {% elif status == 'completed' %}
+        تکمیل شده
+    {% elif status == 'review' %}
+        در حال بازبینی
+    {% elif status == 'pending' %}
+        در انتظار
+    {% elif status == 'cleared' %}
+        تسویه کامل
+    {% else %}
+        نامشخص
+    {% endif %}
+{% else %}
+    بدون وضعیت
+{% endif %}

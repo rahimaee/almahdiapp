@@ -1,0 +1,86 @@
+<style>
+        /* کارت فرم */
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            padding: 10px 25px;
+            margin-top: 2rem;
+            max-width:800px;
+            margin:0 auto;
+        }
+
+.tab-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+
+.tab-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background-color: #f3f4f6; /* رنگ پیش‌فرض */
+    color: #374151;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.tab-item i {
+    font-size: 16px;
+}
+
+/* هاور */
+.tab-item:hover {
+    background-color: #e5e7eb;
+}
+
+/* تب فعال */
+.tab-item.active {
+    background-color: #3b82f6;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+</style>
+<div class="tab-navigation flex flex-wrap gap-2 mb-4">
+    <a href="{% url 'main_letters' %}" 
+       class="tab-item {% if request.resolver_match.url_name == 'main_letters' %}active{% endif %}">
+       <i class="fa fa-home"></i> صفحه اصلی
+    </a>
+    <a href="{% url 'normal_letter_list' %}" 
+       class="tab-item {% if request.resolver_match.url_name == 'normal_letter_list' %}active{% endif %}">
+       <i class="fa fa-file-text-o"></i> نامه‌های عادی
+    </a>
+    <a href="{% url 'ClearanceLetterListView' %}" 
+       class="tab-item {% if request.resolver_match.url_name == 'ClearanceLetterListView' %}active{% endif %}">
+       <i class="fa fa-list"></i> تسویه‌حساب اصلی
+    </a>
+    <a href="{% url 'judicial_inquiry_list' %}" 
+       class="tab-item {% if request.resolver_match.url_name == 'judicial_inquiry_list' %}active{% endif %}">
+       <i class="fa fa-balance-scale"></i> استعلام قضایی
+    </a>
+    <a href="{% url 'domestic_settlement_list' %}" 
+       class="tab-item {% if request.resolver_match.url_name == 'domestic_settlement_list' %}active{% endif %}">
+       <i class="fa fa-home"></i> تسویه حساب داخلی
+    </a>
+    <a href="{% url 'introduction_letter_list' %}" 
+       class="tab-item {% if request.resolver_match.url_name == 'introduction_letter_list' %}active{% endif %}">
+       <i class="fa fa-id-card"></i> نامه معرفی
+    </a>
+    <a href="{% url 'membership_certificate_list' %}" 
+       class="tab-item {% if request.resolver_match.url_name == 'membership_certificate_list' %}active{% endif %}">
+       <i class="fa fa-certificate"></i> گواهی
+    </a>
+    <a href="{% url 'health_iodine_letter_list' %}" 
+       class="tab-item {% if request.resolver_match.url_name == 'health_iodine_letter_list' %}active{% endif %}">
+       <i class="fa fa-heartbeat"></i> تائیدیه سلامت
+    </a>
+    <a href="{% url 'commitment_letter_list' %}" 
+       class="tab-item {% if request.resolver_match.url_name == 'commitment_letter_list' %}active{% endif %}">
+       <i class="fa fa-pencil-square-o"></i> تعهد نامه
+    </a>
+</div>

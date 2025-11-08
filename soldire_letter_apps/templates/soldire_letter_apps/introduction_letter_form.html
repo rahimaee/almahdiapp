@@ -2,6 +2,8 @@
 {% load static %}
 
 {% block main %}
+  {% include "../letter_types_nav_layout.html" %}
+
     <div class="container">
         <h3>فرم نامه</h3>
 
@@ -43,4 +45,12 @@
             });
         </script>
     </div>
+{% endblock %}
+
+{% block footer %}
+    <script>
+        $('select').select2({
+            allowClear:true,
+        })
+    </script>
 {% endblock %}

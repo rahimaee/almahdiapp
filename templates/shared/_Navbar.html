@@ -41,11 +41,13 @@
                       </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li><a href="{% url 'soldier_list' %}">لیست سربازان</a></li>
-                    <li><a href="{% url 'soldier_create' %}">سرباز جدید</a></li>
+                    <li><a href="{% url 'soldier_list' %}">مدیریت سربازان</a></li>
+                    <li><a href="{% url 'soldier_list' %}">اطلاعات جامع سرباز</a></li>
+                    <li><a href="{% url 'expired_soldiers' %}">سربازان منقضی خدمت</a></li>
+                    <li><a href="{% url 'soldier_create' %}">پذیرش سرباز</a></li>
                     <li><a href="{% url 'organizational_codes_list' %}">کد سازمانی</a></li>
-                    <li><a href="{% url 'bulk_photo_upload' %}">آپلود گروهی عکس بر اساس کد ملی</a></li>
-                    <li><a href="{% url 'due_mental_health_letters' %}">تست مجدد روان پس از 6 ماه</a></li>
+                    <li><a href="{% url 'bulk_photo_upload' %}">آپلود گروهی عکس</a></li>
+                    <li><a href="{% url 'due_mental_health_letters' %}">تست مجدد سلامت روان</a></li>
                     <li><a href="{% url 'escaped_soldiers' %}">فراری ها</a></li>
                     <li><a href="{% url 'soldiers_by_entry_date' %}">ورودی های جدید</a></li>
                     <li><a href="{% url 'incomplete_soldiers_list' %}">نواقص پرونده</a></li>
@@ -85,13 +87,13 @@
                       </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li><a href="{% url 'review_settlements' %}">لیست سربازانی که نیاز به بررسی حقوق دارند</a></li>
+                    <li><a href="{% url 'review_settlements' %}">بررسی حقوق سربازان</a></li>
                     <li><a href="{% url 'soldiers_settlement_list' %}">وضعیت تسویه‌حساب</a></li>
                     <li><a href="{% url 'soldiers_ready_for_card' %}">سربازان آماده برای ارسال کارت</a></li>
                     <li><a href="{% url 'card_series_list' %}">لیست سری‌های کارت</a></li>
                     <li><a href="{% url 'card_series_create' %}">ایجاد سری کارت</a></li>
                     <li><a href="{% url 'card_send_list_n' %}">بررسی ارسال کارت‌ها</a></li>
-                    <li><a href="{% url 'card_send_list' %}">لیست</a></li>
+                    {% comment %} <li><a href="{% url 'card_send_list' %}">لیست</a></li> {% endcomment %}
                 </ul>
             </li>
             <li class="treeview">

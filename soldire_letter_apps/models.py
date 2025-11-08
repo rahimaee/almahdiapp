@@ -16,6 +16,17 @@ class ClearanceLetter(models.Model):
         ('چاپ و درحال بررسی', 'چاپ و درحال بررسی'),
         ('تأیید نهایی', 'تأیید نهایی'),
     ]
+    ACTION_CHOICES = [
+        ("approve_page_results", "📋 انتخاب گروهی نتایج این صفحه"),
+        ("approve_end_service", "🎖️ انتخاب گروهی پایان خدمت"),
+        ("approve_transfer", "🔄 انتخاب گروهی انتقالی‌ها"),
+        ("approve_uni", "🎓 انتخاب گروهی قبولی در دانشگاه"),
+        ("approve_permanent_exemption", "🛂 انتخاب گروهی معافیت دائم"),
+        ("approve_temporary_exemption", "⛔ انتخاب گروهی معافیت موقت"),
+        ("approve_results", "📋 انتخاب گروهی همه نتایج"),
+        ("approve_settlement", "🧾 انتخاب گروهی همه تسویه حساب ها"),
+    ]
+
     soldier = models.ForeignKey('soldires_apps.Soldier', on_delete=models.CASCADE, verbose_name="سرباز")
     reason = models.CharField(max_length=30, choices=CLEARANCE_REASON_CHOICES, verbose_name="علت تسویه حساب")
     letter_number = models.CharField(max_length=100, unique=True, verbose_name="شماره نامه", editable=False)
@@ -286,8 +297,33 @@ class NormalLetterCommitmentLetter(models.Model):
 
 from django.db import models
 from django.utils import timezone
+from django.core.paginator import Paginator
+import json
+class EssentialFormQuerySet(models.QuerySet):
+    def loads_data(self):
+        for obj in self:
+            if isinstance(obj.form_data, str):
+                try:
+                    obj.form_data = json.loads(obj.form_data)
+                except json.JSONDecodeError:
+                    obj.form_data = {}
+        return self
+
+    def paginate(self, page=1, per_page=50):
+        paginator = Paginator(self, per_page)
+        return paginator.get_page(page)
+
+
+class EssentialFormManager(models.Manager):
+    def get_queryset(self):
+        return EssentialFormQuerySet(self.model, using=self._db)
+
+    def paginate(self, query, page=1, per_page=50):
+        qs = query.loads_data()
+        return qs.paginate(page, per_page)
 
 class EssentialFormCardLetter(models.Model):
+    objects = EssentialFormManager()
     # انتخاب نوع فرم / نامه
     LETTER_TYPES = [
         ('clearance_letter', 'فرم شماره 3'),
@@ -326,3 +362,24 @@ class EssentialFormCardLetter(models.Model):
 
     def __str__(self):
         return f"{self.get_letter_type_display()} - {self.title or 'بدون عنوان'}"
+
+    def loads_form_data(self):
+        """
+        تبدیل form_data به dict اگر string ذخیره شده باشد.
+        خروجی: dict برمی‌گرداند.
+        """
+        if isinstance(self.form_data, str):
+            try:
+                self.form_data = json.loads(self.form_data)
+            except json.JSONDecodeError:
+                self.form_data = {}
+        return self.form_data
+
+    @classmethod
+    def paginate(cls, query, page=1, counts=50):
+        """
+        دریافت queryset و برگرداندن صفحه‌ی مشخص
+        خروجی: page_obj
+        """
+        paginator = Paginator(query, counts)
+        return paginator.get_page(page)

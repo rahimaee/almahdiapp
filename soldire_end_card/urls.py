@@ -9,7 +9,7 @@ urlpatterns = [
     path('card-send/list/', views.card_send_list_n, name='card_send_list_n'),
     path('card-send/<int:series_id>/list/', views.card_send_list_series, name='card_send_list_series'),
     path('card-send/<int:pk>/review/', views.review_card_send, name='review_card_send'),
-    path('cards/', views.card_send_list_n, name='card_send_list'),
+    path('cards/', views.card_send_list, name='card_send_list'),
     path('cards/create/', views.card_send_create, name='card_send_create'),
     path('cards/<int:pk>/edit/', views.card_send_update, name='card_send_update'),
     path('cards/create/soldier/<int:soldier_id>/', views.card_send_create_for_soldier,

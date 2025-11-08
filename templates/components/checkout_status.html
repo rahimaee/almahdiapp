@@ -1,0 +1,9 @@
+{% if status == 'cleared' %}
+    تسویه کامل
+{% elif status == 'pending' %}
+    در انتظار بررسی
+{% elif status == 'review' %}
+    در حال بررسی
+{% else %}
+    نامشخص
+{% endif %}

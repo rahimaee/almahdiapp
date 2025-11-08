@@ -22,6 +22,7 @@ urlpatterns = [
     path('group-submit/download-template/', views.download_soldiers_template, name='download_soldiers_template'),
     path('group-submit/', views.soldiers_group_submit, name='soldiers_group_submit'),
     path('api/soldiers/search', views.soldiers_search, name='soldiers_search'),
-    path('soldiers/<int:soldier_id>/reports/single/', views.single_reports_soldier, name='single_reports_soldier')
+    path('soldiers/<int:soldier_id>/reports/single/', views.single_reports_soldier, name='single_reports_soldier'),
+    path('soldiers/date_to_end/', views.soldiers_date_to_end, name='soldiers_date_to_end')
 
 ]

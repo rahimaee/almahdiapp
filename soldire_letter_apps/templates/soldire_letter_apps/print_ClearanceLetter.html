@@ -7,20 +7,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>نامه تسویه‌حساب - {{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</title>
+<link href="{% static 'dist/css/font.css' %}" rel="stylesheet" />
 <style>
-    @font-face {
-        font-family: YekanBakh;
-        src: url("{% static '/fonts/YekanBakh-Regular.woff2' %}") format("woff2"),
-            url("{% static '/fonts/YekanBakh-Regular.woff' %}") format("woff"),
-            url("{% static '/fonts/YekanBakh-Regular.ttf' %}") format("truetype");
-        font-weight: normal;
-        font-style: normal;
-    }
+
 
 
     html *,
     body * {
-        font-family: YekanBakh, sans-serif;
+        font-family: Vazir, sans-serif;
     }
 
     body {
@@ -42,7 +36,7 @@
     .A4 {
         width: 100%;
         height: 100%;
-        padding: 20px;
+        padding: 14px;
         box-sizing: border-box;
         background-color: #fff;
         border: 2px solid black;
@@ -75,7 +69,7 @@
             /* اطمینان از RTL و فونت */
             html, body {
                 direction: rtl;
-                font-family: YekanBakh, sans-serif;
+                font-family: Vazir, sans-serif;
             }
 
             /* جلوگیری از شکستن layout در Firefox */
@@ -96,15 +90,15 @@
     }
     .header-left, .header-right { flex: 1; }
     .header-center { text-align: center; }
-    .main-title { text-align: center; margin: 2px 0 5px; font-size: 12px; }
+    .main-title { text-align: center; margin: 2px 0 5px; font-size: 16px; }
     .form-title-container { display: flex; align-items: center; justify-content: center; margin-bottom: 5px; }
     .form-title-container h2 { color: red; margin: 0 10px; }
-    .status { flex:1; text-align: left; font-weight: bold; }
+    .status { flex:1; text-align: right; font-weight: bold; }
     .details { font-size: 12px; margin: 5px 0; }
-    .settlement-info { display: flex; justify-content: space-between; margin-bottom: 0; }
+    .settlement-info { display: flex; justify-content: space-between;margin-top: 20px; margin-bottom: 0; }
     .settlement-info div h5 { margin: 0 0 5px 0; }
     #signature { text-align: center; }
-    #signature p { font-size: 10px; margin: 0; }
+    #signature p { font-size: 12px; margin: 0; }
     table { width: 100%; border-collapse: collapse; text-align: center; font-size: 12px; font-weight:bold; margin-bottom: 10px; }
     th, td { border: 1px solid #000; padding:  3px; }
     th { background-color: #f0f0f0; }
@@ -143,19 +137,32 @@
     <div class="header-center">
         <img src="{% static 'img/allah-placeholder.png' %}" alt="الله" width="60">
     </div>
-    <div class="header-right" style="text-align:left;">
-        <h5 style="margin:0;">شماره نامه : {{ letter.letter_number }}</h5>
-        <h5 style="margin:10px 0 0;">تاریخ نامه : {{ letter.issue_date_shamsi }}</h5>
+    <div class="header-right" style="text-align:left;display: flex;justify-content: end;align-items: center;">
+        <div style="margin: 0 10px; font-size: 14px;">
+            <div style="margin:0;"><strong>شماره نامه :</strong> {{ letter.letter_number }}</div>
+            <div style="margin:5px 0 0;"><strong>تاریخ نامه :</strong> {{ letter.issue_date_shamsi }}</div>
+        </div>
+        
     </div>
+        
 </header>
 
-<main>
+<main style="position: relative;">
+<div style="position: absolute;left: 0; top: 0; width: 100px;height: 120px;font-style: italic; text-align: center;">
+    {% if letter.soldier and letter.soldier.avatar %}
+        <img alt="محل اطلاق عکس" src={{letter.soldier.avatar.url}} style="height: 100%; width: 100%;"   />
+    {% else %}
+            <div style="word-wrap: break-word; height: 100%; width: 100%;display: flex;align-items: center;justify-content: center; border: 1px solid black; font-size: 20px; padding: 5px; box-sizing: border-box;">
+                محل اطلاق عکس
+            </div>
+    {% endif %}
+</div>
 <h6 class="main-title">« افزایش توان دفاع همه جانبه در سال جهش تولید با مشارکت مردم »</h6>
 
 <div class="form-title-container">
-    <span style="flex:1;"></span>
-    <h2 class="form-title">« برگه تسویه کل »</h2>
     <span class="status">وضعیت : {{ letter.soldier.health_status }}</span>
+    <h2 class="form-title">« برگه تسویه کل »</h2>
+    <span style="flex:1;"></span>
 </div>
 
 <p class="details">
@@ -171,7 +178,11 @@
         <h5>کد پاسداری: {{ letter.soldier.id_card_code }}</h5>
     </div>
     <div id="signature">
-        <h5>ستوان دوم پاسدار       میثم گل بابازاده</h5>
+        <h5>
+            <span>ستوان دوم پاسدار</span>
+            <span style="margin: 0 10px;"></span>
+            <span style="display: inline-block;">میثم گل بابازاده</span>
+        </h5>
         <p>کارشناس منابع انسانی سرباز آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه</p>
     </div>
 </div>
@@ -489,7 +500,7 @@
         </main>
         <footer class="A4-footer">
             <div style="flex:1; text-align: center;">کد سازمانی: {{ letter.soldier.organizational_code }}</div>
-            <div style="flex:1; text-align: center;">امضا</div>
+            <div style="flex:1; text-align: center;">امضای سرگروه ناصرین</div>
         </footer>
     </section>
 </div>

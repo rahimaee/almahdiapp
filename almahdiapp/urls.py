@@ -24,6 +24,7 @@ urlpatterns = [
     path('', include('home_apps.urls')),
     path('admin/', admin.site.urls),
     path('soldiers/', include('soldires_apps.urls')),
+    path('soldiers/expireds/', include('expired_soldiers.urls')),
     path('documents/', include('soldier_documents_apps.urls')),
     path('services/', include('soldier_service_apps.urls')),
     path('vacation/', include('soldier_vacation_apps.urls')),
@@ -37,6 +38,7 @@ urlpatterns = [
     path('letter/', include('soldire_letter_apps.urls')),
     path('escaped/', include('soldire_runaway_apps.urls')),
     path('analystics/', include('analystics.urls', namespace='analystics')),
+    
     re_path(r'^header_partial_view',
             header_partial_view,
             name='header_partial_view'),

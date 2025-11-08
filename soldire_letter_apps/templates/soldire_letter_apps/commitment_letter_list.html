@@ -3,10 +3,9 @@
 {% load jalali_filters %}
 
 {% block main %}
+{% include "../letter_types_nav_layout.html" %}
+<h2 class="page-title">📄 لیست تعهدنامه‌ها</h2>
 <div class="commitment-container">
-
-    <h2 class="page-title">📄 لیست تعهدنامه‌ها</h2>
-
     <!-- فرم جستجو و ایجاد نامه -->
     <div class="controls">
         <form method="get" class="search-form">
@@ -93,7 +92,7 @@
         max-width: 1000px;
         margin: auto;
         padding: 20px;
-        font-family: YekanBakh, sans-serif;
+        font-family: Vazir, sans-serif;
         direction: rtl;
         background: #fdfdfd;
         border-radius: 10px;

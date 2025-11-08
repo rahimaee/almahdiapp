@@ -12,27 +12,33 @@
     padding: 5mm !important;
     box-sizing: border-box !important;
     background: #fff !important;
-    font-family: YekanBakh !important;
     font-size: 13px !important;
     color: black !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+
 }
 .page > * {
-    font-family: YekanBakh !important;
+   font-family: YekanBakh ,sans-serif !important;
 
 }
 @media print {
+   .page {
+      color: black !important;
+      font-family: Vazir,sans-serif !important;
+      page-break-inside: avoid;
+      page-break-after: avoid;
+      page-break-before: avoid;
+   }
   .info-table td:empty {
     background-color:#fff !important;
-    
+  }
    .info-table td {
       font-size:13px !important;
    }
 }  
-}
 .info-table td:empty {
-    background-color: #ff0000ff;
+    background-color: #ff0000ff !important;
 }
 .page-title{
    text-align:center !important;
@@ -69,7 +75,8 @@
     word-wrap: break-word !important;
     padding:3px 5px ;
     font-size:13px !important;
-    font-family: YekanBakh !important;
+    font-family: Vazir, sans-serif !important;
+    color: black !important;
 }
 
 .info-table tr td:nth-child(odd) {
@@ -98,7 +105,7 @@
    flex: 1 ;
 }
 .main-container > div {
-   padding: 0 50px ;
+   padding: 0 10px ;
 }
 </style>
 <style>

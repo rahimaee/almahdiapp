@@ -57,7 +57,7 @@
         .letters-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 4px;
             justify-content: flex-start;
             margin-top: 20px;
         }
@@ -65,12 +65,12 @@
         .letter-box {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 2px;
             background: #ffffff;
             border: 1.5px solid #dee2e6;
             border-radius: 12px;
             padding: 8px 11px;
-            min-width: 220px;
+            min-width: 200px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
             cursor: pointer;
             transition: background-color 0.3s, box-shadow 0.3s;
@@ -111,272 +111,183 @@
             font-style: italic;
         }
 
-.shadow-card {
-    background: #1f2937; /* خاکستری تیره */
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    color: #f9fafb;
-}
+        .shadow-card {
+            background: #1f2937; /* خاکستری تیره */
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            color: #f9fafb;
+        }
 
-.card-title {
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-    color: white;
-    padding: 0 0 20px;
-    margin: 0;
-}
+        .card-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            padding: 0 0 20px;
+            margin: 0;
+        }
 
-.soldier-status {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 15px;
-}
+        .soldier-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+        }
 
-.soldier-item {
-    border-radius: 10px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.soldier-item  a{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 15px;
-    border-radius: 10px;
-    font-weight: 600;
-    color: #fff;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.soldier-item a {
-    color: #fff;
+        /* کارت */
+        .soldier-item {
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            font-weight: 600;
+            transition: 0.2s;
+        }
 
-}
-.soldier-item a:first-child {
-    font-size: 1.4rem;
-}
+        /* متن و عدد */
+        .item-content {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
 
-.soldier-item a:last-child {
-    font-size: 1.3rem;
-    font-weight: bold;
-}
+        .label {
+            padding: 0;
+            margin: 0;
+            text-align: right;
+            font-size: 22px;
+        }
 
-/* رنگ بندی اختصاصی برای هر وضعیت */
-.soldier-total { background-color: #4f46e5; }       /* بنفش */
-.soldier-active { background-color: #10b981; }      /* سبز */
-.soldier-forari { background-color: #ef4444; }      /* قرمز */
-.soldier-adari { background-color: #f59e0b; }       /* نارنجی */
-.soldier-shifti { background-color: #3b82f6; }      /* آبی */
-.soldier-posti { background-color: #6366f1; }       /* بنفش ملایم */
-.soldier-transferred { background-color: #8b5cf6; } /* بنفش روشن */
-.soldier-married { background-color: #22c55e; }     /* سبز روشن */
-.soldier-single { background-color: #14b8a6; }      /* فیروزه‌ای */
-.soldier-with-card { background-color: #facc15; }    /* زرد */
+        .value {
+            font-size: 26px;
+            font-weight: bold;
+            margin-top: 6px;
+        }
 
-/* وضعیت سلامت */
-.soldier-healthy { background-color: #16a34a; }     /* سبز تیره */
-.soldier-exempt { background-color: #f87171; }      /* قرمز روشن */
-.soldier-group-b { background-color: #60a5fa; }     /* آبی روشن */
-.soldier-exempt-b { background-color: #fbbf24; }    /* زرد نارنجی */
+        /* دکمه اکسل */
+        .btn-download {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #fff !important;
+            white-space: nowrap;
+            height: fit-content;
+            transition: 0.2s;
+        }
 
-/* تحصیلات */
-.soldier-education-zirdiplom { background-color: #9ca3af; }      /* خاکستری روشن */
-.soldier-education-diplom { background-color: #3b82f6; }         /* آبی */
-.soldier-education-foghdiplom { background-color: #6366f1; }     /* بنفش ملایم */
-.soldier-education-lisans { background-color: #4f46e5; }          /* بنفش */
-.soldier-education-foghlisans { background-color: #8b5cf6; }      /* بنفش روشن */
-.soldier-education-doctor { background-color: #ef4444; }          /* قرمز */
+        .btn-download:hover {
+            background: rgba(255,255,255,0.35);
+        }
 
-/* بدهی حقوقی */
-.soldier-financial-debt { background-color: #f59e0b; }           /* نارنجی */
+        /* Hover کارت */
+        .soldier-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
 
-/* انیمیشن hover */
-.soldier-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-}
+    /* رنگ کارت‌ها */
+    .soldier-total { background-color: #4f46e5; }
+    .soldier-active { background-color: #10b981; }
+    .soldier-forari { background-color: #ef4444; }
+    .soldier-transferred { background-color: #8b5cf6; }
+    .soldier-financial-debt { background-color: #f59e0b; }
+    .soldier-single { 
+        background-color: #0e8f82; 
+    }
 
-    </style>
+    /* آلارم */
+    .alarm-blink {
+        animation: blink 1.2s infinite, shake 0.8s infinite;
+        border: 2px solid #0e8f8255;
+        box-shadow: 0 0 8px #0e8f8255;
+    }
+
+    @keyframes blink {
+        0%   { box-shadow: 0 0 5px #0e8f8255; }
+        50%  { box-shadow: 0 0 18px #0e8f8255; }
+        100% { box-shadow: 0 0 5px #0e8f8255; }
+    }
+    @keyframes shake {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(2px); }
+    }
+
+</style>
 {% endblock %}
 
 {% block main %}
 
     <div class="container">
-        <h1 class="text-center my-5">داشبورد</h1>
-        <div class="row pt-6">
+        <div class="row ">
             <div class="col-md-12">
     <div class="shadow-card">
-        <h5 class="card-title mb-3">وضعیت سربازان</h5>
         <div class="soldier-status">
 
-    <!-- کل سربازان -->
-    <div class="soldier-item soldier-total">
-        <a href="{% url 'export_soldiers' %}?category=all" target="_blank">
-            <span>کل سربازان</span>
-            <span>{{ stats.all_soldiers }}</span>
-        </a>
-    </div>
+            <!-- 45 روز مانده -->
+            <div class="soldier-item soldier-single alarm-blink">
+                <div class="item-content">
+                    <span class="label">45 روز تا پایان خدمت</span>
+                    <span class="value">{{ stats.soldiers_45_to_end }} نفر</span>
+                </div>
+                <a class="btn-download" href="{% url 'soldier_list' %}?remainingFilter=remaining45" target="_blank">مشاهده</a>
+            </div>
 
-    <!-- حاضر -->
-    <div class="soldier-item soldier-active">
-        <a href="{% url 'export_soldiers' %}?category=active" target="_blank">
-            <span>حاضر</span>
-            <span>{{ stats.active_soldiers }}</span>
-        </a>
-    </div>
+            <div class="soldier-item soldier-total">
+                <div class="item-content">
+                    <span class="label">کل سربازان</span>
+                    <span class="value">{{ stats.all_soldiers }} نفر</span>
+                </div>
+                <a class="btn-download" href="{% url 'export_soldiers' %}?category=all" target="_blank">📥 اکسل</a>
+            </div>
 
-    <!-- فراری -->
-    <div class="soldier-item soldier-forari">
-        <a href="{% url 'export_soldiers' %}?category=fugitives" target="_blank">
-            <span>فراری</span>
-            <span>{{ stats.fugitives }}</span>
-        </a>
-    </div>
+            <div class="soldier-item soldier-active">
+                <div class="item-content">
+                    <span class="label">حاضر</span>
+                    <span class="value">{{ stats.active_soldiers }} نفر</span>
+                </div>
+                <a class="btn-download" href="{% url 'export_soldiers' %}?category=active" target="_blank">📥 اکسل</a>
+            </div>
 
-    <!-- اداری -->
-    <div class="soldier-item soldier-adari">
-        <a href="{% url 'export_soldiers' %}?category=administrative" target="_blank">
-            <span>اداری</span>
-            <span>{{ stats.administrative }}</span>
-        </a>
-    </div>
+            <div class="soldier-item soldier-forari">
+                <div class="item-content">
+                    <span class="label">فراری</span>
+                    <span class="value">{{ stats.fugitives }} نفر</span>
+                </div>
+                <a class="btn-download" href="{% url 'export_soldiers' %}?category=fugitives" target="_blank">📥 اکسل</a>
+            </div>
+                <!-- انتقالی -->
+                <div class="soldier-item soldier-transferred">
+                    <div class="item-content">
+                        <span class="label">انتقالی</span>
+                        <span class="value">{{ stats.transferred }} نفر</span>
+                    </div>
+                    <a class="btn-download" href="{% url 'export_soldiers' %}?category=transferred" target="_blank">
+                        📥 اکسل
+                    </a>
+                </div>
 
-    <!-- شیفتی -->
-    <div class="soldier-item soldier-shifti">
-        <a href="{% url 'export_soldiers' %}?category=shifted" target="_blank">
-            <span>شیفتی</span>
-            <span>{{ stats.shifted }}</span>
-        </a>
-    </div>
+                <!-- بدهی حقوقی -->
+                <div class="soldier-item soldier-financial-debt">
+                    <div class="item-content">
+                        <span class="label">بدهی حقوقی</span>
+                        <span class="value">{{ stats.financial_debt }} نفر</span>
+                    </div>
+                    <a class="btn-download" href="{% url 'export_soldiers' %}?category=financial_debt" target="_blank">
+                        📥 اکسل
+                    </a>
+                </div>
 
-    <!-- پستی -->
-    <div class="soldier-item soldier-posti">
-        <a href="{% url 'export_soldiers' %}?category=posted" target="_blank">
-            <span>پستی</span>
-            <span>{{ stats.posted }}</span>
-        </a>
-    </div>
-
-    <!-- انتقالی -->
-    <div class="soldier-item soldier-transferred">
-        <a href="{% url 'export_soldiers' %}?category=transferred" target="_blank">
-            <span>انتقالی</span>
-            <span>{{ stats.transferred }}</span>
-        </a>
-    </div>
-
-    <!-- متاهل -->
-    <div class="soldier-item soldier-married">
-        <a href="{% url 'export_soldiers' %}?category=married" target="_blank">
-            <span>متاهل</span>
-            <span>{{ stats.married }}</span>
-        </a>
-    </div>
-
-    <!-- مجرد -->
-    <div class="soldier-item soldier-single">
-        <a href="{% url 'export_soldiers' %}?category=single" target="_blank">
-            <span>مجرد</span>
-            <span>{{ stats.single }}</span>
-        </a>
-    </div>
-
-    <!-- دارای کارت -->
-    <div class="soldier-item soldier-with-card">
-        <a href="{% url 'export_soldiers' %}?category=with_card" target="_blank">
-            <span>دارای کارت</span>
-            <span>{{ stats.with_card }}</span>
-        </a>
-    </div>
-
-    <!-- وضعیت سلامت -->
-    <div class="soldier-item soldier-healthy">
-        <a href="{% url 'export_soldiers' %}?category=health_salam" target="_blank">
-            <span>سالم</span>
-            <span>{{ stats.health_status.salam }}</span>
-        </a>
-    </div>
-
-    <div class="soldier-item soldier-exempt">
-        <a href="{% url 'export_soldiers' %}?category=health_exempt" target="_blank">
-            <span>معاف از رزم</span>
-            <span>{{ stats.health_status.exempt }}</span>
-        </a>
-    </div>
-
-    <div class="soldier-item soldier-group-b">
-        <a href="{% url 'export_soldiers' %}?category=health_group_b" target="_blank">
-            <span>گروه ب</span>
-            <span>{{ stats.health_status.group_b }}</span>
-        </a>
-    </div>
-
-    <div class="soldier-item soldier-exempt-b">
-        <a href="{% url 'export_soldiers' %}?category=health_exempt_b" target="_blank">
-            <span>معاف + گروه ب</span>
-            <span>{{ stats.health_status.exempt_group_b }}</span>
-        </a>
-    </div>
-
-    <!-- تحصیلات -->
-    <div class="soldier-item soldier-education-zirdiplom">
-        <a href="{% url 'export_soldiers' %}?category=education_zirdiplom" target="_blank">
-            <span>زیر دیپلم</span>
-            <span>{{ stats.education.zir_diplom }}</span>
-        </a>
-    </div>
-
-    <div class="soldier-item soldier-education-diplom">
-        <a href="{% url 'export_soldiers' %}?category=education_diplom" target="_blank">
-            <span>دیپلم</span>
-            <span>{{ stats.education.diplom }}</span>
-        </a>
-    </div>
-
-    <div class="soldier-item soldier-education-foghdiplom">
-        <a href="{% url 'export_soldiers' %}?category=education_foghdiplom" target="_blank">
-            <span>فوق دیپلم</span>
-            <span>{{ stats.education.fogh_diplom }}</span>
-        </a>
-    </div>
-
-    <div class="soldier-item soldier-education-lisans">
-        <a href="{% url 'export_soldiers' %}?category=education_lisans" target="_blank">
-            <span>لیسانس</span>
-            <span>{{ stats.education.lisans }}</span>
-        </a>
-    </div>
-
-    <div class="soldier-item soldier-education-foghlisans">
-        <a href="{% url 'export_soldiers' %}?category=education_foghlisans" target="_blank">
-            <span>فوق لیسانس</span>
-            <span>{{ stats.education.fogh_lisans }}</span>
-        </a>
-    </div>
-
-    <div class="soldier-item soldier-education-doctor">
-        <a href="{% url 'export_soldiers' %}?category=education_doctor" target="_blank">
-            <span>دکترا</span>
-            <span>{{ stats.education.doctor }}</span>
-        </a>
-    </div>
-
-    <!-- بدهی حقوقی -->
-    <div class="soldier-item soldier-financial-debt">
-        <a href="{% url 'export_soldiers' %}?category=financial_debt" target="_blank">
-            <span>بدهی حقوقی</span>
-            <span>{{ stats.financial_debt }}</span>
-        </a>
-    </div>
-
-</div>
+        </div>
 
     </div>
 
             </div>
 
             <!-- ستون چپ -->
-            <div class="col-md-12">
+            <div  style="margin-top: 20px;" class="col-md-12">
                 <div class="quick-access-box">
                     <h5 class="mb-3">🧭 دسترسی سریع</h5>
                     <div class="letters-container">

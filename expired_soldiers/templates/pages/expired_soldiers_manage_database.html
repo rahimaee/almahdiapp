@@ -1,0 +1,294 @@
+{% extends "layouts/expired_soldiers_layout.html" %}
+{% load jalali_filters %}
+{% block page %}
+<style>
+/* 🌟 کارت‌ها با سایه نرم و گوشه‌های گرد */
+.card {
+    border-radius: 1rem;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 🧩 تیتر کارت‌ها */
+.card-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+/* 🎯 آیکون‌های کنار کارت */
+.icon-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    margin-right: 0.5rem;
+    font-size: 2rem;
+    transition: 0.3s;
+}
+
+/* رنگ‌های آیکون‌ها */
+.icon-primary { background: rgba(13, 110, 253, 0.15); color: #0d6efd; }
+.icon-info    { background: rgba(13, 202, 240, 0.15); color: #0dcaf0; }
+.icon-success { background: rgba(25, 135, 84, 0.15); color: #198754; }
+.icon-warning { background: rgba(255, 193, 7, 0.15); color: #ffc107; }
+
+/* 💾 عددهای داخل کارت */
+.card-number {
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+/* 📊 استایل Progress Bar */
+.progress {
+    height: 6px;
+    border-radius: 10px;
+    background: #e9ecef;
+    overflow: hidden;
+    margin-top: 0.5rem;
+}
+.progress-bar {
+    height: 100%;
+    border-radius: 10px;
+    background-color: #0d6efd;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+/* 📄 جدول رکوردها */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+.table th, .table td {
+    padding: 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+.table tbody tr:hover {
+    background-color: #f1f5ff;
+}
+
+/* 🔹 فلکس‌ها و چینش‌ها */
+.d-flex { display: flex; }
+.align-items-center { align-items: center; }
+.justify-content-between { justify-content: space-between; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 1rem; }
+.text-end { text-align: right; }
+.text-center { text-align: center; }
+
+/* 🔹 حاشیه‌ها و فضاها */
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 1rem; }
+.my-3 { margin-top: 1rem; margin-bottom: 1rem; }
+.p-3 { padding: 1rem; }
+.container { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+
+/* 🔖 نشان‌ها */
+.badge {
+    display: inline-block;
+    padding: 0.3rem 0.6rem;
+    border-radius: 0.5rem;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+.badge-success { background-color: #198754; color: #fff; }
+.badge-danger  { background-color: #dc3545; color: #fff; }
+.badge-light   { background-color: #f8f9fa; color: #6c757d; }
+body .db .table  * {
+    font-size: 10px !important;
+}
+</style>
+
+<div class=" my-5">
+    <!-- تیتر اصلی -->
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2 class="fw-bold text-primary mb-0">مدیریت پایگاه داده سربازان منقضی خدمت</h2>
+        {% if db_modified %}
+        <span class="badge badge-light">
+            ⏰ به‌روزرسانی: {{ db_modified|date:"Y-m-d H:i" }}
+        </span>
+        {% endif %}
+    </div>
+
+    <div class="d-flex flex-wrap gap-3">
+        <!-- مسیر دیتابیس -->
+        <div class="card" style="flex:1 1 250px;">
+            <div class="d-flex align-items-center justify-content-between  mb-2">
+                <h5 class="card-title mb-0">مسیر پایگاه داده</h5>
+                <span class="icon-circle icon-primary">📦</span>
+            </div>
+ 
+            <div class="d-flex align-items-center  justify-content-between   mb-2">
+                    <span class="text-muted small ">{{ db_path }}</span>
+                    {% if db_exists %}
+                        <span class="badge badge-success">موجود است</span>
+                    {% else %}
+                        <span class="badge badge-danger">یافت نشد</span>
+                    {% endif %} 
+            </div>
+            <div class="d-flex align-items-center  justify-content-between">
+                <button class="btn btn-sm btn-success">
+                    💾 خروجی sqlite3
+                </button>
+                <button class="btn btn-sm btn-danger">
+                    🗑️ پاک سازی کامل
+                </button>
+            </div>
+        </div>
+
+        <!-- حجم دیتابیس -->
+        <div class="card" style="flex:1 1 250px;">
+            <div class="d-flex align-items-center  justify-content-between  mb-2">
+                <h5 class="card-title mb-0">حجم فضای اشغالی</h5>
+                <span class="icon-circle icon-info">💾</span>
+            </div>
+            <div class="card-number">{{ size_mb }} MB</div>
+            <div class="progress">
+                <div class="progress-bar" style="width: {{ size_mb|floatformat:0 }}%"></div>
+            </div>
+       
+        </div>
+
+        <!-- تعداد رکوردها -->
+        <div class="card" style="flex:1 1 250px;">
+            <div class="d-flex align-items-center  justify-content-between  mb-2">
+                <h5 class="card-title mb-0">تعداد کل رکوردها</h5>
+                <span class="icon-circle icon-success">👥</span>
+            </div>
+            <div class="d-flex align-items-center  justify-content-between">
+                <div class="card-number">{{ total_count }}</div>
+                <p class="text-muted small mb-0">تعداد سربازان ثبت‌شده</p>
+            </div>
+            <div class="d-flex align-items-center  justify-content-between">
+                <button class="btn btn-sm btn-success">📄 اکسل رکوردها</button>
+                <button class="btn btn-sm btn-danger">🗑️ حذف همه موارد</button>
+            </div>
+        </div>
+
+        <!-- رکوردهای خالی -->
+        <div class="card" style="flex:1 1 250px;">
+            <div class="d-flex align-items-center justify-content-between  mb-2">
+                <h5 class="card-title mb-0">رکوردهای خالی</h5>
+                <span class="icon-circle icon-warning">⚠️</span>
+            </div>
+            <div class="d-flex align-items-center  justify-content-between">
+                <div class="card-number">{{ empty_records }}</div>
+                <p class="text-muted small mb-0">مواردی که نام و نام خانوادگی ندارند</p>
+            </div>
+            <div class="d-flex align-items-center  justify-content-between">
+                <button class="btn btn-sm btn-success">📄 اکسل رکوردها</button>
+                <button class="btn btn-sm btn-danger">🗑️ حذف همه موارد</button>
+            </div>
+        </div>
+    </div>
+    <div class="row db">
+        <div class="col-md-6">
+    <!-- جدول آخرین رکوردها -->
+    <div class="card mt-4">
+        <div class="d-flex justify-content-between align-items-center " >
+            <h5 class="mb-0">📄 آخرین رکوردهای ثبت‌شده</h5>
+        </div>
+        <div class="p-3">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>کد ملی</th>
+                    <th>نام و نام خانوادگی</th>
+                    <th>نام پدر</th>
+                    <th>تاریخ شروع خدمت</th>
+                    <th>دلیل تسویه</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in recent_records %}
+                <tr>
+                    <td>{{ s.national_code }}</td>
+                    <td>{{ s.full_name }}</td>
+                    <td>{{ s.father_name }}</td>
+                    <td>{{ s.start_service_date|to_jalali_date }}</td>
+                    <td>
+                        <span class="badge bg-{{ s.expired_reason_color }}">
+                            {{ s.expired_reason_label }}
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-danger">اطلاعاتی یافت نشد</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+    </div>
+        </div>
+        <div class="col-md-6">
+                <!-- جدول رکوردهای خالی -->
+    <div class="card mt-4 shadow-sm">
+        <div class="card-header  d-flex align-items-center justify-content-between" style="gap: 2px;">
+            <h5 class="mb-0 text-secondary">⚠️ رکوردهای خالی (نام و نام خانوادگی ندارد)</h5>
+            <div style="flex: 1;"></div>
+            <button class="btn btn-sm btn-success">
+                📄 اکسل جدول
+            </button>
+            <button class="btn btn-sm btn-danger">
+                🗑️ حذف موارد جدول
+            </button>
+
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                  <thead>
+                <tr>
+                    <th>کد ملی</th>
+                    <th>نام و نام خانوادگی</th>
+                    <th>نام پدر </th>
+                    <th>تاریخ شروع خدمت</th>
+                    <th>دلیل تسویه</th>
+                </tr>
+            </thead>
+            <tbody> 
+                {% for s in empty_records_list %}
+                <tr>
+                    <td>{{ s.national_code }}</td>
+                    <td>{{ s.full_name }}</td>
+                    <td>{{ s.father_name }}</td>
+                    <td>{{ s.start_service_date|to_jalali_date }}</td>
+                    <td>
+                        <span class="badge bg-{{ s.expired_reason_color }}">
+                            {{ s.expired_reason_label }}
+                        </span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-danger">اطلاعاتی یافت نشد</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        </div>
+    </div>
+        </div>
+    </div>
+
+
+
+</div>
+{% endblock %}

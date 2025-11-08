@@ -1,3 +1,5 @@
+{% load static %}
+
 @font-face {
     font-family: 'B Nazanin';
     src: local('B Nazanin'),
@@ -19,9 +21,7 @@
     url('../../../static_cdn/static_root/dist/fonts/BNaznnBd.ttf') format('truetype');
     font-weight: 700;
     font-stretch: normal;
-    /*font-style: normal;*/
 }
-{% load static %}
 @font-face {
     font-family: 'IranNastaliq';
     src: url('/static/dist/fonts/IranNastaliq.eot');
@@ -31,5 +31,20 @@
          url('/static/dist/fonts/IranNastaliq.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
+}
+
+
+
+@font-face {
+    font-family: Vazir;
+    src: url('/static/dist/fonts/Vazir-FD-WOL.eot');
+    src: local('YekanBakh-Regular'),
+        url('/static/dist/fonts/Vazir-FD-WOL.eot?#iefix') format('embedded-opentype'),
+        url('/static/dist/fonts/Vazir-FD-WOL.woff2') format('woff2'),
+        url('/static/dist/fonts/Vazir-FD-WOL.woff') format('woff'),
+        url('/static/dist/fonts/Vazir-FD-WOL.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
 }
 

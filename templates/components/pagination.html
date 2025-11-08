@@ -1,0 +1,94 @@
+{% comment %}
+کامپوننت Pagination حرفه‌ای
+ورودی‌ها:
+- page_obj: Page object از ListView
+- request.GET: برای حفظ پارامترهای فیلتر
+{% endcomment %}
+
+<style>
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.pagination-container .page-link {
+    display: block;
+    min-width: 40px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    text-align: center;
+}
+
+.pagination-container .page-link:hover {
+    background-color: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+}
+
+.pagination-container .page-item.active .page-link {
+    background-color: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+    font-weight: 600;
+}
+
+.pagination-container .page-item.disabled .page-link {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* برای نمایش کوتاه‌تر در موبایل */
+@media (max-width: 768px) {
+    .pagination-container .page-link {
+        min-width: 32px;
+        padding: 4px 8px;
+        font-size: 14px;
+    }
+}
+</style>
+
+<div class="pagination-container">
+    {% if page_obj.has_previous %}
+        <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">« ابتدا</a>
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">‹ قبلی</a>
+    {% else %}
+        <span class="page-link disabled">« ابتدا</span>
+        <span class="page-link disabled">‹ قبلی</span>
+    {% endif %}
+
+    {% comment %} نمایش شماره صفحات با محدودیت sliding window {% endcomment %}
+    {% with total_pages=page_obj.paginator.num_pages %}
+        {% with current=page_obj.number %}
+            {% for num in page_obj.paginator.page_range %}
+                {% if num >= current|add:"-2" and num <= current|add:"2" %}
+                    {% if num == current %}
+                        <span class="page-link active">{{ num }}</span>
+                    {% else %}
+                        <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                    {% endif %}
+                {% elif num == 1 or num == total_pages %}
+                    <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ num }}</a>
+                {% elif num == current|add:"-3" or num == current|add:"3" %}
+                    <span class="page-link disabled">...</span>
+                {% endif %}
+            {% endfor %}
+        {% endwith %}
+    {% endwith %}
+
+    {% if page_obj.has_next %}
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">بعدی ›</a>
+        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">» انتها</a>
+    {% else %}
+        <span class="page-link disabled">بعدی ›</span>
+        <span class="page-link disabled">انتها »</span>
+    {% endif %}
+</div>

@@ -19,13 +19,36 @@
                     <i class="fa fa-money"></i>
                     ثبت فیش واریزی
                 </h2>
+
+            </div>
+        </div>
+        <!-- اطلاعات راهنما -->
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
                 <div class="alert alert-info">
                     <i class="fa fa-info-circle"></i>
                     در این صفحه می‌توانید فیش واریزی برای سرباز ثبت کنید. پس از ثبت، به صفحه مشاهده فیش‌های سرباز هدایت خواهید شد.
                 </div>
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <i class="fa fa-question-circle"></i>
+                            راهنمای ثبت فیش واریزی
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-unstyled">
+                            <li><i class="fa fa-check text-success"></i> ابتدا سرباز مورد نظر را انتخاب کنید{% if settlements|length == 1 and selected_settlement_id %} (این مرحله به صورت خودکار انجام شده){% endif %}</li>
+                            <li><i class="fa fa-check text-success"></i> مبلغ واریزی را وارد کنید (نباید از بدهی باقی‌مانده بیشتر باشد)</li>
+                            <li><i class="fa fa-check text-success"></i> شماره فیش واریزی را دقیق وارد کنید</li>
+                            <li><i class="fa fa-check text-success"></i> تاریخ فیش واریزی را مشخص کنید</li>
+                            <li><i class="fa fa-check text-success"></i> کد متصدی بانک را وارد کنید</li>
+                            <li><i class="fa fa-check text-success"></i> پس از ثبت، به صفحه مشاهده فیش‌های سرباز هدایت خواهید شد</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
-
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-primary">
@@ -156,29 +179,7 @@
             </div>
         </div>
 
-        <!-- اطلاعات راهنما -->
-        <div class="row">
-            <div class="col-md-8 col-md-offset-2">
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <i class="fa fa-question-circle"></i>
-                            راهنمای ثبت فیش واریزی
-                        </h4>
-                    </div>
-                    <div class="panel-body">
-                        <ul class="list-unstyled">
-                            <li><i class="fa fa-check text-success"></i> ابتدا سرباز مورد نظر را انتخاب کنید{% if settlements|length == 1 and selected_settlement_id %} (این مرحله به صورت خودکار انجام شده){% endif %}</li>
-                            <li><i class="fa fa-check text-success"></i> مبلغ واریزی را وارد کنید (نباید از بدهی باقی‌مانده بیشتر باشد)</li>
-                            <li><i class="fa fa-check text-success"></i> شماره فیش واریزی را دقیق وارد کنید</li>
-                            <li><i class="fa fa-check text-success"></i> تاریخ فیش واریزی را مشخص کنید</li>
-                            <li><i class="fa fa-check text-success"></i> کد متصدی بانک را وارد کنید</li>
-                            <li><i class="fa fa-check text-success"></i> پس از ثبت، به صفحه مشاهده فیش‌های سرباز هدایت خواهید شد</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
+
     </div>
 
     <script>

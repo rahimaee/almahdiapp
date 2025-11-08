@@ -11,11 +11,17 @@
 <div class="stats-card">
     <div class="card form-card">
      <form method="get" class="row">
-        <div class="col-md-6 ">
-            {{ form.unit.label_tag }} {{ form.unit }}
+        <div class="col-md-6">
+          {{ form.unit.label_tag }} 
+          <div class="select2 w-100">
+            {{ form.unit }}
+          </div>
         </div>
         <div class="col-md-6 ">
-            {{ form.month.label_tag }} {{ form.month }}
+          {{ form.month.label_tag }}  
+          <div class="select2 w-100">
+            {{ form.month }} 
+          </div>
         </div>
         <div class="col-md-6">
             {{ form.base_date.label_tag }} {{ form.base_date }}
@@ -36,29 +42,46 @@
         {% endif %}: 
       </span>
       <span class="stat-value">
-      0 نفر
+      {{data.unit_discharged_counts|default:"0"}} نفر
+      </span>
+    </div>
+        <div class="stat-row">
+      <span class="stat-key">سربازان موجود در قسمت 
+         {% if data and data.unit %}
+            {{ data.unit.name }}
+        {% else %}
+            نامشخص
+        {% endif %}: 
+      </span>
+      <span class="stat-value">
+      {{data.soldiers_exist_in_unit|default:"0"}} نفر
       </span>
     </div>
 
     <div class="stat-row">
       <span class="stat-key">ترخیصی‌های آموزشگاه:</span>
-      <span class="stat-value">{{ academy_discharged_count|default:"0" }} نفر</span>
+      <span class="stat-value">{{ data.academy_discharged_counts|default:"0" }} نفر</span>
     </div>
 
     <div class="stat-row">
-      <span class="stat-key">درصد سربازان موجود در قسمت نسبت به کل سربازان:</span>
-      <span class="stat-value">{{ percentage_in_unit|default:"0.0" }}%</span>
+      <span class="stat-key">
+        درصد سربازان موجود در قسمت
+        {% if data and data.unit %}
+            {{ data.unit.name }}
+        {% else %}
+            نامشخص
+        {% endif %}
+        نسبت به کل سربازان:
+      </span>
+      <span class="stat-value">{{ data.percentage_in_unit_counts|default:"0.0" }}%</span>
     </div>
 
     <div class="stat-row">
       <span class="stat-key">تعداد کل سربازان حاضر:</span>
-      <span class="stat-value">{{ total_soldiers|default:"0" }} نفر</span>
+      <span class="stat-value">{{ data.total_soldiers_counts|default:"0" }} نفر</span>
     </div>
   </div>
 </div>
-
-
-
   {% if data %}
  
 
@@ -68,79 +91,76 @@
     <table class="table table-bordered table-sm text-center">
       <thead class="table-light">
         <tr>
-            <th colspan="2">نام قسمت</th>
-            <th>تعداد</th>
-            <th>سالم</th>
-            <th>معاف از رزم</th>
-            <th>گروه ب</th>
-            <th>معاف+گروه ب</th>
-            <th>کمیسیون</th>
-            <th>اداری</th>
-            <th>شیفتی</th>
-            <th>بومی</th>
-            <th>غیربومی</th>
-            <th>افسر</th>
-            <th>درجه دار</th>
-            <th>عادی</th>
-            <th>پاسدار وظیفه</th>
-            <th>زیر دیپلم</th>
-            <th>دیپلم</th>
-            <th>فوق دیپلم</th>
-            <th>لیسانس</th>
-            <th>فوق لیسانس</th>
-            <th>دکتری</th>
-            <th>پایان تا ... ماه بعد</th>
+            <th >نام قسمت</th>
+            <th class="rotate">تعداد</th>
+            <th class="rotate">سالم</th>
+            <th class="rotate">معاف از رزم</th>
+            <th class="rotate">گروه ب</th>
+            <th class="rotate">معاف+گروه ب</th>
+            <th class="rotate">کمیسیون</th>
+            <th class="rotate">اداری</th>
+            <th class="rotate">شیفتی</th>
+            <th class="rotate">بومی</th>
+            <th class="rotate">غیربومی</th>
+            <th class="rotate">افسر</th>
+            <th class="rotate">درجه دار</th>
+            <th class="rotate">عادی</th>
+            <th class="rotate">پاسدار وظیفه</th>
+            <th class="rotate">زیر دیپلم</th>
+            <th class="rotate">دیپلم</th>
+            <th class="rotate">فوق دیپلم</th>
+            <th class="rotate">لیسانس</th>
+            <th class="rotate">فوق لیسانس</th>
+            <th class="rotate">دکتری</th>
         </tr>
       </thead>
       <tbody>
-          <tr class="total">
-            <td colspan="2">{{ data.unit.name }}</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>یک ماه</td>
+          <tr>
+            <td>{{ data.unit.name }} (مجموع)</td>
+            <td>{{data.unit_stats.all}}</td>
+            <td>{{data.unit_stats.salem}}</td>
+            <td>{{data.unit_stats.moafazrazm}}</td>
+            <td>{{data.unit_stats.moafazrazmgrohb}}</td>
+            <td>{{data.unit_stats.moafazrazbamgrohb}}</td>
+            <td>{{data.unit_stats.komision}}</td>
+            <td>{{data.unit_stats.edari}}</td>
+            <td>{{data.unit_stats.shifti}}</td>
+            <td>{{data.unit_stats.bomi}}</td>
+            <td>{{data.unit_stats.bomino}}</td>
+            <td>{{data.unit_stats.officer}}</td>
+            <td>{{data.unit_stats.dagree}}</td>
+            <td>{{data.unit_stats.sarbaz}}</td>
+            <td>{{data.unit_stats.pasdarvazife}}</td>
+            <td>{{data.unit_stats.zirdiplom}}</td>
+            <td>{{data.unit_stats.diplom}}</td>
+            <td>{{data.unit_stats.foghdiplom}}</td>
+            <td>{{data.unit_stats.lisans}}</td>
+            <td>{{data.unit_stats.foghlisans}}</td>
+            <td>{{data.unit_stats.doctor}}</td>
         </tr>
         {% for sub in data.sub_units %}
-        <tr >
-            <td colspan="2">{{ sub.name }}</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>یک ماه</td>
+        <tr >  
+            <td >{{ sub.name }}</td>
+            <td>{{sub.all}}</td>
+            <td>{{sub.salem}}</td>
+            <td>{{sub.moafazrazm}}</td>
+            <td>{{sub.moafazrazmgrohb}}</td>
+            <td>{{sub.moafazrazbamgrohb}}</td>
+            <td>{{sub.komision}}</td>
+            <td>{{sub.edari}}</td>
+            <td>{{sub.shifti}}</td>
+            <td>{{sub.bomi}}</td>
+            <td>{{sub.bomino}}</td>
+            <td>{{sub.officer}}</td>
+            <td>{{sub.dagree}}</td>
+            <td>{{sub.sarbaz}}</td>
+            <td>{{sub.pasdarvazife}}</td>
+            <td>{{sub.zirdiplom}}</td>
+            <td>{{sub.diplom}}</td>
+            <td>{{sub.foghdiplom}}</td>
+            <td>{{sub.lisans}}</td>
+            <td>{{sub.foghlisans}}</td>
+            <td>{{sub.doctor}}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -148,4 +168,13 @@
   </div>
   {% endif %}
 </div>
+{% endblock %}
+
+{%block footer%}
+<script>
+  $('.select2 select').select2({
+    width:"100%"
+  })
+
+</script>
 {% endblock %}

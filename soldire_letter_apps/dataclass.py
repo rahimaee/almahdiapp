@@ -1,14 +1,46 @@
 from dataclasses import dataclass
 import json
-from typing import Any, Dict, Type
+from typing import Any, Dict,Optional
 
-# فرم شماره 3
+# فرم شماره 3 - داده‌ها با مقدار پیش‌فرض
 @dataclass
 class ClearanceLetterFormData:
-    shkh: str
-    course_name: str
-    course_number: int
-    attachment_count: int = 1
+    # ---------------- اطلاعات پایه ----------------
+    first_name: str = ""                      # نام
+    last_name: str = ""                       # نام خانوادگی
+    father_name: str = ""                     # نام پدر
+    birth_certificate_number: str = "1"       # شماره شناسنامه
+    national_code: str = ""                    # کد ملی
+    rank: str = ""                             # درجه
+    employee_type: str = "وظیفه"              # نوع کارمند (کادر، بسیجی، وظیفه) - radio
+    unit_name: str = "اموزشگاه رزم مقدماتی المهدی (عج) بابل"  # محل خدمت
+    deployment_area: str = "اداره کل وظیفه عمومی نیروی انتظامی"  # حوزه اعزام کننده
+    discharge_unit: str = "اموزشگاه رزم مقدماتی المهدی (عج) بابل"  # یگان ترخیص‌کننده
+
+    # ---------------- اطلاعات تکمیلی ----------------
+    birth_date: str = ""                        # تاریخ تولد
+    birth_place: str = ""                       # محل تولد
+    card_issue_date: str = ""                   # تاریخ صدور کارت
+    eye_color: str = ""                         # رنگ چشم
+    blood_group: str = ""                        # گروه خون
+    height: float = 0                            # قد
+    service_branch: str = ""                     # رسته خدمتی
+    education_level: str = ""                    # مدرک تحصیلی
+    specialty_code: str = ""                     # کد تخصصی
+    military_education_status: str = ""         # وضعیت آموزشی نظامی
+    legal_service_duration: int = 21            # مدت قانونی خدمت (ماه)
+    served_duration: int = 21                    # مدت خدمت انجام شده (ماه)
+    service_start_date: str = ""                 # تاریخ شروع خدمت
+    service_end_date: str = ""                   # تاریخ خاتمه خدمت
+    personal_code: str = ""                      # شماره پرسنلی / کد پاسداری
+    main_office_number: str = ""                 # شماره دفتر اساس
+    detailed_office_number: str = ""             # شماره دفتر تفضیلی
+
+    # ---------------- اطلاعات فرم ----------------
+    card_type: str = "المثنی"                   # نوع کارت: المثنی، تعویضی، مفقودی - radio
+    main_image: Optional[str] = None            # عکس اصلی کارت
+    normal_image: Optional[str] = None          # عکس جانبی/نرمال کارت
+
 
 # صدور کارت پایور
 @dataclass
@@ -58,18 +90,6 @@ class PermanentExemptionFormData:
     exemption_reason: str
     exemption_date: str
 
-
-
-# فرض می‌کنیم کلاس‌ها همان‌هایی هستند که تعریف کردی
-FORM_CLASSES: Dict[str, Type] = {
-    "clearance_letter": ClearanceLetterFormData,
-    "officer_card": OfficerCardFormData,
-    "soldier_card": SoldierCardFormData,
-    "checkout_3plus": Checkout3PlusFormData,
-    "activate_old_staff": ActivateOldStaffFormData,
-    "certificate_two_guard": CertificateTwoGuardFormData,
-    "permanent_exemption": PermanentExemptionFormData,
-}
 
 def form_data_to_json(form_type: str, data: Dict[str, Any]) -> str:
     """

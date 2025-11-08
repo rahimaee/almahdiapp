@@ -1,6 +1,8 @@
 {% extends 'shared/_PanelMain.html' %}
 {% load static %}
 {% block main %}
+  {% include "../letter_types_nav_layout.html" %}
+
     <div class="container">
         <h3>{{ title }}</h3>
         <form method="post" class="form-horizontal">
@@ -24,4 +26,12 @@
             </div>
         </form>
     </div>
+{% endblock %}
+
+{% block footer %}
+    <script>
+        $('select').select2({
+            allowClear:true,
+        })
+    </script>
 {% endblock %}

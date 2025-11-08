@@ -2,8 +2,10 @@
 {% load static %}
 
 {% block main %}
-    <div class="container">
-        <h3>فرم نامه</h3>
+  {% include "../letter_types_nav_layout.html" %}
+
+<div class="container">
+        <h3 class="text-center">فرم تست تاییدیه سلامت و روان</h3>
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
@@ -24,4 +26,12 @@
             });
         </script>
     </div>
+{% endblock %}
+
+{% block footer %}
+    <script>
+        $('select').select2({
+            allowClear:true,
+        })
+    </script>
 {% endblock %}

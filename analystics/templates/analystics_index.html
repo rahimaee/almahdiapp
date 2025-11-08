@@ -70,11 +70,66 @@
 .wide-chart {
   grid-column: span 2;
 }
+.wide1-chart {
+  grid-column: span 1;
+}
+.wide2-chart {
+  grid-column: span 2;
+}
 /* چارت ستونی/خطی دو ستون */
 .wide3-chart {
   grid-column: span 3;
 }
 
+</style>
+<style>
+/* تب‌ها */
+.tab-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+.tab-btn {
+    padding: 8px 16px;
+    background: #2d3748;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+.tab-btn.active {
+    background: #4b6cb7;
+}
+.tab-btn:hover {
+    background: #3b4a63;
+}
+
+/* مخفی کردن محتوای تب‌ها */
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+/* کارت‌های چارت */
+.chart-card {
+    background: #fff;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.chart-card canvas {
+    height: 300px;
+}
 </style>
 {% endblock %}
 
@@ -83,98 +138,145 @@
 
 <div class="container-fluid">
   <!-- کارت‌های آماری -->
-  <div class="stats-card">
-    <div class="card">
-      <h4 class="card-title">کل سربازان</h4>
-      <div class="stat-row"><span class="stat-key">تعداد کل</span><span class="stat-value">261</span></div>
+<div class="stats-card">
+  <div class="card">
+    <h4 class="card-title">کل سربازان</h4>
+    <div class="stat-row">
+      <span class="stat-key">تعداد کل</span>
+      <span class="stat-value">{{ all_soldiers_counts }}</span>
     </div>
-    <div class="card">
-      <h4 class="card-title">سربازان حاضر</h4>
-      <div class="stat-row"><span class="stat-key">حاضر</span><span class="stat-value">200</span></div>
-    </div>
-    <div class="card">
-      <h4 class="card-title">فراری</h4>
-      <div class="stat-row"><span class="stat-key">تعداد</span><span class="stat-value">30</span></div>
-    </div>
-    <div class="card">
-      <h4 class="card-title">اعلام حضور نشده</h4>
-      <div class="stat-row"><span class="stat-key">تعداد</span><span class="stat-value">10</span></div>
-    </div>
-    <div class="card">
-      <h4 class="card-title">پایان خدمت</h4>
-      <div class="stat-row"><span class="stat-key">تعداد</span><span class="stat-value">15</span></div>
-    </div>
-    <div class="card">
-      <h4 class="card-title">کارت صادر نشده</h4>
-      <div class="stat-row"><span class="stat-key">تعداد</span><span class="stat-value">5</span></div>
-    </div>
-    <div class="card">
-      <h4 class="card-title">بدهی حقوقی</h4>
-      <div class="stat-row"><span class="stat-key">تعداد</span><span class="stat-value">8</span></div>
-    </div>
-    <div class="card">
-      <h4 class="card-title">جذبی</h4>
-      <div class="stat-row"><span class="stat-key">تعداد</span><span class="stat-value">3</span></div>
+
+  </div>
+
+  <div class="card">
+    <h4 class="card-title">سربازان حاضر</h4>
+    <div class="stat-row">
+      <span class="stat-key">حاضر</span>
+      <span class="stat-value">{{ present_soliders_counts }}</span>
     </div>
   </div>
 
-<div class="chart-grid">
-
-
-  <!-- چارت دایره‌ای -->
-  <div class="chart-card circle-chart">
-      <h5 class="text-center">وضعیت حضور سربازان</h5>
-      <canvas id="presenceChart"></canvas>
+  <div class="card">
+    <h4 class="card-title">فراری</h4>
+    <div class="stat-row">
+      <span class="stat-key">تعداد</span>
+      <span class="stat-value">{{ runaway_soliders_counts }}</span>
+    </div>
   </div>
 
-  <!-- چارت ستونی یا خطی -->
-  <div class="chart-card wide3-chart">
-      <h5 class="text-center">وضعیت حضور ماهانه</h5>
-      <canvas id="serviceStatusChart"></canvas>
+  <div class="card">
+    <h4 class="card-title">اعلام حضور نشده</h4>
+    <div class="stat-row">
+      <span class="stat-key">تعداد</span>
+      <span class="stat-value">{{ not_reported_counts }}</span>
+    </div>
   </div>
 
-  <!-- چارت ستونی -->
-  <div class="chart-card wide-chart">
-      <h5 class="text-center">تحصیلات</h5>
-      <canvas id="educationChart"></canvas>
+  <div class="card">
+    <h4 class="card-title">پایان خدمت</h4>
+    <div class="stat-row">
+      <span class="stat-key">تعداد</span>
+      <span class="stat-value">{{ finished_service_counts }}</span>
+    </div>
   </div>
 
-  <!-- سایر چارت‌ها -->
- 
-
-  <div class="chart-card circle-chart">
-      <h5 class="text-center">وضعیت کارت‌ها و بدهی</h5>
-      <canvas id="statusChart"></canvas>
+  <div class="card">
+    <h4 class="card-title">در حال صدور کارت</h4>
+    <div class="stat-row">
+      <span class="stat-key">تعداد</span>
+      <span class="stat-value">{{ issuing_card_counts }}</span>
+    </div>
   </div>
 
-  <div class="chart-card circle-chart">
-      <h5 class="text-center">شیفت‌ها</h5>
-      <canvas id="shiftChart"></canvas>
+  <div class="card">
+    <h4 class="card-title">بدهی حقوقی</h4>
+    <div class="stat-row">
+      <span class="stat-key">تعداد</span>
+      <span class="stat-value">{{ debt_counts }}</span>
+    </div>
   </div>
 
-  <div class="chart-card circle-chart">
-      <h5 class="text-center">بومی/غیربومی</h5>
-      <canvas id="localityChart"></canvas>
-  </div>
-  <!-- چارت دایره‌ای -->
-  <div class="chart-card circle-chart">
-      <h5 class="text-center">تراکم سربازان در قسمت‌ها</h5>
-      <canvas id="unitDensityChart"></canvas>
-  </div>
-  <div class="chart-card wide-chart">
-      <h5 class="text-center">پایان خدمت تا ۶ ماه آینده</h5>
-      <canvas id="upcomingServiceChart"></canvas>
-  </div>
-   <div class="chart-card wide-chart">
-      <h5 class="text-center">تقسیم‌بندی بر اساس درجه</h5>
-      <canvas id="rankChart"></canvas>
+  <div class="card">
+    <h4 class="card-title">جذبی</h4>
+    <div class="stat-row">
+      <span class="stat-key">تعداد</span>
+      <span class="stat-value">{{ absorption_counts }}</span>
+    </div>
   </div>
 </div>
 
 
+  <div class="tab-container">
+      <button class="tab-btn active" data-tab="tab-presence">وضعیت حضور</button>
+      <button class="tab-btn" data-tab="tab-education">تحصیلات و درجات</button>
+      <button class="tab-btn" data-tab="tab-status">صدور کارت</button>
+      <button class="tab-btn" data-tab="tab-shift">شیفت‌ها</button>
+  </div>
+    <div id="tab-presence" class="tab-content active chart-grid">
+          <div class="chart-card circle-chart">
+              <h5 class="text-center">وضعیت حضور سربازان</h5>
+              <canvas id="presenceChart"></canvas>
+          </div>
+          <div class="chart-card wide2-chart">
+              <h5 class="text-center">وضعیت حضور ماهانه</h5>
+              <canvas id="serviceStatusChart"></canvas>
+          </div>
+    </div>
+    <div id="tab-education" class="tab-content chart-grid">
+        <div class="chart-card wide1-chart">
+            <h5 class="text-center">تحصیلات</h5>
+            <canvas id="educationChart"></canvas>
+        </div>
+        <div class="chart-card wide2-chart">
+            <h5 class="text-center">تقسیم‌بندی بر اساس درجه</h5>
+            <canvas id="rankChart"></canvas>
+        </div>
+    </div>
+    <div id="tab-shift" class="tab-content chart-grid">
+        <div class="chart-card circle-chart">
+            <h5 class="text-center">تراکم سربازان در قسمت‌ها</h5>
+            <canvas id="unitDensityChart"></canvas>
+        </div>
+        <div class="chart-card circle-chart">
+            <h5 class="text-center">شیفت‌ها</h5>
+            <canvas id="shiftChart"></canvas>
+        </div>
+        <div class="chart-card circle-chart">
+            <h5 class="text-center">بومی/غیربومی</h5>
+            <canvas id="localityChart"></canvas>
+        </div>
+    </div>
+    <div id="tab-status" class="tab-content chart-grid">
+        <div class="chart-card circle-chart">
+            <h5 class="text-center">وضعیت کارت‌ها و بدهی</h5>
+            <canvas id="statusChart"></canvas>
+        </div>
+        <div class="chart-card wide-chart">
+            <h5 class="text-center">پایان خدمت تا ۶ ماه آینده</h5>
+            <canvas id="upcomingServiceChart"></canvas>
+        </div>
+    </div>
+
 
 
 </div>
+<script>
+// کنترل تب‌ها
+const tabButtons = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+
+tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        // حذف کلاس active از همه تب‌ها
+        tabButtons.forEach(b => b.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+
+        // فعال کردن تب انتخاب شده
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+});
+</script>
 <script src="{% static 'dist/js/chart.js' %}"></script>
 <script>
 const unitDensityCtx = document.getElementById('unitDensityChart').getContext('2d');

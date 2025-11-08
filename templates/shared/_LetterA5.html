@@ -335,6 +335,7 @@
           <h3 class="control-title">🛠 عملیات پرینت</h3>
           <div class="control-card">
             <button class="print-btn" onclick="window.print()">🖨 چاپ نامه</button>
+            <a href="{% url 'soldier_edit' pk=letter.soldier.id %}"  class="btn btn-info" >ویرایش سرباز</a>
             <button class="back-btn" onclick="history.back()">🔙 بازگشت</button>
           </div>
         </div>

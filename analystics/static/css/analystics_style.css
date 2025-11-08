@@ -83,7 +83,13 @@ h3 {
 .table-responsive {
     overflow-x: auto;
 }
-
+.table>thead>tr>th.rotate  {
+    writing-mode: vertical-rl;
+    /* چرخش متن به صورت افقی */
+    transform: rotate(180deg);
+    text-align: center;
+    vertical-align:center; 
+}
 /* ریسپانسیو */
 @media (max-width: 992px) {
     .table th, .table td {

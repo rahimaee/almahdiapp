@@ -1,0 +1,124 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+
+{% block header %}
+    <title>پنل مدیریت | سربازان منقضی خدمت</title>
+
+    <style>
+        /* ====== Layout Styles ====== */
+        section.expired-soldiers-container {
+            display: flex;
+            gap: 12px;
+            direction: rtl;
+        }
+
+        aside.expired-soldiers-sidebar {
+            min-width: 260px;
+
+        }
+
+        .expired-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #ddd;
+        }
+
+        /* ====== Sidebar Card ====== */
+    .sidebar-card {
+        border-radius: 6px;
+        margin-bottom: 10px;
+        padding-bottom: 5px;
+        background: #fff;
+    }
+
+    .sidebar-card-header {
+        background: #0069d9;
+        color: #fff;
+        padding: 7px 10px;
+        font-weight: 600;
+        border-radius: 10px 10px 0 0 ;
+        margin-bottom: 5px;
+    }
+    .list-group {
+        margin: 0 5px;
+    }
+
+    .list-group-item {
+        padding: 6px 8px !important;
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+        transition: 0.2s;
+    }
+
+    .list-group-item i {
+        font-size: 13px;
+        opacity: 0.8;
+        margin-left: 5px;
+    }
+
+    .list-group-item:hover {
+        background: #f1f5fb;
+    }
+
+    .list-group-item span {
+        flex-grow: 1;
+        text-align: right;
+    }
+
+    .sidebar-select-container select {
+        width: 100%;
+        padding: 2px;
+        font-size: 0.83rem;
+    }
+    .badge {
+    display: inline-block;
+    padding: 0.25em 0.4em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
+    color: #fff;
+}
+
+.bg-success { background-color: #28a745; }
+.bg-danger { background-color: #dc3545; }
+.bg-info    { background-color: #17a2b8; }
+.bg-warning { background-color: #ffc107; color: #212529; }
+.bg-primary { background-color: #007bff; }
+.bg-secondary { background-color: #6c757d; }
+.bg-dark    { background-color: #343a40; }
+.bg-light   { background-color: #f8f9fa; color: #212529; }
+    </style>
+
+{% endblock %}
+
+{% block main %}
+
+    <!-- Top Menu -->
+    <nav class="mb-3">
+        {% include "../layouts/expired_soldiers_nav.html" %}
+    </nav>
+
+    <section class="expired-soldiers-container">
+
+        <!-- Sidebar -->
+        <aside class="expired-soldiers-sidebar">
+                {% include "../layouts/expired_soldiers_sidebar.html" %}
+        </aside>
+
+        <!-- Page Content -->
+        <div style="flex: 1;">
+            {% block page %} {% endblock %}
+        </div>
+
+    </section>
+
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

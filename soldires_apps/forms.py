@@ -249,26 +249,74 @@ class SoldierForm(forms.ModelForm):
                 except (ValueError, TypeError):
                     pass
 
-
+import jdatetime
+def jalali_to_gregorian(jdate_str):
+    # jdate_str looks like "1404/10/01"
+    if jdate_str:
+        y, m, d = map(int, jdate_str.split('/'))
+        return jdatetime.date(y, m, d).togregorian()
+    else:
+        return None
+    
 class SoldierSearchForm(forms.Form):
-    # اطلاعات هویتی
-    national_code = forms.CharField(label='کد ملی', required=False,
-                                    widget=forms.TextInput(attrs={'class': 'form-control'}))
-    first_name = forms.CharField(label='نام', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    last_name = forms.CharField(label='نام خانوادگی', required=False,
-                                widget=forms.TextInput(attrs={'class': 'form-control'}))
-    father_name = forms.CharField(label='نام پدر', required=False,
-                                  widget=forms.TextInput(attrs={'class': 'form-control'}))
-    organizational_code = forms.CharField(label='کد سازمانی', required=False,
-                                          widget=forms.TextInput(attrs={'class': 'form-control'}))
-    id_card_code = forms.CharField(label='کد پاسداری', required=False,
-                                   widget=forms.TextInput(attrs={'class': 'form-control'}))
+        # فیلترهای پایان خدمت
+    remainingFilter = forms.ChoiceField(
+        label="تا پایان خدمت",
+        required=False,
+        choices=[
+            ("", "همه"),
+            ("unknown", "نامشخص"),
+            ("end", "پایان خدمت"),
+            ("remaining", "بیش از 45 روز مانده"),
+            ("remaining45", "کمتر از 45 روز"),
+            ("remaining30", "کمتر از 30 روز"),
+            ("remaining15", "کمتر از 15 روز"),
+            ("remaining5", "کمتر از 5 روز")
+        ],
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
 
+    end_service_from_date = forms.CharField(
+        label="پایان خدمت از تاریخ",
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'YYYY/MM/DD',
+            'maxlength': '10',
+            'dir': 'ltr',
+            'oninput': 'formatDateInput(this)'
+        })
+    )
+
+    end_service_to_date = forms.CharField(
+        label="پایان خدمت تا تاریخ",
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'YYYY/MM/DD',
+            'maxlength': '10',
+            'dir': 'ltr',
+            'oninput': 'formatDateInput(this)'
+        })
+    )
+    def clean_end_service_from_date(self):
+        date = self.cleaned_data.get("end_service_from_date")
+        return jalali_to_gregorian(date)
+
+    def clean_end_service_to_date(self):
+        date = self.cleaned_data.get("end_service_to_date")
+        return jalali_to_gregorian(date)
+    
+    # اطلاعات هویتی
+    national_code = forms.CharField(label='کد ملی', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    first_name = forms.CharField(label='نام', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    last_name = forms.CharField(label='نام خانوادگی', required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
+    father_name = forms.CharField(label='نام پدر', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    organizational_code = forms.CharField(label='کد سازمانی', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    id_card_code = forms.CharField(label='کد پاسداری', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     # اطلاعات مکانی
-    birth_place = forms.CharField(label='محل تولد', required=False,
-                                  widget=forms.TextInput(attrs={'class': 'form-control'}))
-    issuance_place = forms.CharField(label='محل صدور', required=False,
-                                     widget=forms.TextInput(attrs={'class': 'form-control'}))
+    birth_place = forms.CharField(label='محل تولد', required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
+    issuance_place = forms.CharField(label='محل صدور', required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
     residence_province = forms.ModelChoiceField(
         queryset=Province.objects.all(),
         label='استان',

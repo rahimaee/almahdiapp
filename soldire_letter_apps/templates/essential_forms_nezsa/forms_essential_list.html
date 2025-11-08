@@ -1,0 +1,359 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load jalali_filters %}
+{% block main %}
+
+<style>
+  .forms-container {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+    direction: rtl;
+    font-size: 14px;
+  }
+
+  .header-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .create-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .btn-create {
+    background: #10b981;
+    padding: 9px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    transition: .2s;
+  }
+
+  .btn-create:hover { background: #0d9469; }
+
+  .filter-bar {
+    background: #1e293b;
+    padding: 12px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+  }
+
+  .filter-bar input {
+    background: #334155;
+    border: none;
+    padding: 9px;
+    border-radius: 6px;
+    color: #e2e8f0;
+    font-size: 13px;
+  }
+
+  .btn-search {
+    background: #2563eb;
+    padding: 9px 12px;
+    border-radius: 6px;
+    border: none;
+    color: white;
+    font-weight: bold;
+  }
+
+  .forms-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #1e293b;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .forms-table th, .forms-table td {
+    padding: 10px;
+  }
+
+  .forms-table thead {
+    background: #334155;
+  }
+
+  tr:nth-child(even) { background: #1e293b; }
+  tr:nth-child(odd) { background: #0f172a; }
+
+  tr:hover {
+    background: #334155;
+    transition: 0.25s;
+  }
+
+  .table-link {
+    color: #60a5fa;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .table-link:hover { color: #93c5fd; }
+
+  .btn-sm {
+    padding: 5px 8px;
+    font-size: 11px;
+    border-radius: 6px;
+    color: white;
+    display: inline-block;
+    margin: 2px;
+    text-decoration: none;
+  }
+
+  .btn-view { background: #3b82f6; }
+  .btn-view:hover { background: #1d4ed8; }
+
+  .btn-delete { background: #dc2626; }
+  .btn-delete:hover { background: #b91c1c; }
+
+  .btn-warning { background: #f59e0b; }
+  .btn-warning:hover { background: #d97706; }
+
+  .empty {
+    text-align: center;
+    padding: 20px;
+    color: #9ca3af;
+    font-style: italic;
+  }
+</style>
+<style>
+.dropdown-create-container {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-create-btn {
+  background: #386bc0;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  border: none;
+  transition: 0.2s;
+}
+
+.dropdown-create-btn:hover {
+  background: #2d57a1;
+}
+
+.dropdown-menu-custom {
+  display: none;
+  position: absolute;
+  background: white;
+  min-width: 300px;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  margin-top: 5px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 999;
+  overflow: hidden;
+}
+
+.dropdown-menu-custom a {
+  display: block;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #444;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.dropdown-menu-custom a:hover {
+  background: #f0f3ff;
+  color: #1e4ea7;
+}
+
+.dropdown-menu-custom.show {
+  display: block;
+}
+</style>
+
+<style>
+.pagination-container {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.page-btn {
+  padding: 6px 10px;
+  border: 1px solid #d0d4da;
+  border-radius: 5px;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: none;
+  color: #2c3e50;
+  transition: 0.2s;
+  min-width: 30px;
+  text-align: center;
+  background: #e8eef9;
+
+}
+
+.page-btn:hover {
+  background: #e8eef9;
+}
+
+.page-btn.active {
+  background: #386bc0;
+  border-color: #386bc0;
+  color: white;
+  cursor: default;
+}
+
+.page-btn.disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+</style>
+
+<style>
+.badge {
+    display: inline-block;
+    background-color: #2563eb; /* رنگ آبی */
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: 8px;
+    min-width: 80px;
+    text-align: center;
+}
+.badge strong {
+    font-weight: bold;
+}
+</style>
+<div class="forms-container">
+  <div style="display:flex; justify-content:space-between; align-items:center; gap: 6px;">
+    <h2 class="header-title">📋 فرم‌های ضروری صدور کارت نزسا</h2>
+    <div class="dropdown-create-container">
+        <button class="dropdown-create-btn" id="createDropdownBtn">
+          ایجاد فرم جدید +
+        </button>
+        <div class="dropdown-menu-custom" id="createDropdownMenu">
+          {% for type, label in letter_types %}
+            <a href="{% url 'form_essential_create' form_type=type %}">ایجاد {{ label }}</a>
+          {% endfor %}
+        </div>
+    </div>
+    <div style="flex: 1;"> </div>
+    <div > 
+        {% if forms.has_other_pages %}
+            <div class="pagination-container">
+                {% if forms.has_previous %}
+                    <a href="?page={{ forms.previous_page_number }}" class="page-btn">‹</a>
+                {% else %}
+                    <span class="page-btn disabled">‹</span>
+                {% endif %}
+
+                {% for num in forms.paginator.page_range %}
+                    {% if num == 1 or num == forms.paginator.num_pages %}
+                        <a href="?page={{ num }}" class="page-btn {% if num == forms.number %}active{% endif %}">{{ num }}</a>
+                    {% elif num >= forms.number|add:"-2" and num <= forms.number|add:"2" %}
+                        <a href="?page={{ num }}" class="page-btn {% if num == forms.number %}active{% endif %}">{{ num }}</a>
+                    {% elif num == 2 and forms.number > 4 %}
+                        <span class="page-btn disabled">…</span>
+                    {% elif num == forms.paginator.num_pages|add:"-1" and forms.number < forms.paginator.num_pages|add:"-3" %}
+                        <span class="page-btn disabled">…</span>
+                    {% endif %}
+                {% endfor %}
+
+                {% if forms.has_next %}
+                    <a href="?page={{ forms.next_page_number }}" class="page-btn">›</a>
+                {% else %}
+                    <span class="page-btn disabled">›</span>
+                {% endif %}
+            </div>
+          {% endif %}
+    </div>
+  </div>
+
+  <form method="get" class="filter-bar">
+    <div style="display:flex; gap:6px; align-items:center;flex: 1;">
+        <span class="badge">کل آیتم‌ها: <strong>{{ total_items }}</strong></span>
+        <span class="badge">نتایج یافت شده: <strong>{{ filtered_items_count }}</strong></span>
+        <span class="badge">نمایش این صفحه: <strong>{{ current_page_items }}</strong></span>
+    </div>
+    <input type="text" name="search" value="{{ search }}" placeholder="جستجو...">
+    <input type="date" name="start_date" value="{{ start_date }}">
+    <input type="date" name="end_date" value="{{ end_date }}">
+    <button class="btn-search">🔍</button>
+  </form>
+
+  <table class="forms-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>نامه</th>
+        <th>عنوان</th>
+        <th>سرباز</th>
+        <th>تاریخ</th>
+        <th>عملیات</th>
+      </tr>
+    </thead>
+
+    <tbody style="text-align: right;">
+      {% for f in forms %}
+      <tr style="text-align: right;">
+        <td>{{ forloop.counter }}</td>
+        <td >
+          <div>{{ f.get_letter_type_display }}</div>
+          <div><strong>شماره : </strong>{{ f.number|default:"-" }}</div>
+        </td>
+        <td>
+          <a href="{% url 'form_essential_edit' form_type=f.letter_type form_id=f.id %}" class="table-link">
+            {{ f.title|default:"بدون عنوان" }} <i class="fa fa-edit"></i>
+          </a>
+        </td>
+
+        <td>
+          {% if f.form_data %}
+            {{ f.form_data.first_name }} {{ f.form_data.last_name }}<br>
+            {% if f.form_data.national_code %}
+              <small>کدملی: {{ f.form_data.national_code }}</small>
+            {% endif %}
+          {% endif %}
+        </td>
+
+        <td>
+          {{ f.created_at|to_jalali_date }} <br>
+          <small>{{ f.created_at|to_jalali_time }}</small>
+        </td>
+
+        <td>
+          <a href="{% url 'form_essential_view' form_id=f.id %}" class="btn-sm btn-view">👁 مشاهده</a>
+          <a onclick="return confirm('حذف شود؟')" href="{% url 'forms_essential_delete' form_id=f.id %}" class="btn-sm btn-delete">🗑 حذف</a>
+          <a class="btn-sm btn-warning">ℹ جزئیات</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="empty">🚫 داده‌ای یافت نشد</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+<script>
+  const btn = document.getElementById("createDropdownBtn");
+  const menu = document.getElementById("createDropdownMenu");
+
+  btn.addEventListener("click", () => {
+    menu.classList.toggle("show");
+  });
+
+  // بستن منو وقتی بیرون کلیک شد
+  document.addEventListener("click", function(e) {
+    if (!btn.contains(e.target) && !menu.contains(e.target)) {
+      menu.classList.remove("show");
+    }
+  });
+</script>
+
+{% endblock %}

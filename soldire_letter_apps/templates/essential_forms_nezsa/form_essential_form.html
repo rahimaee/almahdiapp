@@ -1,75 +1,89 @@
+
 {% extends 'shared/_PanelMain.html' %}
 {% block main %}
-<div class="form-container">
-    <h2>📄 فرم {{ form_type|title }}</h2>
-    
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-fields">
-            {% for field in form %}
-                <div class="form-group">
-                    {{ field.label_tag }}
-                    {{ field }}
-                    {% if field.errors %}
-                        <div class="field-errors">{{ field.errors }}</div>
-                    {% endif %}
-                    {% if field.help_text %}
-                        <small class="help-text">{{ field.help_text }}</small>
-                    {% endif %}
-                </div>
-            {% endfor %}
-        </div>
-        
-        <div class="form-actions">
-            <button type="submit" class="btn-submit">💾 ذخیره</button>
-        </div>
-    </form>
-</div>
 
 <style>
 .form-container {
-    max-width: 900px;
-    margin: 30px auto;
-    background: #f9fafb;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin: 0 auto;
+    background: #ffffff;
+    padding:0  0 10px;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
     direction: rtl;
     font-family: Vazirmatn, sans-serif;
 }
 
-.form-container h2 {
-    text-align: center;
-    margin-bottom: 25px;
-    color: #1f2937;
-}
-
-.form-group {
+.form-tabs {
     display: flex;
-    flex-direction: column;
-    margin-bottom: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #e5e7eb;
 }
 
+.form-tabs a {
+    padding: 10px 18px;
+    text-decoration: none;
+    color: #4b5563;
+    border-radius: 6px 6px 0 0;
+    font-weight: 500;
+    background: #f3f4f6;
+    transition: 0.2s;
+}
+
+.form-tabs a.active {
+    background: #2563eb;
+    color: #fff;
+    font-weight: 600;
+}
+
+.form-tabs a:hover {
+    background: #dbeafe;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    padding: 0 20px;
+}
+.form-group {
+    margin-bottom: 0;
+}
 .form-group label {
-    font-weight: bold;
+    font-weight: 600;
     margin-bottom: 5px;
+    display: block;
     color: #374151;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-    padding: 10px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
     font-size: 14px;
 }
 
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #fff;
+    transition: 0.2s;
+}
+
+.form-group textarea {
+    min-height: 130px;
+    resize: vertical;
+}
+
 .form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
+.form-group select:focus,
+.form-group textarea:focus {
     border-color: #2563eb;
+    box-shadow: 0 0 6px rgba(37, 99, 235, 0.3);
     outline: none;
+}
+
+.form-group-full {
+    grid-column: 1 / 4;
 }
 
 .field-errors {
@@ -80,22 +94,22 @@
 
 .help-text {
     color: #6b7280;
-    font-size: 12px;
-    margin-top: 2px;
+    font-size: 11px;
 }
 
 .form-actions {
+    margin-top: 25px;
     text-align: center;
-    margin-top: 20px;
 }
 
 .btn-submit {
     background: #2563eb;
-    color: #fff;
-    padding: 10px 18px;
-    border: none;
-    border-radius: 6px;
+    color: white;
+    padding: 12px 20px;
     font-size: 15px;
+    font-weight: bold;
+    border-radius: 8px;
+    border: none;
     cursor: pointer;
     transition: 0.3s;
 }
@@ -103,5 +117,74 @@
 .btn-submit:hover {
     background: #1d4ed8;
 }
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .form-tabs {
+        justify-content: flex-start;
+    }
+}
+label[for="id_letter_type"] {
+    display: none;
+}
 </style>
+
+<div class="form-container">
+
+    <div class="form-tabs">
+        {% for key, label in FORM_TYPE_TITLES.items %}
+            <a href="{% url 'form_essential_create' form_type=key %}"  class="{% if key == form_type %}active{% endif %}">
+                {{ label }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <form method="post"  enctype="multipart/form-data">
+        {% csrf_token %}
+            {# ابتدا فیلدهای مخفی #}
+        {% for field in form.hidden_fields %}
+            {{ field }}
+        {% endfor %}
+        <div class="form-grid" style="height: 70vh;overflow-y:auto ;">
+            {% for field in form.visible_fields %}
+                {% if field.name in 'sender receiver description' %}
+                    <div class="form-group form-group-full col-span-3">
+                        <label>{{ field.label }} {% if field.help_text %}<small class="help-text">({{ field.help_text }})</small>{% endif %}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="field-errors">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="form-group">
+                        <label>{{ field.label }} {% if field.help_text %}<small class="help-text">({{ field.help_text }})</small>{% endif %}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="field-errors">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="form-actions flex flex-wrap justify-center gap-3 mt-6">
+            <!-- ذخیره فرم -->
+            <button type="submit" class="btn-submit">💾 ذخیره</button>
+            <!-- پیش نمایش -->
+            <button type="button" onclick="previewForm()" class="btn-submit" style="background:#10b981;">👁 پیش‌نمایش</button>
+            <!-- چاپ فرم -->
+            <button type="button" onclick="window.print()" class="btn-submit" style="background:#3b82f6;">🖨 ذخیره و چاپ</button>
+            <!-- راهنمای فرم -->
+            <button type="button" onclick="showHelp()" class="btn-submit" style="background:#8b5cf6;">❔ راهنما</button>
+        </div>
+    </form>
+</div>
+<script>
+
+function showHelp() {
+    alert("راهنمای پر کردن فرم: تمامی فیلدهای ضروری را پر کنید و توضیحات اضافی را تکمیل نمایید.");
+}
+</script>
 {% endblock %}

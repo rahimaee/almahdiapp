@@ -14,9 +14,41 @@ from django.shortcuts import redirect
 from .models import EshrafAnalyze
 from django.utils.timezone import now
 
+from django.shortcuts import render
+from soldires_apps.models import Soldier, Settlement
+from datetime import date
+
 def index(request):
-  
-   return render(request, 'analystics_index.html')
+    today = date.today()
+    # تعداد کل سربازان
+    all_soldiers_counts = Soldier.objects.count()
+    # حاضر: سربازانی که پایان خدمت نرسیده‌اند و فراری نیستند
+    present_soliders_counts = Soldier.objects.filter(is_fugitive=False, service_end_date__gt=today).count()
+    # فراری
+    runaway_soliders_counts = Soldier.objects.filter(is_fugitive=True).count()
+    # اعلام حضور نشده: فرضاً سربازانی که هنوز اعزام نشده‌اند یا service_entry_date خالی است
+    not_reported_counts = Soldier.objects.filter(service_entry_date__isnull=True).count()
+    # پایان خدمت
+    finished_service_counts = Soldier.objects.filter(service_end_date__lte=today).count()
+    # درحال صدور کارت
+    issuing_card_counts = Soldier.objects.filter(eligible_for_card_issuance=True, card_issuance_status__isnull=True).count()
+    # بدهی حقوقی
+    debt_counts = Settlement.objects.filter(current_debt_rial__gt=0).count()
+    # جذبی
+    absorption_counts = Soldier.objects.filter(absorption=True).count()
+
+    context = {
+        'all_soldiers_counts': all_soldiers_counts,
+        'present_soliders_counts': present_soliders_counts,
+        'runaway_soliders_counts': runaway_soliders_counts,
+        'not_reported_counts': not_reported_counts,
+        'finished_service_counts': finished_service_counts,
+        'issuing_card_counts': issuing_card_counts,
+        'debt_counts': debt_counts,
+        'absorption_counts': absorption_counts,
+    }
+
+    return render(request, 'analystics_index.html', context)
 
 def latest_statistics(request):
    context = {
@@ -58,8 +90,9 @@ def reports_all(request):
         'total': 0,
     }
 
+    soldiers = Soldier.objects.filter(is_checked_out=False,is_fugitive=False)
     for unit in units:
-        soldiers = Soldier.objects.filter(current_parent_unit=unit)
+        soldiers = soldiers.filter(current_parent_unit=unit)
 
         row = {
             'unit': unit,
@@ -449,38 +482,114 @@ def reports_chip(request):
     return render(request, "analystics/reports_chip_page.html", ctx)
 
 import jdatetime  # برای تاریخ شمسی
+import jdatetime
+from collections import defaultdict
+from django.db.models import Count, Q
+from .choices import RANK_CHOICES_KEYS,RANK_CHOICES,RANK_OFFICER,RANK_DAGREE,RANK_SARBAZ
+from datetime import timedelta
 
 def reports_type2(request):
-    # مقادیر پیش‌فرض
-    default_unit = ParentUnit.objects.first()
-    default_month = 1  # عدد ماه پیش‌فرض
-    default_base_date = jdatetime.date.today()  # تاریخ امروز شمسی
-
-    # فرم با داده‌های GET یا مقادیر پیش‌فرض
-    form = ReportType2Form(request.GET or None, initial={
-        'unit': default_unit,
-        'month': default_month,
-        'base_date': default_base_date
-    })
-
+    form = ReportType2Form(request.GET or None)
     if form.is_valid():
-        unit = form.cleaned_data.get('unit') or default_unit
-        month = form.cleaned_data.get('month') or default_month
-        base_date = form.cleaned_data.get('base_date') or default_base_date
+        data = form.cleaned_data
+        unit = data['unit']
+        month = data['month']
+        base_date = data['base_date']
+        base_date_j = data['base_date_j']
+        base_date_g = data['base_date_g']
+        next_date_g = data['next_date_g']
     else:
-        # اگر فرم معتبر نبود، از پیش‌فرض‌ها استفاده می‌کنیم
-        unit = default_unit
-        month = default_month
-        base_date = default_base_date
+        # fallback به مقادیر پیش‌فرض فرم
+        unit = form.default_unit
+        month = form.default_month
+        base_date = form.default_base_date.strftime('%Y/%m/%d')
+        base_date_j = form.default_base_date
+        base_date_g = base_date_j.togregorian()
+        next_date_g = base_date_g + relativedelta(months=month)
 
+    # واکشی زیرواحدها
     sub_units = SubUnit.objects.filter(parent_unit=unit)
+
+    # سربازانی که تا ماه بعدی تسویه می‌کنند
+    soldiers_end_in_days = Soldier.objects.filter(
+        is_checked_out=False,
+        is_fugitive=False,
+        service_end_date__gt=base_date_g,   # بزرگتر از تاریخ مبنا (میلادی)
+        service_end_date__lt=next_date_g    # کوچکتر از تاریخ یک ماه بعد (میلادی)
+    )
+    soldiers_not_end_in_days = Soldier.objects.filter(
+        (
+           Q(is_checked_out=False) & Q(is_fugitive=False)
+           & 
+            ( 
+                Q(service_end_date__isnull=True) |
+                Q(service_end_date__gt=next_date_g) 
+            )
+        )
+    )
+    stats = defaultdict(int)
+    
+    sub_units_data = []
+    for sub in sub_units:
+        soldiers = soldiers_end_in_days.filter(current_sub_unit=sub)
+
+        # آمار زیرواحد
+        sub_stats = {
+            'name': sub.name,
+            'all': soldiers.count(),
+            'salem': soldiers.filter(health_status='سالم').count(),
+            'moafazrazm': soldiers.filter(health_status='معاف از رزم').count(),
+            'moafazrazmgrohb': soldiers.filter(health_status='گروه ب').count(),
+            'moafazrazbamgrohb': soldiers.filter(health_status='معاف+گروه ب').count(),
+            'komision': soldiers.filter(health_status='معاف+گروه ب').count(),
+            'edari': soldiers.filter(rank__icontains='اداری').count(),
+            'shifti': soldiers.filter(rank__icontains='شیفتی').count(),
+            'bomi': soldiers.filter(residence_province__isnull=False).count(),
+            'bomino': soldiers.filter(residence_province__isnull=True).count(),
+            'officer': soldiers.filter(rank__in=RANK_OFFICER).count(),
+            'dagree': soldiers.filter(rank__in=RANK_DAGREE).count(),
+            'sarbaz': soldiers.filter(rank__in=RANK_SARBAZ).count(),
+            'pasdarvazife': soldiers.filter(is_guard_duty=True).count(),
+            'zirdiplom': soldiers.filter(degree='زیردیپلم').count(),
+            'diplom': soldiers.filter(degree='دیپلم').count(),
+            'foghdiplom': soldiers.filter(degree='فوق دیپلم').count(),
+            'lisans': soldiers.filter(degree='لیسانس').count(),
+            'foghlisans': soldiers.filter(degree='فوق لیسانس').count(),
+            'doctor': soldiers.filter(degree__icontains='دکترا').count(),
+        }
+
+        # جمع‌بندی برای واحد
+        for k, v in sub_stats.items():
+            if k != 'name':
+                stats[k] += v
+
+        sub_units_data.append(sub_stats)
+
+    # داده نهایی برای قالب
+    total_soldiers_counts= soldiers_not_end_in_days.count()
+    # درصد سربازان حاضر به کل سربازان
+    soldiers_exist_in_unit =  soldiers_not_end_in_days.filter(current_parent_unit=unit).count()  
+    percentage_in_unit_counts = (soldiers_exist_in_unit / total_soldiers_counts * 100) if Soldier.objects.exists() else 0
+    formatted_percentage = "{:.2f}".format(percentage_in_unit_counts)
+    # تعداد ترخیصی‌های قسمت
+    unit_discharged_counts = soldiers_end_in_days.filter(current_parent_unit=unit).count()  
+    # تعداد ترخیصی‌های آموزشگاه
+    academy_discharged_counts = soldiers_end_in_days.count()  
 
     data = {
         'unit': unit,
         'month': month,
         'base_date': base_date,
-        'sub_units': sub_units
+        'form':form,
+        'sub_units': sub_units_data,
+        'unit_stats': stats,
+        'total_soldiers_counts':total_soldiers_counts,
+        'soldiers_exist_in_unit':soldiers_exist_in_unit,
+        'percentage_in_unit_counts':formatted_percentage,
+        'unit_discharged_counts':unit_discharged_counts,
+        'academy_discharged_counts':academy_discharged_counts,
     }
+
 
     ctx = {
         'form': form,

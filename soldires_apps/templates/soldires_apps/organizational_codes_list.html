@@ -4,147 +4,231 @@
 
 {% block main %}
 <style>
-    .page-title {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: #1f2937;
-        text-align: center;
-        margin-bottom: 30px;
-    }
-    .card-custom {
-        border-radius: 12px;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-        background-color: #fff;
-        transition: transform 0.2s ease-in-out;
-    }
-    .card-custom:hover {
-        transform: translateY(-3px);
-    }
-    .card-header {
-        font-weight: 600;
-        background-color: #f3f4f6;
-        border-bottom: 1px solid #e5e7eb;
-        padding: 12px 16px;
-        border-radius: 12px 12px 0 0;
-        font-size: 1rem;
-    }
-    .card-body-form {
-        box-sizing:border-box;
-        padding:16px;
-    }
-    .form-control {
-        border-radius: 8px;
-        border: 1px solid #d1d5db;
-        padding: 6px 12px;
-    }
-    .form-check-label {
-        margin-left: 8px;
-    }
-    .btn-primary {
-        background: #3b82f6;
-        border: none;
-        border-radius: 8px;
-        transition: background 0.2s ease-in-out;
-    }
-    .btn-primary:hover {
-        background: #2563eb;
-    }
-    .btn-info {
-        background: #06b6d4;
-        color: #fff;
-        border-radius: 6px;
-    }
-    .btn-info:hover { background: #0e7490; }
-    .btn-danger { border-radius: 6px; }
-    .table th, .table td {
-        vertical-align: middle !important;
-        text-align: center;
-        padding: 12px;
-    }
-    .table thead th {
-        background: #3b82f6;
-        color: #fff;
-        border: none;
-    }
-    .table tbody tr:hover {
-        background-color: #f3f4f6;
-    }
-    .badge-status {
-        padding: 5px 12px;
-        border-radius: 12px;
-        font-size: 0.85rem;
-    }
-    .badge-active { background-color: #ef4444; color: #fff; }
-    .badge-inactive { background-color: #10b981; color: #fff; }
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1f2937;
+    text-align: center;
+    margin-bottom: 30px;
+}
+.card-custom {
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    background-color: #fff;
+    transition: transform 0.2s ease-in-out;
+    margin-bottom: 10px;
+}
+.card-custom:hover { transform: translateY(-3px); }
+.card-header {
+    font-weight: 600;
+    background-color: #f3f4f6;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 12px 16px;
+    border-radius: 12px 12px 0 0;
+    font-size: 1rem;
+}
+.card-body-form {
+    box-sizing:border-box;
+    padding:16px;
+}
+.card-body-form > * { margin-bottom: 10px; }
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    padding: 6px 12px;
+}
+.form-check-label { margin-left: 8px; }
+.btn-primary {
+    background: #3b82f6;
+    border: none;
+    border-radius: 8px;
+    transition: background 0.2s ease-in-out;
+}
+.btn-primary:hover { background: #2563eb; }
+.btn-info { background: #06b6d4; color: #fff; border-radius: 6px; }
+.btn-info:hover { background: #0e7490; }
+.btn-danger { border-radius: 6px; }
+.table th, .table td {
+    vertical-align: middle !important;
+    text-align: center;
+    padding: 12px;
+}
+.table thead th { background: #3b82f6; color: #fff; border: none; }
+.table tbody tr:hover { background-color: #f3f4f6; }
+.badge-status { padding: 5px 12px; border-radius: 12px; font-size: 0.85rem; }
+.badge-active { background-color: #ef4444; color: #fff; }
+.badge-inactive { background-color: #10b981; color: #fff; }
+.table-wrapper {
+    max-height: 80vh;
+    overflow-y: auto;
+    display: block;
+    -webkit-overflow-scrolling: touch;
+}
+.table-wrapper table { width: 100%; border-collapse: collapse; }
+.table-wrapper thead { position: sticky; top: 0; background-color: #fff; z-index: 1; }
+.card-title { padding:10px 10px; margin:0; font-size:20px; }
 </style>
+
 <div>
-        <div class="row g-4">
-            <!-- فرم افزودن -->
-            <div class="col-lg-5 col-md-12">
-                <div class="card card-custom">
-                    <div class="card-header">➕ افزودن کد جدید</div>
-                    <div class="card-body card-body-form">
-                        <form method="post" class="row g-3" style="padding:10px;">
-                            {% csrf_token %}
-                            <div class="col-12">
-                                {{ form.code_number.label_tag }}
-                                {{ form.code_number }}
-                            </div>
-                            <div class="col-12 d-flex align-items-center mt-2">
-                                {{ form.is_active }}
-                                <span class="form-check-label">{{ form.is_active.label }}</span>
-                            </div>
-                            <div class="col-12 mt-3 text-left" >
-                                <button type="submit" class="btn btn-primary w-100">ذخیره</button>
-                            </div>
-                        </form>
-                    </div>
+    <div class="row g-4">
+
+        <!-- فیلتر و افزودن -->
+        <div class="col-lg-3 col-md-12">
+
+            <!-- فیلترها -->
+            <div class="card card-custom">
+                <div class="card-header card-title">فیلتر ها</div>
+                <div class="card-body card-body-form">
+                    <input type="text" id="searchInput" class="form-control" placeholder="جستجو کد یا نام سرباز..." onkeyup="filterTable()">
+                    <select id="sortSelect" class="form-control" onchange="sortTable()">
+                        <option value="">مرتب سازی بر اساس</option>
+                        <option selected value="code_asc">کد ↑</option>
+                        <option value="code_desc">کد ↓</option>
+                        <option value="soldier_asc">نام سرباز ↑</option>
+                        <option value="soldier_desc">نام سرباز ↓</option>
+                    </select>
+                    <select id="statusFilter" class="form-control" onchange="filterTable()">
+                        <option selected value="all">نمایش همه</option>
+                        <option value="active">فقط غیرآزاد</option>
+                        <option value="inactive">فقط آزاد</option>
+                    </select>
                 </div>
             </div>
 
-            <!-- لیست کدها -->
-            <div class="col-lg-7 col-md-12">
-                <div class="card card-custom">
-                    <div class="card-header">📋 لیست کدهای سازمانی</div>
-                    <div class="card-body">
-                        <table class="table table-hover mb-0 m-0">
-                            <thead>
+            <!-- افزودن کد جدید -->
+            <div class="card card-custom">
+                <div class="card-header card-title">➕ افزودن کد جدید</div>
+                <div class="card-body card-body-form">
+                    <form method="post" class="row g-3" style="padding:10px;">
+                        {% csrf_token %}
+                        <div class="col-12">
+                            {{ form.code_number.label_tag }}
+                            {{ form.code_number }}
+                        </div>
+                        <div class="col-12 d-flex align-items-center mt-2">
+                            {{ form.is_active }}
+                            <span class="form-check-label">{{ form.is_active.label }}</span>
+                        </div>
+                        <div class="col-12 mt-3 text-left">
+                            <button type="submit" class="btn btn-primary w-100">ذخیره</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- جدول کدها -->
+        <div class="col-lg-9 col-md-12">
+            <div class="card card-custom">
+                <h1 class="card-header card-title">📋 لیست کدهای سازمانی</h1>
+                <div class="card-body table-wrapper">
+                    <table class="table table-hover mb-0 m-0">
+                        <thead>
+                            <tr>
+                                <th>کد سازمانی</th>
+                                <th>سرباز فعلی</th>
+                                <th>تعداد استفاده‌کننده</th>
+                                <th>وضعیت</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if codes.exists %}
+                                {% for code in codes %}
                                 <tr>
-                                    <th>ردیف</th>
-                                    <th>کد سازمانی</th>
-                                    <th>وضعیت</th>
-                                    <th>عملیات</th>
+                                    <td class="fw-bold">{{ code.code_number }}</td>
+                                    <td>
+                                        {% if code.current_soldier %}
+                                            {{ code.current_soldier.first_name }} {{ code.current_soldier.last_name }}
+                                        {% else %}
+                                            <span class="text-muted">خالی</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ code.soldiers_count }}</td>
+                                    <td>
+                                        {% if code.is_active %}
+                                            <span name="active" class="badge-status badge-active">غیرآزاد</span>
+                                        {% else %}
+                                            <span name="inactive" class="badge-status badge-inactive">آزاد</span>
+                                        {% endif %}
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                {% if codes.exists %}
-                                    {% for code in codes %}
-                                    <tr>
-                                        <td>{{ forloop.counter }}</td>
-                                        <td class="fw-bold">{{ code.code_number }}</td>
-                                        <td>
-                                            {% if code.is_active %}
-                                                <span class="badge-status badge-active">غیرآزاد</span>
-                                            {% else %}
-                                                <span class="badge-status badge-inactive">آزاد</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            <a class="btn btn-sm btn-info">تغییر وضعیت</a>
-                                            <a class="btn btn-sm btn-danger" onclick="return confirm('آیا مطمئن هستید؟')">حذف</a>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                {% else %}
-                                    <tr>
-                                        <td colspan="4" class="text-muted">⚠️ هیچ کدی ثبت نشده است</td>
-                                    </tr>
-                                {% endif %}
-                            </tbody>
-                        </table>
-                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="text-muted">⚠️ هیچ کدی ثبت نشده است</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
+
+    </div>
 </div>
+
+<script>
+function filterTable() {
+    const input = document.getElementById("searchInput").value.toLowerCase();
+    const statusFilter = document.getElementById("statusFilter").value;
+    const table = document.querySelector(".table-wrapper table tbody");
+    const rows = table.getElementsByTagName("tr");
+
+    for (let i = 0; i < rows.length; i++) {
+        const codeCell = rows[i].getElementsByTagName("td")[0];
+        const soldierCell = rows[i].getElementsByTagName("td")[1];
+        const statusCell = rows[i].getElementsByTagName("td")[3];
+        const statusSpan = statusCell ? statusCell.querySelector("span") : null;
+        const statusName = statusSpan ? statusSpan.getAttribute("name") : "";
+
+        let codeText = codeCell ? codeCell.textContent.toLowerCase() : "";
+        let soldierText = soldierCell ? soldierCell.textContent.toLowerCase() : "";
+        let statusText = statusCell ? statusCell.textContent.toLowerCase() : "";
+
+        // بررسی جستجو
+        let matchesText = codeText.includes(input) || soldierText.includes(input);
+
+        // بررسی وضعیت آزاد یا غیرآزاد
+        let matchesStatus = false;
+        if (statusFilter === "all") {
+            matchesStatus = true;
+        } else if (statusFilter === "active") { 
+            matchesStatus = (statusName === "active");  // فقط غیرآزاد
+        } else if (statusFilter === "inactive") { 
+            matchesStatus = (statusName === "inactive");  // فقط آزاد
+        }
+
+        // نمایش یا پنهان کردن ردیف
+        rows[i].style.display = (matchesText && matchesStatus) ? "" : "none";
+    }
+}
+
+
+function sortTable() {
+    const table = document.querySelector(".table-wrapper table tbody");
+    const rows = Array.from(table.querySelectorAll("tr"));
+    const sortValue = document.getElementById("sortSelect").value;
+    if (!sortValue) return;
+
+    rows.sort((a, b) => {
+        let aText, bText;
+        if (sortValue.includes("code")) {
+            aText = parseInt(a.cells[0].textContent.trim()) || 0;
+            bText = parseInt(b.cells[0].textContent.trim()) || 0;
+        } else {
+            aText = a.cells[1].textContent.trim().toLowerCase() || '';
+            bText = b.cells[1].textContent.trim().toLowerCase() || '';
+        }
+
+        if (sortValue.endsWith("_asc")) return aText > bText ? 1 : -1;
+        else return aText < bText ? 1 : -1;
+    });
+
+    rows.forEach(row => table.appendChild(row));
+
+    // فیلتر بعد از مرتب سازی
+    filterTable();
+}
+</script>
 {% endblock %}

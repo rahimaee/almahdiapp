@@ -120,7 +120,7 @@
        .national-card {
         padding : 5px;
         margin :0;
-        font-family: YekanBakh, Yekan, Naskh, sans-serif;
+        font-family: Vazir, Yekan, Naskh, sans-serif;
     }
     .text-truncate {
         display: -webkit-box;
@@ -141,9 +141,10 @@
 {% endblock %}
 {% block main %}
     <div class="container">
-        <h2 class="fw-bold text-primary text-center">لیست سربازان و وضعیت تسویه‌حساب</h2>
+       
         <div class="modern-table-container">
         <div class="header-tools mb-3">
+                    <h2 style="padding: 0;margin: 0;" class="fw-bold text-primary text-center">لیست سربازان و وضعیت تسویه‌حساب</h2>
                     <div class="center-box"> 
                         <ul class="pagination justify-content-center">
                             {% if page_obj.has_previous %}
@@ -190,26 +191,24 @@
                     </td>
                     <td>
                         {% if item.settlement %}
-                            {{ item.settlement.status }}
+                            {% include "components/status_text.html" with status=item.settlement.status  %}
                         {% else %}
                             بدون وضعیت
                         {% endif %}
                     </td>
                     <td>
                         {% if item.settlement %}
-                            {{ item.settlement.last_rights_check_date }}
+                            {{ item.settlement.last_rights_check_date|to_jalali_g }}
                         {% else %}
                             ندارد
                         {% endif %}
                     </td>
                     <td>
                         {% if item.settlement %}
-                            <a href="{% url 'payment_receipt_create' %}?settlement_id={{ item.settlement.id }}"
-                               class="btn btn-success btn-sm">ثبت فیش واریزی</a>
+                            <a href="{% url 'payment_receipt_create' %}?settlement_id={{ item.settlement.id }}" class="btn btn-danger btn-sm">ثبت فیش واریزی</a>
                         {% else %}
                             <span class="btn btn-warning btn-sm">تسویه‌حساب ندارد</span>
                         {% endif %}
-                        {% comment %} settlement_payments {% endcomment %}
                         <a href="#" class="btn btn-success btn-sm">فیش واریزی</a>
                     </td>
                 </tr>

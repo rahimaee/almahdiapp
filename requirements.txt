@@ -1,0 +1,7 @@
+Django==5.2.7
+django_jalali==7.4.0
+jdatetime==5.2.0
+openpyxl==3.1.5
+pandas==2.3.3
+persiantools==5.4.0
+python_dateutil==2.9.0.post0

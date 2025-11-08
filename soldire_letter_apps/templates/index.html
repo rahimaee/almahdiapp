@@ -14,7 +14,6 @@
   .page-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 25px 15px;
   }
 
   /* عنوان بخش */
@@ -84,9 +83,10 @@
 </style>
 
 <div class="page-container">
+        {% include "./letter_types_nav_layout.html" %}
 
   <!-- بخش فهرست -->
-  <h3 class="section-title title-list">
+  {% comment %} <h3 class="section-title title-list">
     <i class="fa fa-folder-open"></i> فهرست نامه‌ها
   </h3>
   <div class="grid">
@@ -122,7 +122,7 @@
       <i class="fa fa-pencil-square-o"></i>
       <span>تعهد نامه</span>
     </a>
-  </div>
+  </div> {% endcomment %}
 
   <!-- بخش ایجاد -->
   <h3 class="section-title title-create">
@@ -172,17 +172,17 @@
         <span>فرم شماره 3</span>
     </a>
 
-    <!-- صدور کارت پایور -->
+    {% comment %} <!-- صدور کارت پایور -->
     <a href="{% url 'form_essential_create' form_type='officer_card' %}" class="card-link blue">
         <i class="fa fa-id-card"></i>
         <span>صدور کارت پایور</span>
-    </a>
+    </a> {% endcomment %}
 
-    <!-- صدور کارت سرباز -->
+    {% comment %} <!-- صدور کارت سرباز -->
     <a href="{% url 'form_essential_create' form_type='soldier_card' %}" class="card-link orange">
         <i class="fa fa-id-card-o"></i>
         <span>صدور کارت سرباز</span>
-    </a>
+    </a> {% endcomment %}
 
     <!-- فرم تسویه حساب 3 فرزندی و بالاتر -->
     <a href="{% url 'form_essential_create' form_type='checkout_3plus' %}" class="card-link purple">
@@ -196,11 +196,11 @@
         <span>فعال سازی اعزام کارکنان قدیمی (قبل از 1365)</span>
     </a>
 
-    <!-- گواهی دو پاسدار -->
+    {% comment %} <!-- گواهی دو پاسدار -->
     <a href="{% url 'form_essential_create' form_type='certificate_two_guard' %}" class="card-link pink">
         <i class="fa fa-certificate"></i>
         <span>گواهی دو پاسدار</span>
-    </a>
+    </a> {% endcomment %}
 
     <!-- معافیت دائم کارکنان وظیفه -->
     <a href="{% url 'form_essential_create' form_type='permanent_exemption' %}" class="card-link red">

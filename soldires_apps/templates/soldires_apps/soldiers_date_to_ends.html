@@ -1,0 +1,128 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% load jalali_filters %}
+
+{% block main %}
+
+<style>
+/* کارت */
+.card-box {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.07);
+    border: 1px solid rgba(20,184,166,0.25); /* فیروزه ای ملایم */
+}
+
+/* عنوان */
+.card-box h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #0f766e; /* فیروزه‌ای تیره */
+    margin-bottom: 20px;
+}
+
+/* فیلتر */
+.filter-box {
+    gap: 10px;
+    margin-bottom: 20px;
+    display: flex;
+}
+
+.btn-primary {
+    background-color: #0d9488 !important;
+    border-color: #0d9488 !important;
+}
+
+/* جدول */
+.table-wrapper {
+    max-width: 100%;
+    border: 1px solid rgba(20,184,166,0.35);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table-wrapper table {
+    width: 100%;
+}
+
+.table-wrapper thead {
+    background: #0d9488;
+    color: white;
+}
+
+.table-wrapper tbody {
+    display: block;
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+.table-wrapper thead, 
+.table-wrapper tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.table-wrapper tbody tr:hover {
+    background-color: rgba(20,184,166,0.07);
+    transition: 0.2s;
+}
+
+/* Badge رنگ‌ها */
+.bg-danger {
+    background-color: #ef4444 !important;
+}
+.bg-success {
+    background-color: #10b981 !important;
+}
+</style>
+
+<div class="card-box">
+
+    <h1>سربازان تا پایان خدمت</h1>
+
+    <form method="get" class="mb-3 d-flex filter-box">
+        <input type="number" id="daysInput" name="days" value="{{ days_filter }}" class="form-control" placeholder="روز مانده...">
+        <button type="submit" class="btn btn-primary">فیلتر</button>
+    </form>
+
+    <div class="table-wrapper">
+    <table class="table table-hover mb-0">
+        <thead>
+            <tr>
+                <th>کد سازمانی</th>
+                <th>نام و نام خانوادگی</th>
+                <th>کد ملی</th>
+                <th>تاریخ پایان خدمت</th>
+                <th>روز باقی مانده</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if soldiers.exists %}
+                {% for soldier in soldiers %}
+                <tr>
+                    <td>{{ soldier.first_name }} {{ soldier.last_name }}</td>
+                    <td>{{ soldier.organizational_code }}</td>
+                    <td>{{ soldier.service_end_date|to_jalali_g }}</td>
+                    <td>
+                        {% if soldier.remaining_days <= 30 %}
+                            <span class="badge bg-danger">{{ soldier.remaining_days }}</span>
+                        {% else %}
+                            <span class="badge bg-success">{{ soldier.remaining_days }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4" class="text-muted text-center py-3">⚠️ هیچ سربازی پیدا نشد</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    </div>
+
+</div>
+
+{% endblock %}

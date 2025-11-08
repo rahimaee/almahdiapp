@@ -3,12 +3,14 @@ import os
 from django.db import models
 from django.utils.timezone import now
 from units_apps.models import UnitHistory
-from training_center_apps.models import TrainingCenter
-from django_jalali.db import models as jmodels
 from django.utils.deconstruct import deconstructible
 from multiselectfield import MultiSelectField
 import re
-from django.utils import timezone
+from datetime import date
+from dateutil.relativedelta import relativedelta
+from .constants import *
+from datetime import date, timedelta
+from django.db.models import F, ExpressionWrapper, DurationField
 
 
 @deconstructible
@@ -24,85 +26,41 @@ class PathAndRename:
 
 
 class Soldier(models.Model):
-    degree_choices = [
-        ('زیردیپلم', 'زیردیپلم'),
-        ('دیپلم', 'دیپلم'),
-        ('فوق دیپلم', 'فوق دیپلم'),
-        ('لیسانس', 'لیسانس'),
-        ('فوق لیسانس', 'فوق لیسانس'),
-        ('دکترا', 'دکترا'),
-        ('دکترا پزشکی', 'دکترا پزشکی'),
-    ]
-    is_guard_duty_CHOICES = [
-        (False, 'خیر'),
-        (True, 'بلی'),
-    ]
-    driving_license_type_choices = [
-        ('پایه سوم', 'پایه سوم'),
-        ('پایه دوم', 'پایه دوم'),
-        ('پایه اول', 'پایه اول'),
-        ('موتورسیکلت', 'موتورسیکلت'),
-        ('ویژه', 'ویژه'),
-        ('ندارد', 'ندارد'),
-    ]
-    has_driving_license_choices = [
-        ('دارد', 'دارد'),
-        ('ندارد', 'ندارد'),
-    ]
-    skill_group_choices = [
-        (
-            'گروه 1 : پزشکی و پیراپزشکی = گروه پیراپزشکی(رادیولوژی،هوش بری،علوم آزمایشگاهی،اتاق عمل،فوریت پزشکی ،کادر درمان)',
-            'گروه 1 : پزشکی و پیراپزشکی = گروه پیراپزشکی(رادیولوژی،هوش بری،علوم آزمایشگاهی،اتاق عمل،فوریت پزشکی ،کادر درمان)'),
-        ('گروه 2 : تحصیلات تکمیلی و غیرپزشکی = فوق لیسانس، دکتری و فوق دکتری',
-         'گروه 2 : تحصیلات تکمیلی و غیرپزشکی = فوق لیسانس، دکتری و فوق دکتری'),
-        ('گروه 3 : لیسانس = در صورت بکارگیری در پست مرتبط با تحصیلات ،عدم نیاز به آموزش',
-         'گروه 3 : لیسانس = در صورت بکارگیری در پست مرتبط با تحصیلات ،عدم نیاز به آموزش'),
-        ('گروه 4 : فوق دیپلم و دیپلم فنی و حرفه ای و کاردانش', 'گروه 4 : فوق دیپلم و دیپلم فنی و حرفه ای و کاردانش'),
-        ('گروه 5 : فوق دیپلم و دیپلم به پایین', 'گروه 5 : فوق دیپلم و دیپلم به پایین'),
-        ('گروه 6 : دارندگان گواهینامه فنی و حرفه ای', 'گروه 6 : دارندگان گواهینامه فنی و حرفه ای'),
-        ('گروه 7 : فوق دیپلم و دیپلم که در سالهای گذشته گواهینامه گرفته اند و همچنان سرباز می باشند',
-         'گروه 7 : فوق دیپلم و دیپلم که در سالهای گذشته گواهینامه گرفته اند و همچنان سرباز می باشند')
-    ]
-    independent_married_choices = [
-        (True, 'بله'),
-        (False, 'خیر')
-    ]
-    need_certificate_choices = [
-        (True, 'بله'),
-        (False, 'خیر')
-    ]
-    skill_certificate_choices = [
-        ('مدرک 1', 'مدرک 1')
-    ]
-    RANK_CHOICES = [
-        ('سرباز(1)', 'سرباز(1)'),
-        ('سرباز دوم(2)', 'سرباز دوم(2)'),
-        ('سرباز یکم(3)', 'سرباز یکم(3)'),
-        ('رزمیار(4)', 'رزمیار(4)'),
-        ('رزم آور سوم(5)', 'رزم آور سوم(5)'),
-        ('رزم آور دوم(6)', 'رزم آور دوم(6)'),
-        ('رزم آور یکم(7)', 'رزم آور یکم(7)'),
-        ('رزمدار دوم(8)', 'رزمدار دوم(8)'),
-        ('رزمدار یکم(9)', 'رزمدار یکم(9)'),
-        ('ستوان سوم(10)', 'ستوان سوم(10)'),
-        ('ستوان دوم(11)', 'ستوان دوم(11)'),
-        ('ستوان یکم(12)', 'ستوان یکم(12)'),
+    degree_choices = degree_choices 
+    is_guard_duty_CHOICES = is_guard_duty_CHOICES 
+    driving_license_type_choices = driving_license_type_choices 
+    has_driving_license_choices = has_driving_license_choices 
+    skill_group_choices = skill_group_choices 
+    independent_married_choices = independent_married_choices
+    need_certificate_choices = need_certificate_choices 
+    skill_certificate_choices = skill_certificate_choices
+    RANK_CHOICES = RANK_CHOICES 
+    MARITAL_STATUS_CHOICES = MARITAL_STATUS_CHOICES
+    HEALTH_STATUS_CHOICES = HEALTH_STATUS_CHOICES
+    blood_group_choices = blood_group_choices
+    traffic_status_choices = traffic_status_choices 
 
-    ]
-    MARITAL_STATUS_CHOICES = [('مجرد', 'مجرد'), ('متاهل', 'متاهل')]
-    HEALTH_STATUS_CHOICES = [('سالم', 'سالم'), ('معاف از رزم', 'معاف از رزم'), ('گروه ب', 'گروه ب'),
-                             ('معاف+گروه ب', 'معاف+گروه ب'), ]
-    blood_group_choices = [('A+', 'A+'), ('A-', 'A-'), ('B+', 'B+'), ('B-', 'B-'),
-                           ('AB+', 'AB+'), ('AB-', 'AB-'), ('O+', 'O+'), ('O-', 'O-')]
-    traffic_status_choices = [('روزانه', 'روزانه'), ('هفتگی', 'هفتگی'), ('ماهانه', 'ماهانه')]
-    # مشخصات شخصی
-    organizational_code = models.OneToOneField(
-        'OrganizationalCode',
-        on_delete=models.SET_NULL,
+   # مشخصات شخصی
+    organizational_code = models.ForeignKey(
+        'OrganizationalCode',   # مدل مرتبط
+        on_delete=models.SET_NULL,  # اگر کد حذف شد، فیلد null شود
         null=True,
         blank=True,
-        verbose_name="کد سازمانی"
+        verbose_name="کد سازمانی",
+        related_name="soldiers"  # حالا می‌توان به همه سربازان یک کد دسترسی داشت
     )
+    @property
+    def is_active_code(self):
+        """
+        بررسی می‌کند که آیا این سرباز فعلی برای کد سازمانی است یا نه
+        """
+        if not self.organizational_code:
+            return False  # سرباز کد ندارد
+
+        current_soldier = getattr(self.organizational_code, 'current_soldier', None)
+        return current_soldier is not None and current_soldier.id == self.id
+
+    
     national_code = models.CharField(
         max_length=10, unique=True, verbose_name="کد ملی"
     )
@@ -207,7 +165,72 @@ class Soldier(models.Model):
     service_end_date = models.DateField(
         blank=True, null=True, verbose_name="پایان خدمت"
     )
+    
+    @property
+    def remaining_days(self):
+        """تعداد روز باقی مانده خدمت"""
+        if self.service_end_date:
+            delta = self.service_end_date - date.today()
+            return max(delta.days, 0)  # منفی نباشد
+        return None
+
+    @property
+    def remaining_years_months_days(self):
+        """تعداد سال، ماه و روز باقی مانده"""
+        if self.service_end_date:
+            today = date.today()
+            if self.service_end_date < today:
+                return (0, 0, 0)
+            delta = relativedelta(self.service_end_date, today)
+            return delta.years, delta.months, delta.days
+        return (0, 0, 0)
+
+    @property
+    def remaining_str(self):
+        """رشته باقی مانده خدمت"""
+        y, m, d = self.remaining_years_months_days
+        days = self.remaining_days
+
+        if days is None:
+            return "نامشخص"
+        parts = []
+        if y > 0:
+            parts.append(f"{y} سال")
+        if m > 0:
+            parts.append(f"{m} ماه")
+        if d > 0:
+            parts.append(f"{d} روز")
+        if not parts:
+            return "اتمام خدمت"
+        return " و ".join(parts)
     # اطلاعات محل خدمت
+    @property
+    def remaining_str_type(self):
+        days = self.remaining_days
+        if days is None:
+            return "unknown"
+        elif days == 0:
+            return "end"
+        elif days <= 15:
+            return "remaining15"
+        elif days <= 30:
+            return "remaining30"
+        elif  days <= 45:
+            return "remaining45"
+        
+    @classmethod
+    def date_to_ends(cls, days: int):
+        """
+        فهرست سربازانی که بین 0 تا days روز تا پایان خدمت مانده‌اند
+        """
+        from datetime import date, timedelta
+
+        today = date.today()
+        max_date = today + timedelta(days=days)
+
+        # سربازانی که تاریخ پایانشان بین امروز تا روز هدف است
+        return cls.objects.filter(service_end_date__range=(today, max_date))
+
     current_parent_unit = models.ForeignKey(
         "units_apps.ParentUnit", on_delete=models.SET_NULL, null=True, blank=True, verbose_name="واحد اصلی فعلی"
     )
@@ -377,15 +400,27 @@ class Soldier(models.Model):
         self.update_is_seyed()
         self.update_absorption()
         super().save(*args, **kwargs)
+        
+        if self.organizational_code:
+            self.organizational_code.current_soldier = self
+            self.organizational_code.save()
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.organizational_code}"
 
 
+
 class OrganizationalCode(models.Model):
     code_number = models.PositiveIntegerField(unique=True, verbose_name='کد سازمانی')
     is_active = models.BooleanField(default=False, verbose_name='فعال/غیرفعال')  # فعال یا غیرفعال بودن کد
-
+    current_soldier = models.OneToOneField(
+        'Soldier',                 # مدل مرتبط
+        on_delete=models.SET_NULL,  # اگر سرباز حذف شد، فیلد null شود
+        null=True,
+        blank=True,
+        related_name='current_code',
+        verbose_name='سرباز فعلی'
+    )
     def __str__(self):
         return f"کد {self.code_number} - {'غیرآزاد' if self.is_active else 'آزاد'}"
 

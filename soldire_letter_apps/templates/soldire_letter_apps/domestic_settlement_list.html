@@ -510,13 +510,15 @@
       }
 </script>
 
-<div class="container">
+<div class="">
+  {% include "../letter_types_nav_layout.html" %}
+
   <h3>لیست نامه‌های تسویه حساب داخلی</h3>
 
   <form method="get" class="form-inline" role="search" aria-label="جستجوی نامه‌ها">
     <input type="text" name="q" class="form-control" placeholder="جستجو..." value="{{ request.GET.q }}" aria-label="جستجوی نامه‌ها">
     <button type="submit" class="btn">جستجو</button>
-    <a href="{% url 'judicial_inquiry_create' %}" class="btn pull-left">نامه جدید</a>
+    <a href="{% url 'domestic_settlement_create' %}" class="btn pull-left">نامه جدید</a>
   </form>
 
   <table class="table" aria-describedby="لیست نامه‌های تسویه حساب داخلی">
