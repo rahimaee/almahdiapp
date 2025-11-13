@@ -1,6 +1,7 @@
 {% extends 'shared/_LetterA5.html' %}
 {% load static %}
 {% load jalali_filters %}
+{% load req %}
 
 {% block title %}نامه سنجش سلامت و روان{% endblock %}
 
@@ -50,85 +51,96 @@
         font-weight:bold;
     }
     .footer {
-        margin:0;
+        margin-top:0;
     }
-    .footer .signature {
-        margin:0;
-        
-    }
+ 
 </style>
-<div class="page">
+<div class="page f-bnazanin">
     <div class="print-content">
-    <!-- هدر -->
-    <div class="header">
-        <div class="left-info">
-            <strong>تاریخ:</strong> {{ letter.date|to_jalali }}<br>
-            <strong>شماره نامه:</strong> {{ letter.letter_number }}
-        </div>
-        <div>
-            <img src="{% static 'img/allah-placeholder.png' %}" alt="آرم وسط">
-        </div>
-        <div class="sepah-logo">
-            <img src="{% static 'img/Sepah.png' %}" alt="آرم راست">
-        </div>
-    </div>
-
-    <!-- شعار ثابت -->
-    <div class="slogan">
-      «افزایش توان دفاع همه‌جانبه در سال جهش تولید با مشارکت مردم»
-    </div>
 
     <!-- محتوای متغیر نامه -->
     <div class="content-box">
+                            <div class="header">
+                      <div class="sepah-logo f-bkoodak">
+                          <img src="{% static 'img/Sepah.png' %}" alt="آرم راست"/>
+                          <br/>
+                          <span  style="font-size: 10px; margin: 0 2px">نیروی زمینی</span>
+                      </div>
+                      <div class="f-btitr">
+                          <div class="f-irnasq text-center" style="font-size: 16px; ">بسمه تعالی</div>
+                          <img src="{% static 'img/allah-placeholder.png' %}" alt="آرم وسط">
+                      </div>
+                      <div class="left-info">
+                        <div class="letter-detail">
+                            <div style="display: flex;align-items: center;justify-content: space-between;gap: 4px;">
+                                <strong class="f-btitr">شماره نامه : </strong><span class="f-bkoodak" style="font-size: 10px">512/106/6/{{ letter.letter_number|lnumtrans }}ز</span><span></span>
+                            </div>
+                            <div style="display: flex;align-items: center;justify-content: space-between">
+                              <strong class="f-btitr">تاریخ : </strong> <span class="f-bkoodak"  style="font-size: 10px">{{ letter.date|to_jalali }}</span>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
         <div>
-           {{ letter.destination }}
-           <br>
-    <strong>از:</strong> قسمت نیروی انسانی آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه
-  </div>
-      <div style="margin-top:10px; font-weight:bold;">
-         موضوع: {{ letter.letter_type }}
-      </div>
-      
-      <div  class="content flex-content">
-        <div class="custom-content">
-            با صلوات بر محمّد (ص) و آل محمّد (ص) و با احترام، <br>
-            بدین‌وسیله سرباز وظیفه
-            <strong>{{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</strong>،
-            فرزند <strong>{{ letter.soldier.father_name }}</strong>،
-            با شماره ملی <strong>{{ letter.soldier.national_code }}</strong>،
-            کد سربازی <strong>{{ letter.soldier.sarbazi_code }}</strong> و
-            تاریخ اعزام <strong>{{ letter.enlistment_date|to_jalali }}</strong>،
-            در تاریخ <strong>{{ letter.date|to_jalali }}</strong>
-            جهت <strong>سنجش و ارزیابی سلامت روان</strong> حضورتان معرفی می‌گردد.
+
+            <div class="slogan f-btitr">
+                 «افزایش توان دفاع همه‌جانبه در سال جهش تولید با مشارکت مردم»
+            </div>
+                <div class="letter-refrences f-btitr" >
+                    {% comment %} <strong> به : {{ letter.destination }}</strong> {% endcomment %}
+                    <strong> از :  آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه - قسمت بهداری</strong>
+                    <br>
+                    <strong> از :  آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه - مدیریت نیروی انسانی - منابع انسانی سرباز</strong>
+                </div>
+                  <div class="f-btitr" style="font-size: 16px;font-weight:bold;margin-top:5px  ">
+                    موضوع : {{ letter.subject|default:letter.letter_type }}
+                  </div>
+                    <div  style="margin:5px 55px 0;font-size: 18px;font-style: italic;">
+                        سلام علیکم
+                    </div>
+              <div  class="content letter-content ">
+                   <span class="salavat" style="font-weight: bolder">(( اَللّهُمّ صَلَّ عَلی مُحَمَّدِ وَآلِ مُحَمَّد))</span>
+                   <span class="respect">با احترام،</span>
+                        بدین‌وسیله سرباز وظیفه
+                        <strong class="f-btitr">{{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</strong>،
+                        فرزند <strong class="f-btitr">{{ letter.soldier.father_name }}</strong>،
+                        با شماره ملی <strong class="f-btitr">{{ letter.soldier.national_code }}</strong>،
+                        کد سربازی <strong class="f-btitr">{{ letter.soldier.sarbazi_code|default:'0' }}</strong> و
+                        تاریخ اعزام <strong class="f-btitr">{{ letter.soldier.dispatch_date|to_jalali }}</strong>،
+                        در تاریخ <strong class="f-btitr">{{ letter.date|to_jalali }}</strong>
+                        جهت <strong class="f-btitr">سنجش و ارزیابی سلامت روان</strong> حضورتان معرفی می‌گردد.
         </div>
       </div>
-      <div class="footer">
-              <div class="signature">
-                <div class="signature-box signature-shape"></div>
-                <div class="signature-name">
-                    <span class="manager-dagre">سرهنگ دوم پاسدار</span>
-                    <span style="margin:0 20px;"></span>
-                    <span class="manager-name">رضا سروی</span>
-                </div>
-                <div class="manager-title">
-                    مدیر نیروی انسانی آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه
-                </div>
-              </div>
+            <div class="footer">
+                  <div class="signature">
+                        <div class="signature-name f-btitr">
+                            <span class="manager-dagre" >{{ signature.degree|default:"سرهنگ دوم پاسدار" }}</span>
+                            <span style="margin: 0 10px;"></span>
+                            <span class="manager-name">{{ signature.name|default:"رضا سروی" }}</span>
+                        </div>
+                        <div class="manager-title f-btitr">
+                            {{ signature.duty|default:"مدیر نیروی انسانی" }} آموزشگاه رزم مقدماتی المهدی (عج)
+                            <br>
+                            نیروی زمینی سپاه
+                        </div>
+                  </div>
               </div>
 
     </div>
     {% if letter.soldier.organizational_code %}
-    <div class="org-code">
-      <span class="code-badge">{{ letter.soldier.organizational_code }}</span>
-    </div>
+            <div class="peivast">    
+                <div class="org-code">
+                    <span class="">{{ letter.soldier.organizational_code }}</span>
+                </div>
+            </div>
     {% endif %}
 
     <div class="breaker"></div>
-    <div class="masol-box">
+    <div class="masol-box f-bnazanin">
         <div class="top-box">
-            <h4 class="title">نتیجه تست سلامت و روان</h4>
-            <h4 class="date">
-                <pre>14   /   /   : تاریخ</pre>
+            <h4 class="title f-bnazanin">نتیجه تست سلامت و روان</h4>
+            <h4 class="date f-bkoodak">
+                <pre>14       /       /      : تاریخ</pre>
             </h4>
         </div>
         <div class="content-box">
@@ -136,10 +148,12 @@
         </div>
     </div>
         {% if letter.soldier.organizational_code %}
-    <div class="org-code">
-      <span class="code-badge">{{ letter.soldier.organizational_code }}</span>
-    </div>
-    {% endif %}
+            <div class="peivast">    
+                <div class="org-code">
+                    <span class="">{{ letter.soldier.organizational_code }}</span>
+                </div>
+            </div>
+        {% endif %}
 </div>
 </div>
 </div>

@@ -5,24 +5,34 @@ from soldires_apps.models import Soldier
 from units_apps.models import SubUnit
 import json
 from .models import EssentialFormCardLetter
-
-
-# Create your views here.
+from units_apps.models import ParentUnit
 class ClearanceLetterForm(forms.ModelForm):
     class Meta:
         model = ClearanceLetter
-        fields = ['soldier', 'reason', 'description']
+        fields = ['soldier', 'reason', 'description', 'expired_file_number']
         widgets = {
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
 
     def __init__(self, *args, **kwargs):
-        super(ClearanceLetterForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
+        
         for field in self.fields:
             self.fields[field].widget.attrs['class'] = 'form-control'
 
+        # مقدار پیش‌فرض برای reason
         first_choice_value = ClearanceLetter.CLEARANCE_REASON_CHOICES[0][0]
         self.fields['reason'].initial = first_choice_value
+
+        # مقدار پیش‌فرض برای شماره پرونده منقضی
+        if not self.instance.pk:  # فقط برای رکوردهای جدید
+            next_number = ClearanceLetter.get_next_expired_file_number()
+            self.fields['expired_file_number'].initial = next_number
+            self.fields['expired_file_number'].help_text = (
+                f"شماره پیشنهادی: {next_number} — در صورت تکرار هنگام ثبت، "
+                "می‌توانید آن را تغییر دهید."
+            )
+    
 class NormalLetterJudicialInquiryForm(forms.ModelForm):
     soldier = forms.ModelChoiceField(
         queryset=Soldier.objects.all(),
@@ -99,31 +109,46 @@ class NormalLetterDomesticSettlementForm(forms.ModelForm):
             'reason': forms.Select(attrs={'class': 'form-control'}),
             'subject': forms.TextInput(attrs={'class': 'form-control'}),
         }
-
-
+        
+        
+        
 class IntroductionLetterForm(forms.ModelForm):
+    part = forms.ModelChoiceField(
+        queryset=ParentUnit.objects.none(),  # queryset خالی، چون فقط hidden است
+        widget=forms.HiddenInput(),
+        required=False
+    )
+
     class Meta:
         model = IntroductionLetter
         exclude = ['letter_number', 'status', 'created_at', 'updated_at', 'letter_type']
         widgets = {
             'soldier': forms.Select(attrs={'class': 'form-control'}),
-            'part': forms.Select(attrs={'class': 'form-control'}),
-            'sub_part': forms.Select(attrs={'class': 'form-control'}),
+            'sub_part': forms.Select(attrs={'class': 'form-control', 'id': 'id_sub_part'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['sub_part'].queryset = SubUnit.objects.none()
 
-        if 'part' in self.data:
-            try:
-                part_id = int(self.data.get('part'))
-                self.fields['sub_part'].queryset = SubUnit.objects.filter(parent_unit_id=part_id)
-            except (ValueError, TypeError):
-                pass
-        elif self.instance.pk and self.instance.part:
-            self.fields['sub_part'].queryset = self.instance.part.sub_units.all()
+        all_sub_parts = SubUnit.objects.select_related('parent_unit').all().order_by('name')
 
+        # ایجاد choices به شکل "Parent - Sub"
+        sub_part_choices = [('', '--- انتخاب کنید ---')]
+        for sp in all_sub_parts:
+            label = f"{sp.parent_unit.name} - {sp.name}" if sp.parent_unit else sp.name
+            sub_part_choices.append((sp.id, label))
+        self.fields['sub_part'].choices = sub_part_choices
+
+        # اگر instance موجود باشد و sub_part انتخاب شده باشد، part را ست کن
+        if self.instance.pk and self.instance.sub_part:
+            self.fields['part'].initial = self.instance.sub_part.parent_unit
+
+    def clean(self):
+        cleaned_data = super().clean()
+        sub_part = cleaned_data.get('sub_part')
+        if sub_part:
+            cleaned_data['part'] = sub_part.parent_unit  # حتما instance بده، نه id
+        return cleaned_data
 
 class MembershipCertificateForm(forms.ModelForm):
     destination_choice = forms.ChoiceField(

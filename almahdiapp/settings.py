@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'soldire_runaway_apps',
     'apps_settings',
     'analystics',
-    'expired_soldiers'
+    'expired_soldiers',
+    'organizational_position'
 ]
 
 MIDDLEWARE = [

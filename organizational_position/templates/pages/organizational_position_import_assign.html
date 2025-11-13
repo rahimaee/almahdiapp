@@ -1,0 +1,211 @@
+{% extends '../organizational_position_layout.html' %}
+{% block page %}
+<style>
+    .import-card {
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 0.5rem 1.2rem rgba(0,0,0,0.15);
+        margin-bottom: 2rem;
+        transition: transform 0.2s ease-in-out;
+    }
+    .import-card:hover { transform: translateY(-3px); }
+
+    .import-card .card-header {
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding: 0.8rem 1.2rem;
+        background: linear-gradient(90deg,#0d6efd,#6610f2);
+        color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .import-card .card-body {
+        padding: 1rem 1.5rem;
+        background-color: #f8f9fa;
+    }
+
+    .btn-modern {
+        border-radius: 0.75rem;
+        padding: 0.5rem 1.2rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    .btn-modern.btn-primary {
+        background: linear-gradient(90deg,#0d6efd,#6610f2);
+        color: #fff;
+        border: none;
+    }
+    .btn-modern.btn-primary:hover {
+        background: linear-gradient(90deg,#6610f2,#0d6efd);
+    }
+    .btn-modern.btn-success {
+        background: linear-gradient(90deg,#28a745,#198754);
+        color: #fff;
+        border: none;
+    }
+    .btn-modern.btn-success:hover {
+        background: linear-gradient(90deg,#198754,#28a745);
+    }
+
+    .helper-table {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+        font-size: 1rem;
+        background: #fff;
+        border-radius: 0.75rem;
+        overflow: hidden;
+    }
+    .helper-table th, .helper-table td {
+        text-align: center;
+        padding: 0.6rem 0.8rem;
+        white-space: nowrap;
+    }
+    .helper-table th {
+        background: #e9ecef;
+        font-weight: 600;
+    }
+    .helper-table tbody tr:hover {
+        background-color: #e2e6ea;
+    }
+    .required-field {
+        background-color: #fde9e9;
+        color: #b30000;
+        font-weight: bold;
+    }
+
+    .input-group-modern {
+        display: flex;
+        border: 2px solid #0d6efd;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        padding: 0.5rem 1rem;
+        align-items: center;
+    }
+    .input-group-modern input[type="file"] {
+        flex: 3;
+        border: none;
+        outline: none;
+    }
+    .input-group-modern .btn {
+        flex: 1;
+        font-weight: 500;
+    }
+</style>
+
+<div class="container mt-4">
+    <h3 class="mb-3"><i class="fa fa-user-plus text-primary"></i> {{ page_title }}</h3>
+    <p class="text-muted">{{ description }}</p>
+
+    <!-- کارت راهنما -->
+    <div class="import-card shadow-lg">
+        <div class="card-header">
+            <h4><i class="fa fa-info-circle me-2"></i> راهنمای آماده‌سازی فایل تخصیص سرباز به جایگاه</h4>
+            <a href="{% url 'organizational_position_import_assign_sample' %}" class="btn-modern btn-success btn-sm">
+                <i class="fa fa-download"></i> دانلود فایل نمونه تخصیص
+            </a>
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-3">
+                - فایل باید با فرمت <code>.xlsx</code> یا <code>.csv</code> باشد.<br>
+                - ستون‌های <code><strong>کد جایگاه</strong></code> و <code><strong>کد ملی</strong></code> الزامی هستند.<br>
+                - هر ردیف باید فقط یک سرباز و یک جایگاه مشخص کند.<br>
+                - در صورت عدم وجود جایگاه یا سرباز در سامانه، گزارش خطا نمایش داده می‌شود.<br>
+                - نمونه‌ای از داده‌ها را در جدول زیر مشاهده می‌کنید:
+            </p>
+
+            <div class="table-responsive mt-3">
+                <table class="table table-striped table-bordered helper-table">
+                    <thead>
+                        <tr>
+                            <th class="required-field">کد جایگاه</th>
+                            <th class="required-field">کد ملی</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="required-field">101</td>
+                            <td class="required-field">1234567890</td>
+                        </tr>
+                        <tr>
+                            <td class="required-field">102</td>
+                            <td class="required-field">0987654321</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- فرم آپلود فایل -->
+    <div class="import-card shadow-lg">
+        <div class="card-header bg-light">
+            <h4 class="mb-0"><i class="fa fa-upload"></i> بارگذاری فایل تخصیص</h4>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="input-group-modern mb-3">
+                    <input type="file" name="file" accept=".csv,.xlsx" required>
+                    <button type="submit" class="btn-modern btn-primary">
+                        <i class="fa fa-upload"></i> ارسال فایل تخصیص
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if result %}
+    <div class="import-card shadow border-success">
+        <div class="card-header bg-success text-white">
+            <h4><i class="fa fa-check-circle"></i> نتیجه تخصیص</h4>
+        </div>
+        <div class="card-body">
+            <p>تعداد تخصیص موفق: <strong>{{ result.assigned }}</strong></p>
+            {% if result.not_found_soldiers %}
+                <h5 class="text-warning mt-3">سربازان یافت‌نشده:</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for s in result.not_found_soldiers %}
+                        <span class="badge bg-warning text-dark p-2">{{ s }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if result.not_found_positions %}
+                <h5 class="text-warning mt-3">جایگاه‌های یافت‌نشده:</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for p in result.not_found_positions %}
+                        <span class="badge bg-warning text-dark p-2">{{ p }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if result.errors %}
+                <h5 class="text-danger mt-3">خطاها:</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-danger">
+                            <tr>
+                                <th>کد ملی سرباز</th>
+                                <th>کد جایگاه</th>
+                                <th>خطا</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for err in result.errors %}
+                                <tr>
+                                    <td>{{ err.record.national_code|default:"-" }}</td>
+                                    <td>{{ err.record.position_code|default:"-" }}</td>
+                                    <td>{{ err.error }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

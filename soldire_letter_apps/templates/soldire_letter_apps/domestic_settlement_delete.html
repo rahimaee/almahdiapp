@@ -1,10 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
 
-</body>
-</html>
+{% block main %}
+<div class="container my-4 p-4 border rounded shadow-sm bg-light">
+    <h3 class="text-center text-danger mb-4">حذف نامه تسویه داخلی</h3>
+    <p class="text-center">
+        آیا مطمئن هستید که می‌خواهید نامه 
+        <strong>{{ settlement.normal_letter.letter_number }}</strong> مربوط به سرباز 
+        <strong>{{ settlement.normal_letter.soldier }}</strong> را حذف کنید؟
+    </p>
+
+    <form method="post" class="text-center mt-4">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger mx-2">حذف</button>
+        <a href="{% url 'domestic_settlement_list' %}" class="btn btn-secondary mx-2">لغو</a>
+    </form>
+</div>
+{% endblock %}
+
+{% block footer %}
+<script>
+    // اختیاری: نمایش پیغام تایید JS قبل از ارسال فرم
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        if(!confirm('آیا از حذف این نامه مطمئن هستید؟')) {
+            e.preventDefault();
+        }
+    });
+</script>
+{% endblock %}

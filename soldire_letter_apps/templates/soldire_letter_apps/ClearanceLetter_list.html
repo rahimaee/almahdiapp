@@ -236,17 +236,20 @@
         <a href="{% url 'ClearanceLetterListView' %}" class="btn btn-default"><i class="fa fa-refresh"></i> پاک کردن</a>
     </form>
     <div style="display: flex; gap: 20px;">
-            <form method="get" class="filter-form " style="flex: 2;">
+            <form method="get" class="filter-form " style="display:block;flex: 2;">
                 <div class="header-tools">
-                    <div class="center-box">
+                    <div class="center-box" style="justify-content: start;gap: 5px;">
                         <a href="{% url 'clearance_letter_create' %}" class="btnx btn-create">
-                            ایجاد نامه جدید <i class="fa fa-plus"></i>
+                            <i class="fa fa-plus"></i>                           ایجاد نامه جدید 
                         </a>
                         <a href="{% url 'clearance_letter_excel' %}" class="btnx btn-download">
-                            دانلود اکسل <i class="fa fa-file-excel-o"></i>
+                           <i class="fa fa-file-excel-o"></i> دانلود اکسل نامه ها
                         </a>
                         <a class="btnx btn-import-letter">
                             <i class="fa fa-file-excel-o"></i> بارگذاری اکسل نامه ها
+                        </a>
+                        <a class="btnx btn-import-letter">
+                            <i class="fa fa-file-excel-o"></i> بارگذاری شماره پرونده ها
                         </a>
                     </div>
                 </div>
@@ -291,11 +294,10 @@
         <table class="modern-table">
             <thead>
                 <tr>
-                    <th>ردیف</th>
+                    <th>شماره پرونده</th>
                     <th></th>
-                    <th>نامه</th>
-                    <th>نام</th>
-                    <th>نام خانوادگی</th>
+                    <th>شماره نامه</th>
+                    <th>نام و نام خانوادگی</th>
                     <th>کد ملی</th>
                     <th>وضعیت</th>
                     <th>عملیات</th>
@@ -304,7 +306,7 @@
             <tbody>
                 {% for letter in letters %}
                     <tr>
-                        <td>{{ forloop.counter }}</td>
+                        <td class="expired-file-number">{{ letter.expired_file_number }}</td>
                         <td style="text-align:right; vertical-align: middle; display:flex;">
                             <span class="badge badge-primary" style="font-size:13px; padding:6px 10px;">
                                 <div>{{ letter.get_reason_display }}</div>
@@ -312,15 +314,14 @@
                                     <i class="fa fa-calendar"></i> {{ letter.issue_date|to_jalali }}
                                 </div>
                             </span>
-                               
                         </td>
-                        <td> <div style="font-size:12px; padding:6px 10px;">
-                                    شماره: {{ letter.letter_number }}
-                                </div></td>
-                        <td class="full-name">{{ letter.soldier.first_name }}</td>
-                        <td class="full-name">{{ letter.soldier.last_name }}</td>
+                        <td> 
+                            <div style="font-size:12px; padding:6px 10px;">
+                                {{ letter.letter_number }}
+                            </div>
+                        </td>
+                        <td class="full-name" style="text-align: right;">{{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</td>
                         <td class="national-card">{{ letter.soldier.national_code }}</td>
-
                         <!-- وضعیت -->
                         <td>
                             {% if letter.status == 'ایجاد شده' %}
@@ -354,10 +355,10 @@
                                 <a href="{% url 'print_ClearanceLetter' letter_id=letter.id %}" class="bg-success" target="_blank">
                                     <i class="fa fa-print"></i> چاپ نهایی
                                 </a>
-                                <a href="{% url 'delete_ClearanceLetter' letter_id=letter.id %}" class="bg-danger" title="حذف نامه و بازگرداندن وضعیت سرباز به حین خدمت">
-                                    <i class="fa fa-trash"></i> حذف
-                                </a>
-                            {% endif %}
+                                {% endif %}
+                            <a href="{% url 'delete_ClearanceLetter' letter_id=letter.id %}" class="bg-danger" title="حذف نامه و بازگرداندن وضعیت سرباز به حین خدمت">
+                                <i class="fa fa-trash"></i> حذف
+                            </a>
                         </td>
                     </tr>
                 {% empty %}

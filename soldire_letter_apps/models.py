@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.utils import timezone
 from datetime import timedelta
+from django.db import models, transaction
 
 
 class ClearanceLetter(models.Model):
@@ -33,13 +34,51 @@ class ClearanceLetter(models.Model):
     issue_date = models.DateField(auto_now_add=True, verbose_name="تاریخ صدور تسویه کل")
     description = models.TextField(blank=True, null=True, verbose_name="توضیحات")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ثبت")
-    status = models.CharField(max_length=100, choices=CLEARANCE_STATUS_CHOICES, verbose_name="وضعیت نامه",
-                              default='ایجاد شده')
-
+    status = models.CharField(max_length=100, choices=CLEARANCE_STATUS_CHOICES, verbose_name="وضعیت نامه", default='ایجاد شده')
+    # 🔹 فیلد جدید:
+    expired_file_number = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name="شماره پرونده منقضی"
+    )
     class Meta:
         verbose_name = "نامه تسویه‌حساب"
         verbose_name_plural = "نامه‌های تسویه‌حساب"
 
+
+    @staticmethod
+    def get_next_expired_file_number():
+        """دریافت شماره پرونده منقضی بعدی به‌صورت اتمیک و یونیک"""
+        with transaction.atomic():
+            # قفل روی رکوردها برای جلوگیری از رقابت همزمان
+            last_number_str = (
+                ClearanceLetter.objects
+                .select_for_update()
+                .order_by('-expired_file_number')
+                .values_list('expired_file_number', flat=True)
+                .first()
+            )
+
+            # اگر رکوردی نبود، از صفر شروع شود
+            last_number = int(last_number_str) if last_number_str and last_number_str.isdigit() else 0
+
+            # افزایش شماره
+            next_number = last_number + 1
+
+            # برگرداندن به رشته (مثلاً "101")
+            return str(next_number)
+
+    def assign_expired_file_number(self, save: bool = True):
+        """
+        تولید و اختصاص شماره پرونده منقضی.
+        اگر save=True باشد، شیء را هم ذخیره می‌کند.
+        """
+        self.expired_file_number = ClearanceLetter.get_next_expired_file_number()
+        if save:
+            self.save(update_fields=['expired_file_number'])
+        return self.expired_file_number
+    
     def __str__(self):
         return f"{self.soldier} - {self.get_reason_display()} - {self.letter_number}"
 
@@ -55,6 +94,10 @@ class ClearanceLetter(models.Model):
             while ClearanceLetter.objects.filter(letter_number=self.letter_number).exists():
                 self.letter_number = f"{base_letter_number}-{counter}"
                 counter += 1
+            
+        if not self.expired_file_number:
+            self.assign_expired_file_number(save=False)
+
         super().save(*args, **kwargs)
 
 

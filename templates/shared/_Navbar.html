@@ -41,22 +41,26 @@
                       </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li><a href="{% url 'soldier_list' %}">مدیریت سربازان</a></li>
                     <li><a href="{% url 'soldier_list' %}">اطلاعات جامع سرباز</a></li>
-                    <li><a href="{% url 'expired_soldiers' %}">سربازان منقضی خدمت</a></li>
-                    <li><a href="{% url 'soldier_create' %}">پذیرش سرباز</a></li>
-                    <li><a href="{% url 'organizational_codes_list' %}">کد سازمانی</a></li>
-                    <li><a href="{% url 'bulk_photo_upload' %}">آپلود گروهی عکس</a></li>
-                    <li><a href="{% url 'due_mental_health_letters' %}">تست مجدد سلامت روان</a></li>
+                    <li><a href="{% url 'soldier_list' %}">مدیریت سربازان</a></li>
+                    <li><a href="{% url 'expired_soldiers' %}">منقضی از خدمت</a></li>
+                    <li><hr style="margin-top: 5px;margin-bottom: 5px;"/></li>
+                    <li><a href="{% url 'checked_out_soldiers_list' %}">تسویه‌حساب شده</a></li>
+                    <li><a href="{% url 'due_mental_health_letters' %}">تست مجدد سلامت</a></li>
                     <li><a href="{% url 'escaped_soldiers' %}">فراری ها</a></li>
+                    <li><hr style="margin-top: 5px;margin-bottom: 5px;"/></li>
+                    <li><a href="{% url 'soldier_create' %}">پذیرش سرباز</a></li>
                     <li><a href="{% url 'soldiers_by_entry_date' %}">ورودی های جدید</a></li>
+                    <li><hr style="margin-top: 5px;margin-bottom: 5px;"/></li>
                     <li><a href="{% url 'incomplete_soldiers_list' %}">نواقص پرونده</a></li>
-                    <li><a href="{% url 'checked_out_soldiers_list' %}">سربازان تسویه‌حساب شده</a></li>
+                    <li><a href="{% url 'bulk_photo_upload' %}">آپلود گروهی عکس</a></li>
+                    <li><a href="{% url 'organizational_codes_list' %}">کد سازمانی</a></li>
+                    <li><a href="{% url 'organizational_position_index' %}">جایگاه سازمانی</a></li>
                 </ul>
             </li>
             {% if request.user.is_staff == True %}
                 <li>
-                    <a href="{% url 'main_letters' %}"><i class="fa fa-envelope"></i> <span>نامه ها</span>
+                    <a href="{% url 'main_letters' %}"><i class="fa fa-envelope"></i> <span>فرم و نامه ها</span>
                         <span class="pull-left-container">
                       </span>
                     </a>

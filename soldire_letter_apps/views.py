@@ -129,7 +129,7 @@ def create_new_letter_from_old(request, test_id):
     new_letter = NormalLetter.objects.create(
         soldier=old_soldier,
         letter_type='تست سلامت روان پس از ۶ ماه',
-        destination='به : قسمت بهداشت و درمان آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه',
+        destination=' قسمت بهداشت و درمان آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه',
         description='تست سلامت روان پس از ۶ ماه',
         created_by=request.user
     )
@@ -166,7 +166,7 @@ def create_group_mental_health_letters(request):
                 new_letter = NormalLetter.objects.create(
                     soldier=soldier,
                     letter_type='تست سلامت روان پس از ۶ ماه',
-                    destination='به : قسمت بهداشت و درمان آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه',
+                    destination=' قسمت بهداشت و درمان آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه',
                     description='تست سلامت روان پس از ۶ ماه',
                     created_by=request.user
                 )
@@ -222,7 +222,7 @@ def judicial_inquiry_create(request):
                 soldier=soldier,
                 letter_type='استعلام قضایی',
                 created_by=request.user,
-                destination='به : قسمت نیروی انسانی آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه - قضایی و انضباطی',
+                destination='آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه - مدیریت نیروی انسانی - قضایی و انضباطی ',
                 description=description,
             )
 
@@ -275,7 +275,7 @@ def judicial_inquiry_delete(request, pk):
 
 def judicial_inquiry_print(request, pk):
     inquiry = get_object_or_404(NormalLetterJudicialInquiry, pk=pk)
-    
+    inquiry.normal_letter.destination='آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه - مدیریت نیروی انسانی - قضایی و انضباطی '
     return render(request, 'soldire_letter_apps/print_judicial_inquiry.html', {
         'inquiry': inquiry,
         'letter':inquiry.normal_letter,
@@ -334,12 +334,14 @@ def domestic_settlement_create(request):
             subject = 'تسویه حساب داخلی'
             description = form.cleaned_data['description']
 
+            part = soldier.current_parent_unit
+            sub = soldier.current_sub_unit
             # ایجاد نامه نرمال
             normal_letter = NormalLetter.objects.create(
                 soldier=soldier,
                 letter_type='تسویه حساب داخلی',
                 created_by=request.user,
-                destination=F'به : {soldier.current_parent_unit} آموزشگاه رزم مقدماتی المهدی(عج) نیروی زمینی سپاه',
+                destination=F'آموزشگاه رزم مقدماتی المهدی(عج) نیروی زمینی سپاه - {part} - {sub}',
                 description=description,
             )
 
@@ -357,16 +359,15 @@ def domestic_settlement_create(request):
                   {'form': form, 'title': 'ایجاد نامه توسیه حساب داخلی'})
 
 
-# حذف
 def domestic_settlement_delete(request, pk):
-    inquiry = get_object_or_404(NormalLetterJudicialInquiry, pk=pk)
+    settlement = get_object_or_404(NormalLetterDomesticSettlement, pk=pk)
     if request.method == 'POST':
-        inquiry.normal_letter.delete()  # حذف خودکار normal_letter مرتبط هم
-        inquiry.delete()
+        settlement.normal_letter.delete()  # حذف خودکار normal_letter مرتبط
+        settlement.delete()
         messages.success(request, "نامه با موفقیت حذف شد.")
         return redirect('domestic_settlement_list')
-    return render(request, 'soldire_letter_apps/domestic_settlement_delete.html', {'object': inquiry})
-
+    
+    return render(request, 'soldire_letter_apps/domestic_settlement_delete.html', {'settlement': settlement})
 
 def approved_domestic_settlement(request, letter_id):
     domestic_settlement = NormalLetterDomesticSettlement.objects.get(normal_letter_id=letter_id)
@@ -382,11 +383,23 @@ def approved_domestic_settlement(request, letter_id):
 
 
 def print_domestic_settlement(request, letter_id):
-    letter = NormalLetter.objects.get(id=letter_id)
-    if letter.status == 'ایجاد شده':
-        letter.status = 'چاپ و درحال بررسی'
-        letter.save()
-    return render(request, 'soldire_letter_apps/print_domestic_settlement.html', {'letter': letter})
+    letter = NormalLetterDomesticSettlement.objects.get(normal_letter__id=letter_id)
+    if letter and letter.normal_letter.status == 'ایجاد شده':
+        letter.normal_letter.status = 'چاپ و درحال بررسی'
+        letter.normal_letter.save()
+    
+    s = letter.normal_letter.soldier
+    if s:
+        part = s.current_parent_unit.name
+        sub = s.current_sub_unit.name
+        letter.normal_letter.destination = f'آموزشگاه رزم مقدماتی المهدی(عج) نیروی زمینی سپاه - {part} - {sub}'
+        
+        
+        print(letter.normal_letter.destination)
+    return render(request, 'soldire_letter_apps/print_domestic_settlement.html', {
+        'letter': letter.normal_letter,
+        'domestic_settlement':letter
+    })
 
 
 def introduction_letter_list(request):
@@ -512,8 +525,13 @@ def print_introduction_letter(request, letter_id):
     if letter.status == 'ایجاد شده':
         letter.status = 'چاپ و درحال بررسی'
         letter.save()
+
+    if letter:
+        letter.date = letter.letter_date
+        letter.sub_part_of = letter.sub_part or '!زیر قسمت انتخاب نشده!'
+        letter.part_of = letter.part or '!قسمت انتخاب نشده!'
+        letter.destination = f"آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه - {letter.part_of} - {letter.sub_part_of}"
         
-    letter.destination = f'به :  {letter.part}'
     return render(request, 'soldire_letter_apps/print_introduction_letter.html', {'letter': letter})
 
 
@@ -597,8 +615,14 @@ def membership_certificate_delete(request, pk):
 def membership_certificate_print(request, pk):
     certificate = get_object_or_404(MembershipCertificate, pk=pk)
 
-    return render(request, 'soldire_letter_apps/print_membership_certificate.html', {'certificate': certificate,'letter':certificate.normal_letter})
-
+    if certificate:
+        letter = certificate.normal_letter
+        letter.subject = certificate.subject or letter.subject
+    context = {
+        'certificate': certificate,
+        'letter': letter
+    }
+    return render(request, 'soldire_letter_apps/print_membership_certificate.html', context)
 
 def health_iodine_letter_list(request):
     query = request.GET.get('q', '')
@@ -622,49 +646,59 @@ def health_iodine_letter_list(request):
     })
 
 
+# ایجاد نامه تائیدیه سلامت
 def health_iodine_letter_create(request):
     if request.method == 'POST':
         form = HealthIodineForm(request.POST)
         if form.is_valid():
             soldier = form.cleaned_data['soldier']
+            # ایجاد نامه عادی مرتبط
             normal_letter = NormalLetter.objects.create(
                 soldier=soldier,
-                destination='به : قسمت بهداری آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه',
+                destination='آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه - قسمت بهداری',
                 letter_type='دریافت تائیدیه سلامت',
                 created_by=request.user if request.user.is_authenticated else None
             )
-            hi = form.save(commit=False)
-            hi.normal_letter = normal_letter
-            hi.save()
+            
+            # ذخیره فرم Health Iodine
+            hi_letter = form.save(commit=False)
+            hi_letter.normal_letter = normal_letter
+            hi_letter.save()
+            messages.success(request, "نامه تائیدیه سلامت با موفقیت ایجاد شد.")
             return redirect('health_iodine_letter_list')
     else:
-        form = IntroductionLetterForm()
-        form.fields['soldier'].queryset = Soldier.objects.filter().all()
+        form = HealthIodineForm()
+        form.fields['soldier'].queryset = Soldier.objects.all()
+
     return render(request, 'soldire_letter_apps/health_iodine_letter_form.html', {'form': form})
 
-
+# بروزرسانی نامه تائیدیه سلامت
 def health_iodine_letter_update(request, pk):
-    letter = get_object_or_404(IntroductionLetter, pk=pk)
+    hi_letter = get_object_or_404(NormalLetterHealthIodine, pk=pk)
     if request.method == 'POST':
-        form = IntroductionLetterForm(request.POST, instance=letter)
+        form = HealthIodineForm(request.POST, instance=hi_letter)
         if form.is_valid():
             form.save()
+            messages.success(request, "نامه تائیدیه سلامت با موفقیت بروزرسانی شد.")
             return redirect('health_iodine_letter_list')
     else:
-        form = IntroductionLetterForm(instance=letter)
-    return render(request, 'soldire_letter_apps/health_iodine_letter_form.html', {'form': form})
+        form = HealthIodineForm(instance=hi_letter)
 
+    return render(request, 'soldire_letter_apps/health_iodine_letter_form.html', {'form': form})
 
 def health_iodine_letter_delete(request, pk):
-    letter = get_object_or_404(IntroductionLetter, pk=pk)
+    letter = get_object_or_404(NormalLetterHealthIodine, pk=pk)
+    
     if request.method == 'POST':
-        form = IntroductionLetterForm(request.POST, instance=letter)
-        if form.is_valid():
-            form.save()
-            return redirect('health_iodine_letter_list')
-    else:
-        form = IntroductionLetterForm(instance=letter)
-    return render(request, 'soldire_letter_apps/health_iodine_letter_form.html', {'form': form})
+        # حذف normal_letter مرتبط قبل از حذف letter
+        if letter.normal_letter:
+            letter.normal_letter.delete()
+        
+        letter.delete()
+        messages.success(request, "نامه با موفقیت حذف شد.")
+    
+    return redirect('health_iodine_letter_list')
+
 
 def print_health_iodine(request, letter_id):
     letter = NormalLetterHealthIodine.objects.get(id=letter_id)
@@ -757,6 +791,7 @@ def print_commitment_letter(request, letter_id):
     if letter.status == 'ایجاد شده':
         letter.status = 'چاپ و درحال بررسی'
         letter.save()
+        letter.date = letter.letter_date
     return render(request, 'soldire_letter_apps/print_commitment_letter.html', {'letter': letter})
 
 

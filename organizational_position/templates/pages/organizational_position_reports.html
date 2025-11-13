@@ -1,0 +1,14 @@
+{% extends '../organizational_position_layout.html' %}
+{% block page %}
+<h2>{{ page_title }}</h2>
+<p>{{ description }}</p>
+
+<div class="report-container">
+    <ul>
+        <li>تعداد کل جایگاه‌ها: <strong>{{ total_positions }}</strong></li>
+        <li>تعداد کل سربازان: <strong>{{ total_soldiers }}</strong></li>
+    </ul>
+</div>
+
+<p>اینجا می‌توان نمودارها یا تحلیل‌های آماری جایگاه‌ها را نمایش داد.</p>
+{% endblock %}

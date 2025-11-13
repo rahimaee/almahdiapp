@@ -5,16 +5,13 @@
 {% block title %}نامه تسویه حساب{% endblock %}
 
 {% block content %}
-      <div  >
         بدین‌وسیله به اطلاع می‌رساند سرباز وظیفه
-        <strong>{{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</strong>
-        فرزند <strong>{{ letter.soldier.father_name }}</strong> با شماره ملی
-        <strong>{{ letter.soldier.national_code }}</strong> و تاریخ اعزام
-        <strong>{{ letter.soldier.enlistment_date|to_jalali }}</strong>
-        به دلیل <strong>{{ letter.description }}</strong> « {{inquiry.reason}} » استعلام قضایی صادر فرمایید.
-      </div>
-      <div>
+        <strong class="f-btitr">{{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</strong>
+        فرزند <strong class="f-btitr">{{ letter.soldier.father_name }}</strong> با شماره ملی
+        <strong class="f-btitr">{{ letter.soldier.national_code }}</strong> و تاریخ اعزام
+        <strong class="f-btitr">{{ letter.soldier.dispatch_date|to_jalali }}</strong>
+        به دلیل <strong class="f-btitr">{{ letter.description }}</strong> « {{inquiry.reason}} » استعلام قضایی صادر فرمایید.
+
         <h5 style="font-weight:bold;">نام قسمت : {{letter.soldier.current_parent_unit}}</h5>
         <h5 style="font-weight:bold;">نام زیر قسمت : {{letter.soldier.current_sub_unit}}</h5>
-      </div>
 {% endblock %}

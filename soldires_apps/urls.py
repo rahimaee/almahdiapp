@@ -1,5 +1,5 @@
 # urls.py
-from django.urls import path
+from django.urls import path,include
 from . import views
 
 urlpatterns = [
@@ -23,6 +23,6 @@ urlpatterns = [
     path('group-submit/', views.soldiers_group_submit, name='soldiers_group_submit'),
     path('api/soldiers/search', views.soldiers_search, name='soldiers_search'),
     path('soldiers/<int:soldier_id>/reports/single/', views.single_reports_soldier, name='single_reports_soldier'),
-    path('soldiers/date_to_end/', views.soldiers_date_to_end, name='soldiers_date_to_end')
-
+    path('soldiers/date_to_end/', views.soldiers_date_to_end, name='soldiers_date_to_end'),
+    path('position/', include('organizational_position.urls')),
 ]

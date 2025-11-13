@@ -1,0 +1,88 @@
+{% extends '../organizational_position_layout.html' %}
+{% block page %}
+<div class="container mt-4">
+    <h2 class="mb-3">{{ page_title }}</h2>
+    <p class="text-muted">{{ description }}</p>
+
+    <!-- بخش آمار جایگاه‌ها -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">کل جایگاه‌ها</div>
+                <div class="card-body">
+                    <h4 class="card-title">{{ total_positions }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-header">جایگاه بدون عنوان</div>
+                <div class="card-body">
+                    <h4 class="card-title">{{ positions_without_title }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-header">آخرین بروزرسانی</div>
+                <div class="card-body">
+                    <h6 class="card-title">
+                        {% if latest_update %}
+                            {{ latest_update.updated_at|date:"Y/m/d H:i" }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- بخش آمار سربازان -->
+    <h4 class="mb-3">آمار سربازان</h4>
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">دارای جایگاه</div>
+                <div class="card-body">
+                    <h4 class="card-title">{{ soldiers_with_position }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary mb-3">
+                <div class="card-header">بدون جایگاه</div>
+                <div class="card-body">
+                    <h4 class="card-title">{{ soldiers_without_position }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">حاضر با جایگاه</div>
+                <div class="card-body">
+                    <h4 class="card-title">{{ soldiers_present_with_position }}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger mb-3">
+                <div class="card-header">حاضر بدون جایگاه</div>
+                <div class="card-body">
+                    <h4 class="card-title">{{ soldiers_present_without_position }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- دکمه‌ها -->
+    <div class="mb-4">
+        <button class="btn btn-primary me-2">
+            📦 پشتیبان‌گیری از داده‌ها
+        </button>
+        <button class="btn btn-danger">
+            🗑️ حذف همه داده‌ها (با احتیاط)
+        </button>
+    </div>
+</div>
+{% endblock %}

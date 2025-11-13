@@ -1,0 +1,231 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+{% load req %}
+
+{% block header %}
+<title>پنل مدیریت | سربازان منقضی خدمت</title>
+<style>
+    /* ====== Layout Styles ====== */
+    section.app-container {
+        display: flex;
+        gap: 12px;
+        direction: rtl;
+    }
+
+    aside.app-sidebar {
+        min-width: 260px;
+
+    }
+
+    .app-card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 16px;
+        border: 1px solid #ddd;
+    }
+
+     /* ====== Sidebar Card ====== */
+    .sidebar-card {
+        border-radius: 6px;
+        margin-bottom: 10px;
+        padding-bottom: 5px;
+        background: #fff;
+    }
+
+    .sidebar-card-header {
+        background: #0069d9;
+        color: #fff;
+        padding: 7px 10px;
+        font-weight: 600;
+        border-radius: 10px 10px 0 0 ;
+        margin-bottom: 5px;
+    }
+    .list-group {
+        margin: 0 5px;
+    }
+
+    .list-group-item {
+        padding: 6px 8px !important;
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+        transition: 0.2s;
+    }
+
+    .list-group-item i {
+        font-size: 13px;
+        opacity: 0.8;
+        margin-left: 5px;
+    }
+
+    .list-group-item:hover {
+        background: #f1f5fb;
+    }
+
+    .list-group-item span {
+        flex-grow: 1;
+        text-align: right;
+    }
+
+    .sidebar-select-container select {
+        width: 100%;
+        padding: 2px;
+        font-size: 0.83rem;
+    }
+    .badge {
+        display: inline-block;
+        padding: 0.25em 0.4em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 0.25rem;
+        color: #fff;
+    }
+
+    .bg-success { background-color: #28a745; }
+    .bg-danger { background-color: #dc3545; }
+    .bg-info    { background-color: #17a2b8; }
+    .bg-warning { background-color: #ffc107; color: #212529; }
+    .bg-primary { background-color: #007bff; }
+    .bg-secondary { background-color: #6c757d; }
+    .bg-dark    { background-color: #343a40; }
+    .bg-light   { background-color: #f8f9fa; color: #212529; }
+</style>
+<style>
+    .disabled-link {
+        pointer-events: none;
+        opacity: 0.4;
+        background: #e9ecef !important;
+        color: #6c757d !important;
+    }
+
+    .active-link {
+        background-color: #e6fdffff !important;
+        color: white !important;
+        font-weight: bold;
+    } 
+    .active-link > * {
+        color: #178a92ff !important;
+    }
+    .active-link > * {
+        color: white;
+        transition: 0.5s;
+    }
+    .tab-list-group .list-group-item span {
+        padding: 0;
+        border-right: 2px solid transparent;
+        
+    }
+    .tab-list-group .list-group-item.active-link span {
+        padding:0 4px;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+
+    <section class="app-container">
+        <!-- Sidebar -->
+        <aside class="app-sidebar">
+            <div class="sidebar-card shadow-sm">
+                <div class="sidebar-card-header">جایگاه سازمانی</div>
+                <div class="list-group list-group-flush tab-list-group">
+                    <a href="{% url 'organizational_position_index' %}" 
+                    class="{% active_link 'organizational_position_index' %} list-group-item list-group-item-action ">
+                        <span>فهرست جایگاه ها</span>
+                        <i class="fa fa-list"></i>
+                    </a>
+                    <a  href="{% url 'organizational_position_tree' %}"  
+                        class="{% active_link 'organizational_position_tree' %} list-group-item list-group-item-action ">
+                        <span>چارت درختی جایگاه</span>
+                        <i class="fa fa-sitemap"></i>
+                    </a>
+                    <a href="{% url 'organizational_position_reports' %}"   
+                    class="{% active_link 'organizational_position_reports' %} list-group-item list-group-item-action ">
+                        <span>گزارشات آمار</span>
+                        <i class="fa fa-bar-chart"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="sidebar-card shadow-sm">
+                <div class="sidebar-card-header">مدیریت داده ها</div>
+                <div class="list-group list-group-flush tab-list-group">
+                    <a  href="{% url 'organizational_position_import_data' %}"   
+                        class="{% active_link 'organizational_position_import_data' %} list-group-item list-group-item-action">
+                        <span>بارگذاری اطلاعات جایگاه</span>
+                        <i class="fa fa-upload"></i>
+                    </a>
+                    <a  href="{% url 'organizational_position_import_assign' %}"    
+                        class="{% active_link 'organizational_position_import_assign' %} list-group-item list-group-item-action disabled-link " >
+                        <span>تخصیص جایگاه سربازان</span>
+                        <i class="fa fa-user-plus"></i>
+                    </a>
+                    <a 
+                        href="{% url 'organizational_position_database' %}"   
+                        class="{% active_link 'organizational_position_database' %} list-group-item list-group-item-action">
+                        <span>مدیریت بانک داده ها</span>
+                        <i class="fa fa-database"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="sidebar-card shadow-sm">
+                <div class="sidebar-card-header" style="background-color: #28a745;">باکس دانلود</div>
+                <div class="list-group list-group-flush tab-list-group">
+                    <!-- لینک‌های فعال -->
+                    <a href="{% url 'organizational_position_export_data' %}?status=all" class="list-group-item list-group-item-action">
+                        <span>خروجی اکسل همه جایگاه‌ها</span>
+                        <i class="fa fa-download"></i>
+                    </a>
+                    <a href="{% url 'organizational_position_export_data' %}?status=full" class="list-group-item list-group-item-action">
+                        <span>اکسل جایگاه‌های پر</span>
+                        <i class="fa fa-download"></i>
+                    </a>
+                    <a href="{% url 'organizational_position_export_data' %}?status=empty" class="list-group-item list-group-item-action">
+                        <span>اکسل جایگاه‌های خالی</span>
+                        <i class="fa fa-download"></i>
+                    </a>
+                    <a href="{% url 'organizational_position_export_assign' %}" class="list-group-item list-group-item-action">
+                        <span>اکسل جایگاه سربازان</span>
+                        <i class="fa fa-download"></i>
+                    </a>
+                    <a href="{% url 'organizational_position_export_assign' %}?is_checked=true" class="list-group-item list-group-item-action">
+                        <span>اکسل سربازان حاضر دارای جایگاه</span>
+                        <i class="fa fa-download"></i>
+                    </a>
+                    <a href="{% url 'organizational_position_export_assign' %}?is_checked=false" class="list-group-item list-group-item-action">
+                        <span>اکسل سربازان حاضر بدون جایگاه</span>
+                        <i class="fa fa-download"></i>
+                    </a>
+
+                    <!-- لینک‌های غیرفعال -->
+                    <a href="#" class="list-group-item list-group-item-action disabled-link">
+                        <span>گزارش خلاصه آمار جایگاه‌ها</span>
+                        <i class="fa fa-download"></i>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action disabled-link">
+                        <span>خروجی PDF ساختار سازمانی</span>
+                        <i class="fa fa-download"></i>
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action disabled-link">
+                        <span>خروجی پشتیبان کامل</span>
+                        <i class="fa fa-download"></i>
+                    </a>
+                </div>
+            </div>
+
+        </aside>
+        <!-- Page Content -->
+        <div style="flex: 1;">
+            {% block page %} {% endblock %}
+        </div>
+
+    </section>
+
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

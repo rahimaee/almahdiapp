@@ -9,9 +9,7 @@ import re
 from datetime import date
 from dateutil.relativedelta import relativedelta
 from .constants import *
-from datetime import date, timedelta
-from django.db.models import F, ExpressionWrapper, DurationField
-
+from datetime import date
 
 @deconstructible
 class PathAndRename:
@@ -329,6 +327,7 @@ class Soldier(models.Model):
     weight = models.CharField(max_length=200, null=True, blank=True, verbose_name='وزن')
     eye_color = models.CharField(max_length=200, null=True, blank=True, verbose_name='رنگ چشم')
     hair_color = models.CharField(max_length=200, null=True, blank=True, verbose_name='رنگ مو')
+    
     STATUS_CHOICES = [
         ('توجیحی', 'توجیحی'),
         ('حین خدمت', 'حین خدمت'),
@@ -349,7 +348,29 @@ class Soldier(models.Model):
         'marital_status',
         'id_card_code',
     ]
-
+    position = models.ForeignKey(
+        'organizational_position.OrganizationalPosition',  # ارجاع به مدلی که پایین‌تر تعریف می‌کنیم (string ok)
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='soldiers',
+        verbose_name="جایگاه سازمانی"
+    )
+    position_at = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name="تاریخ انتصاب به جایگاه"
+    )
+    # 
+    @property 
+    def clearance_expired_file_number(self):
+        from soldire_letter_apps.models import ClearanceLetter
+        letter = ClearanceLetter.objects.filter(soldier=self).order_by('-created_at').first()
+        if letter  and letter.expired_file_number:
+            return letter.expired_file_number
+        
+        return ''
+    
     def get_missing_fields(self):
         missing = []
         for field_name in self.IMPORTANT_FIELDS:
@@ -422,7 +443,12 @@ class OrganizationalCode(models.Model):
         verbose_name='سرباز فعلی'
     )
     def __str__(self):
-        return f"کد {self.code_number} - {'غیرآزاد' if self.is_active else 'آزاد'}"
+        active_label = 'آزاد'
+        if  self.is_active or self.current_soldier:
+            active_label = 'غیر آزاد'
+            
+        
+        return f"کد سازمانی : {self.code_number} - {active_label}"
 
 
 class Settlement(models.Model):

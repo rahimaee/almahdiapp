@@ -58,11 +58,11 @@
     top: 0;                  /* stick to top */
     z-index: 2;              /* ensure above tbody */
     background-color: #f8f9fa;
+    text-align: center;
 }
 .table td, .table th {
     vertical-align: middle;
-    padding: 0.75rem 0.5rem;
-    text-align: center;
+    padding: 0.75rem 0.75rem;
 }
 
 
@@ -146,33 +146,70 @@
         <table class="table table-hover table-bordered">
             <thead>
                 <tr>
-                    <th># ردیف</th>
-                    <th>کد ملی</th>
-                    <th>نام و نام خانوادگی</th>
-                    <th>تاریخ شروع خدمت</th>
-                    <th>تاریخ فرار</th>
-                    <th>تاریخ پایان خدمت</th>
-                    <th>تاریخ تسویه</th>
-                    <th>دلیل تسویه</th>
+                    <th>#</th>
+                    <th>پرونده</th>
+                    <th>سرباز</th>
+                    <th>ورود به خدمت</th>
+                    <th>پایان خدمت</th>
                     <th>وضعیت</th>
+                    <th>توضیحات</th>
                 </tr>
             </thead>
             <tbody>
                 {% for s in soldiers %}
                 <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ s.national_code }}</td>
-                    <td>{{ s.full_name }}</td>
-                    <td>{{ s.start_service_date|to_jalali_date }}</td>
-                    <td>{{ s.runaway_date|to_jalali_date }}</td>
-                    <td>{{ s.end_service_date|to_jalali_date }}</td>
-                    <td>{{ s.settlement_date|to_jalali_date }}</td>
                     <td>
-                        <span class="badge bg-{{ s.expired_reason_color }}">
-                            {{ s.expired_reason_label }}
-                        </span>
+                        <div style="display: flex;align-items: center;justify-content: space-between;">
+                            <strong> ردیف : </strong> <span>{{ forloop.counter }}</span>
+                        </div>
+                        <div style="display: flex;align-items: center;justify-content: space-between;">
+                            <span style="flex: 1;" class="badge badge-xl bg-{{ s.expired_reason_color }}">{{ s.expired_reason_label }}</span>
+                        </div>
                     </td>
-                    <td>{{ s.status|default:"" }}</td>
+                    <td>
+                        <div style="display: flex;align-items: center;justify-content: space-between;">
+                            <strong> وضعیت :</strong> <span>{{ s.expired_file }}</span>
+                        </div>
+                        <div style="display: flex;align-items: center;justify-content: space-between;">
+                            <strong>کد منقضی :</strong> <span>{{ s.expired_file_number }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex;align-items: center;justify-content: space-between;">
+                            <strong>{{ s.full_name }}</strong> 
+                            <span>کدملی : {{ s.national_code }}</span>
+                        </div>
+                        <div style="display: flex;align-items: center;justify-content: space-between;">
+                            <strong>فرزند {{s.father_name}}</strong> 
+                            <span>شماره شناسنامه : {{ s.birth_certificate_number }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex;align-items: center;justify-content: space-between;">
+                            <strong>تاریخ اعزام :</strong> <span dir="ltr"> {{ s.start_service_date|to_jalali_date|default:'----/--/--' }}</span>
+                        </div>
+                        <div style="display: flex;align-items: center;justify-content: space-between;">
+                            <strong>تاریخ فرار :</strong> <span dir="ltr">{{ s.runaway_date|to_jalali_date|default:'----/--/--'}}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex;align-items: center;justify-content: space-between;">
+                            <strong>پایان خدمت :</strong> <span dir="ltr"> {{ s.end_service_date|to_jalali_date|default:'----/--/--' }}</span>
+                        </div>
+                        <div style="display: flex;align-items: center;justify-content: space-between;">
+                            <strong>تاریخ تسویه :</strong> <span dir="ltr">{{ s.settlement_date|to_jalali_date|default:'----/--/--' }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex;align-items: center;justify-content: space-between;">
+                            <strong>نوع :</strong> <span dir="ltr"> {{ s.status }}</span>
+                        </div>
+                        <div style="display: flex;align-items: center;justify-content: space-between;">
+                            <strong>بررسی :</strong> <span dir="ltr">{{ s.review_status }}</span>
+                        </div>
+                    </td>
+
+                    <td>{{ s.description|default:"" }}</td>
                 </tr>
                 {% empty %}
                 <tr>

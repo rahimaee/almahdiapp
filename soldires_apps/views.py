@@ -711,7 +711,7 @@ def soldiers_by_entry_date(request):
 
             soldiers = Soldier.objects.filter(
                 service_entry_date__range=(from_gregorian, to_gregorian),
-                is_checked_out=False,
+                # is_checked_out=False,
             ).order_by('service_entry_date')
 
         except Exception as e:

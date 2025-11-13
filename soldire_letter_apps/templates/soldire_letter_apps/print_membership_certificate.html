@@ -5,14 +5,22 @@
 {% block title %}نامه گواهی عضویت حساب{% endblock %}
 
 {% block content %}
-
-
-      <div  >
         بدین‌وسیله به اطلاع می‌رساند سرباز وظیفه
-        <strong>{{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</strong>
-        فرزند <strong>{{ letter.soldier.father_name }}</strong> با شماره ملی
-        <strong>{{ letter.soldier.national_code }}</strong> و تاریخ اعزام
-        <strong>{{ letter.soldier.enlistment_date|to_jalali }}</strong>
-        به عضویت سپاه پاسداران درامده و هم اکنون در این آموزشگاه مشغول به خدمت مقدس سربازی می باشد.
-      </div>
+        <strong class="f-btitr">{{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</strong>
+        فرزند <strong class="f-btitr">{{ letter.soldier.father_name }}</strong> با شماره ملی
+        <strong class="f-btitr">{{ letter.soldier.national_code }}</strong> و تاریخ اعزام
+        <strong class="f-btitr">{{ letter.soldier.dispatch_date|to_jalali }}</strong>
+            به عضویت سپاه پاسداران انقلاب اسلامی درامده و
+          {% if letter.subject == "گواهی عضویت" %}
+             هم اکنون در این آموزشگاه مشغول به خدمت مقدس سربازی می باشد.
+          {% elif letter.subject == "گواهی پایان خدمت" %}
+              خدمت سربازی خود را در تاریخ {{ letter.soldier.service_end_date|to_jalali }} به پایان رسانده است.
+          {% elif letter.subject == "گواهی پایان دوره آموزش" %}
+             هم اکنون در این آموزشگاه مشغول به خدمت مقدس سربازی می باشد.
+          {% elif letter.subject == "تسویه حساب" %}
+             هم اکنون در این آموزشگاه مشغول به خدمت مقدس سربازی می باشد.
+          {% else %}
+             هم اکنون در این آموزشگاه مشغول به خدمت مقدس سربازی می باشد.
+          {% endif %}
+
 {% endblock %}

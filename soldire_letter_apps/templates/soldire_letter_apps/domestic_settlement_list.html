@@ -562,8 +562,8 @@
   data-status="{{ domestic_settlement.normal_letter.get_status_display }}"
 >مشاهده</button>
                       <a href="{% url 'print_domestic_settlement' domestic_settlement.normal_letter.id %}"  class="btn btn-xs btn-success">چاپ</a>
-            <a href="{% url 'judicial_inquiry_edit' domestic_settlement.id %}" class="btn btn-sm btn-facebook" title="ویرایش نامه" aria-label="ویرایش نامه {{ domestic_settlement.normal_letter.letter_number }}">ویرایش</a>
-            <a href="{% url 'judicial_inquiry_delete' domestic_settlement.id %}" class="btn btn-sm btn-danger" title="حذف نامه" aria-label="حذف نامه {{ domestic_settlement.normal_letter.letter_number }}" onclick="return confirm('آیا از حذف این نامه اطمینان دارید؟');">حذف</a>
+            {% comment %} <a href="{% url 'domestic_settlement_edit' domestic_settlement.id %}" class="btn btn-sm btn-facebook" title="ویرایش نامه" aria-label="ویرایش نامه {{ domestic_settlement.normal_letter.letter_number }}">ویرایش</a> {% endcomment %}
+            <a href="{% url 'domestic_settlement_delete' domestic_settlement.id %}" class="btn btn-sm btn-danger" title="حذف نامه" aria-label="حذف نامه {{ domestic_settlement.normal_letter.letter_number }}" onclick="return confirm('آیا از حذف این نامه اطمینان دارید؟');">حذف</a>
           </td>
         </tr>
 

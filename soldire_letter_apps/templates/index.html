@@ -11,10 +11,7 @@
     background: #f4f7fb;
   }
 
-  .page-container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
+
 
   /* عنوان بخش */
   .section-title {
@@ -44,6 +41,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-between;
     padding: 20px 15px;
     background: #fff;
     border-radius: 8px;
@@ -58,7 +56,7 @@
   }
 
   .card-link i {
-    font-size: 28px;
+    font-size: 42px;
     margin-bottom: 12px;
     transition: transform 0.3s, color 0.3s;
   }
@@ -67,7 +65,7 @@
   }
 
   .card-link span {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 600;
     text-align: center;
     line-height: 1.4;
@@ -82,49 +80,8 @@
   .teal i { color: #20c997; }
 </style>
 
-<div class="page-container">
-        {% include "./letter_types_nav_layout.html" %}
-
-  <!-- بخش فهرست -->
-  {% comment %} <h3 class="section-title title-list">
-    <i class="fa fa-folder-open"></i> فهرست نامه‌ها
-  </h3>
-  <div class="grid">
-    <a href="{% url 'ClearanceLetterListView' %}" class="card-link blue">
-      <i class="fa fa-list"></i>
-      <span>تسویه‌حساب اصلی</span>
-    </a>
-    <a href="{% url 'normal_letter_list' %}" class="card-link orange">
-      <i class="fa fa-file-text-o"></i>
-      <span>نامه‌های عادی</span>
-    </a>
-    <a href="{% url 'judicial_inquiry_list' %}" class="card-link red">
-      <i class="fa fa-balance-scale"></i>
-      <span>استعلام قضایی</span>
-    </a>
-    <a href="{% url 'domestic_settlement_list' %}" class="card-link teal">
-      <i class="fa fa-home"></i>
-      <span>تسویه حساب داخلی</span>
-    </a>
-    <a href="{% url 'introduction_letter_list' %}" class="card-link purple">
-      <i class="fa fa-id-card"></i>
-      <span>نامه معرفی</span>
-    </a>
-    <a href="{% url 'membership_certificate_list' %}" class="card-link green">
-      <i class="fa fa-certificate"></i>
-      <span>گواهی</span>
-    </a>
-    <a href="{% url 'health_iodine_letter_list' %}" class="card-link red">
-      <i class="fa fa-heartbeat"></i>
-      <span>تائیدیه سلامت</span>
-    </a>
-    <a href="{% url 'commitment_letter_list' %}" class="card-link blue">
-      <i class="fa fa-pencil-square-o"></i>
-      <span>تعهد نامه</span>
-    </a>
-  </div> {% endcomment %}
-
-  <!-- بخش ایجاد -->
+{% include "./letter_types_nav_layout.html" %}
+<div class="page-content">
   <h3 class="section-title title-create">
     <i class="fa fa-plus-square"></i> ایجاد نامه‌
   </h3>
@@ -172,18 +129,6 @@
         <span>فرم شماره 3</span>
     </a>
 
-    {% comment %} <!-- صدور کارت پایور -->
-    <a href="{% url 'form_essential_create' form_type='officer_card' %}" class="card-link blue">
-        <i class="fa fa-id-card"></i>
-        <span>صدور کارت پایور</span>
-    </a> {% endcomment %}
-
-    {% comment %} <!-- صدور کارت سرباز -->
-    <a href="{% url 'form_essential_create' form_type='soldier_card' %}" class="card-link orange">
-        <i class="fa fa-id-card-o"></i>
-        <span>صدور کارت سرباز</span>
-    </a> {% endcomment %}
-
     <!-- فرم تسویه حساب 3 فرزندی و بالاتر -->
     <a href="{% url 'form_essential_create' form_type='checkout_3plus' %}" class="card-link purple">
         <i class="fa fa-file-text"></i>
@@ -195,13 +140,6 @@
         <i class="fa fa-user-plus"></i>
         <span>فعال سازی اعزام کارکنان قدیمی (قبل از 1365)</span>
     </a>
-
-    {% comment %} <!-- گواهی دو پاسدار -->
-    <a href="{% url 'form_essential_create' form_type='certificate_two_guard' %}" class="card-link pink">
-        <i class="fa fa-certificate"></i>
-        <span>گواهی دو پاسدار</span>
-    </a> {% endcomment %}
-
     <!-- معافیت دائم کارکنان وظیفه -->
     <a href="{% url 'form_essential_create' form_type='permanent_exemption' %}" class="card-link red">
         <i class="fa fa-shield"></i>

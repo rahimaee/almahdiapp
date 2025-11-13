@@ -162,8 +162,8 @@
                         <td class="table-actions">
                             <a href="{% url 'print_health_iodine' letter.id %}" class="bg-success">🖨 چاپ</a>
                             <a href="{% url 'approved_introduction_letter' letter_id=letter.id %}" class="bg-primary">✔ تایید</a>
-                            <a href="{% url 'introduction_letter_update' letter.id %}" class="bg-warning">✏ ویرایش</a>
-                            <a href="{% url 'introduction_letter_delete' letter.id %}" class="bg-danger">🗑 حذف</a>
+                            <a href="{% url 'health_iodine_letter_update' letter.id %}" class="bg-warning">✏ ویرایش</a>
+                            <a href="{% url 'health_iodine_letter_delete' letter.id %}" class="bg-danger">🗑 حذف</a>
                         </td>
                     </tr>
                 {% empty %}

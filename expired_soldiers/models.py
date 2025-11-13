@@ -32,7 +32,9 @@ class ExpiredSoldier(models.Model):
     end_service_date = models.DateField(null=True,blank=True,verbose_name="تاریخ پایان خدمت سربازی")
     settlement_date = models.DateField(null=True,blank=True,verbose_name="تاریخ تسویه سرباز")
     expired_reason = models.CharField(max_length=50, choices=EXPIRED_REASON_CHOICES, null=True, blank=True, verbose_name="دلیل منقضی شدن",default='')
-    
+    review_status = models.CharField( null=True,blank=True,max_length=20,verbose_name="بررسی وضعیت",default='')
+    status = models.CharField( null=True,blank=True,max_length=20,verbose_name="وضعیت",default='')
+ 
     
     @property
     def expired_reason_label(self):
@@ -60,8 +62,6 @@ class ExpiredSoldier(models.Model):
         }
         return color_map.get(self.expired_reason, "secondary")
     
-    review_status = models.CharField( null=True,blank=True,max_length=20,verbose_name="بررسی وضعیت",default='')
-    status = models.CharField( null=True,blank=True,max_length=20,verbose_name="وضعیت",default='')
 
 
     def __str__(self):
