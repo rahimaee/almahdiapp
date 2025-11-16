@@ -1,0 +1,163 @@
+{% load jalali_filters %}
+{% load extra_filters %}
+
+<style>
+    /* ClearanceLetterList Component */
+.clearance-letter-list {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.clearance-letter-list .letters {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    height: 200px;
+    overflow-y: auto;
+}
+
+.clearance-letter-list .letter-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    margin-bottom: 4px;
+    border-radius: 10px;
+    gap: 4px;
+    background: #fdfdfd;
+    border: 1px solid #333;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+
+.clearance-letter-list .soldier-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.clearance-letter-list .soldier-info .name {
+    font-weight: 600;
+    color: #333;
+}
+
+.clearance-letter-list .soldier-info .code {
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.clearance-letter-list .letter-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.clearance-letter-list .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    min-width: 100px;
+}
+
+/* رنگ‌بندی بر اساس علت نامه */
+.clearance-letter-list .badge.پایان-خدمت { background: #4CAF50; }        /* سبز */
+.clearance-letter-list .badge.قبولی-در-دانشگاه { background: #2196F3; }   /* آبی */
+.clearance-letter-list .badge.انتقال { background: #FF9800; }             /* نارنجی */
+.clearance-letter-list .badge.معافیت-دائم { background: #F44336; }       /* قرمز */
+
+.clearance-letter-list .issue-date {
+    font-size: 1rem;
+    color: #555;
+    font-weight: bold;
+}
+
+.clearance-letter-list .data-empty {
+    text-align: center;
+    padding: 12px 0;
+    color: #888;
+    font-style: italic;
+}
+.letter-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 6px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+    padding: 0;
+    font-size: 12px; /* برای Font Awesome */
+    color: #555;
+}
+
+.action-btn:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-1px);
+}
+
+.action-btn.view {
+    color: #2196F3; /* آبی برای مشاهده */
+}
+
+.action-btn.print {
+    color: #4CAF50; /* سبز برای چاپ */
+}
+
+</style>
+<!-- ClearanceLetterList Component -->
+<div  class="clearance-letter-list">
+    <ul id="{{data_target}}" class="letters">
+        {% if letters %}
+            {% for letter in letters %}
+                <li class="letter-item">
+                    <div class="soldier-info">
+                        <div class="name">{{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</div>
+                        <span class="code">کدملی :{{ letter.soldier.national_code }}</span>
+                    </div>
+                    <div style="flex:1;" class="letter-info">
+                        <div  class="issue-date">تاریخ صدور تسویه : {{ letter.issue_date|to_jalali }}</div>
+                        <div style="display:flex;align-items:center;gap: 4px;">
+                            <span class="badge {{ letter.reason|slugify }}">{{ letter.reason }}</span>
+                            <span style="width: auto;background-color: darkgreen;font-weight: bold;" class="badge badge-success">
+                                {% if  letter.reminde_issue_days   == 0 %}
+                                    امروز
+                                {% elif letter.reminde_issue_days   < 0 %}
+                                    {{ letter.reminde_issue_days  |abs_val  }} روز دیگر)
+                                {% else %}
+                                    {{ letter.reminde_issue_days   }} روز پیش
+                                {% endif %}
+                            </span>
+
+                        </div>
+                    </div>
+                    <div class="letter-actions">
+                        <!-- مشاهده نامه -->
+                        <button class="action-btn view" title="مشاهده نامه">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                        <!-- چاپ نامه -->
+                        <button class="action-btn print" title="چاپ نامه">
+                            <i class="fa fa-print"></i>
+                        </button>
+                    </div>
+                </li>
+            {% endfor %}
+        {% else %}
+            <li class="data-empty">هیچ نامه‌ای ثبت نشده است.</li>
+        {% endif %}
+    </ul>
+</div>

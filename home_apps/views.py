@@ -8,12 +8,34 @@ from django.http import HttpResponse
 from openpyxl.styles import Alignment, Font, PatternFill
 from datetime import datetime
 from soldires_apps.utils import create_soldiers_excel
+from django.utils import timezone
+from datetime import timedelta
+from soldire_letter_apps.models import ClearanceLetter   # اگر مسیرت متفاوت است، اصلاح کن
+from django.db import models
 
 @login_required
 def home(request):
     soldires = Soldier.objects.filter(is_checked_out=False)
     allCount = Soldier.objects.all().count()
     soldiers_45_to_end = Soldier.date_to_ends(45).count() 
+    # --- تاریخ‌ها برای فیلتر ---
+    last_date = ClearanceLetter.objects.aggregate(last=models.Max('issue_date'))['last']
+    today_date = last_date or timezone.now().date()
+    last_week_start = today_date - timedelta(days=7)
+    last_month_start = today_date - timedelta(days=30)
+    # --- گرفتن نامه‌ها ---
+    today_letters = ClearanceLetter.get_between_dates(start_date=today_date, end_date=today_date)
+    last_week_letters = ClearanceLetter.get_between_dates(start_date=last_week_start, end_date=today_date)
+    last_month_letters = ClearanceLetter.get_between_dates(start_date=last_month_start, end_date=today_date)
+    no_accepted = ClearanceLetter.accepted_list(False)
+    clearance_letters = {
+        'today': today_letters,
+        'last_week': last_week_letters,
+        'last_month': last_month_letters,
+        'no_accepted':no_accepted,
+    }
+    letter = ClearanceLetter.objects.first()
+    print(letter.reminde_issue_days) 
     stats = {
         'all_soldiers': allCount,
         'active_soldiers': soldires.count(),
@@ -47,9 +69,12 @@ def home(request):
     context = {
         'stats': stats,
         'soldires': soldires,
+        'clearance_letters':clearance_letters,
     }
 
     return render(request, 'home_apps/home.html', context)
+
+
 def header_partial_view(request, *args, **kwargs):
     return render(request, 'shared/_Header.html')
 

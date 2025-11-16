@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 from datetime import timedelta
 from django.db import models, transaction
+from django.utils.dateparse import parse_date
 
 
 class ClearanceLetter(models.Model):
@@ -35,6 +36,7 @@ class ClearanceLetter(models.Model):
     description = models.TextField(blank=True, null=True, verbose_name="توضیحات")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ثبت")
     status = models.CharField(max_length=100, choices=CLEARANCE_STATUS_CHOICES, verbose_name="وضعیت نامه", default='ایجاد شده')
+
     # 🔹 فیلد جدید:
     expired_file_number = models.CharField(
         max_length=100,
@@ -46,6 +48,36 @@ class ClearanceLetter(models.Model):
         verbose_name = "نامه تسویه‌حساب"
         verbose_name_plural = "نامه‌های تسویه‌حساب"
 
+    @property
+    def reminde_issue_days(self):
+        import logging
+        logger = logging.getLogger(__name__)
+
+        """
+        تعداد روزهایی که تا تاریخ صدور مانده یا گذشته است.
+        - 0 → امروز
+        - منفی → برای آینده
+        - مثبت → گذشته
+        """
+        if not self.issue_date:
+            return None
+        
+        today = timezone.now().date()
+        delta = today - self.issue_date  # تعداد روز گذشته
+        logger.info(f"Delta days: {delta.days}")  # امن و در هر محیط کار می‌کند
+
+        return delta.days
+    
+    @staticmethod
+    def accepted_list(is_accepted=True):
+        """
+        دریافت نامه‌ها بر اساس وضعیت.
+        خروجی QuerySet است و property ها روی هر instance در دسترس هستند.
+        """
+        status = "تأیید نهایی"
+        qs = (ClearanceLetter.objects.filter(status=status) if is_accepted
+              else ClearanceLetter.objects.exclude(status=status))
+        return qs.order_by('-issue_date')
 
     @staticmethod
     def get_next_expired_file_number():
@@ -78,7 +110,48 @@ class ClearanceLetter(models.Model):
         if save:
             self.save(update_fields=['expired_file_number'])
         return self.expired_file_number
-    
+
+    @staticmethod
+    def get_between_dates(start_date=None, end_date=None):
+        """
+        دریافت نامه‌ها بین دو تاریخ. ساعت نادیده گرفته می‌شود.
+        تاریخ‌های نامعتبر یا خالی به‌صورت خودکار با اولین یا آخرین تاریخ موجود جایگزین می‌شوند.
+        """
+
+        # دریافت حداقل و حداکثر تاریخ موجود
+        dates = ClearanceLetter.objects.aggregate(
+            first_date=models.Min("issue_date"),
+            last_date=models.Max("issue_date")
+        )
+
+        first_date = dates["first_date"]
+        last_date = dates["last_date"]
+
+        # اگر هیچ نامه‌ای وجود نداشت
+        if not first_date or not last_date:
+            return ClearanceLetter.objects.none()
+
+        # تبدیل string به date اگر لازم باشد
+        if isinstance(start_date, str):
+            start_date = parse_date(start_date)
+        if isinstance(end_date, str):
+            end_date = parse_date(end_date)
+
+        # جایگزینی تاریخ‌های نامعتبر یا خالی
+        if not start_date:
+            start_date = first_date
+        if not end_date:
+            end_date = last_date
+
+        # اصلاح بازه اگر برعکس باشد
+        if start_date > end_date:
+            start_date, end_date = end_date, start_date
+
+        if start_date == end_date:
+            return ClearanceLetter.objects.filter(issue_date=start_date).order_by('-issue_date')
+
+        return ClearanceLetter.objects.filter(issue_date__gte=start_date,issue_date__lte=end_date).order_by('-issue_date')
+
     def __str__(self):
         return f"{self.soldier} - {self.get_reason_display()} - {self.letter_number}"
 

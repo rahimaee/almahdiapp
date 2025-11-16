@@ -1,379 +1,143 @@
 {% extends 'shared/_PanelMain.html' %}
 
 {% load static %}
+{% load jalali_filters %}
 
 {% block header %}
-
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>داشبورد</title>
-    <style>
-        body {
-            direction: rtl;
-            background-color: #f8f9fa;
-            font-family: 'Tahoma', sans-serif;
-        }
-
-        .custom-table thead {
-            background-color: #e3e3e3;
-            font-weight: bold;
-        }
-
-        .custom-table tbody tr:nth-child(odd) {
-            background-color: #f9f9f9;
-        }
-
-        .custom-table tbody tr:nth-child(even) {
-            background-color: #ffffff;
-        }
-
-        .custom-table .entry {
-            color: #0b7300;
-            font-weight: bold;
-        }
-
-        .custom-table .exit {
-            color: #c0392b;
-            font-weight: bold;
-        }
-
-        .custom-table td {
-            vertical-align: middle;
-        }
-
-        h1, h5 {
-            font-weight: 700;
-            color: #212529;
-        }
-
-        .quick-access-box {
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-            margin-bottom: 25px;
-        }
-
-        .letters-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            justify-content: flex-start;
-            margin-top: 20px;
-        }
-
-        .letter-box {
-            display: flex;
-            align-items: center;
-            gap: 2px;
-            background: #ffffff;
-            border: 1.5px solid #dee2e6;
-            border-radius: 12px;
-            padding: 8px 11px;
-            min-width: 200px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-            cursor: pointer;
-            transition: background-color 0.3s, box-shadow 0.3s;
-        }
-
-        .letter-box:hover {
-            background-color: #f1f9ff;
-            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.15);
-        }
-
-        .letter-icon {
-            font-size: 16px;
-        }
-
-        .letter-text {
-            font-weight: 600;
-            color: #212529;
-            font-size: 14px;
-            text-decoration: none;
-        }
-
-        .letter-text:hover {
-            text-decoration: underline;
-        }
-
-        /* جدول ورود و خروج */
-        table {
-            font-size: 14px;
-        }
-
-        .table th, .table td {
-            vertical-align: middle;
-        }
-
-        .empty-box-text {
-            color: #6c757d;
-            font-size: 15px;
-            font-style: italic;
-        }
-
-        .shadow-card {
-            background: #1f2937; /* خاکستری تیره */
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            color: #f9fafb;
-        }
-
-        .card-title {
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-            color: white;
-            padding: 0 0 20px;
-            margin: 0;
-        }
-
-        .soldier-status {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 12px;
-        }
-
-        /* کارت */
-        .soldier-item {
-            border-radius: 12px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            color: white;
-            font-weight: 600;
-            transition: 0.2s;
-        }
-
-        /* متن و عدد */
-        .item-content {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-
-        .label {
-            padding: 0;
-            margin: 0;
-            text-align: right;
-            font-size: 22px;
-        }
-
-        .value {
-            font-size: 26px;
-            font-weight: bold;
-            margin-top: 6px;
-        }
-
-        /* دکمه اکسل */
-        .btn-download {
-            background: rgba(255,255,255,0.2);
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #fff !important;
-            white-space: nowrap;
-            height: fit-content;
-            transition: 0.2s;
-        }
-
-        .btn-download:hover {
-            background: rgba(255,255,255,0.35);
-        }
-
-        /* Hover کارت */
-        .soldier-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        }
-
-    /* رنگ کارت‌ها */
-    .soldier-total { background-color: #4f46e5; }
-    .soldier-active { background-color: #10b981; }
-    .soldier-forari { background-color: #ef4444; }
-    .soldier-transferred { background-color: #8b5cf6; }
-    .soldier-financial-debt { background-color: #f59e0b; }
-    .soldier-single { 
-        background-color: #0e8f82; 
-    }
-
-    /* آلارم */
-    .alarm-blink {
-        animation: blink 1.2s infinite, shake 0.8s infinite;
-        border: 2px solid #0e8f8255;
-        box-shadow: 0 0 8px #0e8f8255;
-    }
-
-    @keyframes blink {
-        0%   { box-shadow: 0 0 5px #0e8f8255; }
-        50%  { box-shadow: 0 0 18px #0e8f8255; }
-        100% { box-shadow: 0 0 5px #0e8f8255; }
-    }
-    @keyframes shake {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(2px); }
-    }
-
-</style>
+    {% include "./home_page_header.html" %}
 {% endblock %}
 
 {% block main %}
-
-    <div class="container">
+    <div>
         <div class="row ">
             <div class="col-md-12">
-    <div class="shadow-card">
-        <div class="soldier-status">
+                <div class="shadow-card">
+                    <div class="soldier-status">
+                        <div class="soldier-item soldier-total">
+                            <div class="item-content">
+                                <span class="label">کل سربازان</span>
+                                <span class="value">{{ stats.all_soldiers }} نفر</span>
+                            </div>
+                            <a class="btn-download" href="{% url 'export_soldiers' %}?category=all" target="_blank">📥 اکسل</a>
+                        </div>
 
-            <!-- 45 روز مانده -->
-            <div class="soldier-item soldier-single alarm-blink">
-                <div class="item-content">
-                    <span class="label">45 روز تا پایان خدمت</span>
-                    <span class="value">{{ stats.soldiers_45_to_end }} نفر</span>
-                </div>
-                <a class="btn-download" href="{% url 'soldier_list' %}?remainingFilter=remaining45" target="_blank">مشاهده</a>
-            </div>
+                        <div class="soldier-item soldier-active">
+                            <div class="item-content">
+                                <span class="label">حاضر</span>
+                                <span class="value">{{ stats.active_soldiers }} نفر</span>
+                            </div>
+                            <a class="btn-download" href="{% url 'export_soldiers' %}?category=active" target="_blank">📥 اکسل</a>
+                        </div>
 
-            <div class="soldier-item soldier-total">
-                <div class="item-content">
-                    <span class="label">کل سربازان</span>
-                    <span class="value">{{ stats.all_soldiers }} نفر</span>
-                </div>
-                <a class="btn-download" href="{% url 'export_soldiers' %}?category=all" target="_blank">📥 اکسل</a>
-            </div>
+                        <div class="soldier-item soldier-forari">
+                            <div class="item-content">
+                                <span class="label">فراری</span>
+                                <span class="value">{{ stats.fugitives }} نفر</span>
+                            </div>
+                            <a class="btn-download" href="{% url 'export_soldiers' %}?category=fugitives" target="_blank">📥 اکسل</a>
+                        </div>
+                                    <!-- 45 روز مانده -->
+                        <div class="soldier-item soldier-single alarm-blink">
+                            <div class="item-content">
+                                <span class="label">45 روز تا پایان خدمت</span>
+                                <span class="value">{{ stats.soldiers_45_to_end }} نفر</span>
+                            </div>
+                            <a class="btn-download" href="{% url 'soldier_list' %}?remainingFilter=remaining45" target="_blank">مشاهده</a>
+                        </div>
+                            <div class="soldier-item soldier-financial-debt">
+                                <div class="item-content">
+                                    <span class="label">جذبی های المهدی</span>
+                                    <span class="value">{{ stats.financial_debt }} نفر</span>
+                                </div>
+                                <a class="btn-download" href="{% url 'export_soldiers' %}?category=financial_debt" target="_blank">
+                                    📥 اکسل
+                                </a>
+                            </div>
+                            <div class="soldier-item soldier-financial-debt">
+                                <div class="item-content">
+                                    <span class="label">پذیرش سرباز</span>
+                                    <span class="value">{{ stats.jazbi }} نفر</span>
+                                </div>
+                                <a class="btn-download" href="{% url 'export_soldiers' %}?category=jazbi" target="_blank">
+                                    📥 اکسل
+                                </a>
+                            </div>
 
-            <div class="soldier-item soldier-active">
-                <div class="item-content">
-                    <span class="label">حاضر</span>
-                    <span class="value">{{ stats.active_soldiers }} نفر</span>
-                </div>
-                <a class="btn-download" href="{% url 'export_soldiers' %}?category=active" target="_blank">📥 اکسل</a>
-            </div>
-
-            <div class="soldier-item soldier-forari">
-                <div class="item-content">
-                    <span class="label">فراری</span>
-                    <span class="value">{{ stats.fugitives }} نفر</span>
-                </div>
-                <a class="btn-download" href="{% url 'export_soldiers' %}?category=fugitives" target="_blank">📥 اکسل</a>
-            </div>
-                <!-- انتقالی -->
-                <div class="soldier-item soldier-transferred">
-                    <div class="item-content">
-                        <span class="label">انتقالی</span>
-                        <span class="value">{{ stats.transferred }} نفر</span>
                     </div>
-                    <a class="btn-download" href="{% url 'export_soldiers' %}?category=transferred" target="_blank">
-                        📥 اکسل
-                    </a>
+
                 </div>
-
-                <!-- بدهی حقوقی -->
-                <div class="soldier-item soldier-financial-debt">
-                    <div class="item-content">
-                        <span class="label">بدهی حقوقی</span>
-                        <span class="value">{{ stats.financial_debt }} نفر</span>
-                    </div>
-                    <a class="btn-download" href="{% url 'export_soldiers' %}?category=financial_debt" target="_blank">
-                        📥 اکسل
-                    </a>
-                </div>
-
-        </div>
-
-    </div>
-
             </div>
-
-            <!-- ستون چپ -->
-            <div  style="margin-top: 20px;" class="col-md-12">
+            <div   class="col-md-4">
                 <div class="quick-access-box">
-                    <h5 class="mb-3">🧭 دسترسی سریع</h5>
+                    <h5 class="mb-3">🧭 دسترسی سریع به نامه ها</h5>
                     <div class="letters-container">
                         {% if request.user.is_staff %}
                             <div class="letter-box">
+                                <a class="letter-text" href="{% url 'ClearanceLetterListView' %}">فهرست نامه تسویه‌حساب اصلی</a>
                                 <span class="letter-icon">📩</span>
-                                <a class="letter-text" href="{% url 'ClearanceLetterListView' %}">لیست نامه تسویه‌حساب
-                                    اصلی</a>
                             </div>
                             <div class="letter-box">
-                                <span class="letter-icon">➕</span>
-                                <a class="letter-text" href="{% url 'clearance_letter_create' %}">ایجاد نامه تسویه‌حساب
-                                    اصلی</a>
-                            </div>
-                            <div class="letter-box">
+                                <a class="letter-text" href="{% url 'normal_letter_list' %}">فهرست نامه‌های عادی</a>
                                 <span class="letter-icon">🧾</span>
-                                <a class="letter-text" href="{% url 'normal_letter_list' %}">لیست نامه‌های عادی</a>
                             </div>
                             <div class="letter-box">
+                                <a class="letter-text" href="{% url 'judicial_inquiry_list' %}">فهرست استعلام قضایی</a>
                                 <span class="letter-icon">⚖️</span>
-                                <a class="letter-text" href="{% url 'judicial_inquiry_list' %}">لیست استعلام قضایی</a>
                             </div>
+
                             <div class="letter-box">
-                                <span class="letter-icon">📝</span>
-                                <a class="letter-text" href="{% url 'judicial_inquiry_create' %}">ایجاد استعلام
-                                    قضایی</a>
-                            </div>
-                            <div class="letter-box">
+                                <a class="letter-text" href="{% url 'domestic_settlement_list' %}">فهرست تسویه حساب داخلی</a>
                                 <span class="letter-icon">🏛️</span>
-                                <a class="letter-text" href="{% url 'domestic_settlement_list' %}">لیست تسویه حساب
-                                    داخلی</a>
                             </div>
                             <div class="letter-box">
-                                <span class="letter-icon">➕</span>
-                                <a class="letter-text" href="{% url 'domestic_settlement_create' %}">ایجاد تسویه حساب
-                                    داخلی</a>
-                            </div>
-                            <div class="letter-box">
+                                <a class="letter-text" href="{% url 'introduction_letter_list' %}">فهرست نامه معرفی</a>
                                 <span class="letter-icon">👤</span>
-                                <a class="letter-text" href="{% url 'introduction_letter_list' %}">لیست نامه معرفی</a>
                             </div>
                             <div class="letter-box">
-                                <span class="letter-icon">➕</span>
-                                <a class="letter-text" href="{% url 'introduction_letter_create' %}">ایجاد نامه
-                                    معرفی</a>
+                                <a class="letter-text" href="{% url 'membership_certificate_list' %}">فهرست گواهی عضویت</a>
+                                    <span class="letter-icon">📜</span>
                             </div>
                             <div class="letter-box">
-                                <span class="letter-icon">📜</span>
-                                <a class="letter-text" href="{% url 'membership_certificate_list' %}">لیست گواهی
-                                    عضویت</a>
-                            </div>
-                            <div class="letter-box">
-                                <span class="letter-icon">➕</span>
-                                <a class="letter-text" href="{% url 'membership_certificate_create' %}">ایجاد گواهی
-                                    عضویت</a>
-                            </div>
-                            <div class="letter-box">
+                                <a class="letter-text" href="{% url 'health_iodine_letter_list' %}">فهرست تاییدیه  سلامت</a>
                                 <span class="letter-icon">🏥</span>
-                                <a class="letter-text" href="{% url 'health_iodine_letter_list' %}">لیست تاییدیه
-                                    سلامت</a>
-                            </div>
-                            <div class="letter-box">
-                                <span class="letter-icon">➕</span>
-                                <a class="letter-text" href="{% url 'health_iodine_letter_create' %}">ایجاد تاییدیه
-                                    سلامت</a>
-                            </div>
-                            <div class="letter-box">
-                                <span class="letter-icon">📂</span>
-                                <a class="letter-text" href="{% url 'parent_unit_list' %}">لیست قسمت اصلی</a>
-                            </div>
-                            <div class="letter-box">
-                                <span class="letter-icon">➕</span>
-                                <a class="letter-text" href="{% url 'parent_unit_create' %}">افزودن قسمت اصلی</a>
-                            </div>
-                            <div class="letter-box">
-                                <span class="letter-icon">📁</span>
-                                <a class="letter-text" href="{% url 'sub_unit_list' %}">لیست زیرقسمت</a>
-                            </div>
-                            <div class="letter-box">
-                                <span class="letter-icon">➕</span>
-                                <a class="letter-text" href="{% url 'sub_unit_create' %}">افزودن زیرقسمت</a>
                             </div>
                         {% endif %}
                     </div>
                 </div>
             </div>
+        <div class="col-md-4 ">
+            <div id="clearance-letter-tab" class="clearance-letter">
+                <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom: 10px;">
+                    <h5 style="margin: 0;padding: 0;" class="mb-3">تسویه حساب‌ها</h5>
+                    <!-- Tabs -->
+                    <div id="clearance-tabs" class="tabs" style="margin: 0;">
+                        <span class="tab active" data-target="today-list">
+                            امروز ({{ clearance_letters.today|length }})
+                        </span>
+                        <span class="tab" data-target="week-list">
+                            7 روز گذشته ({{ clearance_letters.last_week|length }})
+                        </span>
+                        <span class="tab" data-target="month-list">
+                            30 روز گذشته ({{ clearance_letters.last_month|length }})
+                        </span>
+                    </div>
+                </div>
+                {% include 'components/clearance_letter_list.html' with letters=clearance_letters.today data_target="today-list" %}
+                {% include 'components/clearance_letter_list.html' with letters=clearance_letters.last_week data_target="week-list" %}
+                {% include 'components/clearance_letter_list.html' with letters=clearance_letters.last_month data_target="month-list" %}
+            </div>
+            <div class="clearance-letter">
+                <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom: 10px;">
+                    <h5 style="margin: 0;padding: 0;" >تسویه حساب های تایید نشده</h5>
+                    <div id="clearance-tabs" class="tabs" style="margin: 0;">
+                        <span class="tab active" data-target="month-list">
+                            درحال تحویل ({{ clearance_letters.no_accepted|length }})
+                        </span>
+                    </div>
+                </div>
+                {% include 'components/clearance_letter_list.html' with letters=clearance_letters.no_accepted  %}
+            </div>
+        </div>
 
         </div>
     </div>
@@ -381,5 +145,30 @@
 {% endblock %}
 
 {% block footer %} 
+<script>
+    const tabs = document.querySelectorAll("#clearance-tabs .tab");
+
+    const updateTabState=(activeTab)=>{
+        panels = document.querySelectorAll("#clearance-letter-tab .letters")
+        panels.forEach(list => {
+            list.style.display = "none";
+        });
+        const target = activeTab.getAttribute("data-target");
+
+        document.getElementById(target).style.display = "block";
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+                tabs.forEach(t => t.classList.remove("active"));
+                tab.classList.add("active");
+                updateTabState(tab)
+        });
+    })
+
+    const activeTab = document.querySelector("#clearance-tabs .tab.active");
+    updateTabState(activeTab)
+
+</script>
 
 {% endblock %}
