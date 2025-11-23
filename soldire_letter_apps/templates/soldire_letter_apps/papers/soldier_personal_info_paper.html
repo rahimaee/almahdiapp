@@ -1,0 +1,299 @@
+{% load jalali_filters %}
+<style>
+/* =================== جدول سرباز =================== */
+.soldier-table {
+    margin-bottom: 0;
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* مهم برای رعایت عرض ستون‌ها */
+}
+
+.soldier-table th,
+.soldier-table td {
+    border: 1px solid #ccc;
+    text-align: center;
+    padding: 5px 8px;
+    word-wrap: break-word;
+    font-size: 11px;
+}
+
+
+
+/* استایل ستون‌ها */
+.soldier-table .field,
+.soldier-table .field-key { font-weight: bold; background-color: #fafafa; font-size: 12px; }
+.soldier-table .value,
+.soldier-table .field-value { background-color: #fefefe; font-size: 12px; }
+.soldier-table .new-value { background-color: #fff;padding: 9px 8px; }
+
+/* عنوان بخش‌ها */
+.soldier-table .section-title { background-color: #e6e6e6; font-weight: bold; font-size: 15px; text-align: center; }
+ol.hint {
+    margin: 0;
+    padding: 0 20px;
+    font-weight: lighter;
+    font-size: 10px;
+}
+</style>
+
+<section class="A4 f-bnazanin">
+        <header class="A4-header">
+                <div class="header-left">
+                    <h3 style="margin:0;">فرم شماره 5 المهدی (عج) </h3>
+                    <h3 style="margin:10px 0 0;">اطلاعات فردی</h3>
+                </div>
+                <div class="header-center" style="flex: 1;"></div>
+                <div class="header-right" style="flex: none;">
+                    <h5 style="margin:0; display: flex;align-items: center;justify-content: space-between;">
+                        <strong class="f-btitr">شماره نامه :</strong> 
+                        <span class="f-bkoodak">{{ letter.letter_number }}</span>
+                    </h5>
+                    <div style="margin: 10px 0;"></div>
+                    <h5 style="margin:0; display: flex;align-items: center;justify-content: space-between;">
+                        <strong class="f-btitr">تاریخ نامه : </strong>
+                        <span class="f-bkoodak">{{ letter.issue_date_shamsi }}</span>
+                    </h5>
+                </div>
+        </header>
+<main>
+    <p class="declaration">
+        این فرم با هدف ثبت و تکمیل اطلاعات فردی و نظامی سرباز تهیه شده است.  
+        لطفاً توجه داشته باشید:  
+    </p>
+    <ol class="hint">
+        <li>ستون اول شامل اطلاعات ثبت‌شده توسط سیستم و منابع رسمی است.</li>
+        <li>ستون آخر برای اصلاح و تکمیل اطلاعات توسط سرباز در نظر گرفته شده است.</li>
+        <li>در صورت ناقص یا اشتباه بودن اطلاعات موجود، لطفاً فیلدهای خالی یا نادرست را تکمیل یا اصلاح نمایید.</li>
+        <li>همراه با فرم، 6 قطعه عکس تحویلی منابع سرباز با لباس نظامی باید ارائه گردد.</li>
+        <li>فرم شامل بخش‌های اطلاعات شخصی، اطلاعات نظامی و کسری/اضافه خدمت می‌باشد که باید با دقت پر شود.</li>
+    </ol>
+    <!-- جدول اطلاعات شخصی -->
+    <table class="soldier-table">
+        <thead>
+            <tr>
+                <th class="section-title" colspan="16">اطلاعات شخصی</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th class="field" colspan="2">نام</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.first_name|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+
+                <th class="field" colspan="2">نام خانوادگی</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.last_name|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+            </tr>
+            <tr>
+                <th class="field" colspan="2">نام پدر</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.father_name|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+
+                <th class="field" colspan="2">کد ملی</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.national_code|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+            </tr>
+            <tr>
+                <th class="field" colspan="2">تاریخ تولد</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.birth_date|to_jalali|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+
+                <th class="field" colspan="2">محل تولد</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.birth_place|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+            </tr>
+            <tr>
+                <th class="field" colspan="2">محل صدور</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.issuance_place|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+
+                <th class="field" colspan="2">وضعیت تاهل</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.marital_status|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+            </tr>
+            <tr>
+                <th class="field" colspan="2">تعداد اولاد</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.number_of_children|default:"0" }}</td>
+                <td class="new-value" colspan="4"></td>
+
+                <th class="field" colspan="2">گروه خون</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.blood_group|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+            </tr>
+            <tr>
+                <th class="field" colspan="2">وضعیت سلامت</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.health_status|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+
+                <th class="field" colspan="2">توضیح سلامت</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.health_status_description|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+            </tr>
+            <tr>
+                <th class="field" colspan="2">شمارهمجازی</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.phone_virtual|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+
+                <th class="field" colspan="2">شماره موبایل</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.phone_mobile|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+            </tr>
+            <tr>
+                <th class="field" colspan="2">شماره منزل</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.phone_home|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+
+                <th class="field" colspan="2">شماره والدین</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.phone_parents|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+            </tr>
+            <tr>
+                <th class="field" colspan="2">کد پستی</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.postal_code|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+
+                <th class="field" colspan="2">قطعه عکس</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.has_pic3x4|default:"ندارد" }}</td>
+                <td class="new-value" colspan="4">تعداد تحویلی : </td>
+            </tr>
+            <tr>
+                <th class="field" colspan="2">آدرس</th>
+                <td class="value" colspan="4">{{ letter.soldier.address|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="10"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- جدول اطلاعات نظامی -->
+    <table class="soldier-table">
+        <thead>
+            <tr>
+                <th class="section-title" colspan="16">اطلاعات نظامی</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th class="field" colspan="2">درجه</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.rank|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+
+                <th class="field" colspan="2">تاریخ اعزام</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.dispatch_date|to_jalali|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+            </tr>
+            <tr>
+                <th class="field" colspan="2">مدت آموزش </th>
+                <td class="new-value" colspan="2">
+                    {{ letter.soldier.training_duration|default:"0" }} 
+                    (روز)
+                </td>
+                <td class="new-value" colspan="4"></td>
+
+                <th class="field" colspan="2">ورود به یگان</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.service_entry_date|to_jalali|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+            </tr>
+            <tr>
+                <th class="field" colspan="2">پاسدار وظیفه</th>
+                <td class="new-value" colspan="2">{% if letter.soldier.is_guard_duty %}بله{% else %}خیر{% endif %}</td>
+                <td class="new-value" colspan="4"></td>
+
+                <th class="field" colspan="2">پایان خدمت</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.service_end_date|to_jalali|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+            </tr>
+            <tr>
+                <th class="field" colspan="2">تردد</th>
+                <td class="new-value" colspan="2">{{ letter.soldier.traffic_status|default:"-- خالی --" }}</td>
+                <td class="new-value" colspan="4"></td>
+
+                <th class="field" colspan="2">فراری</th>
+                <td class="new-value" colspan="2">{% if letter.soldier.is_fugitive %}بله{% else %}خیر{% endif %}</td>
+                <td class="new-value" colspan="4"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- جدول کسری و اضافه خدمت -->
+    <table class="soldier-table">
+        <thead>
+            <tr>
+                <th class="section-title" colspan="18">کسری و اضافه خدمت</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% with service=letter.soldier.soldierservice %}
+            <tr>
+                <th class="field-key" colspan="3">کسری رزمندگان</th>
+                <td class="field-value" colspan="3">{{ service.reduction_veterans|default:"0" }}</td>
+                <th class="field-key" colspan="3">کسری جانبازی</th>
+                <td class="field-value" colspan="3">{{ service.reduction_disability|default:"0" }}</td>
+                <th class="field-key" colspan="3">کسری بسیج</th>
+                <td class="field-value" colspan="3">{{ service.reduction_bsj|default:"0" }}</td>
+            </tr>
+            <tr>
+                <th class="field-key" colspan="3">کسری پروژه</th>
+                <td class="field-value" colspan="3">{{ service.reduction_project|default:"0" }}</td>
+                <th class="field-key" colspan="3">کسری فرزند</th>
+                <td class="field-value" colspan="3">{{ service.reduction_children|default:"0" }}</td>
+                <th class="field-key" colspan="3">کسری همسر</th>
+                <td class="field-value" colspan="3">{{ service.reduction_spouse|default:"0" }}</td>
+            </tr>
+            <tr>
+                <th class="field-key" colspan="3">کسری مناطق عملیاتی</th>
+                <td class="field-value" colspan="3">{{ service.reduction_operational_areas|default:"0" }}</td>
+                <th class="field-key" colspan="3">بخشش سنواتی</th>
+                <td class="field-value" colspan="3">{{ service.reduction_seniority|default:"0" }}</td>
+                <th class="field-key" colspan="3">غیربومی</th>
+                <td class="field-value" colspan="3">{{ service.reduction_non_local|default:"0" }}</td>
+            </tr>
+            <tr>
+                <th class="field-key" colspan="3">تطبیق سامانه</th>
+                <td class="field-value" colspan="3">{{ service.reduction_system_adjustment|default:"0" }}</td>
+                <th class="field-key" colspan="3">غیره</th>
+                <td class="field-value" colspan="3">{{ service.reduction_other|default:"0" }}</td>
+                <th class="field-key" colspan="3">سایر</th>
+                <td class="field-value" colspan="3">{{ service.addition_other|default:"0" }}</td>
+            </tr>
+            <tr>
+                <th class="field-key" colspan="3">سنواتی</th>
+                <td class="field-value" colspan="3">{{ service.addition_seniority|default:"0" }}</td>
+                <th class="field-key" colspan="3">انضباطی</th>
+                <td class="field-value" colspan="3">{{ service.addition_discipline|default:"0" }}</td>
+                <th class="field-key" colspan="3">خلاء</th>
+                <td class="field-value" colspan="3">{{ service.addition_gap|default:"0" }}</td>
+            </tr>
+            <tr>
+                <th class="field-key" colspan="5">سامانه</th>
+                <td class="field-value" colspan="4">{{ service.addition_system|default:"0" }}</td>
+                <th class="field-key" colspan="5">خدمت اصلی به روز</th>
+                <td class="field-value" colspan="4">{{ service.main_service_days|default:"0" }}</td>
+            </tr>
+            <tr>
+                <th class="field-key" colspan="5">مجموع اضافه خدمت</th>
+                <td class="field-value" colspan="4">{{ service.addition_total|default:"0" }}</td>
+                <th class="field-key" colspan="5">مجموع کسری خدمت</th>
+                <td class="field-value" colspan="4">{{ service.reduction_total|default:"0" }}</td>
+            </tr>
+            {% endwith %}
+        </tbody>
+    </table>
+</main>
+
+        <footer style="padding:0 20px;" class="A4-footer">
+            <div>
+                <div>
+                    <span   style="font-size: 12px;font-weight: lighter;" class="f-btitr">شماره پرونده منقضی از خدمت :</span> 
+                    <strong style="font-size: 16px;" class="f-bkoodak">{{ letter.soldier.expired_file_number }}</strong>
+                </div>
+                <div>
+                    <span   style="font-size: 12px;font-weight: lighter;" class="f-btitr" >کد سازمانی :</span> 
+                    <strong style="font-size: 16px;" class="f-bkoodak">{{ letter.soldier.organizational_code.code_number }}</strong>
+                </div>
+            </div>
+            <div style="padding:0 140px;">
+                <div  class="f-btitr">امضا و نام گیرنده فرم</div>
+                <div style="margin-top: 10px;" class="f-btitr">تاریخ تحویل : </div>
+            </div>
+        </footer>
+</section>

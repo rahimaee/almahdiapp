@@ -42,6 +42,7 @@ from openpyxl.utils import get_column_letter
 from .utils import create_soldiers_excel
 from datetime import datetime
 import jdatetime
+from .enums import SoldierStatusFilterEnum
 def jalali_to_gregorian(jdate_str):
     # jdate_str looks like "1404/10/01"
     y, m, d = map(int, jdate_str.split('/'))
@@ -49,15 +50,39 @@ def jalali_to_gregorian(jdate_str):
 
 @feature_required('لیست سربازان')
 def soldier_list(request):
+    default_filter = SoldierStatusFilterEnum.PRESENT.key  # مقدار پیش‌فرض
+    status_choices = [(s.key, s.label) for s in SoldierStatusFilterEnum]
+
     form = SoldierSearchForm(request.GET or None)
     soldiers = get_accessible_soldiers_for_user(request.user)
-    soldiers = soldiers.filter(is_checked_out=False).select_related(
+    soldiers = soldiers.filter().select_related(
         'residence_province',
         'residence_city',
         'current_parent_unit',
         'current_sub_unit',
         'basic_training_center'
     )
+    # مقدار انتخاب شده توسط کاربر
+    selected_filter = request.GET.get("defaultFilter", default_filter)
+    print(selected_filter)
+    # ================================
+    #   اعمال فیلتر وضعیت انتخاب شده
+    # ================================
+    if selected_filter == SoldierStatusFilterEnum.ALL.key:
+        # بدون فیلتر
+        pass
+    elif selected_filter == SoldierStatusFilterEnum.PRESENT_AND_ABSENT.key:
+        soldiers = soldiers.filter(is_checked_out=False)
+
+    elif selected_filter == SoldierStatusFilterEnum.PRESENT.key:
+        soldiers = soldiers.filter(is_fugitive=False, is_checked_out=False)
+
+    elif selected_filter == SoldierStatusFilterEnum.ABSENT.key:
+        soldiers = soldiers.filter(is_fugitive=True, is_checked_out=False)
+
+    elif selected_filter == SoldierStatusFilterEnum.CHECKOUT.key:
+        soldiers = soldiers.filter(is_checked_out=True)
+
     all_soldiers_counts= len(soldiers) 
     remaining_filter = None
     
@@ -188,6 +213,8 @@ def soldier_list(request):
         'soldiers_counts' : len(soldiers),
         'all_soldiers_counts':all_soldiers_counts,
         'remainingFilter':remaining_filter,
+        'status_choices':status_choices,
+        'selected_filter':selected_filter,
     })
 
 
@@ -947,3 +974,223 @@ def single_reports_soldier(request, soldier_id=None):
         'today': today,
     }
     return render(request, 'soldires_apps/single_reports_soldier.html', context)
+
+
+def import_organization_code_from_excel(request):
+    
+    pass
+
+from django.shortcuts import redirect
+from django.http import HttpResponse
+from .models import OrganizationalCode, Soldier
+from io import BytesIO
+from almahdiapp.utils.excel import ExcelExporter,ExcelImport  # کلاس ExcelExporter که ارسال کردی
+from almahdiapp.utils.builder import EnumMetaBuilder  # کلاس ExcelExporter که ارسال کردی
+from django.contrib import messages
+import pandas as pd
+from .enums import OrganizationalCodeEnum,SoldierOrgCodeEnum 
+from .enums import ExistingOrgCodeModeEnum,SoldierOrgCodeStatusEnum,OrganizationalCodeStatusEnum
+from .constants import ORGANIZATIONAL_CODE_SAMPLE,SOLDIER_ORG_CODE_SAMPLE 
+
+# =========================================================
+# View اصلی فرم
+# =========================================================
+def organizational_code_match_view(request):
+    """
+    این view صفحه اصلی فرم را نشان می‌دهد و فرم‌ها را پردازش می‌کند.
+    """
+    status_choices = EnumMetaBuilder(OrganizationalCodeStatusEnum).choices
+    existing_choices = EnumMetaBuilder(ExistingOrgCodeModeEnum).choices
+    soldier_status_choices = EnumMetaBuilder(SoldierOrgCodeStatusEnum).choices
+
+    status_default = OrganizationalCodeStatusEnum.INEXCEL
+    existing_default = ExistingOrgCodeModeEnum.KEEP
+    soldier_status_default = SoldierOrgCodeStatusEnum.INEXCEL
+    
+    context = {
+        "status_choices":status_choices,
+        "existing_choices":existing_choices,
+        "soldier_status_choices":soldier_status_choices,
+        "status_default":status_default,
+        "existing_default":existing_default,
+        "soldier_status_default":soldier_status_default,
+    }
+    
+    return render(request, 'soldires_apps/organizational_codes_match.html', context)
+
+
+# =========================================================
+# دانلود فایل نمونه کد سازمانی
+# =========================================================
+def organizational_code_match_org_code_sample(request):
+    eb = EnumMetaBuilder(OrganizationalCodeEnum)
+    headers = eb.headers
+    required_fields = [OrganizationalCodeEnum.NATIONAL_CODE.label, OrganizationalCodeEnum.ORG_CODE.label]
+
+    data = [
+        {e.label: row.get(e.key, "") for e in OrganizationalCodeEnum}
+        for row in ORGANIZATIONAL_CODE_SAMPLE
+    ]
+
+    exporter = ExcelExporter(headers=headers, data=data, required_fields=required_fields)
+    bio = exporter.export_to_bytes()
+    return ExcelExporter.response(bio, "نمونه_کد_سازمانی.xlsx")
+
+
+# =========================================================
+# دانلود فایل نمونه تطبیق کد سازمانی با سرباز
+# =========================================================
+def organizational_code_match_soldier_org_code_sample(request):
+    eb = EnumMetaBuilder(SoldierOrgCodeEnum)
+    headers = eb.headers
+    required_fields = [SoldierOrgCodeEnum.NATIONAL_CODE.label, SoldierOrgCodeEnum.ORG_CODE.label]
+
+    data = [
+        {e.label: row.get(e.key, "") for e in SoldierOrgCodeEnum}
+        for row in SOLDIER_ORG_CODE_SAMPLE
+    ]
+
+    exporter = ExcelExporter(headers=headers, data=data, required_fields=required_fields)
+    bio = exporter.export_to_bytes()
+    return ExcelExporter.response(bio, "نمونه_تطبیق_سرباز.xlsx")
+
+from django.db import transaction
+
+def organizational_code_match_org_code(request):
+    eb = EnumMetaBuilder(OrganizationalCodeEnum)
+    
+    if request.method != "POST":
+        return redirect("organizational_codes_match")
+
+    excel_file = request.FILES.get("excel_file")
+    mode = request.POST.get("mode")
+    existing_mode = request.POST.get("existing_mode")
+
+    if not excel_file:
+        messages.error(request, "هیچ فایلی انتخاب نشده است.")
+        return redirect("organizational_codes_match")
+
+
+    importer = ExcelImport(file=excel_file,choices=eb.choices)
+    importer.read_file()
+    importer.clean_data()
+    records = importer.records
+
+    processed_orgs = set()
+    count = 0
+
+    try:
+        with transaction.atomic():  # تمام تغییرات در یک تراکنش
+            for row in records:
+                nc = row.get("national_code")
+                oc = row.get("org_code")
+                status = row.get("status")
+
+                print(nc,"  ****  ",oc)
+                if not nc and not oc:
+                    continue
+                
+                soldier = Soldier.objects.filter(national_code=nc).first()
+                org = OrganizationalCode.objects.filter(code_number=oc).first()
+                print(org,"  ****  ",soldier)
+
+                if not soldier and not org:
+                    continue
+                
+                if not soldier and org:
+                    soldier = org.current_soldier
+                elif not org:
+                    if soldier and soldier.organizational_code:
+                        org = soldier.organizational_code
+                    else:
+                        continue
+
+                if mode == OrganizationalCodeStatusEnum.INEXCEL.key:
+                    if status == OrganizationalCodeStatusEnum.ACTIVE.label:
+                        org.current_soldier = soldier
+                    elif status == OrganizationalCodeStatusEnum.INACTIVE.label:
+                        org.current_soldier = None
+                    elif status == OrganizationalCodeStatusEnum.CHECKOUT.label and soldier:
+                        soldier.to_checkout()
+                    elif status == OrganizationalCodeStatusEnum.PRESENT.label and soldier:
+                        soldier.is_fugitive = False
+                    elif status == OrganizationalCodeStatusEnum.FUGITIVE.label and soldier:
+                        soldier.is_fugitive = True
+                        
+                elif mode == OrganizationalCodeStatusEnum.ACTIVE.key:
+                    org.current_soldier = soldier
+                elif mode == OrganizationalCodeStatusEnum.INACTIVE.key:
+                    org.current_soldier = None
+                elif mode == OrganizationalCodeStatusEnum.CHECKOUT.key and soldier:
+                    soldier.to_checkout()
+                elif mode == OrganizationalCodeStatusEnum.PRESENT.label and soldier:
+                        soldier.is_fugitive = False
+                elif mode == OrganizationalCodeStatusEnum.FUGITIVE.label and soldier:
+                        soldier.is_fugitive = True
+                if soldier:
+                    soldier.save()
+                if org:
+                    org.save()
+
+                if org:
+                    processed_orgs.add(org.id)
+                count += 1
+
+            remaining_orgs = OrganizationalCode.objects.exclude(id__in=processed_orgs)
+            for org in remaining_orgs:
+                soldier = org.current_soldier
+                if existing_mode == ExistingOrgCodeModeEnum.ACTIVATE.key:
+                    if not soldier:
+                        org.current_soldier = Soldier.objects.filter(organizational_code=org).first()
+                        org.save()
+                elif existing_mode == ExistingOrgCodeModeEnum.DEACTIVATE.key:
+                    if soldier:
+                        org.current_soldier = None
+                        org.save()
+                # KEEP: بدون تغییر
+
+    except Exception as e:
+        print(e)
+        messages.error(request, f"خطا در پردازش رکوردها: {str(e)}")
+        return redirect("organizational_codes_match")
+
+    messages.success(request, f"{count} رکورد با موفقیت پردازش شد.")
+    return redirect("organizational_codes_match")
+
+# ========================
+# Form پردازش تطبیق کد سازمانی با سرباز
+# ========================
+def organizational_code_match_soldier_org_code(request):
+    eb = EnumMetaBuilder(SoldierOrgCodeEnum)
+    result = None
+
+    if request.method == "POST":
+        excel_file = request.FILES.get("excel_file")
+        mode = request.POST.get("mode")
+
+        if excel_file:
+            importer = ExcelImport(file=excel_file,choices=eb.choices)
+            importer.read_file()
+            importer.clean_data()
+            records = importer.records
+            count = 0
+            for row in records:
+                nc = row.get("national_code")
+                oc = row.get("org_code")
+                new_status = row.get("new_status") or mode
+                if not nc or not oc:
+                    continue
+                OrganizationalCode.objects.update_or_create(
+                    national_code=nc,
+                    defaults={"org_code": oc, "status": new_status}
+                )
+                count += 1
+
+            messages.success(request, f"{count} رکورد با موفقیت تطبیق داده شد.")
+        else:
+            messages.error(request, "هیچ فایلی انتخاب نشده است.")
+
+        return redirect("organizational_code_match_view")
+
+    # GET: فقط رندر فرم
+    return redirect("organizational_code_match_view")

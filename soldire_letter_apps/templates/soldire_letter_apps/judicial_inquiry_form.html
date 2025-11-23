@@ -1,9 +1,7 @@
-{% extends 'shared/_PanelMain.html' %}
+{% extends '../soldier_letter_apps_layout.html' %}
 {% load static %}
-{% block main %}
-  {% include "../letter_types_nav_layout.html" %}
-
-    <div class="container">
+{% block page %}
+    <div >
         <h3>{{ title }}</h3>
         <form method="post" class="form-horizontal">
             {% csrf_token %}

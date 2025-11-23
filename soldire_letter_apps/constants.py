@@ -201,3 +201,23 @@ FIELD_LABELS_HELPER = {
 }
 
 
+CLEARANCE_LETTER_SAMPLE = [
+    {
+        'soldier_code': '0012345678',
+        'reason': 'پایان خدمت',
+        'letter_number': 'CL-5678-14031201',
+        'absence_start_date': '1403/12/01',
+        'absence_end_date': '1403/12/10',
+        'description': 'توضیح نمونه ۱',
+        'status': 'ایجاد شده',
+    },
+    {
+        'soldier_code': '0098765432',
+        'reason': 'انتقال',
+        'letter_number': 'CL-4321-14031205',
+        'absence_start_date': '1403/12/05',
+        'absence_end_date': '1403/12/15',
+        'description': 'توضیح نمونه ۲',
+        'status': 'تأیید نهایی',
+    }
+]

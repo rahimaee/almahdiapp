@@ -184,6 +184,11 @@ class MembershipCertificateForm(forms.ModelForm):
         choices.append(('custom', 'سایر (مقصد دلخواه)'))
         self.fields['destination_choice'].choices = choices
 
+        default_subject = 'گواهی عضویت'
+        subject_choices_values = [c[0] for c in self.fields['subject'].choices]
+        if default_subject in subject_choices_values:
+            self.fields['subject'].initial = default_subject
+            
     def clean(self):
         cleaned_data = super().clean()
         dest_choice = cleaned_data.get('destination_choice')
@@ -387,3 +392,154 @@ class EssentialFormCardLetterForm(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+    
+    
+from django import forms
+from .models import ReadyForms
+
+class ReadyFormsForm(forms.ModelForm):
+    class Meta:
+        model = ReadyForms
+        fields = ['label', 'file', 'image', 'description', 'helper_text', 'file_type', 'page_size']
+        widgets = {
+            'label': forms.TextInput(attrs={'class': 'form-control'}),
+            'file': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'helper_text': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'file_type': forms.Select(attrs={'class': 'form-control'}),
+            'page_size': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+from django import forms
+from django.db.models import Q
+from .models import RunawayLetter
+from almahdiapp.utils.date import shamsi_to_gregorian
+
+class RunawayLetterForm(forms.ModelForm):
+    absence_start_date = forms.CharField(
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'مثلاً 1403/01/01'}),
+        label="تاریخ شروع غیبت"
+    )
+
+    absence_end_date = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'مثلاً 1403/02/15'}),
+        label="تاریخ پایان غیبت"
+    )
+
+    class Meta:
+        model = RunawayLetter
+        fields = ['soldier', 'absence_start_date', 'absence_end_date', 'description']
+        widgets = {
+            'soldier': forms.Select(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+    def clean_absence_start_date(self):
+        value = self.cleaned_data.get('absence_start_date')
+        date = shamsi_to_gregorian(value)
+        if not date:
+            raise forms.ValidationError("تاریخ شروع غیبت الزامی است")
+        return date
+
+    def clean_absence_end_date(self):
+        value = self.cleaned_data.get('absence_end_date')
+        if value:
+            return shamsi_to_gregorian(value)
+        return None
+
+class RunawaySearchForm(forms.Form):
+    q = forms.CharField(
+        required=False,
+        label="جستجو",
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "نام، نام خانوادگی یا کد سرباز"})
+    )
+    start_from = forms.CharField(
+        required=False,
+        label="تاریخ شروع از",
+        widget=forms.TextInput(attrs={'id': 'filter_start_from', 'name': 'start_from'})
+    )
+    start_to = forms.CharField(
+        required=False,
+        label="تاریخ شروع تا",
+        widget=forms.TextInput(attrs={'id': 'filter_start_to', 'name': 'start_to'})
+    )
+    end_from = forms.CharField(
+        required=False,
+        label="تاریخ پایان از",
+        widget=forms.TextInput(attrs={'id': 'filter_end_from', 'name': 'end_from'})
+    )
+    end_to = forms.CharField(
+        required=False,
+        label="تاریخ پایان تا",
+        widget=forms.TextInput(attrs={'id': 'filter_end_to', 'name': 'end_to'})
+    )
+    created_from = forms.CharField(
+        required=False,
+        label="تاریخ ثبت از",
+        widget=forms.TextInput(attrs={'id': 'filter_created_from', 'name': 'created_from'})
+    )
+    created_to = forms.CharField(
+        required=False,
+        label="تاریخ ثبت تا",
+        widget=forms.TextInput(attrs={'id': 'filter_created_to', 'name': 'created_to'})
+    )
+    def clean_start_from(self):
+        return shamsi_to_gregorian(self.cleaned_data.get("start_from"))
+
+    def clean_start_to(self):
+        return shamsi_to_gregorian(self.cleaned_data.get("start_to"))
+
+    def clean_end_from(self):
+        return shamsi_to_gregorian(self.cleaned_data.get("end_from"))
+
+    def clean_end_to(self):
+        return shamsi_to_gregorian(self.cleaned_data.get("end_to"))
+
+    def clean_created_from(self):
+        return shamsi_to_gregorian(self.cleaned_data.get("created_from"))
+
+    def clean_created_to(self):
+        return shamsi_to_gregorian(self.cleaned_data.get("created_to"))
+
+    def filter_queryset(self, queryset=None):
+        """
+        فیلتر کردن QuerySet بر اساس فیلدهای فرم
+        """
+        if queryset is None:
+            queryset = RunawayLetter.objects.all().order_by("-created_at")
+
+        if self.cleaned_data.get("q"):
+            q = self.cleaned_data["q"]
+            queryset = queryset.filter(
+                Q(soldier__first_name__icontains=q) |
+                Q(soldier__last_name__icontains=q) |
+                Q(soldier__code__icontains=q)
+            )
+
+        start_from = self.cleaned_data.get("start_from")
+        start_to = self.cleaned_data.get("start_to")
+        end_from = self.cleaned_data.get("end_from")
+        end_to = self.cleaned_data.get("end_to")
+        created_from = self.cleaned_data.get("created_from")
+        created_to = self.cleaned_data.get("created_to")
+
+
+        if start_from:
+            queryset = queryset.filter(absence_start_date__gte=start_from)
+        if start_to:
+            queryset = queryset.filter(absence_start_date__lte=start_to)
+
+        if end_from:
+            queryset = queryset.filter(absence_end_date__gte=end_from)
+        if end_to:
+            queryset = queryset.filter(absence_end_date__lte=end_to)
+
+        if created_from:
+            queryset = queryset.filter(created_at__date__gte=created_from)
+        if created_to:
+            queryset = queryset.filter(created_at__date__lte=created_to)
+
+        return queryset

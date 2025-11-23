@@ -1,225 +1,218 @@
-{% extends 'shared/_PanelMain.html' %}
+{% extends '../soldier_letter_apps_layout.html' %}
 {% load static %}
 {% load jalali_filters %}
 
 {% block header %}
-<style>
-    .modern-table-container {
-        margin-top: 2rem;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-        background: #fff;
-    }
+    <style>
+        .modern-table-container {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            background: #fff;
+        }
 
-    .modern-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-    }
+        .modern-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
 
-    .modern-table thead {
-        background: linear-gradient(to left, #4e73df, #224abe);
-        color: white;
-        font-weight: bold;
-    }
+        .modern-table thead {
+            background: linear-gradient(to left, #4e73df, #224abe);
+            color: white;
+            font-weight: bold;
+        }
 
-    .modern-table th,
-    .modern-table td {
-        padding: 1rem;
-        text-align: center;
-    }
+        .modern-table th,
+        .modern-table td {
+            padding: 1rem;
+            text-align: center;
+        }
 
-    .modern-table tbody tr {
-        transition: background-color 0.3s ease;
-        border-bottom: 1px solid #eee;
-    }
+        .modern-table tbody tr {
+            transition: background-color 0.3s ease;
+            border-bottom: 1px solid #eee;
+        }
 
-    .modern-table tbody tr:hover {
-        background-color: #f0f4ff;
-    }
+        .modern-table tbody tr:hover {
+            background-color: #f0f4ff;
+        }
 
-    .btn-create {
-        background: linear-gradient(to left, #1cc88a, #17a673);
-        color: white;
-        border-radius: 6px;
-        padding: 8px 20px;
-        font-weight: 500;
-    }
+        .btn-create {
+            background: linear-gradient(to left, #1cc88a, #17a673);
+            color: white;
+            border-radius: 6px;
+            padding: 8px 20px;
+            font-weight: 500;
+        }
 
-    .btn-create:hover {
-        opacity: 0.95;
-    }
+        .btn-create:hover {
+            opacity: 0.95;
+        }
 
-    .header-tools {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        padding:15px;
-        gap:1rem;
-    }
+        .header-tools {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            padding:15px;
+            gap:1rem;
+        }
 
-    .search-form {
-        display:flex;
-        align-items:center;
-        border:1px solid gray;
-        border-radius: 6px;
-    }
+        .search-form {
+            display:flex;
+            align-items:center;
+            border:1px solid gray;
+            border-radius: 6px;
+        }
 
-    .search-form input {
-        border: none;
-        outline: none;
-        border-radius: 6px;
-        padding-right: 6px;
-        width: 200px;
-    }
+        .search-form input {
+            border: none;
+            outline: none;
+            border-radius: 6px;
+            padding-right: 6px;
+            width: 200px;
+        }
 
-    .table-actions a {
-        padding: 4px 10px;
-        font-weight: 500;
-        transition: all 0.2s ease-in-out;
-        color: white !important;
-        border-radius: 6px;
-    }
+        .table-actions a {
+            padding: 4px 10px;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+            color: white !important;
+            border-radius: 6px;
+        }
 
-    .table-actions a.bg-success { background-color: #28a745; }
-    .table-actions a.bg-primary { background-color: #007bff; }
-    .table-actions a.bg-warning { background-color: #ffc107; color: black !important; }
-    .table-actions a.bg-danger  { background-color: #dc3545; }
+        .table-actions a.bg-success { background-color: #28a745; }
+        .table-actions a.bg-primary { background-color: #007bff; }
+        .table-actions a.bg-warning { background-color: #ffc107; color: black !important; }
+        .table-actions a.bg-danger  { background-color: #dc3545; }
 
-    .table-actions a:hover {
-        transform: translateY(-1px);
-        opacity: 0.9;
-    }
-    .header-tools .center-box {
-        flex:1;
-        display:flex;
-        align-items:center;
-        justify-content:end;
-    }
-    .pagination .page-link {
-        border-radius: 10px !important;
-    }
+        .table-actions a:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+        .header-tools .center-box {
+            flex:1;
+            display:flex;
+            align-items:center;
+            justify-content:end;
+        }
+        .pagination .page-link {
+            border-radius: 10px !important;
+        }
+        
+        .pagination {
+            margin:0;
+        }
+
     
-    .pagination {
-        margin:0;
-    }
+        .table-actions {
+            display:flex;
+            gap:4px;
+        }
+        .table-actions a {
+            display:inline-black;
+            width:100%;
+            margin:1px 0;
+        }
+        .national-card {
+            padding : 5px;
+            margin :0;
+            font-family: Vazir, Yekan, Naskh, sans-serif;
+        }
+        .text-truncate {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;  
+            overflow: hidden;
+            font-size:12px;
+        }
 
- 
-    .table-actions {
-        display:flex;
-        flex-direction:column;
-        gap:1;
-    }
-    .table-actions a {
-        display:inline-black;
-        width:100%;
-        margin:1px 0;
-    }
-       .national-card {
-        padding : 5px;
-        margin :0;
-        font-family: Vazir, Yekan, Naskh, sans-serif;
-    }
-    .text-truncate {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;  
-        overflow: hidden;
-        font-size:12px;
-    }
-
-    .full-name { 
-        font-weight:bold;
-    }
-    .col-2 {
-        column-span:2;
-    }
-</style>
-
+        .full-name { 
+            font-weight:bold;
+        }
+        .col-2 {
+            column-span:2;
+        }
+    </style>
 {% endblock %}
 
-{% block main %}
+{% block page %}
+    <div class="">
+        <div class="modern-table-container">
+            <div class="header-tools mb-3">
+                <h3 style="margin: 0;padding: 0;font-weight: bold;flex: 1;">
+                    فهرست نامه‌های گواهی عضویت
+                </h3>
+                
+                <form method="get" class="search-form d-flex align-items-center gap-2">
+                    <input type="text" name="q" class="form-control" placeholder="عبارت..." value="{{ query }}">
+                    <button type="submit" class="btn btn-outline-primary btn-sm">جستجو 🔍</button>
+                </form>
+                 <a href="{% url 'membership_certificate_create' %}" class="btn btn-create">➕ ایجاد نامه جدید</a>
 
-
-<div class="container">
-    {% include "../letter_types_nav_layout.html" %}
-
-    <h2 class="fw-bold text-primary text-center"> فهرست نامه‌های گواهی عضویت</h2>
-
-    <div class="modern-table-container">
-        <div class="header-tools mb-3">
-            <a href="{% url 'membership_certificate_create' %}" class="btn btn-create">➕ ایجاد نامه جدید</a>
-        <div class="center-box"> 
-            <ul class="pagination justify-content-center">
-                {% if page_obj.has_previous %}
-                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ query }}">«</a></li>
-                {% endif %}
-                {% for num in page_obj.paginator.page_range %}
-                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-                        <a class="page-link" href="?page={{ num }}&q={{ query }}">{{ num }}</a>
-                    </li>
-                {% endfor %}
-                {% if page_obj.has_next %}
-                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ query }}">»</a></li>
-                {% endif %}
-            </ul>
-        </div>
-            <form method="get" class="search-form d-flex align-items-center gap-2">
-                <input type="text" name="q" class="form-control" placeholder="عبارت..." value="{{ query }}">
-                <button type="submit" class="btn btn-outline-primary btn-sm">جستجو 🔍</button>
-            </form>
-        </div>
-
-        <table class="modern-table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>شماره نامه</th>
-                    <th>نام و نام خانوادگی</th>
-                    <th>موضوع</th>
-                    <th>مقصد</th>
-                    <th>توضحات داخل نامه</th>
-                    <th>توضحالت تکمیلی</th>
-                    <th>تاریخ نامه</th>
-                    <th>عملیات</th>
-                </tr>
-            </thead>
-                        <tbody>
-                        {% for c in certificates %}
-                            <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{ c.normal_letter.letter_number }}</td>
-                                <td>
-                                    <div class="full-name">{{ c.soldier.first_name }} {{ c.soldier.last_name }}</div>
-                                    <div>
-                                        <pre class="national-card">کد ملی : {{c.soldier.national_code}}</pre>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="badge badge-pill badge-primary">{{ c.subject }}</span>
-                                </td>
-                                <td><span class="text-truncate">{{ c.normal_letter.destination }}</span></td>
-                                <td><span class="text-truncate">{{ c.description_in }}</span></td>
-                                <td><span class="text-truncate">{{ c.description }}</span></td>
-                                <td>{{ c.normal_letter.date|to_jalali }}</td>
-                                <td class="table-actions">
-                                    <a href="{% url 'membership_certificate_print' c.id %}" class="btn btn-success btn-xs">چاپ</a>
-                                    <a href="{% url 'membership_certificate_edit' c.id %}" class="btn btn-primary btn-xs">ویرایش</a>
-                                    <a href="{% url 'membership_certificate_delete' c.id %}" class="btn btn-danger btn-xs">حذف</a>
-                                </td>
-                            </tr>
-                            {% empty %}
+            </div>
+            <div class="center-box"> 
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ query }}">«</a></li>
+                        {% endif %}
+                        {% for num in page_obj.paginator.page_range %}
+                            <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                                <a class="page-link" href="?page={{ num }}&q={{ query }}">{{ num }}</a>
+                            </li>
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ query }}">»</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            <table class="modern-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>شماره نامه</th>
+                        <th>نام و نام خانوادگی</th>
+                        <th>توضحات داخل نامه</th>
+                        <th>توضحالت تکمیلی</th>
+                        <th>تاریخ نامه</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                            <tbody>
+                            {% for c in certificates %}
                                 <tr>
-                                    <td colspan="8" class="text-center text-muted">موردی یافت نشد.</td>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>
+                                        <div style="margin-bottom: 4px;display: flex;align-items: center;justify-content: space-between;">
+                                            <span style="padding: 4px;border-radius: 3px;" class="badge badge-primary">{{ c.subject }}</span> 
+                                            <span>{{ c.normal_letter.letter_number }}</span>
+                                        </div>
+                                        <pre class="national-card">به : {{c.normal_letter.destination}}</pre>
+                                    </td>
+                                    <td>
+                                        <div style="margin-bottom: 4px;" class="full-name">{{ c.soldier.first_name }} {{ c.soldier.last_name }}</div>
+                                        <div>
+                                            <pre class="national-card">کد ملی : {{c.soldier.national_code}}</pre>
+                                        </div>
+                                    </td>
+                                    <td><span class="text-truncate">{{ c.description_in }}</span></td>
+                                    <td><span class="text-truncate">{{ c.description }}</span></td>
+                                    <td dir="ltr">{{ c.normal_letter.date|to_jalali_datetime }}</td>
+                                    <td class="table-actions">
+                                        <a href="{% url 'membership_certificate_print' c.id %}" class="btn btn-success btn-xs">چاپ</a>
+                                        <a href="{% url 'membership_certificate_edit' c.id %}" class="btn btn-primary btn-xs">ویرایش</a>
+                                        <a href="{% url 'membership_certificate_delete' c.id %}" class="btn btn-danger btn-xs">حذف</a>
+                                    </td>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-        </table>
-            
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="8" class="text-center text-muted">موردی یافت نشد.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+            </table>
+        </div>
     </div>
-</div>
-
 {% endblock %}
 

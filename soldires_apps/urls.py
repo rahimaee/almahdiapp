@@ -18,7 +18,26 @@ urlpatterns = [
     path('incomplete_soldiers_list/', views.incomplete_soldiers_list, name='incomplete_soldiers_list'),
     path('checked_out_soldiers_list/', views.checked_out_soldiers_list, name='checked_out_soldiers_list'),
     path('soldier/new/status/<int:pk>/letters/', views.soldires_new_status_view, name='soldires_new_status_view'),
+    # ORGANIZATIONAL CODES
     path('organizational-codes/', views.organizational_codes_list, name='organizational_codes_list'),
+    path('organizational-codes/match', views.organizational_code_match_view, name='organizational_codes_match'),
+    path('organizational-codes/match/sample/organizational_code_soldier', 
+         views.organizational_code_match_soldier_org_code_sample, 
+         name='organizational_code_match_soldier_org_code_sample'
+    ),
+    path('organizational-codes/match/sample/organizational_code', 
+         views.organizational_code_match_org_code_sample, 
+         name='organizational_code_match_org_code_sample'
+    ),
+    
+    path('organizational-codes/match/organizational_code', 
+         views.organizational_code_match_org_code, 
+         name='organizational_code_match_org_code'
+    ),
+    
+    path('organizational-codes/crud', views.organizational_codes_list,   name='organizational_codes_crud'),
+    path('organizational-codes/doc', views.organizational_codes_list,    name='organizational_codes_doc'),
+    # GROUP SUBMIT
     path('group-submit/download-template/', views.download_soldiers_template, name='download_soldiers_template'),
     path('group-submit/', views.soldiers_group_submit, name='soldiers_group_submit'),
     path('api/soldiers/search', views.soldiers_search, name='soldiers_search'),

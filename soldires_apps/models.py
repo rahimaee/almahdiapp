@@ -387,9 +387,9 @@ class Soldier(models.Model):
             self.has_driving_license = 'ندارد'
 
     def update_is_seyed(self):
-        first_name = self.first_name or ""
-        self.is_sayyed = bool(re.search(r'(^|[\s‌])سید', first_name))
-
+        full = f"{self.first_name or ''} {self.last_name or ''}"
+        self.is_sayyed = "سید" in full
+        
     def update_absorption(self):
         if self.referral_person is not None:
             self.absorption = True
@@ -421,16 +421,121 @@ class Soldier(models.Model):
         self.update_is_seyed()
         self.update_absorption()
         super().save(*args, **kwargs)
-        
-        if self.organizational_code:
-            self.organizational_code.current_soldier = self
-            self.organizational_code.save()
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.organizational_code}"
 
+    
+    @classmethod
+    def create_minimal_from_import(cls,
+        national_code: str,
+        first_name: str = '',
+        last_name: str = '',
+        degree_number=None,
+        expired_file_number: str = None,
+        defaults: dict = None,
+        finished_at=None
+    ):
+        """
+        ایجاد (یا برگرداندن موجود) یک سرباز با اطلاعات حداقلی.
+        از national_code به عنوان شناسه اصلی استفاده می‌شود.
+        ورودی‌ها:
+            - national_code (str): الزامی
+            - first_name, last_name (str): اگر موجود نیست، رشته خالی
+            - degree_number: عدد یا رشته عددی (1..12)
+            - expired_file_number: شماره پرونده منقضی (اختیاری) — در فیلد expired_file_number ذخیره می‌شود
+            - defaults: دیکشنری برای override مقادیر پیش‌فرض (مثلاً phone_mobile, postal_code, training_duration ...)
+        خروجی: (soldier_instance, created_bool, error_message_or_None)
+        """
+        from django.db import transaction
+        from .utils import map_rank_number_to_choice
+        
+        if not national_code:
+            return None, False, "کد ملی ارسال نشده است."
 
+        defaults = defaults or {}
 
+        # مقادیر پیش‌فرض برای فیلدهای NOT NULL که در مدل شما الزامی هستند
+        safe_defaults = {
+            "phone_mobile": defaults.get("phone_mobile", "0000000000"),
+            "postal_code": defaults.get("postal_code", ""),
+            "training_duration": defaults.get("training_duration", 0),
+            "address": defaults.get("address", ""),
+            "essential_service_duration": defaults.get("essential_service_duration", 0),
+            # اگر مدل فیلدهای دیگری اجباری دارد، اینجا اضافه کنید
+        }
+
+        # نگاشت درجه عددی به مقدار choices
+        rank_choice = map_rank_number_to_choice(degree_number)
+
+        try:
+            with transaction.atomic():
+                soldier, created = cls.objects.get_or_create(
+                    national_code=str(national_code).strip(),
+                    defaults={
+                        "first_name": first_name or "",
+                        "last_name": last_name or "",
+                        "rank": rank_choice,
+                        # فیلدهای اجباری را از safe_defaults پر کن
+                        "phone_mobile": safe_defaults["phone_mobile"],
+                        "postal_code": safe_defaults["postal_code"],
+                        "training_duration": safe_defaults["training_duration"],
+                        "address": safe_defaults["address"],
+                        "essential_service_duration": safe_defaults["essential_service_duration"],
+                        # وضعیت تسویه را فعال کن چون گفته بودی تسویه حساب شده
+                        "is_checked_out": True,
+                        "service_end_date":finished_at,
+                        # اگر نیاز داری فیلد وضعیت را هم ست کنی می‌توانی:
+                        # "status": "پایان خدمت",
+                    }
+                )
+                # اگر قبلاً موجود بوده، ممکن است بخواهی بعضی فیلدهای حداقلی را همین‌جا آپدیت کنی
+                if not created:
+                    changed = False
+                    if first_name and not soldier.first_name:
+                        soldier.first_name = first_name
+                        changed = True
+                    if last_name and not soldier.last_name:
+                        soldier.last_name = last_name
+                        changed = True
+                    if rank_choice and not soldier.rank:
+                        soldier.rank = rank_choice
+                        changed = True
+                    if expired_file_number and not soldier.expired_file_number:
+                        soldier.expired_file_number = expired_file_number
+                        changed = True
+                    # اگر می‌خواهی حتماً is_checked_out را ست کنی:
+                    if not soldier.is_checked_out:
+                        soldier.is_checked_out = True
+                        changed = True
+
+                    if changed:
+                        soldier.save()
+
+                else:
+                    # رکورد جدید؛ مقدار expired_file_number را تنظیم کن اگر ارسال شده
+                    if expired_file_number:
+                        soldier.expired_file_number = expired_file_number
+                        soldier.save(update_fields=["expired_file_number"])
+
+                return soldier, created, None
+
+        except Exception as e:
+            return None, False, str(e)
+
+    def to_checkout(self):
+        # 1️⃣ علامت‌گذاری خروج سرباز
+        self.is_checked_out = True
+        self.save(update_fields=['is_checked_out'])
+
+        # 2️⃣ پیدا کردن کد سازمانی که این سرباز در آن است
+        orgc = self.organizational_code
+        print(orgc)
+        # 3️⃣ بررسی کد ملی و آزاد کردن کد سازمانی
+        if orgc and self.national_code == orgc.current_soldier.national_code:
+            orgc.current_soldier = None
+            orgc.save(update_fields=['current_soldier'])
+            
 class OrganizationalCode(models.Model):
     code_number = models.PositiveIntegerField(unique=True, verbose_name='کد سازمانی')
     is_active = models.BooleanField(default=False, verbose_name='فعال/غیرفعال')  # فعال یا غیرفعال بودن کد
@@ -442,6 +547,8 @@ class OrganizationalCode(models.Model):
         related_name='current_code',
         verbose_name='سرباز فعلی'
     )
+    
+        
     def __str__(self):
         active_label = 'آزاد'
         if  self.is_active or self.current_soldier:

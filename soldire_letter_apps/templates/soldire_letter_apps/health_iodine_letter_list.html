@@ -1,8 +1,8 @@
-{% extends 'shared/_PanelMain.html' %}
+{% extends '../soldier_letter_apps_layout.html' %}
 {% load static %}
 {% load jalali_filters %}
 
-{% block main %}
+{% block page %}
 <style>
     .modern-table-container {
         margin-top: 2rem;
@@ -107,7 +107,7 @@
     }
 </style>
 
-<div class="container">
+<div class="">
     {% include "../letter_types_nav_layout.html" %}
     
     <h2 class="fw-bold text-primary text-center">📄 فهرست نامه‌های بهداشت</h2>

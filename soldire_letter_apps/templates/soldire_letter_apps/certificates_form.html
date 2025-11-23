@@ -1,72 +1,99 @@
-{% extends 'shared/_PanelMain.html' %}
+{% extends '../soldier_letter_apps_layout.html' %}
 {% load static %}
+{% load css %}
 
+{% block page %}
+    <div class="row justify-content-center">
 
+        <!-- ستون اول: کارت فرم -->
+        <div class="col-md-6 mb-3">
+            <div class="ui-card">
 
-{% block main %}
-  {% include "../letter_types_nav_layout.html" %}
+                <div class="ui-card-header ui-card-header-primary">
+                    ایجاد نامه گواهی
+                </div>
 
-    <div class="container ">
-        <h3 class="text-center">ایجاد نامه گواهی</h3>
+                <div class="ui-card-body">
 
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group select2">
-                {{ form.soldier.label_tag }}
-                {{ form.soldier }}
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="ui-form-group select2">
+                            {{ form.soldier.label_tag }}
+                            {{ form.soldier|add_class:"ui-select" }}
+                        </div>
+
+                        <div class="ui-form-group">
+                            {{ form.destination_choice.label_tag }}
+                            {{ form.destination_choice|add_class:"ui-select" }}
+                        </div>
+
+                        <div class="ui-form-group" id="manual-destination">
+                            {{ form.destination_manual.label_tag }}
+                            {{ form.destination_manual|add_class:"ui-input" }}
+                        </div>
+
+                        <div class="ui-form-group">
+                            {{ form.subject.label_tag }}
+                            {{ form.subject|add_class:"ui-select" }}
+                        </div>
+
+                        <div class="ui-form-group">
+                            {{ form.description_in.label_tag }}
+                            {{ form.description_in|add_class:"ui-input" }}
+                        </div>
+
+                        <div class="ui-form-group">
+                            {{ form.description.label_tag }}
+                            {{ form.description|add_class:"ui-textarea" }}
+                        </div>
+
+                        <button type="submit" class="ui-btn ui-btn-success">ذخیره</button>
+                    </form>
+
+                </div>
             </div>
-            <div class="form-group ">
-                {{ form.destination_choice.label_tag }}
-                {{ form.destination_choice }}
-            </div>
+        </div>
 
-            <div class="form-group" id="manual-destination">
-                {{ form.destination_manual.label_tag }}
-                {{ form.destination_manual }}
-            </div>
+        <!-- ستون دوم: کارت اطلاعات -->
+        <div class="col-md-6 mb-3">
+            <div class="ui-card">
 
-            <div class="form-group select2">
-                {{ form.subject.label_tag }}
-                {{ form.subject }}
-            </div>
+                <div class="ui-card-header ui-card-header-secondary">
+                    اطلاعات تکمیلی
+                </div>
 
-            <div class="form-group">
-                {{ form.description_in.label_tag }}
-                {{ form.description_in }}
-            </div>
+                <div class="ui-card-body">
+                    <p class="text-muted text-center">
+                        از این کارت می‌توانید برای توضیحات یا اطلاعات مرتبط استفاده کنید.
+                    </p>
+                </div>
 
-            <div class="form-group">
-                {{ form.description.label_tag }}
-                {{ form.description }}
             </div>
+        </div>
 
-            <button type="submit" class="btn btn-success">ذخیره</button>
-        </form>
     </div>
+{% endblock %}
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var select = document.querySelector("select[name='destination_choice']");
-            var manualDiv = document.getElementById("manual-destination");
+{% block footer %}
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var select = document.querySelector("select[name='destination_choice']");
+        var manualDiv = document.getElementById("manual-destination");
+
+        if (select && manualDiv) {
             function toggleManualInput() {
-                if (select.value === "custom") {
-                    manualDiv.style.display = "block";
-                } else {
-                    manualDiv.style.display = "none";
-                }
+                manualDiv.style.display = select.value === "custom" ? "block" : "none";
             }
 
             toggleManualInput();
             select.addEventListener("change", toggleManualInput);
-        });
-    </script>
-{% endblock %}
+        }
+    });
+    $(document).ready(function () {
+        $('.select2 select').select2({allowClear: true });
+    });
+</script>
 
-{% block footer %}
-    <script>
-        $('.select2 select').select2({
-            allowClear:true,
-        })
-    </script>
 {% endblock %}

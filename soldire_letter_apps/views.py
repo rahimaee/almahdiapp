@@ -40,7 +40,7 @@ class ClearanceLetterListView(ListView):
                 Q(soldier__last_name__icontains=query) |
                 Q(soldier__national_code__icontains=query)
             )
-        return queryset.order_by('-issue_date')
+        return queryset.order_by('-expired_file_number')
 
 
 def approved_ClearanceLetter(request, letter_id):
@@ -64,6 +64,7 @@ def to_shamsi(gregorian_date):
 
 def print_ClearanceLetter(request, letter_id):
     letter = ClearanceLetter.objects.get(id=letter_id)
+
     if letter.status == 'ایجاد شده':
         letter.status = 'چاپ و درحال بررسی'
         letter.save()
@@ -73,7 +74,17 @@ def print_ClearanceLetter(request, letter_id):
     letter.activities_end_date_shamsi = to_shamsi(letter.soldier.dispatch_date)
     letter.service_end_date_shamsi = to_shamsi(letter.soldier.service_end_date)
     letter.service_entry_date_shamsi = to_shamsi(letter.soldier.service_entry_date)
-    print(letter.soldier.service_end_date,letter.service_end_date_shamsi)
+    
+    sol = letter.soldier
+    if sol.expired_file_number != letter.expired_file_number:
+        if not letter.expired_file_number:
+            letter.expired_file_number = sol.expired_file_number
+            letter.save()
+            
+        else:
+            sol.expired_file_number = letter.expired_file_number
+            sol.save()    
+    
     return render(request, 'soldire_letter_apps/print_ClearanceLetter.html', {'letter': letter})
 
     
@@ -83,7 +94,9 @@ def delete_ClearanceLetter(request, letter_id):
     
     if request.method == 'POST':
         soldier = letter.soldier
-        
+        if soldier:
+            soldier.is_checked_out = False
+            soldier.save()
         # حذف نامه (signal خودکار وضعیت سرباز را تغییر می‌دهد)
         letter.delete()
         
@@ -928,3 +941,221 @@ def form_essential_form(request, form_type, form_id=None):
         'FORM_TYPE_TITLES': FORM_TYPE_TITLES
     }
     return render(request, "essential_forms_nezsa/form_essential_form.html", context)
+
+
+from django.shortcuts import get_object_or_404, redirect
+from django.views.generic import TemplateView
+from django.urls import reverse_lazy
+from django.contrib import messages
+from .models import ReadyForms
+from .forms import ReadyFormsForm
+
+class ReadyFormsListView(TemplateView):
+    template_name = 'ready_forms_page.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['forms_list'] = ReadyForms.objects.all().order_by('-created_at')
+        context['form'] = ReadyFormsForm()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if 'create_form' in request.POST:
+            form = ReadyFormsForm(request.POST, request.FILES)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "فرم با موفقیت ایجاد شد.")
+                return redirect('ready_forms:list')
+        elif 'update_form' in request.POST:
+            pk = request.POST.get('form_id')
+            instance = get_object_or_404(ReadyForms, pk=pk)
+            form = ReadyFormsForm(request.POST, request.FILES, instance=instance)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "فرم با موفقیت بروزرسانی شد.")
+                return redirect('ready_forms:list')
+        return self.get(request, *args, **kwargs)
+
+class ReadyFormsCreateView(TemplateView):
+    template_name = 'ready_forms_page.html'
+
+class ReadyFormsUpdateView(TemplateView):
+    template_name = 'ready_forms_page.html'
+
+class ReadyFormsDeleteView(TemplateView):
+    template_name = 'ready_forms_page.html'
+
+    def get(self, request, pk, *args, **kwargs):
+        instance = get_object_or_404(ReadyForms, pk=pk)
+        instance.delete()
+        messages.success(request, "فرم با موفقیت حذف شد.")
+        return redirect('ready_forms:list')
+
+
+from django.shortcuts import render, redirect
+from django.core.paginator import Paginator
+from django.utils.timezone import now
+from .forms import RunawayLetterForm,RunawaySearchForm
+from django.shortcuts import get_object_or_404, redirect
+from django.db import transaction
+from .models import RunawayLetter
+
+def runaway_page(request):
+    form = RunawayLetterForm()
+    search_form = RunawaySearchForm(request.GET or None)
+
+    items = RunawayLetter.objects.all().order_by("-created_at")
+    if search_form.is_valid():
+        print(search_form.cleaned_data)
+        items = search_form.filter_queryset(items)
+
+    if request.method == "POST":
+        form = RunawayLetterForm(request.POST)
+        if form.is_valid():
+            runaway = form.save(commit=False)
+            runaway.save()
+            return redirect("runaway_page")
+
+    # Pagination
+    paginator = Paginator(items, 10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        "form": form,
+        "search_form": search_form,
+        "page_obj": page_obj,
+    }
+    return render(request, "soldire_letter_apps/runaway_letter_page.html", context)
+
+
+def runaway_change_status(request, pk, status):
+    """
+    تغییر وضعیت نامه فرار و به‌روزرسانی وضعیت سرباز
+    """
+    valid_statuses = [
+        'تأیید نهایی',
+        'چاپ و درحال بررسی',
+        'ایجاد شده',
+    ]
+
+    if status not in valid_statuses:
+        return redirect("runaway_page")
+
+    runaway = get_object_or_404(RunawayLetter, pk=pk)
+
+    with transaction.atomic():
+        runaway.status = status
+        runaway.save()
+      
+
+    return redirect("runaway_page")
+
+def runaway_print_page(request, pk):
+    """
+     صفحه چاپ یک نامه فراری خاص
+    """
+    runaway_letter = get_object_or_404(RunawayLetter, pk=pk)
+
+    if runaway_letter and runaway_letter.status == 'ایجاد شده':
+        runaway_letter.status = 'چاپ و درحال بررسی'
+        runaway_letter.save()
+
+    context= {
+        'runaway_letter':runaway_letter,
+        'letter': runaway_letter.normal_letter,
+        'signature':{
+            "name": "میثم گل بابا زاده",
+            "degree": "ستوان دوم پاسدار",
+            "duty": "کارشناس منابع سرباز",
+        }
+    }
+    return render(request, 'soldire_letter_apps/print_runaway_letter.html', context)
+
+def runaway_delete(request, pk):
+    runaway = get_object_or_404(RunawayLetter, pk=pk)
+
+    if runaway.normal_letter:
+        runaway.normal_letter.delete()
+
+    runaway.delete()
+
+    messages.success(request, "نامه با موفقیت حذف شد.")
+    return redirect("runaway_page")
+
+
+
+from django.http import HttpResponse
+from .enums import ClearanceLetterEnum
+from almahdiapp.utils.excel import ExcelExporter,ExcelImport
+from almahdiapp.utils.builder import EnumMetaBuilder
+from .constants import CLEARANCE_LETTER_SAMPLE
+
+def import_clearanceLetter_sample_excel(request):
+    """Download sample Excel file using ExcelExporter"""
+    eb = EnumMetaBuilder(ClearanceLetterEnum)
+    data = CLEARANCE_LETTER_SAMPLE
+    required_fields = [ClearanceLetterEnum.LETTER_NUMBER.label,ClearanceLetterEnum.NATIONAL_CODE.label]
+    exporter = ExcelExporter(headers=eb.headers, data=data, required_fields=required_fields)
+    bio = exporter.export_to_bytes()
+    return ExcelExporter.response(bio, filename="نمونه_نامه_تسویه.xlsx")
+
+def import_clearanceLetter_from_excel(request):
+    """
+    درون‌ریزی نامه‌های تسویه از فایل اکسل
+    """
+    if request.method == "POST":
+        file = request.FILES.get("file")
+        print("➡️ File received:", file)
+
+        if not file:
+            messages.error(request, "فایل اکسل ارسال نشده است.")
+            return redirect(request.path)
+
+        # ساخت Meta برای ستون‌ها
+        eb = EnumMetaBuilder(ClearanceLetterEnum)
+        print("➡️ Enum choices:", eb.choices)
+
+        # ایجاد ایمپورتر
+        importer = ExcelImport(file=file, choices=eb.choices)
+
+        try:
+            print("📥 Reading Excel file...")
+            importer.read_file()
+            print("✔️ File read successfully.")
+
+            print("🧹 Cleaning data...")
+            importer.clean_data()
+            print("✔️ Clean data completed.")
+
+        except Exception as e:
+            print("❌ ERROR while reading/cleaning Excel:", e)
+            messages.error(request, f"خطا در خواندن فایل اکسل: {e}")
+            return redirect(request.path)
+
+        # رکوردهای تمیزشده
+        records = importer.records
+        print(f"📊 Cleaned Records Count: {len(records)}")
+        print("📊 Sample Record:", records[0] if records else "No records")
+
+        # پردازش رکوردها
+        print("⚙️ Running ClearanceLetter.import_data() ...")
+        result = ClearanceLetter.import_data(records)
+        print("✔️ Import Result:", result)
+
+        # پیام موفقیت
+        messages.success(
+            request,
+            f"درون‌ریزی انجام شد. {result['created']} مورد ایجاد، {result['updated']} مورد بروزرسانی شد."
+        )
+
+        # نمایش خطاها اگر وجود داشت
+        if result["errors"]:
+            print("❌ Errors during import:")
+            for err in result["errors"]:
+                print("   Record:", err["record"])
+                print("   Error:", err["error"])
+
+            messages.error(request, f"{len(result['errors'])} خطا هنگام پردازش رکوردها رخ داد.")
+
+    return redirect('ClearanceLetterListView')

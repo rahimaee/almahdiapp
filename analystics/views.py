@@ -21,21 +21,22 @@ from datetime import date
 def index(request):
     today = date.today()
     # تعداد کل سربازان
-    all_soldiers_counts = Soldier.objects.count()
+    all_soldiers = Soldier.objects.filter(is_checked_out=False)
+    all_soldiers_counts = all_soldiers.count()
     # حاضر: سربازانی که پایان خدمت نرسیده‌اند و فراری نیستند
-    present_soliders_counts = Soldier.objects.filter(is_fugitive=False, service_end_date__gt=today).count()
+    present_soliders_counts = all_soldiers.filter(is_fugitive=False, service_end_date__gt=today).count()
     # فراری
-    runaway_soliders_counts = Soldier.objects.filter(is_fugitive=True).count()
+    runaway_soliders_counts = all_soldiers.filter(is_fugitive=True).count()
     # اعلام حضور نشده: فرضاً سربازانی که هنوز اعزام نشده‌اند یا service_entry_date خالی است
-    not_reported_counts = Soldier.objects.filter(service_entry_date__isnull=True).count()
+    not_reported_counts = all_soldiers.filter(service_entry_date__isnull=True).count()
     # پایان خدمت
-    finished_service_counts = Soldier.objects.filter(service_end_date__lte=today).count()
+    finished_service_counts = all_soldiers.filter(service_end_date__lte=today).count()
     # درحال صدور کارت
-    issuing_card_counts = Soldier.objects.filter(eligible_for_card_issuance=True, card_issuance_status__isnull=True).count()
+    issuing_card_counts = all_soldiers.filter(eligible_for_card_issuance=True, card_issuance_status__isnull=True).count()
     # بدهی حقوقی
     debt_counts = Settlement.objects.filter(current_debt_rial__gt=0).count()
     # جذبی
-    absorption_counts = Soldier.objects.filter(absorption=True).count()
+    absorption_counts = all_soldiers.filter(absorption=True).count()
 
     context = {
         'all_soldiers_counts': all_soldiers_counts,

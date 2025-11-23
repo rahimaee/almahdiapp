@@ -25,6 +25,13 @@ class EnumMetaBuilder:
         return [(f.value[0], f.value[1]) for f in self.enum_class]
 
     @property
+    def labels(self):
+        """
+        خروجی لیست از labelها
+        """
+        return [f.value[1] for f in self.enum_class]
+
+    @property
     def headers(self):
         """
         خروجی لیست از labelها

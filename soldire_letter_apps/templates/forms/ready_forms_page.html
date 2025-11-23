@@ -1,0 +1,53 @@
+{% extends '../soldier_letter_apps_layout.html' %}
+{% load static %}
+{% load jalali_filters %}
+
+{% block header %}
+<h3>فرم‌های آماده</h3>
+{% endblock %}
+
+{% block page %}
+<div class="row">
+    <!-- فرم ایجاد / ویرایش -->
+    <div class="col-md-4">
+        <div class="card p-3 mb-3">
+            <h5>{% if form.instance.pk %}ویرایش فرم{% else %}ایجاد فرم جدید{% endif %}</h5>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                {% if form.instance.pk %}
+                    <input type="hidden" name="form_id" value="{{ form.instance.pk }}">
+                    <button type="submit" name="update_form" class="btn btn-primary w-100">بروزرسانی فرم</button>
+                {% else %}
+                    <button type="submit" name="create_form" class="btn btn-success w-100">ایجاد فرم</button>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <!-- فهرست فرم‌ها -->
+    <div class="col-md-8">
+        <div class="row">
+            {% for item in forms_list %}
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    {% if item.image %}
+                        <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.label }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item.label }}</h5>
+                        <p class="card-text">{{ item.description|truncatewords:15 }}</p>
+                        <p class="card-text"><small class="text-muted">{{ item.get_file_type_display }} - {{ item.page_size }}</small></p>
+                        <a href="{{ item.file.url }}" target="_blank" class="btn btn-outline-success btn-sm">دانلود</a>
+                        <a href="{% url 'ready_forms_update' item.pk %}" class="btn btn-outline-primary btn-sm">ویرایش</a>
+                        <a href="{% url 'ready_forms_delete' item.pk %}" class="btn btn-outline-danger btn-sm" onclick="return confirm('آیا مطمئن هستید حذف شود؟');">حذف</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>هیچ فرم آماده‌ای وجود ندارد.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,150 +1,196 @@
-{% extends 'shared/_PanelMain.html' %}
+{% extends './soldier_letter_apps_layout.html' %}
 {% load static %}
-{% block main %}
 
-<!-- Font Awesome 4.7.0 -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+{% block page %}
 <style>
-  body {
+/* ------------------------------
+   فونت و پس‌زمینه
+------------------------------ */
+body {
     font-family: 'Tahoma', sans-serif;
-    background: #f4f7fb;
-  }
-
-
-
-  /* عنوان بخش */
-  .section-title {
-    font-size: 18px;
-    font-weight: bold;
-    margin: 30px 0 20px 0;
-    text-align: right;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .section-title i {
-    font-size: 20px;
-  }
-  .title-list { color: #007bff; }
-  .title-create { color: #28a745; }
-
-  /* گرید کارت‌ها */
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 18px;
-  }
-
-  /* کارت‌ها */
-  .card-link {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 15px;
-    background: #fff;
-    border-radius: 8px;
-    text-decoration: none;
+    background: #f9f9f9;
     color: #333;
-    transition: all 0.3s ease;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
-  }
-  .card-link:hover {
-    transform: translateY(-5px) scale(1.03);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-  }
+    direction: rtl;
+}
 
-  .card-link i {
-    font-size: 42px;
-    margin-bottom: 12px;
-    transition: transform 0.3s, color 0.3s;
-  }
-  .card-link:hover i {
-    transform: rotate(8deg) scale(1.1);
-  }
+.documentation-page {
+    margin: 0 auto;
+    padding: 20px;
+    height: 80svh;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
 
-  .card-link span {
-    font-size: 11px;
-    font-weight: 600;
-    text-align: center;
-    line-height: 1.4;
-  }
+.documentation-page h2, .documentation-page h3 {
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
 
-  /* رنگ‌بندی آیکون‌ها */
-  .blue i { color: #007bff; }
-  .green i { color: #28a745; }
-  .red i { color: #dc3545; }
-  .orange i { color: #fd7e14; }
-  .purple i { color: #6f42c1; }
-  .teal i { color: #20c997; }
+.documentation-page h2 {
+    font-size: 24px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+}
+
+.documentation-page h3 {
+    font-size: 20px;
+    color: #007bff;
+}
+
+.doc-section {
+    margin-bottom: 30px;
+}
+.doc-section h2 {
+  width: 100%;
+}
+
+
+.doc-item {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background: #fefefe;
+}
+
+.doc-item h4 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: #28a745;
+}
+
+.doc-item p {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 3px 0;
+}
+
+/* نکات مهم */
+.doc-item ul {
+    font-size: 13px;
+    margin: 5px 0 0 0;
+    padding-left: 20px;
+}
 </style>
 
-{% include "./letter_types_nav_layout.html" %}
-<div class="page-content">
-  <h3 class="section-title title-create">
-    <i class="fa fa-plus-square"></i> ایجاد نامه‌
-  </h3>
-  <div class="grid">
-    <a href="{% url 'clearance_letter_create' %}" class="card-link green">
-      <i class="fa fa-plus-circle"></i>
-      <span>تسویه‌حساب اصلی</span>
-    </a>
-    <a href="{% url 'judicial_inquiry_create' %}" class="card-link green">
-      <i class="fa fa-plus-circle"></i>
-      <span>استعلام قضایی</span>
-    </a>
-    <a href="{% url 'domestic_settlement_create' %}" class="card-link green">
-      <i class="fa fa-plus-circle"></i>
-      <span>تسویه حساب داخلی</span>
-    </a>
-    <a href="{% url 'introduction_letter_create' %}" class="card-link green">
-      <i class="fa fa-plus-circle"></i>
-      <span>نامه معرفی</span>
-    </a>
-    <a href="{% url 'membership_certificate_create' %}" class="card-link green">
-      <i class="fa fa-plus-circle"></i>
-      <span>گواهی</span>
-    </a>
-    <a href="{% url 'health_iodine_letter_create' %}" class="card-link green">
-      <i class="fa fa-plus-circle"></i>
-      <span>تائیدیه سلامت</span>
-    </a>
-    <a href="{% url 'commitment_letter_create' %}" class="card-link green">
-      <i class="fa fa-plus-circle"></i>
-      <span>تعهد نامه</span>
-    </a>
-  </div>
-  <!-- بخش ایجاد -->
-  <h3 class="section-title title-create">
-    <i class="fa fa-plus-square"></i> فرم های ضروری صدور کارت نزسا
-  </h3>
-  <div class="grid">
-    <a href="{% url 'forms_essential_list' %}" class="card-link green">
-        <i class="fa fa-list"></i>
-        <span>فهرست فرم ها</span>
-    </a>
-    <a href="{% url 'form_essential_create' form_type='clearance_letter' %}" class="card-link green">
-        <i class="fa fa-plus-circle"></i>
-        <span>فرم شماره 3</span>
-    </a>
+<div class="documentation-page" style="max-width:1000px; margin:auto; padding:20px; font-family:Tahoma,sans-serif; direction:rtl; background:#f9f9f9; color:#333;">
+    
+    <h1 style="border-bottom:3px solid #007bff; padding-bottom:5px;">مستندات نرم‌افزار نامه‌ها و فرم‌ها</h1>
+    
+    <section>
+        <ul>
+            <li>هدف: افزایش سرعت و دقت در صدور نامه‌ها.</li>
+            <li>قابلیت‌ها: مدیریت نامه‌های تسویه‌حساب، استعلام قضایی، گواهی عضویت، معرفی نامه، تعهدنامه و فرم‌های ضروری کارت نزسا.</li>
+        </ul>
+    </section>
 
-    <!-- فرم تسویه حساب 3 فرزندی و بالاتر -->
-    <a href="{% url 'form_essential_create' form_type='checkout_3plus' %}" class="card-link purple">
-        <i class="fa fa-file-text"></i>
-        <span>فرم تسویه حساب 3 فرزندی و بالاتر</span>
-    </a>
+    <section>
+        <h2>نامه‌ها</h2>
 
-    <!-- فرم فعال سازی اعزام کارکنان قدیمی متولدین قبل از سال 1365 -->
-    <a href="{% url 'form_essential_create' form_type='activate_old_staff' %}" class="card-link teal">
-        <i class="fa fa-user-plus"></i>
-        <span>فعال سازی اعزام کارکنان قدیمی (قبل از 1365)</span>
-    </a>
-    <!-- معافیت دائم کارکنان وظیفه -->
-    <a href="{% url 'form_essential_create' form_type='permanent_exemption' %}" class="card-link red">
-        <i class="fa fa-shield"></i>
-        <span>معافیت دائم کارکنان وظیفه</span>
-    </a>
+        <div class="doc-item" style="border:1px solid #e0e0e0; padding:15px; margin-bottom:15px; border-radius:8px; background:#fff;">
+            <h3>تسویه‌حساب (ClearanceLetter)</h3>
+            <p><strong>هدف:</strong> صدور نامه تسویه‌حساب اصلی برای سرباز.</p>
+            <p><strong>ورودی‌ها:</strong> شماره نامه، اطلاعات سرباز، تاریخ صدور.</p>
+            <p><strong>خروجی:</strong> نامه رسمی تسویه‌حساب قابل چاپ.</p>
+            <ul>
+                <li>وضعیت نامه: ایجاد شده → چاپ و در حال بررسی → تایید شده</li>
+                <li>امکان حذف نامه و بازگرداندن وضعیت سرباز</li>
+            </ul>
+        </div>
+
+        <div class="doc-item">
+            <h3>استعلام قضایی (NormalLetterJudicialInquiry)</h3>
+            <p><strong>هدف:</strong> صدور نامه استعلام قضایی مرتبط با سرباز.</p>
+            <p><strong>ورودی‌ها:</strong> اطلاعات سرباز، موضوع، دلیل استعلام.</p>
+            <p><strong>خروجی:</strong> نامه رسمی برای مراجع قضایی.</p>
+            <ul>
+                <li>امکان ایجاد گروهی نامه‌های تست سلامت روان پس از ۶ ماه</li>
+                <li>ویرایش، حذف و چاپ نامه‌ها</li>
+            </ul>
+        </div>
+
+        <div class="doc-item">
+            <h3>تسویه‌حساب داخلی (NormalLetterDomesticSettlement)</h3>
+            <p><strong>هدف:</strong> ثبت و صدور نامه‌های تسویه داخلی بین واحدها.</p>
+            <ul>
+                <li>امکان چاپ و تایید نهایی نامه</li>
+                <li>بازگرداندن وضعیت سرباز در صورت حذف نامه</li>
+            </ul>
+        </div>
+
+        <div class="doc-item">
+            <h3>معرفی نامه (IntroductionLetter)</h3>
+            <p><strong>هدف:</strong> معرفی سرباز به واحد و زیرواحد مشخص.</p>
+            <ul>
+                <li>کنترل وضعیت سلامت سرباز قبل از معرفی</li>
+                <li>امکان تایید دستی در صورت نبود تائیدیه سلامت</li>
+                <li>ویرایش، حذف و چاپ نامه</li>
+            </ul>
+        </div>
+
+        <div class="doc-item">
+            <h3>گواهی عضویت (MembershipCertificate)</h3>
+            <p><strong>هدف:</strong> صدور گواهی عضویت سرباز در واحد مشخص.</p>
+            <ul>
+                <li>امکان انتخاب مقصد نامه</li>
+                <li>ویرایش، حذف و چاپ گواهی</li>
+            </ul>
+        </div>
+
+        <div class="doc-item">
+            <h3>تائیدیه سلامت (NormalLetterHealthIodine)</h3>
+            <p><strong>هدف:</strong> ثبت و صدور نامه تائیدیه سلامت سرباز.</p>
+            <ul>
+                <li>ایجاد، ویرایش، حذف و چاپ نامه</li>
+            </ul>
+        </div>
+
+        <div class="doc-item">
+            <h3>تعهدنامه (NormalLetterCommitmentLetter)</h3>
+            <p><strong>هدف:</strong> صدور تعهدنامه برای سرباز.</p>
+            <ul>
+                <li>ثبت نوع کارت سرباز</li>
+                <li>تایید نهایی و چاپ نامه</li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <h2>فرم‌های ضروری کارت نزسا</h2>
+
+        <div class="doc-item">
+            <h3>EssentialFormCardLetter</h3>
+            <p><strong>هدف:</strong> مدیریت فرم‌های ضروری کارت نزسا.</p>
+            <ul>
+                <li>لیست فرم‌ها با جستجو، فیلتر تاریخ و صفحه‌بندی</li>
+                <li>ایجاد فرم جدید یا ویرایش فرم‌های موجود</li>
+                <li>مشاهده جزئیات فرم و چاپ بر اساس نوع نامه</li>
+                <li>حذف فرم‌ها با بازگرداندن وضعیت مرتبط</li>
+            </ul>
+        </div>
+
+        <div class="doc-item">
+            <h3>ReadyForms</h3>
+            <p><strong>هدف:</strong> مدیریت فرم‌های آماده برای استفاده سریع در نرم‌افزار.</p>
+            <ul>
+                <li>لیست فرم‌ها با قابلیت ایجاد، ویرایش و حذف</li>
+                <li>آپلود فایل‌ها و ذخیره اطلاعات فرم</li>
+            </ul>
+        </div>
+    </section>
+
+    <section>
+        <h2>نکات مهم</h2>
+        <ul>
+            <li>اطلاعات وارد شده باید دقیق و کامل باشد.</li>
+            <li>نامه‌ها و فرم‌ها تنها پس از تکمیل صحیح قابل صدور هستند.</li>
+            <li>هر فرم و نامه دارای وضعیت است که به ترتیب: ایجاد شده → چاپ و در حال بررسی → تایید نهایی است.</li>
+            <li>کاربران می‌توانند با کلیک روی لینک‌های هر نامه یا فرم، وارد صفحه مربوطه شوند.</li>
+        </ul>
+    </section>
+
 </div>
 
 {% endblock %}

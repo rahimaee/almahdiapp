@@ -1,423 +1,375 @@
-{% extends 'shared/_PanelMain.html' %}
+{% extends '../soldier_letter_apps_layout.html' %}
 {% load static %}
 {% load jalali_filters %}
 
 {% block header %}
-<style>
-    .modern-table-container {
-        margin-top: 2rem;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-        background: #fff;
-    }
+    <style>
+        .modern-table-container {
+            margin-top: 2rem;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            background: #fff;
+        }
 
-    .modern-table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-    }
+        .modern-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
 
-    .modern-table thead {
-        background: linear-gradient(to left, #4e73df, #224abe);
-        color: white;
-        font-weight: bold;
-    }
+        .modern-table thead {
+            background: linear-gradient(to left, #4e73df, #224abe);
+            color: white;
+            font-weight: bold;
+        }
 
-    .modern-table th,
-    .modern-table td {
-        padding: 1rem;
-        text-align: center;
-    }
+        .modern-table th,
+        .modern-table td {
+            padding: 1rem;
+            text-align: center;
+        }
 
-    .modern-table tbody tr {
-        transition: background-color 0.3s ease;
-        border-bottom: 1px solid #eee;
-    }
+        .modern-table tbody tr {
+            transition: background-color 0.3s ease;
+            border-bottom: 1px solid #eee;
+        }
 
-    .modern-table tbody tr:hover {
-        background-color: #f0f4ff;
-    }
-    .btnx {
-        color: white !important;
-        border-radius: 6px;
-        padding: 8px 20px;
-        font-weight: 500;
-        margin-left: 5px;
-        cursor: pointer;
-        opacity: 0.7;
-        transition: 0.3s;
-    }
-    .btnx:hover {
-        opacity: 1;
-    }
-    .btn-create {
-        background: linear-gradient(to left, #c81c8a, #a61773);
-    }
-    .btn-download {
-    background: linear-gradient(to left, #094d36, #0c6a48);
-    }
-    .btn-action {
-        background: linear-gradient(to left, #0f4c81, #0073e6);
-    }
+        .modern-table tbody tr:hover {
+            background-color: #f0f4ff;
+        }
+        .btnx {
+            color: white !important;
+            border-radius: 6px;
+            padding: 8px 20px;
+            font-weight: 500;
+            margin-left: 5px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: 0.3s;
+        }
+        .btnx:hover {
+            opacity: 1;
+        }
+        .btn-create {
+            background: linear-gradient(to left, #c81c8a, #a61773);
+        }
+        .btn-download {
+        background: linear-gradient(to left, #094d36, #0c6a48);
+        }
+        .btn-action {
+            background: linear-gradient(to left, #0f4c81, #0073e6);
+        }
 
-    .btn-import-letter {
-        background: linear-gradient(to left, #0a064a, #1b0673);
-    }
+        .btn-import-letter {
+            background: linear-gradient(to left, #0a064a, #1b0673);
+        }
 
-    .header-tools {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap:1rem;
-    }
+        .header-tools {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap:1rem;
+        }
 
-    .filter-form {
-        display:flex;
-        flex-wrap:wrap;
-        gap:10px;
-        padding:15px;
-        margin: 10px 0;
-        border:1px solid #ddd;
-        border-radius:10px;
-        background:#f9f9f9;
-        align-items:center;
-    }
+        .filter-form {
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+            padding:15px;
+            margin: 10px 0;
+            border:1px solid #ddd;
+            border-radius:10px;
+            background:#f9f9f9;
+            align-items:center;
+        }
 
-    .filter-form input, .filter-form select {
-        padding:6px 10px;
-        border-radius:6px;
-        border:1px solid #ccc;
-    }
-.table-actions {
-    display:flex;
-    gap : 2px;
-}
-    .table-actions a {
-        padding: 4px 10px;
-        font-weight: 500;
-        transition: all 0.2s ease-in-out;
-        color: white !important;
-        border-radius: 6px;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        margin:2px 0;
-    }
+        .filter-form input, .filter-form select {
+            padding:6px 10px;
+            border-radius:6px;
+            border:1px solid #ccc;
+        }
+        .table-actions {
+            display:flex;
+            gap : 2px;
+        }
+        .table-actions a {
+            padding: 4px 10px;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+            color: white !important;
+            border-radius: 6px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            margin:2px 0;
+        }
 
-    .table-actions a.bg-success { background-color: #28a745; }
-    .table-actions a.bg-primary { background-color: #007bff; }
-    .table-actions a.bg-info    { background-color: #17a2b8; }
-    .table-actions a.bg-danger  { background-color: #dc3545; }
+        .table-actions a.bg-success { background-color: #28a745; }
+        .table-actions a.bg-primary { background-color: #007bff; }
+        .table-actions a.bg-info    { background-color: #17a2b8; }
+        .table-actions a.bg-danger  { background-color: #dc3545; }
 
-    .table-actions a:hover {
-        transform: translateY(-1px);
-        opacity: 0.9;
-    }
+        .table-actions a:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
 
-    .header-tools .center-box {
-        display:flex;
-        align-items:center;
-        justify-content:end;
-        flex-wrap:wrap;
-    }
+        .header-tools .center-box {
+            display:flex;
+            align-items:center;
+            justify-content:end;
+            flex-wrap:wrap;
+        }
 
-    .pagination .page-link {
-        border-radius: 10px !important;
-    }
-    .pagination {
-        margin:0;
-    }
+        .pagination .page-link {
+            border-radius: 10px !important;
+        }
+        .pagination {
+            margin:0;
+        }
 
-    .national-card {
-        padding : 5px;
-        margin :0;
-        font-family: Vazir, Yekan, Naskh, sans-serif;
-    }
+        .national-card {
+            padding : 5px;
+            margin :0;
+            font-family: Vazir, Yekan, Naskh, sans-serif;
+        }
 
-    .full-name { 
-        font-weight:bold;
-    }
-    .pagination > .page-item  .page-link {
-        margin-right:  2px !important;
-        margin-left:  2px !important;
-    }
+        .full-name { 
+            font-weight:bold;
+        }
+        .pagination > .page-item  .page-link {
+            margin-right:  2px !important;
+            margin-left:  2px !important;
+        }
 
-</style>
+    </style>
 {% endblock %}
 
-{% block main %}
-<div class="container-fluid">
-    {% include "../letter_types_nav_layout.html" %}
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                {{ message }}
+{% block page %}
+    <div class="">
+        <!-- فرم فیلتر -->
+        <form method="get" class="filter-form">
+            <div style="width: 100%;margin: 0 0 10px;display: flex;align-items: center;justify-content: center;">
+                <h3 style=" padding: 0;margin: 0;" class="text-center">لیست نامه‌های تسویه‌حساب</h3>
+                <span style="font-size:20px; padding:4px 10px;margin: 0 10px;" class="badge badge-primary">
+                    {% if is_paginated %}
+                        نتیجه {{ page_obj.start_index }} تا {{ page_obj.end_index }} از {{ page_obj.paginator.count }}
+                    {% else %}
+                        مجموع نتایج: {{ page_obj.paginator.count }}
+                    {% endif %}
+                </span>
+                
+                <div style="flex: 1;"></div>
+                <nav aria-label="Page navigation" >
+                    {% include "components/pagination.html" with page_obj=page_obj %}
+                </nav>
             </div>
-        {% endfor %}
-    {% endif %}
 
-    <!-- هدر و دکمه‌ها -->
-    
+            <input type="text" name="q" placeholder="نام، نام خانوادگی یا کد ملی" value="{{ request.GET.q }}">
+            <select name="status">
+                <option value="">--- وضعیت نامه ---</option>
+                {% for value, label in letters.model.CLEARANCE_STATUS_CHOICES %}
+                    <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <select name="reason">
+                <option value="">--- علت تسویه ---</option>
+                {% for value, label in letters.model.CLEARANCE_REASON_CHOICES %}
+                    <option value="{{ value }}" {% if request.GET.reason == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
 
-    <!-- فرم فیلتر -->
-    <form method="get" class="filter-form">
-        <div style="width: 100%;margin: 0 0 10px;display: flex;align-items: center;justify-content: center;">
-            <h3 style=" padding: 0;margin: 0;" class="text-center">لیست نامه‌های تسویه‌حساب</h3>
-            <span style="font-size:20px; padding:4px 10px;margin: 0 10px;" class="badge badge-primary">
-                {% if is_paginated %}
-                    نتیجه {{ page_obj.start_index }} تا {{ page_obj.end_index }} از {{ page_obj.paginator.count }}
-                {% else %}
-                    مجموع نتایج: {{ page_obj.paginator.count }}
-                {% endif %}
-            </span>
-            
-            <div style="flex: 1;"></div>
-            <nav aria-label="Page navigation" >
-                <ul  class="pagination justify-content-center">
+            <input type="date" name="date_from" value="{{ request.GET.date_from }}">
+            <span>تا</span>
+            <input type="date" name="date_to" value="{{ request.GET.date_to }}">
 
-                    {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
-                            قبلی
-                        </a>
-                    </li>
-                    {% else %}
-                    <li class="page-item disabled"><span class="page-link">قبلی</span></li>
-                    {% endif %}
-
-                    {% for num in paginator.page_range %}
-                        {% if page_obj.number == num %}
-                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                        {% elif num > page_obj.number|add:-3 and num < page_obj.number|add:3 %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
-                                    {{ num }}
-                                </a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-
-                    {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
-                            بعدی
-                        </a>
-                    </li>
-                    {% else %}
-                    <li class="page-item disabled"><span class="page-link">بعدی</span></li>
-                    {% endif %}
-
-                </ul>
-            </nav>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> جست‌وجو</button>
+            <a href="{% url 'ClearanceLetterListView' %}" class="btn btn-default"><i class="fa fa-refresh"></i> پاک کردن</a>
+        </form>
+        <div style="display: flex; gap: 20px;">
+                <form 
+                    id="import-form"
+                    method="POST" 
+                    action="{% url "import_clearanceLetter_from_excel" %}" 
+                    enctype="multipart/form-data"
+                    class="filter-form " 
+                    style="display:block;flex: 2;"
+                >
+                    {% csrf_token %}
+                    <div class="header-tools">
+                        <div class="center-box" style="justify-content: start;gap: 5px;">
+                            <a href="{% url 'clearance_letter_create' %}" class="btnx btn-create">
+                                <i class="fa fa-plus"></i>                           ایجاد نامه جدید 
+                            </a>
+                            <a href="{% url 'clearance_letter_excel' %}" class="btnx btn-download">
+                            <i class="fa fa-file-excel-o"></i> دانلود اکسل نامه ها
+                            </a>
+                            <input id="excel-file-input" name="file" style="display:none;" type="file" accept=".xlsx,.xls"/>
+                            <a id="upload-excel-btn" class="btnx btn-import-letter">
+                                <i class="fa fa-file-excel-o"></i> بارگذاری اکسل تسویه حساب ها
+                            </a>
+                            <a href="{% url "import_clearanceLetter_sample_excel" %}" class="btnx btn-import-letter">
+                                <i class="fa fa-file-excel-o"></i>دانلود اکسل نمونه
+                            </a>
+                        </div>
+                    </div>
+                </form>
+                <form method="get" class="filter-form " style="flex: 1;">
+                    <div class="row" >
+                        <div class="col-md-6">
+                            <select style="width: 100%;margin: 2px 0;" name="action_group">
+                                <option value="">--- انتخاب گروهی ---</option>
+                                {% for value, label in letters.model.ACTION_CHOICES %}
+                                    <option value="{{ value }}" {% if request.GET.action_group == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                            </div>
+                        <div class="col-md-6">
+                            <select style="width: 100%;margin: 2px 0;" name="action_reason">
+                                <option value="">--- انتخاب دلیل ---</option>
+                                {% for value, label in letters.model.CLEARANCE_REASON_CHOICES %}
+                                <option  value="{{ value }}" {% if request.GET.action_status == value %}selected{% endif %}>به دلیل {{ label }}</option>
+                                {% endfor %}
+                            </select>
+                            </div>
+                        <div class="col-md-6">
+                            <select  style="width: 100%;margin: 2px 0;" name="action_status">
+                                <option value="">--- انتخاب وضعیت ---</option>
+                                {% for value, label in letters.model.CLEARANCE_STATUS_CHOICES %}
+                                    <option  value="{{ value }}" {% if request.GET.action_status == value %}selected{% endif %}>به وضعیت {{ label }}</option>
+                                {% endfor %}
+                            </select>
+                            </div>
+                        <div class="col-md-6">
+                            <button  style="width: 100%;margin: 2px 0;" type="submit" class="btnx btn-action">
+                                اجرای عملیات <i class="fa fa-gear"></i>
+                            </button>
+                            </div>
+                        </div>
+                </form>
         </div>
 
-        <input type="text" name="q" placeholder="نام، نام خانوادگی یا کد ملی" value="{{ request.GET.q }}">
-        <select name="status">
-            <option value="">--- وضعیت نامه ---</option>
-            {% for value, label in letters.model.CLEARANCE_STATUS_CHOICES %}
-                <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-        </select>
-        <select name="reason">
-            <option value="">--- علت تسویه ---</option>
-            {% for value, label in letters.model.CLEARANCE_REASON_CHOICES %}
-                <option value="{{ value }}" {% if request.GET.reason == value %}selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-        </select>
-
-        <input type="date" name="date_from" value="{{ request.GET.date_from }}">
-        <span>تا</span>
-        <input type="date" name="date_to" value="{{ request.GET.date_to }}">
-
-        <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> جست‌وجو</button>
-        <a href="{% url 'ClearanceLetterListView' %}" class="btn btn-default"><i class="fa fa-refresh"></i> پاک کردن</a>
-    </form>
-    <div style="display: flex; gap: 20px;">
-            <form method="get" class="filter-form " style="display:block;flex: 2;">
-                <div class="header-tools">
-                    <div class="center-box" style="justify-content: start;gap: 5px;">
-                        <a href="{% url 'clearance_letter_create' %}" class="btnx btn-create">
-                            <i class="fa fa-plus"></i>                           ایجاد نامه جدید 
-                        </a>
-                        <a href="{% url 'clearance_letter_excel' %}" class="btnx btn-download">
-                           <i class="fa fa-file-excel-o"></i> دانلود اکسل نامه ها
-                        </a>
-                        <a class="btnx btn-import-letter">
-                            <i class="fa fa-file-excel-o"></i> بارگذاری اکسل نامه ها
-                        </a>
-                        <a class="btnx btn-import-letter">
-                            <i class="fa fa-file-excel-o"></i> بارگذاری شماره پرونده ها
-                        </a>
-                    </div>
-                </div>
-            </form>
-            <form method="get" class="filter-form " style="flex: 1;">
-                <div class="row" >
-                    <div class="col-md-6">
-                        <select style="width: 100%;margin: 2px 0;" name="action_group">
-                            <option value="">--- انتخاب گروهی ---</option>
-                            {% for value, label in letters.model.ACTION_CHOICES %}
-                                <option value="{{ value }}" {% if request.GET.action_group == value %}selected{% endif %}>{{ label }}</option>
-                            {% endfor %}
-                        </select>
-                        </div>
-                    <div class="col-md-6">
-                        <select style="width: 100%;margin: 2px 0;" name="action_reason">
-                            <option value="">--- انتخاب دلیل ---</option>
-                            {% for value, label in letters.model.CLEARANCE_REASON_CHOICES %}
-                            <option  value="{{ value }}" {% if request.GET.action_status == value %}selected{% endif %}>به دلیل {{ label }}</option>
-                            {% endfor %}
-                        </select>
-                        </div>
-                    <div class="col-md-6">
-                        <select  style="width: 100%;margin: 2px 0;" name="action_status">
-                            <option value="">--- انتخاب وضعیت ---</option>
-                            {% for value, label in letters.model.CLEARANCE_STATUS_CHOICES %}
-                                <option  value="{{ value }}" {% if request.GET.action_status == value %}selected{% endif %}>به وضعیت {{ label }}</option>
-                            {% endfor %}
-                        </select>
-                        </div>
-                    <div class="col-md-6">
-                        <button  style="width: 100%;margin: 2px 0;" type="submit" class="btnx btn-action">
-                            اجرای عملیات <i class="fa fa-gear"></i>
-                        </button>
-                        </div>
-                    </div>
-            </form>
-    </div>
-
-    <!-- جدول نامه‌ها -->
-    <div class="modern-table-container">
-        <table class="modern-table">
-            <thead>
-                <tr>
-                    <th>شماره پرونده</th>
-                    <th></th>
-                    <th>شماره نامه</th>
-                    <th>نام و نام خانوادگی</th>
-                    <th>کد ملی</th>
-                    <th>وضعیت</th>
-                    <th>عملیات</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for letter in letters %}
+        <!-- جدول نامه‌ها -->
+        <div class="modern-table-container">
+            <table class="modern-table">
+                <thead>
                     <tr>
-                        <td class="expired-file-number">{{ letter.expired_file_number }}</td>
-                        <td style="text-align:right; vertical-align: middle; display:flex;">
-                            <span class="badge badge-primary" style="font-size:13px; padding:6px 10px;">
-                                <div>{{ letter.get_reason_display }}</div>
-                                <div style="font-size:12px; padding:6px 10px;">
-                                    <i class="fa fa-calendar"></i> {{ letter.issue_date|to_jalali }}
+                        <th></th>
+                        <th>شماره پرونده</th>
+                        <th>شماره نامه</th>
+                        <th>تاریخ تسویه</th>
+                        <th>نام و نام خانوادگی</th>
+                        <th>کد ملی</th>
+                        <th>وضعیت</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for letter in letters %}
+                        <tr>
+                            <td style="text-align:right; vertical-align: middle; display:flex;">
+                                <div class="badge badge-primary" style="font-size:13px; padding:6px 10px;">
+                                    <span>{{ letter.get_reason_display }}</span>
+                                    <span style="font-size:12px; padding:6px 10px;">
+                                        <i class="fa fa-calendar"></i> {{ letter.soldier.service_end_date|to_jalali }}
+                                    </span>
                                 </div>
-                            </span>
-                        </td>
-                        <td> 
-                            <div style="font-size:12px; padding:6px 10px;">
-                                {{ letter.letter_number }}
-                            </div>
-                        </td>
-                        <td class="full-name" style="text-align: right;">{{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</td>
-                        <td class="national-card">{{ letter.soldier.national_code }}</td>
-                        <!-- وضعیت -->
-                        <td>
-                            {% if letter.status == 'ایجاد شده' %}
-                                <span class="label label-warning">{{ letter.status }}</span>
-                            {% elif letter.status == 'چاپ و درحال بررسی' %}
-                                <span class="label label-info">{{ letter.status }}</span>
-                            {% elif letter.status == 'تایید شده' %}
-                                <span class="label label-success">{{ letter.status }}</span>
-                            {% else %}
-                                <span class="label label-default">{{ letter.status }}</span>
-                            {% endif %}
-                        </td>
+                            </td>                            
+                            <td class="expired-file-number">{{ letter.expired_file_number }}</td>
+                            <td> 
+                                <div style="font-size:12px; padding:6px 10px;">
+                                    {{ letter.letter_number }}
+                                </div>
+                            </td>
+                            <td>
+                                <i class="fa fa-calendar"></i> {{ letter.issue_date|to_jalali }}
+                            </td>
+                            <td class="full-name" style="text-align: right;">{{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</td>
+                            <td class="national-card">{{ letter.soldier.national_code }}</td>
+                            <!-- وضعیت -->
+                            <td>
+                                {% if letter.status == 'ایجاد شده' %}
+                                    <span class="label label-warning">{{ letter.status }}</span>
+                                {% elif letter.status == 'چاپ و درحال بررسی' %}
+                                    <span class="label label-info">{{ letter.status }}</span>
+                                {% elif letter.status == 'تایید شده' %}
+                                    <span class="label label-success">{{ letter.status }}</span>
+                                {% else %}
+                                    <span class="label label-default">{{ letter.status }}</span>
+                                {% endif %}
+                            </td>
 
-                        <!-- عملیات -->
-                        <td class="table-actions">
-                            <a href="{% url 'single_reports_soldier' soldier_id=letter.soldier.id %}" class="bg-primary" target="_blank">
-                                <i class="fa fa-chart"></i> گزارش انفرادی
-                            </a> 
-                            {% if letter.status == 'ایجاد شده' %}
+                            <!-- عملیات -->
+                            <td class="table-actions">
+                                <a href="{% url 'single_reports_soldier' soldier_id=letter.soldier.id %}" class="bg-primary" target="_blank">
+                                    <i class="fa fa-chart"></i> گزارش انفرادی
+                                </a> 
                                 <a href="{% url 'print_ClearanceLetter' letter_id=letter.id %}" class="bg-primary" target="_blank">
                                     <i class="fa fa-print"></i> چاپ
                                 </a>
-                            {% elif letter.status == 'چاپ و درحال بررسی' %}
-                                <a href="{% url 'print_ClearanceLetter' letter_id=letter.id %}" class="bg-info" target="_blank">
-                                    <i class="fa fa-print"></i> چاپ مجدد
+                                {% if letter.status == 'ایجاد شده' %}
+                                {% elif letter.status == 'چاپ و درحال بررسی' %}
+                                    <a href="{% url 'approved_ClearanceLetter' letter_id=letter.id %}" class="bg-success" onclick="return confirm('آیا از تایید این نامه اطمینان دارید؟')">
+                                        <i class="fa fa-check"></i> تایید
+                                    </a>
+                                {% elif letter.status == 'تایید شده' %}
+                                    <a href="{% url 'print_ClearanceLetter' letter_id=letter.id %}" class="bg-success" target="_blank">
+                                        <i class="fa fa-print"></i> چاپ نهایی
+                                    </a>
+                                    {% endif %}
+                                <a href="{% url 'delete_ClearanceLetter' letter_id=letter.id %}" class="bg-danger" title="حذف نامه و بازگرداندن وضعیت سرباز به حین خدمت">
+                                    <i class="fa fa-trash"></i> حذف
                                 </a>
-                                <a href="{% url 'approved_ClearanceLetter' letter_id=letter.id %}" class="bg-success" onclick="return confirm('آیا از تایید این نامه اطمینان دارید؟')">
-                                    <i class="fa fa-check"></i> تایید
-                                </a>
-                            {% elif letter.status == 'تایید شده' %}
-                                <a href="{% url 'print_ClearanceLetter' letter_id=letter.id %}" class="bg-success" target="_blank">
-                                    <i class="fa fa-print"></i> چاپ نهایی
-                                </a>
-                                {% endif %}
-                            <a href="{% url 'delete_ClearanceLetter' letter_id=letter.id %}" class="bg-danger" title="حذف نامه و بازگرداندن وضعیت سرباز به حین خدمت">
-                                <i class="fa fa-trash"></i> حذف
-                            </a>
-                        </td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="7">هیچ نامه‌ای یافت نشد.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7">هیچ نامه‌ای یافت نشد.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+       
     </div>
 
-    <!-- صفحه‌بندی -->
-    {% if is_paginated %}
-        <div class="text-center">
-            <ul class="pagination">
-                {% if page_obj.has_previous %}
-                    <li><a href="?q={{ request.GET.q }}&page={{ page_obj.previous_page_number }}">قبلی</a></li>
-                {% endif %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const selectGroup = document.querySelector('select[name="action_group"]');
+            const selectActionStatus = document.querySelector('select[name="action_status"]');
+            const selectActionReason = document.querySelector('select[name="action_reason"]');
+            const btn = document.querySelector('.btn-action');
 
-                {% for num in paginator.page_range %}
-                    {% if page_obj.number == num %}
-                        <li class="active"><a href="#">{{ num }}</a></li>
-                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                        <li><a href="?q={{ request.GET.q }}&page={{ num }}">{{ num }}</a></li>
-                    {% endif %}
-                {% endfor %}
+            function updateState() {
+                const choiced = !!selectGroup.value;
+                console.log({choiced})
+                // ✅ اصلاح فقط همین بخش‌ها
+                selectActionStatus.disabled = !choiced;
+                selectActionReason.disabled = !choiced;
+                btn.disabled = !(selectActionStatus.value || selectActionReason.value);
 
-                {% if page_obj.has_next %}
-                    <li><a href="?q={{ request.GET.q }}&page={{ page_obj.next_page_number }}">بعدی</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    {% endif %}
-</div>
+            }
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const selectGroup = document.querySelector('select[name="action_group"]');
-    const selectActionStatus = document.querySelector('select[name="action_status"]');
-    const selectActionReason = document.querySelector('select[name="action_reason"]');
-    const btn = document.querySelector('.btn-action');
+            // اجرای اولیه
+            updateState();
 
-    function updateState() {
-        const choiced = !!selectGroup.value;
-        console.log({choiced})
-        // ✅ اصلاح فقط همین بخش‌ها
-        selectActionStatus.disabled = !choiced;
-        selectActionReason.disabled = !choiced;
-        btn.disabled = !(selectActionStatus.value || selectActionReason.value);
+            // اتصال event ها
+            selectGroup.addEventListener("change", updateState);
+            selectActionStatus.addEventListener("change", updateState);
+            selectActionReason.addEventListener("change", updateState);
+        });
+    </script>
+    <script>
+        document.getElementById("upload-excel-btn").addEventListener("click", function () {
+            document.getElementById("excel-file-input").click();
+        });
 
-    }
-
-    // اجرای اولیه
-    updateState();
-
-    // اتصال event ها
-    selectGroup.addEventListener("change", updateState);
-    selectActionStatus.addEventListener("change", updateState);
-    selectActionReason.addEventListener("change", updateState);
-});
-</script>
+        document.getElementById("excel-file-input").addEventListener("change", function () {
+            if (this.files.length > 0) {
+                document.getElementById("import-form").submit();
+            }
+        });
+    </script>
 {% endblock %}

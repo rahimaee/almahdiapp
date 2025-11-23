@@ -17,8 +17,21 @@ def active_link(context, url_name,className='active-link'):
 
 @register.filter
 def lnumtrans(value=''):
+    num = value
     if value:
-        num = value.replace('-','')
+        # جدا کردن قسمت عددی از باقی کلیدها
+        parts = value.split('-')
+        if parts:
+            # آخرین بخش معمولاً عدد است
+            num_part = parts[-1].lstrip('0')  # حذف صفرهای اول
+            if not num_part:
+                num_part = '0'  # اگر همه صفر بودند، حداقل 0 نمایش داده شود
+            # جایگزینی بخش عددی با مقدار اصلاح شده
+            parts[-1] = num_part
+            num = '-'.join(parts)
+
+    if value:
+        num = num.replace('-','')
         num = num.replace('LTR','')
         num = num.replace('LT','')
         

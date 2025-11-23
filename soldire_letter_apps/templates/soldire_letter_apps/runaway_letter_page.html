@@ -1,0 +1,471 @@
+{% extends "../soldier_letter_apps_layout.html" %}
+{% load static %}
+{% load jalali_filters %}
+{% load css %}
+{% load req %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'dist/css/persian-datepicker-0.4.5.min.css' %}"/>
+<style>
+        .filters-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* سه ستون */
+            gap: 5px; /* فاصله بین فیلدها */
+        }
+
+        /* در هر گروه، همه آیتم‌های فرم عمودی باشند */
+        .filters-row .ui-form-group {
+            flex-direction: column;
+            margin-bottom: 0;
+        }
+
+        /* حالت تبلت: دو ستونی */
+        @media (max-width: 992px) {
+            .filters-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* حالت موبایل: تک ستون */
+        @media (max-width: 576px) {
+            .filters-row {
+                grid-template-columns: 1fr;
+            }
+        }
+.col-2 {
+    grid-column: span 2;
+}
+</style>
+{% endblock %}
+
+{% block page %}
+
+<div>
+    <div class="row">
+
+        <!-- ================= فرم ثبت فرار ================= -->
+        <div class="col-md-6">
+            <div style="margin-bottom: 10px;" class="ui-card ">
+                <div class="ui-card-header ui-card-header-primary">
+                    فرم ثبت فرار / غیبت
+                </div>
+
+                <div class="ui-card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ form.non_field_errors }}
+                        <div class="ui-form-group select2">
+                            <label>سرباز:</label>
+                            {{ form.soldier|add_class:"ui-select" }}
+                        </div>
+
+                        <div class="ui-form-group">
+                            <label>تاریخ شروع غیبت:</label>
+                            <input dir="ltr" type="text" id="absence_start_date_view" class="form-control ui-input" placeholder="مثلاً 1403/01/01">
+                            <input type="hidden" id="absence_start_date" name="absence_start_date">
+                        </div>
+
+                        <div class="ui-form-group">
+                            <label>تاریخ پایان غیبت (اختیاری):</label>
+                            <input dir="ltr" type="text" id="absence_end_date_view" class="form-control ui-input" placeholder="مثلاً 1403/02/15" autocomplete="off">
+                            <input type="hidden" id="absence_end_date" name="absence_end_date">
+                        </div>
+
+                        <div class="ui-form-group">
+                            <label>توضیحات:</label>
+                            {{ form.description|add_class:"ui-textarea" }}
+                        </div>
+
+                        <div style="display: flex;align-items: center;justify-content: end;gap: 10px;">
+                            <button type="submit" class="ui-btn ui-btn-success">
+                                ثبت و ذخیره
+                            </button>
+
+                            <button type="submit" class="ui-btn ui-btn-primary">
+                                ثبت و چاپ
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+            <div class="ui-card">
+                <div class="ui-card-header ui-card-header-secondary">فیلتر</div>
+                <div class="ui-card-body">
+                    <form method="get">
+                        <div class="filters-row">
+                            <div class="ui-form-group xs">
+                                <label>تاریخ شروع غیبت از</label>
+                                <input dir="ltr" type="text" id="filter_start_from_view" class="form-control ui-input" placeholder="مثلاً 1403/01/01">
+                                {{ search_form.start_from|add_class:"hidden" }}
+                            </div>
+                            <div class="ui-form-group xs">
+                                <label>تاریخ پایان غیبت از</label>
+                                <input dir="ltr" type="text" id="filter_end_from_view" class="form-control ui-input" placeholder="مثلاً 1403/01/10">
+                                {{ search_form.end_from|add_class:"hidden" }}
+                            </div>
+                                <div class="ui-form-group xs">
+                                <label>تاریخ ثبت از</label>
+                                <input dir="ltr" type="text" id="filter_created_from_view" class="form-control ui-input" placeholder="مثلاً 1403/01/01">
+                                {{ search_form.created_from|add_class:"hidden" }}
+                            </div>
+                            <div class="ui-form-group xs">
+                                <label>تاریخ شروع غیبت تا</label>
+                                <input dir="ltr" type="text" id="filter_start_to_view" class="form-control ui-input" placeholder="مثلاً 1403/02/01">
+                                {{ search_form.start_to|add_class:"hidden" }}
+                            </div>
+                            <div class="ui-form-group xs">
+                                <label>تاریخ پایان غیبت تا</label>
+                                <input dir="ltr" type="text" id="filter_end_to_view" class="form-control ui-input" placeholder="مثلاً 1403/02/10">
+                                {{ search_form.end_to|add_class:"hidden" }}
+                            </div>
+                            <div class="ui-form-group xs">
+                                <label>تاریخ ثبت تا</label>
+                                <input dir="ltr" type="text" id="filter_created_to_view" class="form-control ui-input" placeholder="مثلاً 1403/02/01">
+                                {{ search_form.created_to|add_class:"hidden" }}
+                            </div>
+                            <div class="ui-form-group xs col-2">
+                                <label>عبارت جستجو</label>
+                                {{ search_form.q|add_class:"form-control ui-input" }}
+                            </div>
+                            <!-- دکمه جستجو -->
+                            <div class="ui-form-group xs">
+                                <label></label>
+                                <button type="submit" class="ui-btn ui-btn-primary">جستجو</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= راهنما ================= -->
+        <div class="col-md-6">
+            <div class="ui-card mb-4">
+                <div class="ui-card-header ui-card-header-secondary">
+                    <i class="fa fa-info-circle"></i> راهنمای بخش فرار
+                </div>
+
+                <div class="ui-card-body">
+                    <h4 class="mt-2 mb-3">
+                        <i class="fa fa-book text-primary"></i> نکات مهم
+                    </h4>
+
+                    <p class="text-justify">
+                        در این بخش می‌توانید <strong>نامه‌های فرار سربازان</strong> را ثبت، مشاهده و مدیریت کنید.
+                        همچنین می‌توانید با استفاده از ابزارهای موجود، نامه‌ها را بر اساس
+                        <strong>سرباز، تاریخ، وضعیت یا شماره پرونده</strong> جستجو نمایید.
+                    </p>
+
+                    <hr>
+
+                    <h4 class="mt-3 mb-2">
+                        <i class="fa fa-check text-success"></i> امکانات این صفحه
+                    </h4>
+
+                    <!-- سه ستونه -->
+                    <ul class="list-unstyled ui-hint-list">
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span>افزودن نامه جدید</span>
+                                    <i class="fa fa-plus-circle text-primary"></i>
+                                </li>
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span>جستجو و فیلتر پیشرفته</span>
+                                    <i class="fa fa-search text-info"></i>
+                                </li>
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span>مشاهده وضعیت فعلی</span>
+                                    <i class="fa fa-eye text-warning"></i>
+                                </li>
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span>ویرایش اطلاعات</span>
+                                    <i class="fa fa-pencil text-success"></i>
+                                </li>
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span>حذف نامه با تأیید</span>
+                                    <i class="fa fa-trash text-danger"></i>
+                                </li>
+                            </div>
+
+                            <div class="col-md-4 mb-2">
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span>تغییر وضعیت نامه</span>
+                                    <i class="fa fa-exchange text-purple"></i>
+                                </li>
+                            </div>
+                        </div>
+                    </ul>
+
+                    <hr>
+
+                    <h4 class="mt-3 mb-2">
+                        <i class="fa fa-exclamation-circle text-danger"></i> توضیحات مربوط به فراری شدن سرباز
+                    </h4>
+
+                    <p class="text-justify">
+                        زمانی که یک نامه فرار ثبت شود، ابتدا در وضعیت 
+                        <strong>در حال بررسی</strong> قرار می‌گیرد. پس از بررسی و تطبیق مدارک،
+                        مسئول مربوطه می‌تواند وضعیت نامه را به:
+                    </p>
+
+                    <ul>
+                        <li>رد شده</li>
+                        <li>بازگشت به وضعیت چاپ</li>
+                        <li><strong>تأیید نهایی</strong></li>
+                    </ul>
+
+                    <p>
+                        پس از اینکه وضعیت نامه به 
+                        <strong class="text-success">تأیید نهایی</strong> 
+                        تغییر پیدا کند:
+                    </p>
+
+                    <p class="text-justify text-danger">
+                        🔴 وضعیت سرباز در سیستم به صورت خودکار به <strong>فراری</strong> تغییر خواهد کرد  
+                        و کلیه پیامدهای مرتبط با غیبت و فرار سرباز فعال می‌شود.
+                    </p>
+
+                </div>
+            </div>
+        </div>
+
+        <div style="margin: 10px;"  class="col-md-12"></div>
+        <div class="col-md-12">
+            <div class="ui-card">
+                <div class="ui-card-header ui-card-header-secondary">فهرست نامه های فرار</div>
+                <nav style="margin-top: 10px;">
+                    {% include "components/pagination.html" with page_obj=page_obj %}
+                </nav>
+                <div class="ui-card-body">
+                    <table class="table ">
+                        <thead>
+                            <tr>
+                                <th>ردیف</th>
+                                <th>نامه</th>
+                                <th>سرباز</th>
+                                <th>غیبت</th>
+                                <th>وضعیت</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for letter in page_obj %}
+                                <tr>
+                                    <td style="display: flex;align-items: center;justify-content: center;height: 100%;">{{forloop.counter}}</td>
+                                    <td>
+                                        <div><strong>شماره نامه : </strong>{{ letter.letter_number }}</div>
+                                        <pre class="national-card"><strong>تاریخ ثبت : </strong>{{ letter.created_at|to_jalali }}</pre>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex;align-items: center;justify-content: space-between;">
+                                            <span>
+                                                {{ letter.soldier.first_name }} {{ letter.soldier.last_name }}
+                                            </span>   
+                                            {% if letter.soldier.is_fugitive %}
+                                            <span class="badge badge-danger">فراری</span>   
+                                            {% endif %}
+                                        </div>
+                                        <pre class="national-card"><strong>کدملی : </strong>{{ letter.soldier.national_code }}</pre>
+                                    </td>
+                                    <td>
+                                        <div><strong>تاریخ شروع : </strong>{{ letter.absence_start_date|to_jalali }}</div>
+                                        <div><strong>تاریخ پایان : </strong>{{ letter.absence_end_date|default:"-"|to_jalali }}</div>
+                                    </td>
+                                    <td>
+                                        {% if letter.status == 'تأیید نهایی' %}
+                                            <span class="badge bg-success">{{ letter.status }}</span>
+                                        {% elif letter.status == 'در حال بررسی' %}
+                                            <span class="badge bg-warning text-dark">{{ letter.status }}</span>
+                                        {% elif letter.status == 'رد شده' %}
+                                            <span class="badge bg-danger">{{ letter.status }}</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ letter.status }}</span>
+                                        {% endif %}
+                                    </td>   
+                                    <td>
+                                        <style>
+                                            /* کاهش شفافیت آیتم‌های disabled */
+                                            .dropdown-menu li.disabled > a {
+                                                pointer-events: none; /* غیر فعال کردن کلیک */
+                                                opacity: 0.5;         /* کاهش شفافیت */
+                                                color: #6c757d;       /* رنگ خاکستری */
+                                            }
+                                        </style>
+                                        <div class="dropdown">
+                                            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+                                                انتخاب عملیات <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <!-- چاپ -->
+                                                <li>
+                                                    <a href={% url "runaway_print_page" letter.pk %} target="_blank">
+                                                        <i class="fa fa-print"></i> چاپ
+                                                    </a>
+                                                </li>
+                                                <!-- خط جداکننده بین گروه‌ها -->
+                                                <li class="divider"></li>
+                                                <li {% if letter.status == 'ایجاد شده' %}class="disabled"{% endif %}>
+                                                    <a href="{% url 'runaway_change_status' letter.pk 'ایجاد شده' %}">
+                                                        <i class="fa fa-refresh"></i> بازگشت به حالت اولیه
+                                                    </a>
+                                                </li>
+
+                                                <!-- بازگشت به وضعیت چاپ -->
+                                                <li {% if letter.status != 'تأیید نهایی' %}class="disabled"{% endif %}>
+                                                    <a href="{% url 'runaway_change_status' letter.pk 'چاپ و درحال بررسی' %}">
+                                                        <i class="fa fa-arrow-left"></i> بازگشت به وضعیت چاپ
+                                                    </a>
+                                                </li>
+
+                                                <!-- رد نامه -->
+                                                <li {% if letter.status == 'ایجاد شده'  %}class="disabled"{% endif %}>
+                                                    <a href="{% url 'runaway_change_status' letter.pk 'رد شده' %}" class="text-danger">
+                                                        <i class="fa fa-times-circle"></i> رد نامه
+                                                    </a>
+                                                </li>
+
+                                                <!-- تأیید نامه -->
+                                                <li {% if letter.status != 'چاپ و درحال بررسی' %}class="disabled"{% endif %}>
+                                                    {% if letter.status == 'تأیید نهایی' %}
+                                                        <a class="text-success">
+                                                            <i class="fa fa-check-circle"></i> تایید شده
+                                                        </a>
+                                                    {% else %}
+                                                        <a href="{% url 'runaway_change_status' letter.pk 'تأیید نهایی' %}" class="text-success">
+                                                            <i class="fa fa-check-circle"></i> تأیید نامه
+                                                        </a>
+                                                    {% endif %}
+
+                                                </li>
+                                                <li class="divider"></li>
+
+                                                <!-- گروه ویرایش/حذف -->
+                                                <!-- ویرایش -->
+                                                {% comment %} <li {% if letter.status == 'تأیید نهایی' %}class="disabled"{% endif %}>
+                                                    <a href="#">
+                                                        <i class="fa fa-pencil"></i> ویرایش
+                                                    </a>
+                                                </li> {% endcomment %}
+
+                                                <!-- حذف -->
+                                                <li>
+                                                    <a href="#" class="text-danger delete-runaway"
+                                                    data-url="{% url 'runaway_delete' letter.id %}">
+                                                        <i class="fa fa-trash"></i> حذف
+                                                    </a>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                    </td>
+
+
+                                 
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+    <script src="{% static 'dist/js/persian-date-0.1.8.min.js' %}"></script>
+    <script src="{% static 'dist/js/persian-datepicker-0.4.5.min.js' %}"></script>
+    <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <script>
+    $(document).on("click", ".delete-runaway", function (e) {
+        e.preventDefault();
+
+        var url = $(this).data("url");
+
+        if (confirm("آیا از حذف این نامه مطمئن هستید؟")) {
+            window.location.href = url;
+        }
+    });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            // تبدیل اعداد فارسی به انگلیسی
+            function convertPersianToEnglish(str) {
+                const persianNumbers = '۰۱۲۳۴۵۶۷۸۹';
+                const englishNumbers = '0123456789';
+                return str.replace(/[۰-۹]/g, w => englishNumbers[persianNumbers.indexOf(w)]);
+            }
+
+            // ================= select2 =================
+            $('.select2 select').select2();
+
+            // ================= helper برای datepicker =================
+            function initPicker(viewId, hiddenId, value, useToday=false) {
+                isNull = value === 'null' || value === '' 
+                if (useToday && !value) {
+                    value = new persianDate().format('YYYY/MM/DD');
+                }
+
+
+                $(viewId).persianDatepicker({
+                    format: 'YYYY/MM/DD',
+                    autoClose: true,
+                    initialValue: !!value,
+                    onSelect: function(unix) {
+                        var d = new persianDate(unix).format('YYYY/MM/DD');
+                        // تبدیل به اعداد انگلیسی قبل از ارسال
+                        $(hiddenId).val(convertPersianToEnglish(d));
+                    }
+                });
+
+                // پاک کردن دستی
+                $(viewId).on('input', function() {
+                    if (!$(this).val().trim()) $(hiddenId).val('');
+                });
+                if (isNull && !useToday){
+                    $(viewId).val('');
+                    $(hiddenId).val('');
+                }else {
+                    $(viewId).val(value || '');
+                    $(hiddenId).val(value || '');
+                }
+            }
+
+            // ================= شروع و پایان غیبت =================
+            initPicker('#absence_start_date_view', '#absence_start_date', '{{ absence_start_date|default:"" }}', true);
+            initPicker('#absence_end_date_view', '#absence_end_date', '{{ absence_end_date|default:"" }}');
+            $('#absence_end_date_view').val('');
+            $('#absence_end_date').val('');
+
+            // ================= فیلترهای جدول =================
+            initPicker('#filter_start_from_view', '#filter_start_from', '{{ request.GET.start_from|default:"" }}');
+            initPicker('#filter_start_to_view', '#filter_start_to', '{{ request.GET.start_to|default:"" }}');
+            initPicker('#filter_end_from_view', '#filter_end_from', '{{ request.GET.end_from|default:"" }}');
+            initPicker('#filter_end_to_view', '#filter_end_to', '{{ request.GET.end_to|default:"" }}');
+            initPicker('#filter_created_from_view', '#filter_created_from', '{{ request.GET.created_from|default:"" }}');
+            initPicker('#filter_created_to_view', '#filter_created_to', '{{ request.GET.created_to|default:"" }}');
+
+            // ================= تبدیل اعداد قبل از submit فرم =================
+            $('form').on('submit', function() {
+                $('#absence_start_date').val(convertPersianToEnglish($('#absence_start_date').val()));
+                $('#absence_end_date').val(convertPersianToEnglish($('#absence_end_date').val()));
+            });
+        });
+    </script>
+{% endblock %}

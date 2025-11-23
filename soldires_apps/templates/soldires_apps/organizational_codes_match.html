@@ -1,0 +1,210 @@
+{% extends '../organizational_code_layout.html' %}
+{% load static %}
+{% load jalali_filters %}
+{% load css %}
+
+{% block page %}
+
+<div class="row" style="direction: rtl;">
+
+    <!-- ========================================================= -->
+    <!-- 1) بارگذاری کد سازمانی به همراه وضعیت (Excel Upload) -->
+    <!-- ========================================================= -->
+    <div class="col-lg-6 col-md-12 mb-4">
+
+        <div class="ui-card">
+
+            <div class="ui-card-header ui-card-header-primary">
+                📄 بارگذاری کد سازمانی به همراه وضعیت
+            </div>
+
+            <div class="ui-card-body">
+
+                <!-- Helper Box -->
+                <div class="import-card shadow-sm mb-3">
+                    <div class="card-header d-flex justify-between items-center">
+                        <h5 class="m-0 p-0"><i class="fa fa-info-circle me-1"></i> راهنمای ارسال فایل</h5>
+                        <a href="{% url 'organizational_code_match_org_code_sample' %}" class="btn-modern btn-success btn-sm">
+                            <i class="fa fa-download"></i> دانلود فایل نمونه
+                        </a>
+                    </div>
+                    <div class="card-body small text-muted">
+
+                        <p class="mb-2">
+                            - فرمت فایل باید <code>.xlsx</code> باشد. <br>
+                            - ستون‌های <strong>کد ملی</strong> و <strong>کد سازمانی</strong> اجباری هستند. <br>
+                            - ستون <strong>وضعیت</strong> می‌تواند یکی از مقادیر باشد:
+                        </p>
+                        <code>فعال</code>, <code>غیرفعال</code>, <code>تسویه</code>.
+
+                        <p class="mb-2">
+                            - گزینه <strong>مدیریت کدهای موجود</strong> کنترل می‌کند که کدهای سازمانی موجود در سرور ولی در فایل اکسل نیستند، چه وضعیتی داشته باشند:
+                        </p>
+                        <code>بدون تغییر</code>: وضعیت کدهای موجود تغییر نمی‌کند.<br>
+                        <code>غیرفعال کردن کدهای موجود که در اکسل نیستند</code><br>
+                        <code>فعال کردن کدهای موجود که در اکسل نیستند</code>
+
+                        <p class="mb-2">نمونه داده‌ها:</p>
+                        <div class="table-responsive">
+                            <table class="table table-bordered helper-table small">
+                                <thead>
+                                    <tr>
+                                        <th class="required-field">کد ملی</th>
+                                        <th class="required-field">کد سازمانی</th>
+                                        <th>وضعیت</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1234567890</td>
+                                        <td>4501</td>
+                                        <td>غیرفعال</td>
+                                    </tr>
+                                    <tr>
+                                        <td>0087654321</td>
+                                        <td>4502</td>
+                                        <td>فعال</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- End Helper -->
+                <hr/>
+                <form method="POST" action="{% url "organizational_code_match_org_code" %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="ui-form-group xs">
+                        <label>وضعیت مورد نظر</label>
+                        <select name="mode" class="ui-select" required>
+                            {% for key, label in status_choices %}
+                                <option value="{{ key }}" {% if key == status_default.key %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="ui-form-group xs">
+                        <label>کدهای موجود در سرور که در فایل نیستند</label>
+                        <select name="existing_mode" class="ui-select" required>
+                            {% for key, label in existing_choices %}
+                                <option value="{{ key }}" {% if key == existing_default.key %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="ui-form-group xs">
+                        <label>فایل اکسل</label>
+                        <input type="file" name="excel_file" class="ui-input" accept=".xlsx,.xls" required>
+                    </div>
+
+                    <button class="ui-btn ui-btn-primary mt-2">ثبت و اعمال تغییرات</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- 2) تطبیق کد سازمانی با کد ملی سرباز -->
+    <!-- ========================================================= -->
+    <div class="col-lg-6 col-md-12 mb-4">
+
+        <div class="ui-card">
+
+            <div class="ui-card-header ui-card-header-secondary">
+                🔍 تطبیق کد سازمانی با کد ملی سرباز
+            </div>
+
+            <div class="ui-card-body">
+
+                <!-- Helper -->
+                <div class="import-card shadow-sm mb-3">
+                    <div class="card-header d-flex justify-between items-center">
+                        <h5 class="m-0 p-0"><i class="fa fa-info-circle me-1"></i>راهنمای تطبیق</h5>
+                        <a href="{% url 'organizational_code_match_soldier_org_code_sample' %}" class="btn-modern btn-success btn-sm">
+                            <i class="fa fa-download"></i> دانلود فایل نمونه
+                        </a>
+                    </div>
+
+                    <div class="card-body small text-muted">
+                        <p>- این فرم برای تطبیق و به‌روزرسانی کدهای سازمانی با کد ملی سربازها است.</p>
+                        <p>- می‌توانید وضعیت جدید برای هر رکورد تعیین کنید.</p>
+                        <p>- اگر از حالت <strong>اکسل</strong> استفاده می‌کنید، فایل باید شامل ستون‌های زیر باشد:</p>
+
+                        <div class="table-responsive mb-2">
+                            <table class="table table-bordered helper-table small">
+                                <thead>
+                                    <tr>
+                                        <th class="required-field">کد ملی</th>
+                                        <th class="required-field">کد سازمانی</th>
+                                        <th>وضعیت جدید (اختیاری)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1234567890</td>
+                                        <td>4501</td>
+                                        <td>فعال</td>
+                                    </tr>
+                                    <tr>
+                                        <td>0087654321</td>
+                                        <td>4502</td>
+                                        <td>غیرفعال</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <p>- ستون وضعیت می‌تواند یکی از مقادیر <code>فعال</code>، <code>غیرفعال</code>، <code>تسویه</code> یا خالی باشد.</p>
+
+                    </div>
+                </div>
+                <hr/>
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="ui-form-group xs">
+                        <label>وضعیت مورد نظر</label>
+                        <select name="mode" class="ui-select" required>
+                            {% for key, label in soldier_status_choices %}
+                                <option value="{{ key }}" {% if key == soldier_status_default.key %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="ui-form-group xs">
+                        <label>فایل اکسل (در صورت انتخاب حالت اکسل)</label>
+                        <input type="file" name="excel_file" class="ui-input" accept=".xlsx,.xls">
+                    </div>
+
+                    <button class="ui-btn ui-btn-primary mt-2">ثبت تطبیق</button>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock page %}
+
+{% block footer %}
+<script>
+    // محو شدن خودکار پیام‌ها بعد از 4 ثانیه
+    setTimeout(() => {
+        document.querySelectorAll(".message-box").forEach(el => {
+            el.style.transition = "0.6s";
+            el.style.opacity = "0";
+        });
+    }, 4000);
+</script>
+{% endblock footer %}

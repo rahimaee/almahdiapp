@@ -68,3 +68,17 @@ HEALTH_STATUS_CHOICES = [('سالم', 'سالم'), ('معاف از رزم', 'م�
 blood_group_choices = [('A+', 'A+'), ('A-', 'A-'), ('B+', 'B+'), ('B-', 'B-'),
                         ('AB+', 'AB+'), ('AB-', 'AB-'), ('O+', 'O+'), ('O-', 'O-')]
 traffic_status_choices = [('روزانه', 'روزانه'), ('هفتگی', 'هفتگی'), ('ماهانه', 'ماهانه')]
+
+
+# ==========================
+# داده نمونه
+# ==========================
+ORGANIZATIONAL_CODE_SAMPLE = [
+    {"national_code": "1234567890", "org_code": "4501", "status": "غیرفعال"},
+    {"national_code": "0087654321", "org_code": "4502", "status": "فعال"},
+]
+
+SOLDIER_ORG_CODE_SAMPLE = [
+    {"national_code": "1234567890", "org_code": "4501", "new_status": "فعال"},
+    {"national_code": "0087654321", "org_code": "4502", "new_status": "غیرفعال"},
+]

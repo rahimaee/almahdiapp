@@ -220,9 +220,10 @@ def import_soldiers_from_excel(file_path):
                   national_code=national_code,
                   defaults=fields  # اینجا دیکشنری fields حاوی تمام فیلدهای دیگر است
                 )
-                if not Soldier.objects.filter(organizational_code=org_code).exists():
-                  soldier.organizational_code = org_code
-          
+                
+                soldier.organizational_code = org_code
+                org_code.save()
+
 
                 if not created:
                     # اگر قبلاً وجود داشت و فقط می‌خواهیم به‌روزرسانی کنیم
@@ -294,3 +295,12 @@ def create_soldiers_excel(soldiers):
         ws.column_dimensions[col[0].column_letter].width = max_length + 3
 
     return wb
+
+
+from .constants import RANK_CHOICES
+def map_rank_number_to_choice(rank_number: int) -> str | None:
+    """
+    دریافت عدد 1 تا 12 و بازگشت مقدار متناظر در RANK_CHOICES
+    """
+    rank_map = {i+1: choice[0] for i, choice in enumerate(RANK_CHOICES)}
+    return rank_map.get(rank_number)

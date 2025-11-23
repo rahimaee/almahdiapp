@@ -67,7 +67,7 @@
 
                 </div>
             </div>
-            <div   class="col-md-4">
+            <div   class="col-md-2">
                 <div class="quick-access-box">
                     <h5 class="mb-3">🧭 دسترسی سریع به نامه ها</h5>
                     <div class="letters-container">
@@ -105,7 +105,7 @@
                     </div>
                 </div>
             </div>
-        <div class="col-md-4 ">
+        <div class="col-md-5 ">
             <div id="clearance-letter-tab" class="clearance-letter">
                 <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom: 10px;">
                     <h5 style="margin: 0;padding: 0;" class="mb-3">تسویه حساب‌ها</h5>
@@ -114,29 +114,25 @@
                         <span class="tab active" data-target="today-list">
                             امروز ({{ clearance_letters.today|length }})
                         </span>
+                        <span class="tab" data-target="no-accepted-list">
+                            درحال تحویل ({{ clearance_letters.no_accepted|length }})
+                        </span>
                         <span class="tab" data-target="week-list">
                             7 روز گذشته ({{ clearance_letters.last_week|length }})
                         </span>
                         <span class="tab" data-target="month-list">
                             30 روز گذشته ({{ clearance_letters.last_month|length }})
                         </span>
+
                     </div>
                 </div>
                 {% include 'components/clearance_letter_list.html' with letters=clearance_letters.today data_target="today-list" %}
                 {% include 'components/clearance_letter_list.html' with letters=clearance_letters.last_week data_target="week-list" %}
                 {% include 'components/clearance_letter_list.html' with letters=clearance_letters.last_month data_target="month-list" %}
+                {% include 'components/clearance_letter_list.html' with letters=clearance_letters.no_accepted data_target="no-accepted-list"  %}
+            
             </div>
-            <div class="clearance-letter">
-                <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom: 10px;">
-                    <h5 style="margin: 0;padding: 0;" >تسویه حساب های تایید نشده</h5>
-                    <div id="clearance-tabs" class="tabs" style="margin: 0;">
-                        <span class="tab active" data-target="month-list">
-                            درحال تحویل ({{ clearance_letters.no_accepted|length }})
-                        </span>
-                    </div>
-                </div>
-                {% include 'components/clearance_letter_list.html' with letters=clearance_letters.no_accepted  %}
-            </div>
+           
         </div>
 
         </div>

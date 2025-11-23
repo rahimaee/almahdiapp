@@ -1,0 +1,189 @@
+{% load req %}
+
+<aside class="app-sidebar">
+    <!-- مدیریت نامه‌ها -->
+    <div class="sidebar-card shadow-sm">
+        <div class="sidebar-card-header">مدیریت و ایجاد نامه‌ها</div>
+
+        <div class="list-group list-group-flush">
+            <!-- تسویه حساب اصلی دارای زیرمنو -->
+                        <!-- نامه عادی (بدون زیرمنو) -->
+            <a href="{% url 'main_letters' %}" class="list-group-item {% active_link 'normal_letter_list' %}">
+                <span>مستندات نامه</span>
+            </a>
+            <div class="list-group-item menu-item">
+                <span>ایجاد نامه جدید</span>
+                <i class="fa fa-chevron-left arrow"></i>
+
+                <div class="submenu">
+                    <a href="{% url 'clearance_letter_create' %}">
+                        <span>تعهد نامه</span>
+                        <i class="fa fa-plus-circle"></i>
+                    </a>
+                    <a href="{% url 'clearance_letter_create' %}">
+                        <span>تاییدیه سلامت و روان</span>
+                        <i class="fa fa-plus-circle"></i>
+                    </a>
+                    <a href="{% url 'clearance_letter_create' %}">
+                        <span>5 برگ</span>
+                        <i class="fa fa-plus-circle"></i>
+                    </a>
+                    <a href="{% url 'clearance_letter_create' %}">
+                        <span>معرفی به قسمت</span>
+                        <i class="fa fa-plus-circle"></i>
+                    </a>
+                    <hr/>
+
+                    <a href="{% url 'membership_certificate_create' %}">
+                        <span>گواهی عضویت</span>
+                        <i class="fa fa-plus-circle"></i>
+                    </a>
+                    <hr/>
+                    <a href="{% url 'runaway_page' %}">
+                        <span> گزارش غیبت منجر به فرار </span>
+                        <i class="fa fa-plus-circle"></i>
+                    </a>
+                    <a href="{% url 'clearance_letter_create' %}">
+                        <span>استعلام قضایی</span>
+                        <i class="fa fa-plus-circle"></i>
+                    </a>
+                    <hr/>
+                    <a href="{% url 'clearance_letter_create' %}">
+                        <span>ایجاد تسویه حساب</span>
+                        <i class="fa fa-plus-circle"></i>
+                    </a>
+                    <a href="{% url 'clearance_letter_create' %}">
+                        <span>تسویه حساب داخلی</span>
+                        <i class="fa fa-plus-circle"></i>
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- نامه عادی (بدون زیرمنو) -->
+            <a href="{% url 'normal_letter_list' %}" class="list-group-item {% active_link 'normal_letter_list' %}">
+                <span>نامه‌های عادی</span>
+                <i class="fa fa-file-text-o"></i>
+            </a>
+
+            <!-- تسویه حساب اصلی دارای زیرمنو -->
+            <a href="{% url 'ClearanceLetterListView' %}" class="list-group-item menu-item">
+                <span>تسویه‌حساب اصلی</span>
+                <i class="fa fa-file-text-o"></i>
+            </a>
+
+            <!-- بدون زیرمنو -->
+            <a href="{% url 'judicial_inquiry_list' %}"
+                class="list-group-item {% active_link 'judicial_inquiry_list' %}">
+                <span>استعلام قضایی</span>
+                <i class="fa fa-balance-scale"></i>
+            </a>
+            <!-- بدون زیرمنو -->
+            <a href="{% url 'runaway_page' %}"
+                class="list-group-item {% active_link 'runaway_page' %}">
+                <span>گزارش غیبت منجر به فرار</span>
+                <i class="fa fa-balance-scale"></i>
+            </a>
+
+            <a href="{% url 'domestic_settlement_list' %}"
+                class="list-group-item {% active_link 'domestic_settlement_list' %}">
+                <span>تسویه حساب داخلی</span>
+                <i class="fa fa-home"></i>
+            </a>
+
+            <a href="{% url 'introduction_letter_list' %}"
+                class="list-group-item {% active_link 'introduction_letter_list' %}">
+                <span>نامه معرفی</span>
+                <i class="fa fa-id-card"></i>
+            </a>
+
+            <a href="{% url 'membership_certificate_list' %}"
+                class="list-group-item {% active_link 'membership_certificate_list' %}">
+                <span>گواهی عضویت</span>
+                <i class="fa fa-certificate"></i>
+            </a>
+
+            <a href="{% url 'health_iodine_letter_list' %}"
+                class="list-group-item {% active_link 'health_iodine_letter_list' %}">
+                <span>تأییدیه سلامت</span>
+                <i class="fa fa-heartbeat"></i>
+            </a>
+
+            <a href="{% url 'commitment_letter_list' %}"
+                class="list-group-item {% active_link 'commitment_letter_list' %}">
+                <span>تعهدنامه</span>
+                <i class="fa fa-pencil-square-o"></i>
+            </a>
+
+        </div>
+    </div>
+    <!-- مدیریت فرم‌ها -->
+    <div class="sidebar-card shadow-sm">
+        <div class="sidebar-card-header">مدیریت و ایجاد فرم‌ها</div>
+
+        <div class="list-group list-group-flush">
+
+            <a href="{% url 'normal_letter_list' %}" class="list-group-item">
+                <span>فرم‌های آماده</span>
+                <i class="fa fa-file-text-o"></i>
+            </a>
+
+            <a href="{% url 'forms_essential_list' %}" class="list-group-item">
+                <span>فهرست فرم‌ها</span>
+                <i class="fa fa-list"></i>
+            </a>
+
+            <!-- زیرمنو برای فرم‌ها -->
+            <div class="list-group-item menu-item">
+                <span>ایجاد فرم ضروری نزسا</span>
+                <i class="fa fa-chevron-left arrow"></i>
+
+                <div class="submenu">
+
+                    <a href="{% url 'form_essential_create' form_type='clearance_letter' %}">
+                        <span>فرم شماره ۳</span>
+                        <i class="fa fa-plus-circle"></i>
+                    </a>
+
+                    <a href="{% url 'form_essential_create' form_type='checkout_3plus' %}">
+                        <span>فرم ۳ فرزندی و بالاتر</span>
+                        <i class="fa fa-plus-circle"></i>
+                    </a>
+
+                    <a href="{% url 'form_essential_create' form_type='activate_old_staff' %}">
+                        <span>فعال‌سازی کارکنان قدیمی</span>
+                        <i class="fa fa-plus-circle"></i>
+                    </a>
+
+                    <a href="{% url 'form_essential_create' form_type='permanent_exemption' %}">
+                        <span>معافیت دائم کارکنان وظیفه</span>
+                        <i class="fa fa-plus-circle"></i>
+                    </a>
+
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+    <!-- باکس دانلودها -->
+    <div class="sidebar-card shadow-sm">
+        <div class="sidebar-card-header">دانلودها</div>
+        <div class="list-group list-group-flush">
+            
+            <a
+                class="list-group-item">
+                <span>دانلود اکسل نامه‌ها</span>
+                <i class="fa fa-download"></i>
+            </a>
+
+            <a 
+                class="list-group-item">
+                <span>دانلود اکسل فرم‌ها</span>
+                <i class="fa fa-file-excel-o"></i>
+            </a>
+
+        </div>
+    </div>
+</aside>

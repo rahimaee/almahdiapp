@@ -14,7 +14,7 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    height: 200px;
+    height: 400px;
     overflow-y: auto;
 }
 
@@ -46,6 +46,7 @@
 .clearance-letter-list .soldier-info .code {
     font-size: 1.2rem;
     color: #333;
+    font-weight: bold;
 }
 
 .clearance-letter-list .letter-info {
@@ -75,6 +76,9 @@
     font-size: 1rem;
     color: #555;
     font-weight: bold;
+    margin-bottom: 2px;
+    text-align: center;
+    width: 100%;
 }
 
 .clearance-letter-list .data-empty {
@@ -124,11 +128,11 @@
         {% if letters %}
             {% for letter in letters %}
                 <li class="letter-item">
-                    <div class="soldier-info">
+                    <div style="flex:1;" class="soldier-info">
                         <div class="name">{{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</div>
                         <span class="code">کدملی :{{ letter.soldier.national_code }}</span>
                     </div>
-                    <div style="flex:1;" class="letter-info">
+                    <div  class="letter-info">
                         <div  class="issue-date">تاریخ صدور تسویه : {{ letter.issue_date|to_jalali }}</div>
                         <div style="display:flex;align-items:center;gap: 4px;">
                             <span class="badge {{ letter.reason|slugify }}">{{ letter.reason }}</span>

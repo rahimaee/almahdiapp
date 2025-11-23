@@ -9,6 +9,8 @@ urlpatterns = [
     path('clearance_letter/print/<int:letter_id>/', print_ClearanceLetter, name='print_ClearanceLetter'),
     path('clearance_letter/excel', print_ClearanceLetter, name='clearance_letter_excel'),
     path('clearance_letter/delete/<int:letter_id>/', delete_ClearanceLetter, name='delete_ClearanceLetter'),
+    path('clearance_letter/import/data', import_clearanceLetter_from_excel, name='import_clearanceLetter_from_excel'),
+    path('clearance_letter/import/sample', import_clearanceLetter_sample_excel, name='import_clearanceLetter_sample_excel'),
     
     path('normal-letters/', normal_letter_list, name='normal_letter_list'),
     path('mental-health/retest/<int:test_id>/', create_new_letter_from_old, name='create_new_letter_from_old'),
@@ -58,4 +60,20 @@ urlpatterns = [
     path('forms/essential/<str:form_id>/view/', form_essential_view, name='form_essential_view'),
 
     
+]
+
+urlpatterns = urlpatterns + [
+    path('ready_forms/', ReadyFormsListView.as_view(), name='ready_forms'),
+    path('ready_forms/create/', ReadyFormsCreateView.as_view(), name='ready_forms_create'),
+    path('ready_forms/update/<int:pk>/', ReadyFormsUpdateView.as_view(), name='ready_formsupdate'),
+    path('ready_forms/delete/<int:pk>/', ReadyFormsDeleteView.as_view(), name='ready_forms_delete'),
+    path("runaway/", runaway_page, name="runaway_page"),
+    path("runaway/<int:pk>/print", runaway_print_page, name="runaway_print_page"),
+     # تغییر وضعیت نامه فرار
+    path("runaway/<int:pk>/delete/", runaway_delete, name="runaway_delete"),
+    path(
+        'runaway/<int:pk>/change-status/<str:status>/',
+        runaway_change_status,
+        name='runaway_change_status'
+    ),
 ]

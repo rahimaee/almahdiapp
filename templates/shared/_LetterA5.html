@@ -169,7 +169,7 @@
     }
 
     .header img {
-      height: 50px;
+      height: 60px;
     }
 
     .left-info {
@@ -363,7 +363,7 @@
                       <div class="sepah-logo f-bkoodak">
                           <img src="{% static 'img/Sepah.png' %}" alt="آرم راست"/>
                           <br/>
-                          <span  style="font-size: 10px; margin: 0 2px">نیروی زمینی</span>
+                          <span  style="font-size: 12px; margin: 0 4px">نیروی زمینی</span>
                       </div>
                       <div class="f-btitr">
                           <div class="f-irnasq text-center" style="font-size: 16px; ">بسمه تعالی</div>
@@ -372,16 +372,16 @@
                       <div class="left-info">
                         <div class="letter-detail">
                             <div style="display: flex;align-items: center;justify-content: space-between;gap: 4px;">
-                                <strong class="f-btitr">شماره نامه : </strong><span class="f-bkoodak" style="font-size: 10px">512/106/6/{{ letter.letter_number|lnumtrans }}ز</span><span></span>
+                                <strong class="f-btitr">شماره نامه : </strong><span class="f-bkoodak" style="font-size: 10px;font-weight: bold;">512/106/6/{{ letter.letter_number|lnumtrans }}ز</span>
                             </div>
                             <div style="display: flex;align-items: center;justify-content: space-between">
-                              <strong class="f-btitr">تاریخ : </strong> <span class="f-bkoodak"  style="font-size: 10px">{{ letter.date|to_jalali }}</span>
+                              <strong class="f-btitr">تاریخ : </strong> <span class="f-bkoodak"  style="font-size: 10px;font-weight: bold;">{{ letter.date|to_jalali }}</span>
                             </div>
                             <div style="display: flex;align-items: center;justify-content: space-between">
-                              <strong class="f-btitr">ارجاع : </strong> <span class="f-bkoodak"  style="font-size: 10px"></span>
+                              <strong class="f-btitr">ارجحیت : </strong> <span class="f-bkoodak"  style="font-size: 10px;font-weight: bold;">عادی</span>
                             </div>
-                            <div style="display: flex;align-items: center;justify-content: space-between;gap: 4px;">
-                                <strong class="f-btitr">پیوست : </strong><span class="f-bkoodak" style="font-size: 10px"></span><span></span>
+                            <div style="display: flex;align-items: center;justify-content: space-between;">
+                                <strong class="f-btitr">پیوست : </strong><span class="f-bkoodak" style="font-size: 10px;font-weight: bold;">ندارد</span>
                             </div>
                         </div>
                       </div>

@@ -4,6 +4,9 @@ from django.utils import timezone
 from datetime import timedelta
 from django.db import models, transaction
 from django.utils.dateparse import parse_date
+from almahdiapp.utils.date import shamsi_to_gregorian
+from soldires_apps.utils import map_rank_number_to_choice
+from .enums import ClearanceLetterEnum 
 
 
 class ClearanceLetter(models.Model):
@@ -12,10 +15,12 @@ class ClearanceLetter(models.Model):
         ('قبولی در دانشگاه', 'قبولی در دانشگاه'),
         ('انتقال', 'انتقال'),
         ('معافیت دائم', 'معافیت دائم'),
+        ('معافیت کفالت', 'معافیت کفالت'),
     ]
     CLEARANCE_STATUS_CHOICES = [
         ('ایجاد شده', 'ایجاد شده'),
         ('چاپ و درحال بررسی', 'چاپ و درحال بررسی'),
+        ('تأیید شده', 'تأیید شده'),
         ('تأیید نهایی', 'تأیید نهایی'),
     ]
     ACTION_CHOICES = [
@@ -156,6 +161,9 @@ class ClearanceLetter(models.Model):
         return f"{self.soldier} - {self.get_reason_display()} - {self.letter_number}"
 
     def save(self, *args, **kwargs):
+        if self.letter_number and ClearanceLetter.objects.filter(letter_number=self.letter_number).exclude(pk=self.pk).exists():
+            self.letter_number = None
+        
         if not self.letter_number:
             # فرض بر این است که Soldier دارای فیلد national_code می‌باشد
             national_code = self.soldier.national_code[-4:]  # ۴ رقم آخر کد ملی
@@ -172,6 +180,126 @@ class ClearanceLetter(models.Model):
             self.assign_expired_file_number(save=False)
 
         super().save(*args, **kwargs)
+        if self.soldier:
+            if self.expired_file_number:
+                self.soldier.expired_file_number = self.expired_file_number  
+            self.soldier.is_checked_out = True
+            self.soldier.save()
+
+    @staticmethod
+    def save_record(record: dict):
+        """
+        ایجاد یا بروزرسانی یک رکورد ClearanceLetter از دیکشنری
+        بازگشت:
+            {'obj': instance_or_None, 'created': bool, 'updated': bool, 'error': str_or_None}
+        """
+        try:
+
+            # ============ 1) دریافت کد ملی از اکسل ============
+            soldier_code = record.get('nationalCode')
+            if not soldier_code:
+                return {
+                    'obj': None, 'created': False, 'updated': False,
+                    'error': 'کد ملی سرباز وجود ندارد.'
+                }
+
+            # ============ 2) پیدا کردن یا ساختن سرباز ============
+            try:
+                # پس تاریخ است → باید تبدیل شود
+                finished_at = shamsi_to_gregorian(record.get('finishedAt'))
+            except:
+                finished_at = None
+            soldier, created, err = Soldier.create_minimal_from_import(
+                national_code=soldier_code,
+                first_name=record.get('firstName', ''),
+                last_name=record.get('lastName', ''),
+                degree_number=record.get('degree'),
+                expired_file_number=record.get('expiredFileNumber'),
+                finished_at =finished_at
+            )
+            if soldier:
+                soldier.to_checkout()
+
+            print(err)
+
+            if err:
+                return {
+                    'obj': None, 'created': False, 'updated': False,
+                    'error': err
+                }
+
+            # ============ 3) شماره نامه ============
+            letter_number = record.get('letterNumber')
+            # ============ 4) تاریخ‌ها (تبدیل به میلادی) ============
+            try:
+                issued_at = shamsi_to_gregorian(record.get('issuedAt'))
+            except:
+                issued_at = None
+                
+            # ============ 5) تعیین reason بر اساس finishedAt اگر تاریخ نبود ============
+            reason = record.get('reason', 'پایان خدمت') 
+            finished_at_raw = record.get('finishedAt')
+            # finishedAt ممکن است یکی از موارد زیر باشد:
+            # 1) تاریخ شمسی → باید تبدیل شود
+            # 2) یکی از مقادیر CHOICES → باید به عنوان reason استفاده شود
+            CHOICE_KEYS = [c[0] for c in ClearanceLetter.CLEARANCE_REASON_CHOICES]
+
+            if finished_at_raw in CHOICE_KEYS:
+                # یعنی این مقدار دلیل است نه تاریخ
+                reason = finished_at_raw
+                finished_at = None
+            
+            # ============ 6) ساخت defaults برای ذخیره ============
+            defaults = {
+                'letter_number':letter_number,
+                'soldier': soldier,
+                'issue_date': issued_at,
+                'description': record.get('description', ''),
+                'reason': reason,
+                'status': record.get('reason', 'تأیید نهایی'),
+                'expired_file_number': record.get('expiredFileNumber') or '00 خالی 00',
+            }
+            # ============ 7) ذخیره یا بروزرسانی ============
+            obj, created = ClearanceLetter.objects.update_or_create(
+                soldier__national_code=soldier_code,
+                defaults=defaults
+            )
+            print(obj,"===== ",created)
+            return {
+                'obj': obj,
+                'created': created,
+                'updated': not created,
+                'error': None
+            }
+
+        except Exception as e:
+            print('Error',str(e))
+            return {
+                'obj': None, 'created': False, 'updated': False,
+                'error': str(e)
+            }
+    @classmethod
+    def import_data(cls, records):
+        """
+        پردازش لیستی از رکوردهای ClearanceLetter.
+        records: لیست دیکشنری‌ها
+        خروجی: {'created': n, 'updated': m, 'errors': [...]}
+        """
+        created = 0
+        updated = 0
+        errors = []
+
+        for rec in records:
+            result = cls.save_record(rec)
+            if result['error']:
+                errors.append({'record': rec, 'error': result['error']})
+            else:
+                if result['created']:
+                    created += 1
+                elif result['updated']:
+                    updated += 1
+
+        return {'created': created, 'updated': updated, 'errors': errors}
 
 
 class NormalLetter(models.Model):
@@ -413,6 +541,77 @@ class NormalLetterCommitmentLetter(models.Model):
 
 from django.db import models
 from django.utils import timezone
+from soldires_apps.models import Soldier
+from django.db import transaction
+
+class RunawayLetter(models.Model):
+    STATUS_CHOICES = [
+        ('ایجاد شده', 'ایجاد شده'),
+        ('چاپ و درحال بررسی', 'چاپ و درحال بررسی'),
+        ('تأیید نهایی', 'تأیید نهایی'),
+    ]
+
+    normal_letter = models.OneToOneField(
+        NormalLetter,
+        on_delete=models.CASCADE,
+        verbose_name='نامه عادی',
+        blank=True,
+        null=True
+    )
+
+    soldier = models.ForeignKey(
+        Soldier,
+        on_delete=models.CASCADE,
+        verbose_name="سرباز"
+    )
+
+    description = models.TextField(blank=True, null=True, verbose_name="توضیحات")
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='ایجاد شده', verbose_name="وضعیت نامه")
+    letter_date = models.DateField(auto_now_add=True, verbose_name="تاریخ ثبت فرار")
+    absence_start_date = models.DateField(verbose_name="تاریخ شروع غیبت")
+    absence_end_date = models.DateField(blank=True, null=True, verbose_name="تاریخ پایان غیبت")
+    letter_number = models.CharField(max_length=50, unique=True, verbose_name="شماره نامه", editable=False)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='تاریخ ایجاد')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='آخرین تغییر')
+    class Meta:
+        verbose_name = "نامه فرار"
+        verbose_name_plural = "نامه‌های فرار"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.letter_number} - {self.soldier}"
+
+
+    def save(self, *args, **kwargs):
+        with transaction.atomic():
+            # اگر شماره نامه یکتا نساخته شده باشد، بساز
+            if not self.letter_number:
+                today = timezone.now().strftime("%y%m%d")
+                last_item = RunawayLetter.objects.order_by('-id').first()
+                next_id = (last_item.id + 1) if last_item else 1
+                self.letter_number = f"ESC-{today}-{next_id:05d}"
+            # ساخت یا بروزرسانی NormalLetter مرتبط
+            if not self.normal_letter:
+                normal_letter = NormalLetter.objects.create(
+                    soldier=self.soldier,
+                    letter_type='گزارش غیبت منجر به فرار',
+                    destination='آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه - مدیریت نیروی انسانی - قضایی و انضباطی ',
+                    description=self.description,
+                )
+                self.normal_letter = normal_letter
+            else:
+                self.normal_letter.description = self.description
+                self.normal_letter.save()
+
+            super().save(*args, **kwargs)
+
+            # اگر وضعیت تأیید نهایی شد، سرباز به حالت فراری تغییر می‌کند
+            if self.status == 'تأیید نهایی':
+                self.soldier.is_fugitive = True
+                self.soldier.save()
+
+from django.db import models
+from django.utils import timezone
 from django.core.paginator import Paginator
 import json
 class EssentialFormQuerySet(models.QuerySet):
@@ -499,3 +698,41 @@ class EssentialFormCardLetter(models.Model):
         """
         paginator = Paginator(query, counts)
         return paginator.get_page(page)
+    
+
+from django.db import models
+
+class ReadyForms(models.Model):
+    label = models.CharField(max_length=255, verbose_name="عنوان فرم")
+    file = models.FileField(upload_to='ready_forms/files/', verbose_name="فایل فرم")
+    image = models.ImageField(upload_to='ready_forms/images/', blank=True, null=True, verbose_name="تصویر فرم")
+    description = models.TextField(blank=True, null=True, verbose_name="توضیحات")
+    helper_text = models.TextField(blank=True, null=True, verbose_name="متن راهنما")
+    
+    FILE_TYPES = [
+        ('pdf', 'پی دی اف'),
+        ('docx', 'ورد'),
+        ('xlsx', 'اکسل'),
+        ('txt', 'متنی'),
+        ('image', 'تصویر'),
+    ]
+
+    file_type = models.CharField(max_length=10, choices=FILE_TYPES, default='pdf', verbose_name="نوع فایل")
+    PAGE_SIZES = [
+        ('A4', 'A4'),
+        ('Letter', 'Letter'),
+        ('Legal', 'Legal'),
+        ('A3', 'A3'),
+        ('A5', 'A5'),
+    ]
+    page_size = models.CharField(max_length=10, choices=PAGE_SIZES, default='A4', verbose_name="نوع صفحه")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "فرم آماده"
+        verbose_name_plural = "فرم‌های آماده"
+
+    def __str__(self):
+        return self.label

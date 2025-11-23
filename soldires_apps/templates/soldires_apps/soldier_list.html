@@ -498,6 +498,15 @@
                         </div>
                         <div style="flex: 1;"></div>
                         <div style="margin: 0 5px;"> 
+                            <label style="min-width: 100px;">پیشفرض : </label>
+                            <select name="defaultFilter" id="defaultFilter" class="form-control">
+                                {% for value, label in status_choices %}
+                                    <option value="{{ value }}" {% if value == selected_filter %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div style="margin: 0 5px;"> 
                             <label style="min-width: 100px;">تا پایان خدمت : </label>
                             <select name="remainingFilter" id="remainingFilter" class="form-control" onchange="filterByRemaining()">
                                 <option  selected value=""  {% if not remainingFilter or remainingFilter == ""   %}selected{% endif %}  >همه</option>

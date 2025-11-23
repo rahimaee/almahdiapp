@@ -1,12 +1,11 @@
-{% extends 'shared/_PanelMain.html' %}
+{% extends '../soldier_letter_apps_layout.html' %}
 {% load static %}
 {% load jalali_filters %}
 
-{% block main %}
-{% include "../letter_types_nav_layout.html" %}
+{% block page %}
 <h2 class="page-title">📄 لیست تعهدنامه‌ها</h2>
 <div class="commitment-container">
-    <!-- فرم جستجو و ایجاد نامه -->
+<!-- فرم جستجو و ایجاد نامه -->
     <div class="controls">
         <form method="get" class="search-form">
             <input type="text" name="q" placeholder="جستجو..." value="{{ query }}">
@@ -14,7 +13,20 @@
         </form>
         <a href="{% url 'commitment_letter_create' %}" class="btn-create">➕ ایجاد نامه جدید</a>
     </div>
+    <!-- صفحه بندی -->
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}" class="page-link">« قبلی</a>
+        {% endif %}
 
+        {% for num in page_obj.paginator.page_range %}
+            <a href="?page={{ num }}&q={{ query }}" class="page-link {% if page_obj.number == num %}active{% endif %}">{{ num }}</a>
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}&q={{ query }}" class="page-link">بعدی »</a>
+        {% endif %}
+    </div>
     <!-- جدول لیست -->
     <div class="table-wrapper">
         <table class="custom-table">
@@ -69,27 +81,13 @@
         </table>
     </div>
 
-    <!-- صفحه بندی -->
-    <div class="pagination">
-        {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}" class="page-link">« قبلی</a>
-        {% endif %}
 
-        {% for num in page_obj.paginator.page_range %}
-            <a href="?page={{ num }}&q={{ query }}" class="page-link {% if page_obj.number == num %}active{% endif %}">{{ num }}</a>
-        {% endfor %}
-
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}&q={{ query }}" class="page-link">بعدی »</a>
-        {% endif %}
-    </div>
 
 </div>
 
 <style>
     /* Container اصلی */
     .commitment-container {
-        max-width: 1000px;
         margin: auto;
         padding: 20px;
         font-family: Vazir, sans-serif;
