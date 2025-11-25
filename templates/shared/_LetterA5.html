@@ -285,68 +285,66 @@
    }
   </style>
   <style>
+    .control-part {
+      width: 100%;
+      max-width: 220px;
+      background-color: #fafafa !important;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+    }
 
+    .control-title {
+      font-size: 16px;
+      text-align: center;
+      margin: 0;
+      color: #333 !important;
+    }
 
-.control-part {
-  width: 100%;
-  max-width: 220px;
-  background-color: #fafafa !important;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
-}
+    .control-card {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
-.control-title {
-  font-size: 16px;
-  text-align: center;
-  margin: 0;
-  color: #333 !important;
-}
+    .control-card button {
+      padding: 10px 16px;
+      font-size: 15px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      font-family: inherit;
+    }
 
-.control-card {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+    .print-btn {
+      background-color: #28a745;
+      color: white;
+    }
 
-.control-card button {
-  padding: 10px 16px;
-  font-size: 15px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  font-family: inherit;
-}
+    .print-btn:hover {
+      background-color: #218838;
+    }
 
-.print-btn {
-  background-color: #28a745;
-  color: white;
-}
+    .back-btn {
+      background-color: #dc3545;
+      color: white;
+    }
 
-.print-btn:hover {
-  background-color: #218838;
-}
-
-.back-btn {
-  background-color: #dc3545;
-  color: white;
-}
-
-.back-btn:hover {
-  background-color: #c82333;
-}
-.letter-refrences {
-    font-size: 14px;
-}
-.peivast {
-  opacity: 0.8;
-  padding: 0 10px;
-}
+    .back-btn:hover {
+      background-color: #c82333;
+    }
+    .letter-refrences {
+        font-size: 14px;
+    }
+    .peivast {
+      opacity: 0.8;
+      padding: 0 10px;
+    }
   </style>
   {% block extra_head %}{% endblock %}
 </head>

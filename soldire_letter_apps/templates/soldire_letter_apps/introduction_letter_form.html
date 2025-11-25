@@ -2,54 +2,154 @@
 {% load static %}
 
 {% block page %}
+<div class="">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
 
-    <div class="container">
-        <h3>فرم نامه</h3>
-
-        {# نمایش پیام‌ها #}
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}"
-                     role="alert">
-                    {{ message }}
+    <div class="row">
+        <!-- فرم نامه -->
+        <div class="col-md-6">
+            <div class="ui-card">
+                <div class="ui-card-header ui-btn-success">
+                    فرم ایجاد نامه معرفی
                 </div>
-            {% endfor %}
-        {% endif %}
+                <div class="ui-card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div class="ui-form-group md">
+                                <label>{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.errors %}
+                                    <div class="text-danger small">{{ field.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
 
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
+                        {% if show_force_submit %}
+                            <input type="hidden" name="force_submit" value="true">
+                            <button type="submit" class="ui-btn ui-btn-danger mt-2">تأیید دستی و ادامه</button>
+                            <a href="{% url 'introduction_letter_create' %}" class="ui-btn ui-btn-light mt-2">انصراف</a>
+                        {% else %}
+                            <button type="submit" class="ui-btn ui-btn-success mt-2">ثبت نامه معرفی</button>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+                       <!-- جابه‌جایی قسمت -->
+            <div style="margin: 10px 0;" class="ui-card mb-3">
+                <div class="ui-card-header ui-btn-warning">
+                    <i class="fa fa-exchange-alt"></i> جابه‌جایی قسمت
+                </div>
+                <div class="ui-card-body">
+                    <div class="helper-block">
+                        <ol>
+                            <li>
+                                <span class="badge ui-btn-info">1</span>
+                                برای جابه‌جایی سرباز از یک قسمت به قسمت دیگر نیازمند <strong>نامه تسویه حساب داخلی</strong> است.
+                            </li>
+                            <li>
+                                <span class="badge ui-btn-primary">2</span>
+                                سرباز باید از فرمانده مسئول قسمت خود امضا تسویه دریافت کند.
+                            </li>
+                            <li>
+                                <span class="badge ui-btn-success">3</span>
+                                پس از تأیید نامه تسویه، سرباز می‌تواند به قسمت جدید منتقل شود.
+                            </li>
+                            <li>
+                                <span class="badge ui-btn-dark">4</span>
+                                <i class="fa fa-link"></i>
+                                <a href="{% url 'clearance_letter_create' %}">ثبت نامه تسویه حساب داخلی</a>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            {% if show_force_submit %}
-                <input type="hidden" name="force_submit" value="true">
-                <button type="submit" class="btn btn-danger">تأیید دستی و ادامه</button>
-                <a href="{% url 'introduction_letter_create' %}" class="btn btn-secondary">انصراف</a>
-            {% else %}
-                <button type="submit" class="btn btn-primary">ثبت نامه معرفی</button>
-            {% endif %}
-        </form>
+        <!-- کارت راهنما -->
+        <div class="col-md-6">
 
-        <script src="{% static 'dist/js/jquery-3.6.0.min.js' %}"></script>
-        <script>
-            $('#id_part').change(function () {
-                var url = "{% url 'ajax_load_sub_units' %}";
-                var partId = $(this).val();
-                $.ajax({
-                    url: url,
-                    data: {'part': partId},
-                    success: function (data) {
-                        $("#id_sub_part").html(data);
-                    }
-                });
-            });
-        </script>
+            <!-- پنج برگ + معرفی نامه -->
+            <div class="ui-card mb-3">
+                <div class="ui-card-header ui-btn-primary">
+                    <i class="fa fa-file-alt"></i> پنج برگ + معرفی نامه
+                </div>
+                <div class="ui-card-body">
+                    <div class="helper-block">
+                        <ol>
+                            <li>
+                                <span class="badge ui-btn-info">1</span>
+                                سربازانی که به یگان وارد می‌شوند، برای رفتن به یک قسمت خاص به صورت پیش‌فرض گردان قرارگاه.
+                            </li>
+                            <li>
+                                <span class="badge ui-btn-success">2</span>
+                                <strong>معرفی‌نامه:</strong> صفحه اول پس از امضای مسئول نیروی انسانی تحویل سرباز داده می‌شود و در بایگانی قرار می‌گیرد.
+                            </li>
+                            <li>
+                                <span class="badge ui-btn-warning">3</span>
+                                صفحه دوم پس از معرفی به قسمت مربوطه با امضای مسئول مربوطه در بایگانی سرباز قرار می‌گیرد.
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- پنج برگ -->
+            <div style="margin:10px 0 ;" class="ui-card mb-3">
+                <div class="ui-card-header ui-btn-info">
+                    <i class="fa fa-list-ul"></i> پنج برگ
+                </div>
+                <div class="ui-card-body">
+                    <div class="helper-block">
+                        <ol>
+                            <li>
+                                <span class="badge ui-btn-primary">1</span>
+                                شامل 5 قسمت از یگان که سرباز باید خود را به آنها معرفی کند و ته برگ آن را به نیروی انسانی تحویل دهد.
+                            </li>
+                            <li>
+                                <span class="badge ui-btn-success">2</span>
+                                <strong>عقیدتی:</strong> نیاز به برگه عقیدتی دوره آموزشی برای نمره دارد و از بایگانی تحویل سرباز می‌شود.
+                            </li>
+                            <li>
+                                <span class="badge ui-btn-warning">3</span>
+                                <strong>حفاظت و اطلاعات :</strong> نیازمند کپی شناسنامه صفحات اول و دوم و دو قطعه عکس سه در چهار نظامی.
+                            </li>
+                            <li>
+                                <span class="badge ui-btn-dark">4</span>
+                                <strong>سایر قسمت‌ها:</strong>  نظارت و صلاحیت ، نیروی انسانی، قضایی و انضباطی.
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <script src="{% static 'dist/js/jquery-3.6.0.min.js' %}"></script>
+    <script>
+        $('#id_part').change(function () {
+            var url = "{% url 'ajax_load_sub_units' %}";
+            var partId = $(this).val();
+            $.ajax({
+                url: url,
+                data: {'part': partId},
+                success: function (data) {
+                    $("#id_sub_part").html(data);
+                }
+            });
+        });
+    </script>
+</div>
 {% endblock %}
 
 {% block footer %}
-    <script>
-        $('select').select2({
-            allowClear:true,
-        })
-    </script>
+<script>
+    $('select').select2({ allowClear:true });
+</script>
 {% endblock %}

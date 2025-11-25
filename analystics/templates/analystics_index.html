@@ -134,84 +134,27 @@
 {% endblock %}
 
 {% block main %}
-        {% include './layout/AnalysticsNavbar.html' %}
+  {% include './layout/AnalysticsNavbar.html' %}
 
 <div class="container-fluid">
-  <!-- کارت‌های آماری -->
-<div class="stats-card">
-  <div class="card">
-    <h4 class="card-title">کل سربازان</h4>
-    <div class="stat-row">
-      <span class="stat-key">تعداد کل</span>
-      <span class="stat-value">{{ all_soldiers_counts }}</span>
+    <div class="stats-card">
+      {% for item in stats %}
+        <div class="card">
+          <h4 class="card-title">{{ item.title }}</h4>
+          <div class="stat-row">
+            <span class="stat-key">تعداد</span>
+            <span class="stat-value">{{ item.value }}</span>
+          </div>
+        </div>
+      {% endfor %}
     </div>
 
-  </div>
-
-  <div class="card">
-    <h4 class="card-title">سربازان حاضر</h4>
-    <div class="stat-row">
-      <span class="stat-key">حاضر</span>
-      <span class="stat-value">{{ present_soliders_counts }}</span>
+    <div class="tab-container">
+        <button class="tab-btn active" data-tab="tab-presence">وضعیت حضور</button>
+        <button class="tab-btn" data-tab="tab-education">تحصیلات و درجات</button>
+        <button class="tab-btn" data-tab="tab-status">صدور کارت</button>
+        <button class="tab-btn" data-tab="tab-shift">شیفت‌ها</button>
     </div>
-  </div>
-
-  <div class="card">
-    <h4 class="card-title">فراری</h4>
-    <div class="stat-row">
-      <span class="stat-key">تعداد</span>
-      <span class="stat-value">{{ runaway_soliders_counts }}</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <h4 class="card-title">اعلام حضور نشده</h4>
-    <div class="stat-row">
-      <span class="stat-key">تعداد</span>
-      <span class="stat-value">{{ not_reported_counts }}</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <h4 class="card-title">پایان خدمت</h4>
-    <div class="stat-row">
-      <span class="stat-key">تعداد</span>
-      <span class="stat-value">{{ finished_service_counts }}</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <h4 class="card-title">در حال صدور کارت</h4>
-    <div class="stat-row">
-      <span class="stat-key">تعداد</span>
-      <span class="stat-value">{{ issuing_card_counts }}</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <h4 class="card-title">بدهی حقوقی</h4>
-    <div class="stat-row">
-      <span class="stat-key">تعداد</span>
-      <span class="stat-value">{{ debt_counts }}</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <h4 class="card-title">جذبی</h4>
-    <div class="stat-row">
-      <span class="stat-key">تعداد</span>
-      <span class="stat-value">{{ absorption_counts }}</span>
-    </div>
-  </div>
-</div>
-
-
-  <div class="tab-container">
-      <button class="tab-btn active" data-tab="tab-presence">وضعیت حضور</button>
-      <button class="tab-btn" data-tab="tab-education">تحصیلات و درجات</button>
-      <button class="tab-btn" data-tab="tab-status">صدور کارت</button>
-      <button class="tab-btn" data-tab="tab-shift">شیفت‌ها</button>
-  </div>
     <div id="tab-presence" class="tab-content active chart-grid">
           <div class="chart-card circle-chart">
               <h5 class="text-center">وضعیت حضور سربازان</h5>

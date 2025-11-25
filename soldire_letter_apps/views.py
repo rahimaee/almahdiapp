@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from soldires_apps.models import Soldier
 from units_apps.models import SubUnit
 from .models import ClearanceLetter, NormalLetter, NormalLetterMentalHealthAssessmentAndEvaluation, \
-    NormalLetterJudicialInquiry, NormalLetterDomesticSettlement, IntroductionLetter, MembershipCertificate, \
+    NormalLetterJudicialInquiry, NormalLetterDomesticSettlement, IntroductionLetter,IntroductionLetterType, MembershipCertificate, \
     NormalLetterHealthIodine, NormalLetterCommitmentLetter
 from .forms import ClearanceLetterForm, NormalLetterJudicialInquiryForm, NormalLetterDomesticSettlementForm, \
     IntroductionLetterForm, MembershipCertificateForm, HealthIodineForm, CommitmentLetterForm , EssentialFormCardLetter,EssentialFormCardLetterForm  
@@ -15,6 +15,15 @@ from django.db.models import Q
 from django.utils import timezone
 from datetime import timedelta
 from .constants import *
+from django.db.models import Q
+from django.utils import timezone
+from .forms import EssentialFormCardLetterForm
+from django.db.models import Q
+from django.utils.dateparse import parse_date
+from django.db.models.functions import Cast
+from django.db.models.expressions import RawSQL
+from django.db.models import TextField
+import json
 
 
 class ClearanceLetterCreateView(CreateView):
@@ -30,8 +39,11 @@ class ClearanceLetterListView(ListView):
     context_object_name = 'letters'
     paginate_by = 50
 
+
     def get_queryset(self):
         queryset = super().get_queryset().select_related('soldier')
+
+        # --- فیلتر جستجوی متن ---
         query = self.request.GET.get('q')
         if query:
             queryset = queryset.filter(
@@ -40,6 +52,27 @@ class ClearanceLetterListView(ListView):
                 Q(soldier__last_name__icontains=query) |
                 Q(soldier__national_code__icontains=query)
             )
+
+        # --- فیلتر وضعیت ---
+        status = self.request.GET.get('status')
+        if status:
+            queryset = queryset.filter(status=status)
+
+        # --- فیلتر علت ---
+        reason = self.request.GET.get('reason')
+        if reason:
+            queryset = queryset.filter(reason=reason)
+
+        # --- فیلتر بازه تاریخ ---
+        date_from = self.request.GET.get('date_from')
+        date_to = self.request.GET.get('date_to')
+
+        if date_from:
+            queryset = queryset.filter(expired_file_number_date__gte=date_from)
+        if date_to:
+            queryset = queryset.filter(expired_file_number_date__lte=date_to)
+
+        # مرتب‌سازی
         return queryset.order_by('-expired_file_number')
 
 
@@ -438,16 +471,24 @@ def introduction_letter_list(request):
 
 
 def introduction_letter_create(request):
+    letter_type = request.GET.get('letter_type', '') or request.GET.get('letter_type', '')
+    
     if request.method == 'POST':
         form = IntroductionLetterForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('introduction_letter_list')
     else:
-        form = IntroductionLetterForm()
+        form = IntroductionLetterForm({
+            'letter_type': letter_type or 'معرفی‌نامه'
+        })
         form.fields['soldier'].queryset = Soldier.objects.filter(current_sub_unit__isnull=True,
                                                                  current_parent_unit__isnull=True).all()
-    return render(request, 'soldire_letter_apps/introduction_letter_form.html', {'form': form})
+    
+    return render(request, 'soldire_letter_apps/introduction_letter_form.html', {
+        'form': form,
+        'letter_type':letter_type,
+    })
 
 
 def introduction_letter_create(request):
@@ -487,8 +528,7 @@ def introduction_letter_create(request):
     else:
         form = IntroductionLetterForm()
         form.fields['soldier'].queryset = Soldier.objects.filter(
-            current_sub_unit__isnull=True,
-            current_parent_unit__isnull=True
+            is_checked_out=False,
         )
 
     return render(request, 'soldire_letter_apps/introduction_letter_form.html', {'form': form})
@@ -539,13 +579,29 @@ def print_introduction_letter(request, letter_id):
         letter.status = 'چاپ و درحال بررسی'
         letter.save()
 
+    i = letter.letter_type in   [IntroductionLetterType.I.value,IntroductionLetterType.L5I.value]
+    l5 = letter.letter_type in [IntroductionLetterType.L5.value,IntroductionLetterType.L5I.value]  
+
     if letter:
         letter.date = letter.letter_date
+        letter.letter_type = IntroductionLetterType.I.value
         letter.sub_part_of = letter.sub_part or '!زیر قسمت انتخاب نشده!'
-        letter.part_of = letter.part or '!قسمت انتخاب نشده!'
-        letter.destination = f"آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه - {letter.part_of} - {letter.sub_part_of}"
-        
-    return render(request, 'soldire_letter_apps/print_introduction_letter.html', {'letter': letter})
+        letter.part_of = '!قسمت انتخاب نشده!'
+        if letter.sub_part:
+            letter.part_of = letter.sub_part.parent_unit or '!قسمت انتخاب نشده!'
+                
+        letter.destination = f"آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه - مدیریت {letter.part_of}"
+    
+    refrence_destination = f"آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه - مدیریت نیروی انسانی - منابع سرباز"
+    
+    
+    return render(request, 'soldire_letter_apps/print_introduction_letter.html', {
+        'letter': letter,
+        'i':i,
+        'l5':l5,
+        'L5_documents':L5_documents,
+        'refrence_destination':refrence_destination,
+    })
 
 
 # دریاف قسمت وزیر قسمت برای معرفی نامه
@@ -812,12 +868,7 @@ def main_letters(request):
     return render(request, 'index.html')
     
 
-from .forms import EssentialFormCardLetterForm
-from django.db.models import Q
-from django.utils.dateparse import parse_date
-from django.db.models.functions import Cast
-from django.db.models.expressions import RawSQL
-from django.db.models import TextField
+
 
 def forms_essential_list(request):
     search = request.GET.get("search", "")
@@ -898,6 +949,7 @@ def form_essential_view(request, form_id=None):
     form_data_obj = None
     if form_class and instance.form_data:
         try:
+            
             data_dict = json.loads(instance.form_data)
             form_data_obj = form_class(**data_dict)
         except Exception as e:
@@ -1089,7 +1141,6 @@ from django.http import HttpResponse
 from .enums import ClearanceLetterEnum
 from almahdiapp.utils.excel import ExcelExporter,ExcelImport
 from almahdiapp.utils.builder import EnumMetaBuilder
-from .constants import CLEARANCE_LETTER_SAMPLE
 
 def import_clearanceLetter_sample_excel(request):
     """Download sample Excel file using ExcelExporter"""

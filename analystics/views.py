@@ -17,39 +17,37 @@ from django.utils.timezone import now
 from django.shortcuts import render
 from soldires_apps.models import Soldier, Settlement
 from datetime import date
+from django.shortcuts import render
+from django.utils import timezone
+from .stats.base import *
+from .stats.items import *
 
 def index(request):
-    today = date.today()
-    # تعداد کل سربازان
-    all_soldiers = Soldier.objects.filter(is_checked_out=False)
-    all_soldiers_counts = all_soldiers.count()
-    # حاضر: سربازانی که پایان خدمت نرسیده‌اند و فراری نیستند
-    present_soliders_counts = all_soldiers.filter(is_fugitive=False, service_end_date__gt=today).count()
-    # فراری
-    runaway_soliders_counts = all_soldiers.filter(is_fugitive=True).count()
-    # اعلام حضور نشده: فرضاً سربازانی که هنوز اعزام نشده‌اند یا service_entry_date خالی است
-    not_reported_counts = all_soldiers.filter(service_entry_date__isnull=True).count()
-    # پایان خدمت
-    finished_service_counts = all_soldiers.filter(service_end_date__lte=today).count()
-    # درحال صدور کارت
-    issuing_card_counts = all_soldiers.filter(eligible_for_card_issuance=True, card_issuance_status__isnull=True).count()
-    # بدهی حقوقی
-    debt_counts = Settlement.objects.filter(current_debt_rial__gt=0).count()
-    # جذبی
-    absorption_counts = all_soldiers.filter(absorption=True).count()
 
-    context = {
-        'all_soldiers_counts': all_soldiers_counts,
-        'present_soliders_counts': present_soliders_counts,
-        'runaway_soliders_counts': runaway_soliders_counts,
-        'not_reported_counts': not_reported_counts,
-        'finished_service_counts': finished_service_counts,
-        'issuing_card_counts': issuing_card_counts,
-        'debt_counts': debt_counts,
-        'absorption_counts': absorption_counts,
-    }
+    present = PresentSoldiers()  # کوئری پایه
 
-    return render(request, 'analystics_index.html', context)
+    STAT_REGISTRY = [
+        ("کل سربازان", AllSoldiers),
+        ("سربازان حاضر", lambda: present),
+        ("سالم", lambda: HealthySoldiers(present)),
+        ("معاف از رزم", lambda: ExemptSoldiers(present)),
+        ("معاف از رزم گروه ب", lambda: ExemptBSoldiers(present)),
+        ("فراری", RunawaySoldiers),
+        # --- این سه مورد که گفتی هم از present استفاده کنند ---
+        ("اعلام حضور نشده در سامانه", lambda: SystemPresenceNotReported(present)),
+        ("اعلام حضور نشده (ورود به یگان)", lambda: NotReportedSoldiers(present)),
+        ("جذبی", lambda: AbsorptionSoldiers(present)),
+        ("سربازان حاضر (نیاز به تسویه)", lambda: PresentOutedService(present)),
+        ("پایان خدمت", FinishedService),
+        ("در حال صدور کارت", CardIssuing),
+    ]
+
+    stats = []
+    for title, cls in STAT_REGISTRY:
+        instance = cls() if not callable(cls) else cls()
+        stats.append(StatItem(title, instance.count()))
+
+    return render(request, "analystics_index.html", { "stats": stats })
 
 def latest_statistics(request):
    context = {

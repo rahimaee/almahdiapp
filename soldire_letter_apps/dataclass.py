@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 import json
 from typing import Any, Dict,Optional
+from .constants import *
+
 
 # فرم شماره 3 - داده‌ها با مقدار پیش‌فرض
 @dataclass
@@ -69,10 +71,10 @@ class Checkout3PlusFormData:
 # فعال سازی اعزام کارکنان قدیمی
 @dataclass
 class ActivateOldStaffFormData:
-    staff_name: str
-    staff_id: str
-    birth_year: int
-    enlistment_date: str
+    staff_name: str = ''
+    staff_id: str = ''
+    birth_year: int = 0
+    enlistment_date: str = ''
 
 # گواهی دو پاسدار
 @dataclass

@@ -15,8 +15,9 @@
 
         /* در هر گروه، همه آیتم‌های فرم عمودی باشند */
         .filters-row .ui-form-group {
-            flex-direction: column;
+            flex-direction: row;
             margin-bottom: 0;
+            align-items: center;
         }
 
         /* حالت تبلت: دو ستونی */
@@ -35,6 +36,9 @@
 .col-2 {
     grid-column: span 2;
 }
+.filters-row .ui-form-group label {flex: 1;}
+.filters-row .ui-form-group input {flex: 1;text-align: center;}
+
 </style>
 {% endblock %}
 
@@ -125,7 +129,8 @@
                                 {{ search_form.created_to|add_class:"hidden" }}
                             </div>
                             <div class="ui-form-group xs col-2">
-                                <label>عبارت جستجو</label>
+                                <label style="flex: none;">عبارت جستجو</label>
+                                <div style="margin: 0 10px;"></div>
                                 {{ search_form.q|add_class:"form-control ui-input" }}
                             </div>
                             <!-- دکمه جستجو -->

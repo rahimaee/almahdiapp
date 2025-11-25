@@ -1,15 +1,83 @@
 {% load static %}
 {% load jalali_filters %}
+{% load req %}
 {% block header %}
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>نامه تسویه‌حساب - {{ letter.soldier.first_name }} {{ letter.soldier.last_name }}</title>
 <link href="{% static 'dist/css/fonts.css' %}" rel="stylesheet" />
 <style>
+            @font-face {
+            font-family: 'B Nazanin';
+            src: local('B Nazanin Bold'),
+            local('BNazanin-Bold'),
+            url('/static/dist/fonts/BNaznnBd.woff2') format('woff2'),
+            url('/static/dist/fonts/BNaznnBd.woff') format('woff'),
+            url('/static/dist/fonts/BNaznnBd.ttf') format('truetype');
+            font-weight: 700;
+            font-stretch: normal;
+        }
+        @font-face {
+            font-family: 'IranNastaliq';
+            src: url('/static/dist/fonts/IranNastaliq.eot');
+            src: url('/static/dist/fonts/IranNastaliq.eot?#iefix') format('embedded-opentype'),
+                 url('/static/dist/fonts/IranNastaliq.woff2') format('woff2'),
+                 url('/static/dist/fonts/IranNastaliq.woff') format('woff'),
+                 url('/static/dist/fonts/IranNastaliq.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: Vazir;
+            src: url('/static/dist/fonts/Vazir-FD-WOL.eot');
+            src: local('YekanBakh-Regular'),
+                url('/static/dist/fonts/Vazir-FD-WOL.eot?#iefix') format('embedded-opentype'),
+                url('/static/dist/fonts/Vazir-FD-WOL.woff2') format('woff2'),
+                url('/static/dist/fonts/Vazir-FD-WOL.woff') format('woff'),
+                url('/static/dist/fonts/Vazir-FD-WOL.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'B Koodak';
+            src: url('/static/dist/fonts/B Koodak Bold_0.ttf');
+            src: local('B Koodak'), url('/static/dist/fonts/B Koodak Bold_0.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'B Titr';
+            src: url('/static/dist/fonts/B Titr.ttf');
+            src: local('B Titr'),
+                    url('/static/dist/fonts/B Titr.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+
+        html  .f-bnazanin *, body  .f-bnazanin * {
+            font-family: 'B Nazanin';
+        }
+        html   .f-bkoodak *, body .f-bkoodak *,html  * .f-bkoodak , body * .f-bkoodak  {
+            font-family: 'B Koodak';
+        }
+        html  .f-btitr * , body  .f-btitr *, html * .f-btitr  , body * .f-btitr {
+            font-family: 'B Titr';
+        }
+        html  .f-irnasq * , body  .f-irnasq *, html * .f-irnasq  , body * .f-irnasq {
+            font-family: 'IranNastaliq';
+        }
+        strong.f-btitr {
+          font-size: 14px;
+        }
     html *,
     body * {
-        font-family: Vazir, sans-serif;
+        font-family: 'B Nazanin', sans-serif;
     }
+
 
     body {
         direction: rtl;
@@ -17,90 +85,106 @@
         margin:0;
         padding:0;
     }
-    .print-page {
-        width: 210mm !important;
-        min-height: 297mm !important;
-        max-height: 297mm !important;
-        padding: 5mm !important; /* کنترل واقعی فضای داخلی */
-        margin: 5px auto !important;
-        box-sizing: border-box !important;
-        background-color: #fff !important;
-        border:1px dashed black !important; border-radius: 5px !important;
+   .print-page {
+        width: 210mm;
+        height: 297mm;
+        padding: 20px;
+        box-sizing: border-box;
+        background-color: #fff;
+        margin:5px;
+        border:1px dashed black;
+        border-radius: 3px;
     }
     .A4 {
-        width: 100% !important;
-        height: 100% !important;
-        padding: 3mm !important;
-        box-sizing: border-box !important;
-        background-color: #fff !important;
-        border: 2px solid black !important;
-        border-radius: 10px !important;
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: space-between !important;
-        overflow: hidden !important;
+        width: 100%;
+        height: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        background-color: #fff;
+        border: 2px solid black;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
+    
+ 
     @media print {
+        /* مخفی کردن همه عناصر غیر از print-page */
         body * {
-            visibility: hidden !important;
-            margin:0 !important;
-            padding:0 !important;
+            visibility: hidden;
         }
-        * {
-             page-break-after: avoid !important;
-            page-break-before: avoid !important;
-            page-break-inside: avoid !important;
-        }
-
+        
+        .no-print {
+            visibility: hidden;
+            display: none;
+        }    
         .print-page, .print-page * {
-            visibility: visible !important;
+            visibility: visible;
         }
 
-        /* کاملاً مخفی کردن صفحه کنترل و جلوگیری از اشغال فضا */
-        .control-page {
-            display: none !important;
-        }
-        .print-page main {
-            flex: 1 !important;
-        }
+        /* حذف margin و padding و border */
         .print-page {
-            margin: 0 auto !important;
+            margin: 0 !important;
             border: none !important;
+            page-break-after: always;
         }
-        @page {
-            size: A4 portrait;
-            margin: 0;
-        }
-    }
 
+            /* حذف header/footer مرورگر */
+            @page {
+                margin: 0;
+            }
+
+            /* اطمینان از RTL و فونت */
+            html, body {
+                direction: rtl;
+                font-family: Vazir, sans-serif;
+            }
+
+            /* جلوگیری از شکستن layout در Firefox */
+            .print-page {
+                overflow: visible !important;
+            }
+}
 
     header.A4-header {
         display: flex;
         align-items: center;
         border-bottom: 1px solid black;
         padding-bottom: 5px;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
     }
     main{
-        flex:1 ;
+        flex:1;
     }
-
     .header-left, .header-right { flex: 1; }
     .header-center { text-align: center; }
-    .main-title { text-align: center; margin: 2px 0 5px !important; font-size: 12px; }
-    .form-title-container { display: flex; align-items: center; justify-content: center; margin-bottom: 5px !important; }
-    .form-title-container h2, .form-title-container h4 { color: red; margin: 0 10px; }
-    .status { flex:1; text-align: left; font-weight: bold; }
-    .details { font-size: 12px; margin: 5px 0; }
-    .settlement-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0 !important; }
-    .settlement-info div h5 { margin: 0 0 5px 0 !important; }
-    #signature { text-align: center; }
-    #signature p { font-size: 10px; margin: 0 !important; }
-    table { width: 100%; border-collapse: collapse; text-align: center; font-size: 12px; font-weight:bold; margin-bottom: 20px !important; }
-    th, td { border: 1px solid #000; padding:  3px !important; }
+    .main-title { text-align: center; margin: 2px 0 5px; font-size: 13px; }
+    .form-title-container { display: flex; align-items: center; justify-content: center; margin-bottom: 0; }
+    .form-title-container h2 { color: red; margin: 0 10px; }
+    .form-title {
+        margin:0 0 10px;
+        padding: 0;
+    }
+    .status { flex:1; text-align: right; font-weight: bold; }
+    .details { font-size: 14px; margin: 2px 0; text-align: justify; font-weight: light;}
+    .details * { font-size: 12px;  }
+    html body .details.f-bnazanin {
+        font-weight: light;
+        font-size: 12spx;
+    }
+    html body .details.f-bnazanin strong {
+        font-size: 16px;
+    }
+    .settlement-info { display: flex; justify-content: space-between;margin-top: 4px; margin-bottom: 0; }
+    .settlement-info div h5 { margin: 0 0 5px 0; }
+    #signature { text-align: center;font-size: 12px;font-weight: normal; }
+    #signature p { font-size: 10px; margin: 0; }
+    table { width: 100%; border-collapse: collapse; text-align: center; font-size: 12px; font-weight:bold; margin-bottom: 10px; }
+    th, td { border: 1px solid #000; padding:  3px; }
     th { background-color: #f0f0f0; }
-    .declaration { font-size: 12px; margin: 5px 0 !important; }
-    footer.A4-footer {  border-top: 1px solid #666; padding: 5px !important; gap: 5px; font-size: 12px; }
+    .declaration { font-size: 11px; margin: 5px 0; font-weight: lighter;text-align: justify;}
+    footer.A4-footer { border-top: 1px solid #666; padding: 5px; gap: 5px; font-size: 14px; }
 
     .nazarie {
        padding:0;
@@ -130,7 +214,7 @@
     .form-table h4 {
         padding: 0 !important;
         margin: 0 !important;
-        font-size: 13px;
+        font-size: 14px;
         font-weight: bold;
         text-align: right;
     }
@@ -140,7 +224,7 @@
     .form-table p {
         padding: 0 !important;
         margin: 0 !important;
-        font-size: 16px;
+        font-size: 14px;
         font-weight: normal;
     }
     .main-page {
@@ -159,38 +243,51 @@
         <section class="A4">
             <header class="A4-header">
                 <div class="header-left">
-                    <img src="{% static 'img/Sepah.png' %}" alt="آرم سپاه" width="60">
+                    <img src="{% static 'img/Sepah.png' %}" alt="آرم سپاه" width="80">
+                    <div class="f-bkoodak" style="font-size: 12px;margin:0 15px;">نیروی زمینی</div>
                 </div>
                 <div class="header-center">
-                    <img src="{% static 'img/allah-placeholder.png' %}" alt="الله" width="60">
+                    <div class="f-irnasq text-center" style="font-size: 16px; ">بسمه تعالی</div>
+                    <img style="margin-top: -10px;" src="{% static 'img/allah-placeholder.png' %}" alt="الله" width="60">
                 </div>
-                <div class="header-right" style="text-align:left;font-size: 14px;">
-                    <div dir="rtl" style="margin:0 !important;">
-                        <strong>شماره نامه :</strong> 
-                        {{ letter.number }}
-                        <span>/512/106/6ز</span> 
+                <div class="header-right" style="display: flex;justify-content: end;align-items: center;">
+                    <div style="margin: 0 10px; font-size: 14px;min-width: 100px;">
+                        <div style="display: flex;align-items: center;justify-content: space-between">
+                            <strong class="f-btitr">شماره نامه : </strong>
+                            <span class="f-bkoodak" style="font-size: 12px">512/106/6/{{ letter.number|lnumtrans }}ز</span><span></span>
+                        </div>
+                        <div style="display: flex;align-items: center;justify-content: space-between">
+                            <strong class="f-btitr">تاریخ : </strong>
+                            <span class="f-bkoodak"  style="font-size: 12px">{{ letter.created_at|to_jalali }}</span>
+                        </div>
+                        <div style="display: flex;align-items: center;justify-content: space-between">
+                            <strong class="f-btitr">ارجحیت : </strong>
+                            <span class="f-bkoodak"  style="font-size: 12px;font-weight: bold;">عادی</span>
+                        </div>
+                        <div style="display: flex;align-items: center;justify-content: space-between;">
+                            <strong class="f-btitr">پیوست : </strong>
+                            <span class="f-bkoodak" style="font-size: 12px;font-weight: bold;">ندارد</span>
+                        </div>
                     </div>
-                    <div style="margin:10px 0 0 !important;">
-                        <strong>تاریخ نامه :</strong> 
-                        <span>{{ letter.created_at|to_jalali_to }}</span>
-                    </div>
+                    
                 </div>
+
             </header>
 
             <main>
                 <h6 class="main-title">« افزایش توان دفاع همه جانبه در سال جهش تولید با مشارکت مردم »</h6>
                 <div class="form-title-container">
                     <span style="flex:1;"></span>
-                    <h4 class="form-title">« (برگه شماره 3) برگ اطلاعات و تایید انجام خدمت دوره ضرورت توسط یگان خدمتی سرباز »</h4>
+                    <h4 class="form-title f-btitr">« (برگه شماره 3) برگ اطلاعات و تایید انجام خدمت دوره ضرورت توسط یگان خدمتی سرباز »</h4>
                     <span class="status"></span>
                 </div>
-                <div class="settlement-info">
-                    <div>
+                <div class="settlement-info ">
+                    <div class="f-btitr" style="font-size: 14px;">
                             <p class="line"><strong>از  :</strong>  {{ letter.sender |default:"------"}}</p>
                             <p class="line"><strong>به  :</strong>  {{ letter.receiver |default:"------"}}</p>
                             <p class="line"><strong>موضوع  :</strong>  {{ letter.title }}   <strong>{{form_data.first_name}} {{form_data.last_name}}</strong></p>
                     </div>
-                    <div>
+                    <div style="height: 100px;">
                             {% if form_data and form_data.main_image %}
                                     <img alt="محل اطلاق عکس" src={{form_data.main_image.url}} style="width: 210px;width: 280px;"   />
                             {% else %}
@@ -210,7 +307,7 @@
                         به شرح ذیل میباشد:
                     </p>    
                 </div>
-                    <table class="form-table">
+                    <table class="form-table f-bkoodak">
                         <tbody>
                             <tr>
                                 <td>
@@ -290,10 +387,11 @@
                                 </td>
                             </tr>
                             <tr>
-                                 <td colspan="1">
-                                    <h4>{{FIELD_LABELS.card_issue_date}}</h4>
-                                    <p>{{form_data.card_issue_date|default:"------"}}</p>
+                                <td colspan="1">
+                                    <h4>{{FIELD_LABELS.employee_type}}</h4>
+                                    <p>{{form_data.employee_type|default:"------"}}</p>
                                 </td>
+
                                 <td colspan="1">
                                     <h4>{{FIELD_LABELS.military_education_status}}</h4>
                                     <p>{{form_data.military_education_status|default:"------"}}</p>
@@ -302,7 +400,6 @@
                                     <h4>{{FIELD_LABELS.deployment_area}}</h4>
                                     <p>{{form_data.deployment_area|default:"------"}}</p>
                                 </td>
-                                
                                  
                             </tr>
                             <tr>
@@ -337,8 +434,8 @@
                             </tr>
                             <tr>
                                 <td colspan="1">
-                                    <h4>{{FIELD_LABELS.employee_type}}</h4>
-                                    <p>{{form_data.employee_type|default:"------"}}</p>
+                                    <h4>{{FIELD_LABELS.card_issue_date}}</h4>
+                                    <p>{{form_data.card_issue_date|default:"------"}}</p>
                                 </td>
                                 <td colspan="3">
                                     <h4>{{FIELD_LABELS.description}}</h4>
@@ -358,15 +455,15 @@
                 </p>    
             </main>
             <div id="signature">
-                    <h5 style="margin:20px 0 10px !important;padding: 0 !important;">
+                    <h3 style="margin:20px 0 10px !important;padding: 0 !important;">
                         و من ا... التوفیق
-                    </h5>
+                    </h3>
                     <h2 style="margin: 0;padding: 0 !important;">
                         سرهنگ پاسدار       علی متولی طاهر
                     </h2>
-                    <h4 style="margin: 0;padding: 0 !important;margin-bottom: 10px !important;">
-                        فرمانده آموزشگاه رزم مقدماتی المهدی (عج) بابل، نیروی زمینی سپاه
-                    </h4>
+                    <h2 style="margin: 0;padding: 0 !important;margin-bottom: 10px !important;">
+                        فرمانده آموزشگاه رزم مقدماتی المهدی (عج) بابل نیروی زمینی سپاه
+                    </h2>
             </div>
             <footer style="margin: 0 !important;padding: 0 !important;" class="A4-footer">
                 <h4 style="text-align: center; padding: 5px !important;margin: 0 !important;" class="text-center">

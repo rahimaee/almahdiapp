@@ -321,6 +321,7 @@ class Soldier(models.Model):
     field_of_study = models.CharField(
         max_length=200, blank=True, null=True, verbose_name="رشته تحصیلی"
     )
+    system_presence = models.BooleanField(null=True,blank=True,default=True,verbose_name="اعلام حضور سامانه")
     absorption = models.BooleanField(default=False, verbose_name='جذبی؟')
     Is_the_Basij_sufficient = models.BooleanField(default=False, verbose_name='کفایتدار بسیج')
     height = models.CharField(max_length=200, null=True, blank=True, verbose_name='قد')
@@ -535,7 +536,36 @@ class Soldier(models.Model):
         if orgc and self.national_code == orgc.current_soldier.national_code:
             orgc.current_soldier = None
             orgc.save(update_fields=['current_soldier'])
-            
+    @property
+    def organizational_code_display_letter(self):
+        """
+        ایجاد متن ترکیبی برای نمایش در نامه بر اساس:
+        - کد سازمانی
+        - شماره پرونده منقضی
+        - وضعیت تسویه
+
+        هر موردی که وجود نداشته باشد از متن حذف می‌شود.
+        """
+
+        parts = []
+
+        # کد سازمانی
+        if getattr(self, "organizational_code", None):
+            parts.append(f"کد سازمانی: {self.organizational_code.code_number}")
+
+        # وضعیت تسویه
+        if getattr(self, "is_checked_out", None):
+            parts.append(f"شماره پرونده منقضی: {self.expired_file_number}")
+            parts.append(f"وضعیت تسویه: {self.clearance_status}")
+
+        # اگر هیچ مقداری نبود
+        if len(parts) < 1:
+            return "اطلاعات سازمانی ثبت نشده است"
+
+        # ترکیب نهایی
+        return " ، ".join(parts)
+
+         
 class OrganizationalCode(models.Model):
     code_number = models.PositiveIntegerField(unique=True, verbose_name='کد سازمانی')
     is_active = models.BooleanField(default=False, verbose_name='فعال/غیرفعال')  # فعال یا غیرفعال بودن کد

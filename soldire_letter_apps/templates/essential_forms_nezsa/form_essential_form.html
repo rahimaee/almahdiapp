@@ -42,7 +42,7 @@
 
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 6px;
     padding: 0 20px;
 }
@@ -51,7 +51,7 @@
 }
 .form-group label {
     font-weight: 600;
-    margin-bottom: 5px;
+    margin-bottom: 0px;
     display: block;
     color: #374151;
     font-size: 14px;
@@ -83,7 +83,10 @@
 }
 
 .form-group-full {
-    grid-column: 1 / 4;
+    grid-column: 1 / 5;
+}
+.form-group-2 {
+    grid-column: 3 / 5;
 }
 
 .field-errors {
@@ -149,9 +152,30 @@ label[for="id_letter_type"] {
         {% endfor %}
         <div class="form-grid" style="height: 70vh;overflow-y:auto ;">
             {% for field in form.visible_fields %}
-                {% if field.name in 'sender receiver description' %}
-                    <div class="form-group form-group-full col-span-3">
-                        <label>{{ field.label }} {% if field.help_text %}<small class="help-text">({{ field.help_text }})</small>{% endif %}</label>
+                
+                {% if field.name in 'title' %}
+                    <div class="form-group form-group-2 ">
+                        <label>
+                            {{ field.label }} 
+                        </label>
+                        {% if field.help_text %}
+                            <div>
+                                <small class="help-text">{{ field.help_text }}</small>
+                            </div>    
+                        {% endif %}
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="field-errors">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% elif field.name in 'sender receiver description' %}
+                    <div class="form-group form-group-full ">
+                        <label>{{ field.label }} 
+                            {% if field.help_text %}
+                                <small class="help-text">{{ field.help_text }}</small>
+                            {% endif %}
+                        </label>
+
                         {{ field }}
                         {% if field.errors %}
                             <div class="field-errors">{{ field.errors }}</div>
@@ -159,7 +183,13 @@ label[for="id_letter_type"] {
                     </div>
                 {% else %}
                     <div class="form-group">
-                        <label>{{ field.label }} {% if field.help_text %}<small class="help-text">({{ field.help_text }})</small>{% endif %}</label>
+                        <label>{{ field.label }} 
+                        </label>
+                        {% if field.help_text %}
+                            <div>
+                                <small class="help-text">{{ field.help_text }}</small>
+                            </div>    
+                        {% endif %}
                         {{ field }}
                         {% if field.errors %}
                             <div class="field-errors">{{ field.errors }}</div>

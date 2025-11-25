@@ -4,12 +4,17 @@
 
 {% block header %}
     <style>
+
         .modern-table-container {
+            height: 60svh;
             margin-top: 2rem;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
             background: #fff;
+            overflow-y: auto;        /* فقط اسکرول عمودی */
+            scrollbar-width: thin;            /* Firefox */
+            scrollbar-color: #9bb3ff #eef2ff;
         }
 
         .modern-table {
@@ -21,12 +26,21 @@
         .modern-table thead {
             background: linear-gradient(to left, #4e73df, #224abe);
             color: white;
+            position: sticky;
             font-weight: bold;
+            position: sticky;
+            top: 0;                    /* مهم! بدون این ثابت نمی‌ماند */
+            z-index: 10;
+        }
+        .modern-table th {
+            position: sticky;        /* makes the header stick */
         }
 
         .modern-table th,
         .modern-table td {
             padding: 1rem;
+                white-space: nowrap;
+
             text-align: center;
         }
 
@@ -266,7 +280,7 @@
                         <th>عملیات</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody >
                     {% for letter in letters %}
                         <tr>
                             <td style="text-align:right; vertical-align: middle; display:flex;">

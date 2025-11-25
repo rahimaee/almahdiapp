@@ -1,5 +1,6 @@
 from soldires_apps.constants import *
-from .dataclass import *
+from .dataclass import OfficerCardFormData,SoldierCardFormData,Checkout3PlusFormData,ClearanceLetterFormData,ActivateOldStaffFormData,PermanentExemptionFormData,CertificateTwoGuardFormData
+
 from typing import  Dict,Type
 
 employee_types = [
@@ -220,4 +221,67 @@ CLEARANCE_LETTER_SAMPLE = [
         'description': 'توضیح نمونه ۲',
         'status': 'تأیید نهایی',
     }
+]
+L5_documents = [
+    {
+        'key': 'JUDICIAL_REPORT',
+        'litral_name': 'گزارش بکارگیری - قضایی و انضباطی',
+        'to': 'قسمت نیروی انسانی آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه - منابع انسانی سرباز',
+        'from': 'قسمت نیروی انسانی - بخش قضایی و انضباطی',
+        'signiture': {
+            'dagree':'سرگرد پاسدار',
+            'name': 'کریم',
+            'family': 'عبدالله زاده',
+            'dutiy': 'مسئول قسمت قضایی و انضباطی آموزشگاه'
+        }
+    },
+
+    {
+        'key': 'VALI_FAGHİH_REPORT',
+        'litral_name': 'گزارش بکارگیری - دفتر نمایندگی ولی فقیه',
+        'to': 'قسمت نیروی انسانی آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه - منابع انسانی سرباز',
+        'from': 'دفتر حوزه نمایندگی ولی فقیه در آموزشگاه - نظارت و تائید صلاحیت',
+        'signiture': {
+            'dagree':'سرهنگ دوم پاسدار',
+            'name': 'علی اکبر',
+            'family': 'کشتکار امیری',
+            'dutiy': 'مسئول نظارت و تائید صلاحیت آموزشگاه'
+        }
+    },
+    {
+        'key': 'HIFAZAT_REPORT_REPORT',
+        'litral_name': 'گزارش بکارگیری - حفاظت اطلاعات',
+        'to': 'قسمت نیروی انسانی آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه - منابع انسانی سرباز',
+        'from': 'حفاظت اطلاعات آموزشگاه',
+        'signiture': {
+            'dagree':'سرهنگ پاسدار',
+            'name': 'سید قاسم',
+            'family': 'موسوی نژاد',
+            'dutiy': 'مسئول حفاظت و اطلاعات آموزشگاه'
+        }
+    },
+    {
+        'key': 'AQIDATI',
+        'litral_name': 'گزارش بکارگیری - عقیدتی',
+        'to': 'قسمت نیروی انسانی آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه - منابع انسانی سرباز',
+        'from': 'دفتر حوزه نمایندگی ولی فقیه در آموزشگاه - قسمت عقیدتی',
+        'signiture': {
+            'dagree':'',
+            'name': 'علی',
+            'family': 'عرب فیروزجائی',
+            'dutiy': 'مسئول قسمت عقیدتی و سیاسی آموزشگاه'
+        }
+    },
+    {
+        'key': 'NASERIN_REPORT',
+        'litral_name': 'گزارش بکارگیری - ناصرین',
+        'to': 'قسمت نیروی انسانی آموزشگاه رزم مقدماتی المهدی (عج) نیروی زمینی سپاه - منابع انسانی سرباز',
+        'from': 'قسمت آموزش آموزشگاه - کارگروه ناصرین',
+        'signiture': {
+            'dagree':'سرگرد پاسدار',
+            'name': 'مجتبی',
+            'family': 'آهنگر',
+            'dutiy': 'مسئول کارگروه ناصرین آموزشگاه'
+        }
+    },
 ]

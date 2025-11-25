@@ -313,8 +313,8 @@ class NormalLetter(models.Model):
         ('membership', 'گواهی عضویت'),
         ('service', 'گواهی اشتغال به خدمت'),
         ('request', 'نامه درخواست'),
-        ('other', 'سایر'),
         ('سنجش و ارزیابی سلامت روان', 'سنجش و ارزیابی سلامت روان'),
+        ('other', 'سایر'),
     ]
 
     soldier = models.ForeignKey('soldires_apps.Soldier', on_delete=models.CASCADE, verbose_name='سرباز')
@@ -414,11 +414,17 @@ class NormalLetterDomesticSettlement(models.Model):
     def __str__(self):
         return f'{self.get_reason_display()} - {self.subject}'
 
+from enum import Enum
+class IntroductionLetterType(Enum):
+    I =     'معرفی‌نامه'
+    L5 =    'پنج‌برگ'
+    L5I =   'پنج‌برگ+معرفی‌نامه'
 
 class IntroductionLetter(models.Model):
     LETTER_TYPE_CHOICES = [
-        ('معرفی‌نامه', 'معرفی‌نامه'),
-        ('چهاربرگ+معرفی نامه', 'چهاربرگ+معرفی نامه'),
+        (IntroductionLetterType.I.value, 'معرفی‌نامه'),
+        (IntroductionLetterType.L5.value, 'پنج برگ'),
+        (IntroductionLetterType.L5I.value, 'پنج برگ + معرفی نامه'),
     ]
 
     STATUS_CHOICES = [

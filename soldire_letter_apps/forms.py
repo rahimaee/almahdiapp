@@ -1,11 +1,12 @@
 from soldire_letter_apps.models import *
 from django import forms
-
 from soldires_apps.models import Soldier
 from units_apps.models import SubUnit
 import json
 from .models import EssentialFormCardLetter
 from units_apps.models import ParentUnit
+from .constants import *
+
 class ClearanceLetterForm(forms.ModelForm):
     class Meta:
         model = ClearanceLetter
@@ -121,10 +122,12 @@ class IntroductionLetterForm(forms.ModelForm):
 
     class Meta:
         model = IntroductionLetter
-        exclude = ['letter_number', 'status', 'created_at', 'updated_at', 'letter_type']
+        exclude = ['letter_number', 'status', 'created_at', 'updated_at','part']
+        fields = ['letter_type','soldier', 'sub_part']
         widgets = {
-            'soldier': forms.Select(attrs={'class': 'form-control'}),
-            'sub_part': forms.Select(attrs={'class': 'form-control', 'id': 'id_sub_part'}),
+            'letter_type': forms.Select(attrs={'class': 'ui-select'}),   # ← افزودیم
+            'soldier': forms.Select(attrs={'class': 'ui-select'}),
+            'sub_part': forms.Select(attrs={'class': 'ui-select', 'id': 'id_sub_part'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -142,7 +145,11 @@ class IntroductionLetterForm(forms.ModelForm):
         # اگر instance موجود باشد و sub_part انتخاب شده باشد، part را ست کن
         if self.instance.pk and self.instance.sub_part:
             self.fields['part'].initial = self.instance.sub_part.parent_unit
-
+        # ====== مقداردهی اولیه Letter Type ======  
+        # فقط وقتی مقدار نداشته باشد و instance جدید باشد
+        if not self.instance.pk and not self.initial.get('letter_type'):
+            self.initial['letter_type'] = 'معرفی‌نامه'
+            
     def clean(self):
         cleaned_data = super().clean()
         sub_part = cleaned_data.get('sub_part')
@@ -250,7 +257,6 @@ class CommitmentLetterForm(forms.ModelForm):
         }
         
 import random
-from .constants import *
 
 class EssentialFormCardLetterForm(forms.ModelForm):
     # فقط این فیلد hidden است
@@ -260,7 +266,7 @@ class EssentialFormCardLetterForm(forms.ModelForm):
     # فیلدهای پیش‌فرض فرم (نه مدل)
     title = forms.CharField(
         label="موضوع",
-        initial="تایید انجام دوره ضرورت سرباز منقضی خدمت",
+        initial="تایید انجام دوره ضرورت سرباز من قضی خدمت",
         help_text="نام سرباز در انتهای موضوع قرار میگیرد.",
     )
     receiver = forms.CharField(
@@ -326,20 +332,20 @@ class EssentialFormCardLetterForm(forms.ModelForm):
                 if field_name in self.fields:
                     continue
                 label = FIELD_LABELS.get(field_name, field_name.replace("_", " "))
-                default_value = form_data_dict.get(field_name, getattr(cls(), field_name))
+                default_value = form_data_dict.get(field_name, getattr(cls(), field_name)) or ''
                 
                 if field_name in FIELD_CHOICES:
                     self.fields[field_name] = forms.ChoiceField(
                         label=label,
                         required=False,
                         choices=FIELD_CHOICES[field_name],
-                        initial=default_value,
+                        initial=default_value or '',
                     )
                 elif field_name in ['main_image', 'normal_image']:
                     self.fields[field_name] = forms.ImageField(
                         label=label,
                         required=False,
-                        initial=default_value if default_value else None
+                        initial=default_value if default_value else ''
                     )
                 elif field_type == int:
                     self.fields[field_name] = forms.IntegerField(
@@ -378,7 +384,6 @@ class EssentialFormCardLetterForm(forms.ModelForm):
         return cleaned_data
     def save(self, commit=True):
         instance = super().save(commit=False)
-        print(instance)
         # ست کردن letter_type
         instance.letter_type = self.cleaned_data.get('letter_type') or instance.letter_type
         # ست کردن فرم داینامیک
