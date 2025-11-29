@@ -215,74 +215,169 @@
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(2px); }
     }
+    .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    .tabs .tab {
+        padding: 6px 10px;
+        border-radius: 10px;
+        font-size: 12px;
+        cursor: pointer;
+        background: #f3f4f6;
+        transition: all 0.25s ease;
+        color: #4b5563;
+    }
+    .tabs .tab:hover {
+        background: #e5e7eb;
+        
+    }
+    .tabs .tab.active {
+        background: #447df7ff;
+        color: #fff;
+        font-weight: 600;
+    }
+    .tabs .tab.active:hover {
+        background: #2563eb;
+    }
+    .tabs .tab.important {
+        background: #ffe8e8ff;
+    }
+    .tabs .tab.important.active
+    {
+        background: #fa5a32ff;
+    }
+    .tabs .tab.important.active:hover 
+    .tabs .tab.important:hover 
+    {
+        background: #c72800ff;
+    }
 
+
+    .data-empty {
+        text-align: center;
+    }
 </style>
 <style>
-.clearance-letter {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 10px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-    margin-top: 25px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    border: 1px solid #e5e7eb;
-    direction: rtl;
+    .data-list {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-
-
-/* --- Tabs --- */
-.tabs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.tabs .tab {
-    padding: 6px 10px;
-    border-radius: 10px;
-    font-size: 12px;
-    cursor: pointer;
-    background: #f3f4f6;
-    transition: all 0.25s ease;
-    color: #4b5563;
-}
-
-.tabs .tab:hover {
-    background: #e5e7eb;
-}
-
-.tabs .active {
-    background: #2563eb;
-    color: #fff;
-    font-weight: 600;
-}
-
-/* --- List --- */
-.clearance-list {
+.data-list .data-items {
     list-style: none;
     padding: 0;
     margin: 0;
+    height: 400px;
+    overflow-y: auto;
 }
 
-.clearance-list li {
-    background: #f9fafb;
-    padding: 12px 14px;
+.data-list .data-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    margin-bottom: 4px;
     border-radius: 10px;
-    margin-bottom: 8px;
-    font-size: 15px;
-    color: #374151;
-    border: 1px solid #e5e7eb;
-    transition: all 0.2s ease;
+    gap: 4px;
+    background: #fdfdfd;
+    border: 1px solid #333;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.clearance-list li:hover {
-    background: #eef2ff;
-    border-color: #c7d2fe;
-    cursor: pointer;
+
+.data-list .soldier-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
-.data-empty {
+
+.data-list .soldier-info .name {
+    font-weight: 600;
+    color: #333;
+}
+
+.data-list .soldier-info .code {
+    font-size: 1.2rem;
+    color: #333;
+    font-weight: bold;
+}
+
+.data-list .letter-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.data-list .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
     text-align: center;
+    min-width: 100px;
 }
 
+/* رنگ‌بندی بر اساس علت نامه */
+.data-list .badge.پایان-خدمت { background: #4CAF50; }        /* سبز */
+.data-list .badge.قبولی-در-دانشگاه { background: #2196F3; }   /* آبی */
+.data-list .badge.انتقال { background: #FF9800; }             /* نارنجی */
+.data-list .badge.معافیت-دائم { background: #F44336; }       /* قرمز */
+
+.data-list .issue-date {
+    font-size: 1rem;
+    color: #555;
+    font-weight: bold;
+    margin-bottom: 2px;
+    text-align: center;
+    width: 100%;
+}
+
+.data-list .data-empty {
+    text-align: center;
+    padding: 12px 0;
+    color: #888;
+    font-style: italic;
+}
+.letter-actions {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    min-width: 24px;
+    height: 24px;
+    min-height: 24px;
+    border: none;
+    border-radius: 6px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+    padding: 0;
+    font-size: 12px; /* برای Font Awesome */
+    color: #555;
+}
+
+.action-btn:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-1px);
+}
+
+.action-btn.view {
+    color: #2196F3; /* آبی برای مشاهده */
+}
+
+.action-btn.print {
+    color: #4CAF50; /* سبز برای چاپ */
+}
 </style>

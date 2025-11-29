@@ -1,0 +1,66 @@
+<style>
+    .registration-item {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 10px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+        margin-top: 25px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e5e7eb;
+        direction: rtl;
+    }
+</style>
+
+
+<div id="registration-item-tab" class="registration-item">
+    <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom: 10px;">
+        <h5 style="margin: 0;padding: 0;" class="mb-3">پذیرش سربازان یگان</h5>
+        <!-- Tabs -->
+        <div id="registration-tabs" class="tabs" style="margin: 0;">
+            <span class="tab active" data-target="registration-today">
+                امروز ({{ registrations.today|length }})
+            </span>
+            <span class="tab" data-target="registration-3">
+                3 روز گذشته ({{ registrations.r_day3|length }})
+            </span>
+            <span class="tab" data-target="registration-7">
+                7 روز گذشته ({{ registrations.r_day7|length }})
+            </span>
+            <span class="tab" data-target="registration-30">
+                30 روز گذشته ({{ registrations.r_day30|length }})
+            </span>
+
+        </div>
+    </div>
+    {% include 'components/soldiers_minimal_list.html' with soldiers=registrations.today    data_target="registration-today" %}
+    {% include 'components/soldiers_minimal_list.html' with soldiers=registrations.r_day3   data_target="registration-3" %}
+    {% include 'components/soldiers_minimal_list.html' with soldiers=registrations.r_day7   data_target="registration-7" %}
+    {% include 'components/soldiers_minimal_list.html' with soldiers=registrations.r_day30  data_target="registration-30"  %}
+</div>
+
+
+<script>
+    const registration_tabs = document.querySelectorAll("#registration-tabs .tab");
+
+    const registrationUpdateTabState=(activeTab)=>{
+        panels = document.querySelectorAll("#registration-item-tab .data-items")
+        panels.forEach(list => {
+            list.style.display = "none";
+        });
+        const target = activeTab.getAttribute("data-target");
+
+        document.getElementById(target).style.display = "block";
+    }
+
+    registration_tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+                registration_tabs.forEach(t => t.classList.remove("active"));
+                tab.classList.add("active");
+                registrationUpdateTabState(tab)
+        });
+    })
+
+    const registration_activeTab = document.querySelector("#registration-tabs .tab.active");
+    registrationUpdateTabState(registration_activeTab)
+
+</script>

@@ -1,0 +1,105 @@
+/* کارت‌ها */
+.bg-white, .bg-orange-100, .bg-yellow-100, .bg-purple-100 {
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+}
+
+/* عناوین بخش‌ها */
+h3 {
+    font-weight: 700;
+    font-size: 1.5rem; /* بزرگ‌تر برای برجسته شدن */
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* جدول‌ها */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 100%;
+    table-layout: auto;
+    font-weight: bolder;
+    font-size: 1.4rem; /* بزرگ‌تر برای خوانایی بهتر */
+}
+
+.table tbody tr td  {
+    font-size: 1.8rem;
+}
+.table th, .table td {
+    padding: 14px 16px;
+    text-align: center;
+    border: 1px solid rgb(49, 49, 49) !important;
+
+}
+
+/* هدر جدول */
+.table thead th {
+    background: linear-gradient(90deg, #4a90e2, #357ABD);
+    color: #fff;
+    font-weight: bolder;
+    font-size: 1.4rem;
+
+}
+.table > tbody > tr.total> td, .table tbody > tr.sum-row >  td
+.table > tbody > tr.total> th, .table tbody > tr.sum-row >  th
+{
+    background-color: #fde68a; /* زرد روشن */
+    font-weight: 700;
+}
+/* ردیف‌های tbody */
+.table tbody tr:nth-child(odd) {
+    background-color: #f7f9fc;
+
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+.table tbody tr.total {
+    font-weight: 700;
+}
+
+/* رنگ‌بندی بخش‌ها */
+.health-status th {
+    background: linear-gradient(90deg, #f59e0b, #f97316);
+    color: #fff;
+
+}
+
+.rank-inventory th {
+    background: linear-gradient(90deg, #facc15, #eab308);
+    color: #fff;
+}
+
+.religion-others th {
+    background: linear-gradient(90deg, #c084fc, #9333ea);
+    color: #fff;
+}
+
+/* جدول ریسپانسیو */
+.table-responsive {
+    overflow-x: auto;
+}
+.table>thead>tr>th.rotate  {
+    writing-mode: vertical-rl;
+    /* چرخش متن به صورت افقی */
+    transform: rotate(180deg);
+    text-align: center;
+    vertical-align:center; 
+}
+/* ریسپانسیو */
+@media (max-width: 992px) {
+    .table th, .table td {
+        font-size: 1rem;
+        padding: 12px 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .table {
+        font-size: 0.95rem;
+    }
+}

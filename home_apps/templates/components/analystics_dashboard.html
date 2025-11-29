@@ -1,0 +1,291 @@
+<style>
+    /* --- Layout --- */
+    .dashboard {
+        font-family: "IRANSans", sans-serif;
+    }
+    .dashboard.row .card-box {
+        padding: 10px;
+    }
+
+    /* گروه‌ها */
+    .stat-group {
+        padding: 20px;
+        border-radius: 18px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.30);
+        color: white;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    /* عنوان */
+    .stat-title {
+        font-size: 26px;
+        font-weight: bold;
+        padding: 0;
+        margin: 0;
+        margin-bottom: 6px;
+        text-align: right;
+    }
+
+    .stat-value {
+        font-size: 32px;
+        font-weight: 900;
+    }
+
+    /* چیدمان کارت‌ها */
+    .stat-cards {
+        padding: 0 20px;
+    }
+
+    .stat-card-group {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: start;
+        gap: 4px;
+    }
+    .stat-card-group {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* سه ستون */
+        gap: 6px; 
+    }
+    /* آیتم‌های داخل کارت – حالت شیشه‌ای */
+    .stat-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255,255,255,0.15);
+        padding: 6px 16px;
+        border-radius: 6px;
+        backdrop-filter: blur(8px);
+        font-size: 18px;
+        transition: 0.25s;
+    }
+
+
+    .stat-item h6 ,.stat-item span {
+        font-size: 16px;
+        font-weight: bold;
+        padding: 0;
+        margin: 0;
+    }
+
+    .stat-item:hover {
+        background: rgba(255,255,255,0.25);
+    }
+
+
+    /* دکمه‌ها */
+    .btn-box {
+        border-top: 2px solid #ffffff77;
+        text-align: left;
+        margin-top: 5px;
+        padding-top: 5px;
+    }
+
+
+
+
+    /* --- گرادیان‌ها --- */
+
+    .gradient-blue {
+        background: linear-gradient(135deg, #1e3a8a, cornflowerblue);
+    }
+
+    .gradient-green {
+        background: linear-gradient(135deg, #14532d, #309257ff);
+    }
+
+    .gradient-red {
+        background: linear-gradient(135deg, #550d0dff, #992b2bff);
+    }
+    .gradient-purple {
+        background: linear-gradient(135deg, #471e8aff, rgba(120, 30, 138, 1));
+    }
+
+    .gradient-gray {
+        background: linear-gradient(135deg, #4d504eff, #101311ff);
+    }
+    .stat-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    /* ریسپانسیو */
+    @media (max-width: 900px) {
+        .dashboard {
+            flex-direction: column;
+        }
+    }
+    /* گرید داخلی – ۳ → ۲ → ۱ ستون */
+    .stat-card-group {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+    }
+
+    @media (max-width: 1100px) {
+        .stat-card-group {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 600px) {
+        .stat-card-group {
+            grid-template-columns: repeat(1, 1fr);
+        }
+    }
+
+    /* گرید باکس‌های اصلی – ۳ ستون → زیر هم */
+    @media (max-width: 900px) {
+        .dashboard {
+            flex-direction: column;
+        }
+    }
+</style>
+<style>
+    /* Dropdown Container */
+    .dropdown {
+        position: relative;
+        display: inline-block;
+        margin-left: 6px;
+    }
+
+    /* Button */
+    .dropdown-btn {
+        padding: 8px 16px;
+        border-radius: 10px;
+        background: #ffffff;
+        color: #000;
+        cursor: pointer;
+        border: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: 0.25s;
+    }
+
+    /* Hover */
+    .dropdown-btn:hover:not(.disabled-action) {
+        background: #e6e6e6;
+    }
+
+    /* Disabled Button */
+    .disabled-action {
+        background: #cccccc !important;
+        color: #666 !important;
+        cursor: not-allowed !important;
+        opacity: 0.7;
+    }
+
+    /* Dropdown Box */
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        background: #ffffff;
+        padding: 8px 0;
+        border-radius: 10px;
+        min-width: 280px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+        z-index: 200;
+    }
+
+    /* Dropdown Items */
+    .dropdown-content a {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        padding: 10px 12px;
+        text-decoration: none;
+        color: #000;
+        font-weight: 600;
+        font-size: 15px;
+    }
+
+    /* Hover on Items */
+    .dropdown-content a:hover {
+        background: rgba(0,0,0,0.08);
+    }
+
+    /* Show on Hover */
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+    .stat-cards .row .item {
+        padding: 2px;
+    }
+    .action-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+   
+</style>
+<div class="dashboard row">
+
+    {% for group in analytics %}
+        <div class="card-box col-md-{{group.col|default:"4"}}">
+            <div class="stat-group {{ group.gradient }}">
+                <!-- عنوان -->
+                <div class="stat-head">
+                    <h2 class="stat-title">{{ group.label }}</h2>
+                    <div class="stat-value">{{ group.count }}</div>
+                </div>
+
+                <!-- گرید آمار -->
+                <div class="stat-cards">
+                    <div  class="row">
+                        {% for item in group.items %}
+                        <div  class="item col-md-{{group.itemsCol|default:'4'}}">
+                            <div class="stat-item">
+                                <h6>{{ item.label }}</h6>
+                                <span>{{ item.count }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% if request.user.is_staff %}
+                    <!-- دکمه‌ها + Dropdown -->
+                    <div class="btn-box">
+                        {% for action in group.actions %}
+                        <div class="dropdown">
+
+                            <button 
+                                class="dropdown-btn {% if action.disabled %}disabled-action{% endif %}" 
+                                {% if action.disabled %}disabled{% endif %}
+                            >
+                                {{ action.icon }} {{ action.label }}
+                            </button>
+
+                            {% if not action.disabled %}
+                            <div class="dropdown-content">
+                                {% if group.query %}
+                                    <a class="action-link" href="{% url action.base %}?parent={{ group.query }}">
+                                        <span>{{ group.label }}</span>
+                                        <span>{{ action.icon }}</span>
+                                    </a>
+                                {% endif %}
+
+                                {% for item in group.items %}
+                                    <a class="action-link" href="{% url action.base %}?parent={{ group.query }}&item={{ item.query }}">
+                                        <span>{{ group.label }} {{ item.label }}</span>
+                                        <span>{{ action.icon }}</span>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+    {% endfor %}
+
+</div>

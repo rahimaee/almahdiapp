@@ -11,160 +11,22 @@
     <div>
         <div class="row ">
             <div class="col-md-12">
-                <div class="shadow-card">
-                    <div class="soldier-status">
-                        <div class="soldier-item soldier-total">
-                            <div class="item-content">
-                                <span class="label">کل سربازان</span>
-                                <span class="value">{{ stats.all_soldiers }} نفر</span>
-                            </div>
-                            <a class="btn-download" href="{% url 'export_soldiers' %}?category=all" target="_blank">📥 اکسل</a>
-                        </div>
-
-                        <div class="soldier-item soldier-active">
-                            <div class="item-content">
-                                <span class="label">حاضر</span>
-                                <span class="value">{{ stats.active_soldiers }} نفر</span>
-                            </div>
-                            <a class="btn-download" href="{% url 'export_soldiers' %}?category=active" target="_blank">📥 اکسل</a>
-                        </div>
-
-                        <div class="soldier-item soldier-forari">
-                            <div class="item-content">
-                                <span class="label">فراری</span>
-                                <span class="value">{{ stats.fugitives }} نفر</span>
-                            </div>
-                            <a class="btn-download" href="{% url 'export_soldiers' %}?category=fugitives" target="_blank">📥 اکسل</a>
-                        </div>
-                                    <!-- 45 روز مانده -->
-                        <div class="soldier-item soldier-single alarm-blink">
-                            <div class="item-content">
-                                <span class="label">45 روز تا پایان خدمت</span>
-                                <span class="value">{{ stats.soldiers_45_to_end }} نفر</span>
-                            </div>
-                            <a class="btn-download" href="{% url 'soldier_list' %}?remainingFilter=remaining45" target="_blank">مشاهده</a>
-                        </div>
-                            <div class="soldier-item soldier-financial-debt">
-                                <div class="item-content">
-                                    <span class="label">جذبی های المهدی</span>
-                                    <span class="value">{{ stats.financial_debt }} نفر</span>
-                                </div>
-                                <a class="btn-download" href="{% url 'export_soldiers' %}?category=financial_debt" target="_blank">
-                                    📥 اکسل
-                                </a>
-                            </div>
-                            <div class="soldier-item soldier-financial-debt">
-                                <div class="item-content">
-                                    <span class="label">پذیرش سرباز</span>
-                                    <span class="value">{{ stats.jazbi }} نفر</span>
-                                </div>
-                                <a class="btn-download" href="{% url 'export_soldiers' %}?category=jazbi" target="_blank">
-                                    📥 اکسل
-                                </a>
-                            </div>
-
-                    </div>
-
-                </div>
+                {% include "../components/analystics_dashboard.html" %}
             </div>
-            <div   class="col-md-2">
-                <div class="quick-access-box">
-                    <h5 class="mb-3">🧭 دسترسی سریع به نامه ها</h5>
-                    <div class="letters-container">
-                        {% if request.user.is_staff %}
-                            <div class="letter-box">
-                                <a class="letter-text" href="{% url 'ClearanceLetterListView' %}">فهرست نامه تسویه‌حساب اصلی</a>
-                                <span class="letter-icon">📩</span>
-                            </div>
-                            <div class="letter-box">
-                                <a class="letter-text" href="{% url 'normal_letter_list' %}">فهرست نامه‌های عادی</a>
-                                <span class="letter-icon">🧾</span>
-                            </div>
-                            <div class="letter-box">
-                                <a class="letter-text" href="{% url 'judicial_inquiry_list' %}">فهرست استعلام قضایی</a>
-                                <span class="letter-icon">⚖️</span>
-                            </div>
-
-                            <div class="letter-box">
-                                <a class="letter-text" href="{% url 'domestic_settlement_list' %}">فهرست تسویه حساب داخلی</a>
-                                <span class="letter-icon">🏛️</span>
-                            </div>
-                            <div class="letter-box">
-                                <a class="letter-text" href="{% url 'introduction_letter_list' %}">فهرست نامه معرفی</a>
-                                <span class="letter-icon">👤</span>
-                            </div>
-                            <div class="letter-box">
-                                <a class="letter-text" href="{% url 'membership_certificate_list' %}">فهرست گواهی عضویت</a>
-                                    <span class="letter-icon">📜</span>
-                            </div>
-                            <div class="letter-box">
-                                <a class="letter-text" href="{% url 'health_iodine_letter_list' %}">فهرست تاییدیه  سلامت</a>
-                                <span class="letter-icon">🏥</span>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        <div class="col-md-5 ">
-            <div id="clearance-letter-tab" class="clearance-letter">
-                <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom: 10px;">
-                    <h5 style="margin: 0;padding: 0;" class="mb-3">تسویه حساب‌ها</h5>
-                    <!-- Tabs -->
-                    <div id="clearance-tabs" class="tabs" style="margin: 0;">
-                        <span class="tab active" data-target="today-list">
-                            امروز ({{ clearance_letters.today|length }})
-                        </span>
-                        <span class="tab" data-target="no-accepted-list">
-                            درحال تحویل ({{ clearance_letters.no_accepted|length }})
-                        </span>
-                        <span class="tab" data-target="week-list">
-                            7 روز گذشته ({{ clearance_letters.last_week|length }})
-                        </span>
-                        <span class="tab" data-target="month-list">
-                            30 روز گذشته ({{ clearance_letters.last_month|length }})
-                        </span>
-
-                    </div>
-                </div>
-                {% include 'components/clearance_letter_list.html' with letters=clearance_letters.today data_target="today-list" %}
-                {% include 'components/clearance_letter_list.html' with letters=clearance_letters.last_week data_target="week-list" %}
-                {% include 'components/clearance_letter_list.html' with letters=clearance_letters.last_month data_target="month-list" %}
-                {% include 'components/clearance_letter_list.html' with letters=clearance_letters.no_accepted data_target="no-accepted-list"  %}
-            
-            </div>
-           
+        <div  class="col-md-2">
+            {% include "../components/quick_access.html" %}
         </div>
-
+        <div class="col-md-5 ">
+            {% include "../components/clearances_with_tabs.html" %}
+        </div>
+        <div class="col-md-5 ">
+            {% include "../components/registration_with_tabs.html" %}
+        </div>
         </div>
     </div>
 
 {% endblock %}
 
 {% block footer %} 
-<script>
-    const tabs = document.querySelectorAll("#clearance-tabs .tab");
-
-    const updateTabState=(activeTab)=>{
-        panels = document.querySelectorAll("#clearance-letter-tab .letters")
-        panels.forEach(list => {
-            list.style.display = "none";
-        });
-        const target = activeTab.getAttribute("data-target");
-
-        document.getElementById(target).style.display = "block";
-    }
-
-    tabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-                tabs.forEach(t => t.classList.remove("active"));
-                tab.classList.add("active");
-                updateTabState(tab)
-        });
-    })
-
-    const activeTab = document.querySelector("#clearance-tabs .tab.active");
-    updateTabState(activeTab)
-
-</script>
 
 {% endblock %}

@@ -959,11 +959,13 @@ def soldiers_search(request):
 
 
 from soldier_service_apps.models import SoldierService,get_service
+from soldier_vacation_apps.models import LeaveBalance
 
 def single_reports_soldier(request, soldier_id=None):
     soldier = get_object_or_404(Soldier, id=soldier_id)
 
     service = get_service(soldier)
+    leave = get_object_or_404(LeaveBalance,soldier=soldier)
 
     # تاریخ امروز
     today = timezone.localdate()  # یا datetime.date.today()
@@ -971,6 +973,7 @@ def single_reports_soldier(request, soldier_id=None):
     context = {
         'soldier': soldier,
         'service': service,
+        'leave': leave,
         'today': today,
     }
     return render(request, 'soldires_apps/single_reports_soldier.html', context)

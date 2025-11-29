@@ -1,0 +1,34 @@
+<div class="quick-access-box">
+    <h5 class="mb-3">🧭 دسترسی سریع به نامه ها</h5>
+    <div class="letters-container">
+            <div class="letter-box">
+                <a class="letter-text" href="{% url 'ClearanceLetterListView' %}">فهرست نامه تسویه‌حساب اصلی</a>
+                <span class="letter-icon">📩</span>
+            </div>
+            <div class="letter-box">
+                <a class="letter-text" href="{% url 'normal_letter_list' %}">فهرست نامه‌های عادی</a>
+                <span class="letter-icon">🧾</span>
+            </div>
+            <div class="letter-box">
+                <a class="letter-text" href="{% url 'judicial_inquiry_list' %}">فهرست استعلام قضایی</a>
+                <span class="letter-icon">⚖️</span>
+            </div>
+
+            <div class="letter-box">
+                <a class="letter-text" href="{% url 'domestic_settlement_list' %}">فهرست تسویه حساب داخلی</a>
+                <span class="letter-icon">🏛️</span>
+            </div>
+            <div class="letter-box">
+                <a class="letter-text" href="{% url 'introduction_letter_list' %}">فهرست نامه معرفی</a>
+                <span class="letter-icon">👤</span>
+            </div>
+            <div class="letter-box">
+                <a class="letter-text" href="{% url 'membership_certificate_list' %}">فهرست گواهی عضویت</a>
+                    <span class="letter-icon">📜</span>
+            </div>
+            <div class="letter-box">
+                <a class="letter-text" href="{% url 'health_iodine_letter_list' %}">فهرست تاییدیه  سلامت</a>
+                <span class="letter-icon">🏥</span>
+            </div>
+    </div>
+</div>

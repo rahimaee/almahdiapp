@@ -1,0 +1,131 @@
+<style>
+    .clearance-letter {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 10px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+        margin-top: 25px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        border: 1px solid #e5e7eb;
+        direction: rtl;
+    }
+    .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    .tabs .tab {
+        padding: 6px 10px;
+        border-radius: 10px;
+        font-size: 12px;
+        cursor: pointer;
+        background: #f3f4f6;
+        transition: all 0.25s ease;
+        color: #4b5563;
+    }
+    .tabs .tab:hover {
+        background: #e5e7eb;
+    }
+    .tabs .active {
+        background: #2563eb;
+        color: #fff;
+        font-weight: 600;
+    }
+    .clearance-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .clearance-list li {
+        background: #f9fafb;
+        padding: 12px 14px;
+        border-radius: 10px;
+        margin-bottom: 8px;
+        font-size: 15px;
+        color: #374151;
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s ease;
+    }
+    .clearance-list li:hover {
+        background: #eef2ff;
+        border-color: #c7d2fe;
+        cursor: pointer;
+    }
+    .data-empty {
+        text-align: center;
+    }
+        .clearance-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .clearance-list li {
+        background: #f9fafb;
+        padding: 12px 14px;
+        border-radius: 10px;
+        margin-bottom: 8px;
+        font-size: 15px;
+        color: #374151;
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s ease;
+    }
+    .clearance-list li:hover {
+        background: #eef2ff;
+        border-color: #c7d2fe;
+        cursor: pointer;
+    }
+</style>
+
+
+<div id="clearance-letter-tab" class="clearance-letter">
+    <div style="display: flex;align-items: center;justify-content: space-between;margin-bottom: 10px;">
+        <h5 style="margin: 0;padding: 0;" class="mb-3">تسویه حساب‌ها</h5>
+        <!-- Tabs -->
+        <div id="clearance-tabs" class="tabs" style="margin: 0;">
+            <span class="tab active" data-target="today-list">
+                امروز ({{ clearance_letters.today|length }})
+            </span>
+            <span class="tab important" data-target="no-accepted-list">
+                درحال تحویل ({{ clearance_letters.no_accepted|length }})
+            </span>
+            <span class="tab" data-target="week-list">
+                7 روز گذشته ({{ clearance_letters.last_week|length }})
+            </span>
+            <span class="tab" data-target="month-list">
+                30 روز گذشته ({{ clearance_letters.last_month|length }})
+            </span>
+
+        </div>
+    </div>
+    {% include 'components/clearance_letter_list.html' with letters=clearance_letters.today data_target="today-list" %}
+    {% include 'components/clearance_letter_list.html' with letters=clearance_letters.last_week data_target="week-list" %}
+    {% include 'components/clearance_letter_list.html' with letters=clearance_letters.last_month data_target="month-list" %}
+    {% include 'components/clearance_letter_list.html' with letters=clearance_letters.no_accepted data_target="no-accepted-list"  %}
+</div>
+
+
+<script>
+    const tabs = document.querySelectorAll("#clearance-tabs .tab");
+
+    const updateTabState=(activeTab)=>{
+        panels = document.querySelectorAll("#clearance-letter-tab .data-items")
+        panels.forEach(list => {
+            list.style.display = "none";
+        });
+        const target = activeTab.getAttribute("data-target");
+
+        document.getElementById(target).style.display = "block";
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+                tabs.forEach(t => t.classList.remove("active"));
+                tab.classList.add("active");
+                updateTabState(tab)
+        });
+    })
+
+    const activeTab = document.querySelector("#clearance-tabs .tab.active");
+    updateTabState(activeTab)
+
+</script>

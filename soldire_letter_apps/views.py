@@ -689,7 +689,12 @@ def membership_certificate_print(request, pk):
         letter.subject = certificate.subject or letter.subject
     context = {
         'certificate': certificate,
-        'letter': letter
+        'letter': letter,
+        'signature':{
+            "name": "علی متولی طاهر",
+            "degree": "سرهنگ پاسدار",
+            "duty": "فرمانده",
+        }
     }
     return render(request, 'soldire_letter_apps/print_membership_certificate.html', context)
 

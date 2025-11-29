@@ -1,0 +1,24 @@
+{% load jalali_filters %}
+{% load extra_filters %}
+<div  class="data-list">
+    <ul id="{{data_target}}" class="data-items">
+        {% if soldiers %}
+            {% for s in soldiers %}
+                <li class="data-item">
+                    <div style="flex:1;" class="soldier-info">
+                        <div class="name">{{ s.first_name }} {{ s.last_name }}</div>
+                        <span class="code">کدملی :{{ s.national_code }}</span>
+                    </div>
+                    <div  class="letter-info">
+                        <div  class="issue-date">تاریخ ورود : {{ s.service_entry_date|to_jalali }}</div>
+                    </div>
+                    <div class="letter-actions">
+
+                    </div>
+                </li>
+            {% endfor %}
+        {% else %}
+            <li class="data-empty">هیچ اطلاعاتی جهت نمایش موجود نیست.</li>
+        {% endif %}
+    </ul>
+</div>

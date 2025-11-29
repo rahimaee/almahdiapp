@@ -7,7 +7,7 @@ from django.utils.dateparse import parse_date
 from almahdiapp.utils.date import shamsi_to_gregorian
 from soldires_apps.utils import map_rank_number_to_choice
 from .enums import ClearanceLetterEnum 
-
+import jdatetime
 
 class ClearanceLetter(models.Model):
     CLEARANCE_REASON_CHOICES = [
@@ -21,7 +21,7 @@ class ClearanceLetter(models.Model):
         ('ایجاد شده', 'ایجاد شده'),
         ('چاپ و درحال بررسی', 'چاپ و درحال بررسی'),
         ('تأیید شده', 'تأیید شده'),
-        ('تأیید نهایی', 'تأیید نهایی'),
+        ('تأییدنهایی', 'تأیید نهایی'),
     ]
     ACTION_CHOICES = [
         ("approve_page_results", "📋 انتخاب گروهی نتایج این صفحه"),
@@ -41,6 +41,15 @@ class ClearanceLetter(models.Model):
     description = models.TextField(blank=True, null=True, verbose_name="توضیحات")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="تاریخ ثبت")
     status = models.CharField(max_length=100, choices=CLEARANCE_STATUS_CHOICES, verbose_name="وضعیت نامه", default='ایجاد شده')
+
+    @property
+    def is_final_approval(self):
+        approval_keys = [
+            'تأیید نهایی ',
+            'تأیید نهایی',
+            'تأیید شده'
+        ]
+        return self.status in approval_keys
 
     # 🔹 فیلد جدید:
     expired_file_number = models.CharField(
@@ -165,10 +174,9 @@ class ClearanceLetter(models.Model):
             self.letter_number = None
         
         if not self.letter_number:
-            # فرض بر این است که Soldier دارای فیلد national_code می‌باشد
-            national_code = self.soldier.national_code[-4:]  # ۴ رقم آخر کد ملی
-            date_part = timezone.now().strftime('%Y%m%d')  # تاریخ به صورت YYYYMMDD
-            self.letter_number = f"CL-{national_code}-{date_part}"
+            now = jdatetime.datetime.now()
+            time_part = f"{now.hour:02d}{now.minute:02d}"
+            self.letter_number = f"9-{time_part}"
             # اطمینان از یونیک بودن:
             counter = 1
             base_letter_number = self.letter_number
@@ -335,10 +343,18 @@ class NormalLetter(models.Model):
         super().save(*args, **kwargs)
 
     def generate_letter_number(self):
-        # ترکیب تاریخ و ID موقتی برای شماره یکتا
-        date_str = timezone.now().strftime('%y%m%d')
-        last_id = (NormalLetter.objects.aggregate(models.Max('id'))['id__max'] or 0) + 1
-        return f"LTR-{date_str}-{last_id:05d}"
+        now = jdatetime.datetime.now()
+        time_part = f"{now.hour:02d}{now.minute:02d}"
+        letter_number = f"1-{time_part}"
+        # اطمینان از یونیک بودن:
+        counter = 1
+        base_letter_number = self.letter_number
+        while NormalLetter.objects.filter(letter_number=self.letter_number).exists():
+            self.letter_number = f"{base_letter_number}-{counter}"
+            counter += 1
+            
+            
+        return letter_number
 
     def __str__(self):
         return f'{self.letter_number} - {self.get_letter_type_display()} - {self.soldier}'
@@ -461,8 +477,18 @@ class IntroductionLetter(models.Model):
         super().save(*args, **kwargs)
 
     def generate_letter_number(self):
-        # می‌تونی اینجا فرمت دلخواهت رو تعریف کنی مثلاً با تاریخ یا شماره تصادفی
-        return f"LT-{uuid.uuid4().hex[:8]}"
+        now = jdatetime.datetime.now()
+        time_part = f"{now.hour:02d}{now.minute:02d}"
+        letter_number = f"2-{time_part}"
+        # اطمینان از یونیک بودن:
+        counter = 1
+        base_letter_number = self.letter_number
+        while NormalLetter.objects.filter(letter_number=self.letter_number).exists():
+            self.letter_number = f"{base_letter_number}-{counter}"
+            counter += 1
+            
+            
+        return letter_number
 
 
 class MembershipCertificate(models.Model):
@@ -590,12 +616,17 @@ class RunawayLetter(models.Model):
 
     def save(self, *args, **kwargs):
         with transaction.atomic():
-            # اگر شماره نامه یکتا نساخته شده باشد، بساز
+        
             if not self.letter_number:
-                today = timezone.now().strftime("%y%m%d")
-                last_item = RunawayLetter.objects.order_by('-id').first()
-                next_id = (last_item.id + 1) if last_item else 1
-                self.letter_number = f"ESC-{today}-{next_id:05d}"
+                now = jdatetime.datetime.now()
+                time_part = f"{now.hour:02d}{now.minute:02d}"
+                self.letter_number = f"8-{time_part}"
+                # اطمینان از یونیک بودن:
+                counter = 1
+                base_letter_number = self.letter_number
+                while RunawayLetter.objects.filter(letter_number=self.letter_number).exists():
+                    self.letter_number = f"{base_letter_number}-{counter}"
+                    counter += 1
             # ساخت یا بروزرسانی NormalLetter مرتبط
             if not self.normal_letter:
                 normal_letter = NormalLetter.objects.create(

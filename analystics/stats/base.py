@@ -8,7 +8,7 @@ class StatItem:
 
 class StatBase:
     base_queryset = None  # اگر None باشد، باید get_queryset override شود
-
+    label = '',
     def __init__(self, parent=None):
         if parent:
             # استفاده از queryset والد، بدون وابستگی

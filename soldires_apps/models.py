@@ -47,6 +47,14 @@ class Soldier(models.Model):
         verbose_name="کد سازمانی",
         related_name="soldiers"  # حالا می‌توان به همه سربازان یک کد دسترسی داشت
     )
+    
+    @property
+    def organizational_code_display(self):
+        if not self.organizational_code:
+            return None
+        
+        return self.organizational_code.code_number
+    
     @property
     def is_active_code(self):
         """

@@ -38,10 +38,13 @@ class SoldierService(models.Model):
     main_service_days = models.PositiveIntegerField("خدمت اصلی به روز", default=0, blank=True, null=True)
     secondary_service_days = models.PositiveIntegerField("کمکی (خدمت اصلی)", default=0, blank=True, null=True)
 
+    
     # خدمت دوره ضرورت
     mandatory_service_months = models.PositiveIntegerField("خدمت دوره ضرورت (به ماه)", default=0, blank=True, null=True)
     notes = models.TextField("توضیحات", blank=True, null=True)
 
+    # service_end_24m
+    # service_end_21m
     def calculate_reduction_total(self):
         self.reduction_total = sum([
             self.reduction_veterans,

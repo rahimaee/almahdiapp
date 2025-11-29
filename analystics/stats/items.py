@@ -103,8 +103,12 @@ class ExemptBSoldiers(StatBase):
     base_queryset = Soldier.objects.filter(is_checked_out=False, is_fugitive=False)
 
     def get_queryset(self):
-        return self.queryset.filter(health_status="معاف از رزم گروه ب")
-
+        safe_values = [
+            'گروه ب',
+            'معاف از رزم + گروه ب',
+            'معاف از رزم+گروه ب',
+        ]
+        return self.queryset.filter(health_status__in=safe_values)
 
 # =====================
 # وضعیت تحصیلی
@@ -164,3 +168,57 @@ class MonthlyEntrySoldiers(StatBase):
         today = timezone.now().date()
         month_start = today.replace(day=1)
         return self.queryset.filter(service_entry_date__gte=month_start)
+
+
+# =====================
+# وضعیت تاهل
+# =====================
+
+class MarriedSoldiers(StatBase):
+    base_queryset = Soldier.objects.filter(is_checked_out=False)
+
+    def get_queryset(self):
+        return self.queryset.filter(marital_status="متاهل")
+
+
+class SingleSoldiers(StatBase):
+    base_queryset = Soldier.objects.filter(is_checked_out=False)
+
+    def get_queryset(self):
+        return self.queryset.filter(marital_status="مجرد")
+
+
+class EducationGroup(StatBase):
+    """برگرداندن تعداد سربازان بر اساس مدرک به صورت دیکشنری"""
+    base_queryset = Soldier.objects.filter(is_checked_out=False)
+
+    def get_queryset(self):
+        return self.queryset
+
+    def get_grouped_counts(self):
+        qs = self.get_queryset()
+        result = {}
+
+        # degree_choices از مدل Soldier خوانده می‌شود
+        for degree, _ in Soldier._meta.get_field("degree").choices:
+            result[degree] = qs.filter(degree=degree).count()
+
+        return result
+
+
+class RankGroup(StatBase):
+    """برگرداندن تعداد سربازان بر اساس درجه به صورت دیکشنری"""
+    base_queryset = Soldier.objects.filter(is_checked_out=False)
+
+    def get_queryset(self):
+        return self.queryset
+
+    def get_grouped_counts(self):
+        qs = self.get_queryset()
+        result = {}
+
+        # rank_choices از مدل Soldier خوانده می‌شود
+        for rank, _ in Soldier._meta.get_field("rank").choices:
+            result[rank] = qs.filter(rank=rank).count()
+
+        return result

@@ -2,6 +2,7 @@
 {% load static %}
 {% load jalali_filters %}
 {% load render_partial %}
+{% load req %}
 
 {% block header %}
 <style id="print-style">
@@ -30,15 +31,15 @@
       page-break-after: avoid;
       page-break-before: avoid;
    }
-  .info-table td:empty {
+   .info-table tr td:empty {
     background-color:#fff !important;
   }
-   .info-table td {
+   .info-table  td {
       font-size:13px !important;
    }
 }  
 .info-table td:empty {
-    background-color: #ff0000ff !important;
+    background-color: #ff7979ff !important;
 }
 .page-title{
    text-align:center !important;
@@ -59,7 +60,7 @@
 .column.col2 {
     flex: 3 !important;
 }
-.column.col2 .info-table {
+.column .info-table {
    margin-bottom: 10px !important;
 }
 
@@ -176,6 +177,7 @@
     font-size: 12px;
 }
 
+
 </style>
 
 {% endblock %}
@@ -195,6 +197,17 @@
          </div>
       </div>
       <div class="card-box guide-box">
+         <h3 class="card-title">بروزرسانی اطلاعات </h3>
+         <div class="card-content guide-content">
+            <h3 class="text-center">درحال تکمیل...</h3>
+            <ul>
+               <li>اطلاعات کسری و اضافه خدمت سرباز به‌صورت خودکار از سامانه بارگذاری می‌شود.</li>
+               <li>در صورت تغییر یا اصلاح، اعداد به‌روزرسانی خواهند شد.</li>
+               <li>برای مشاهده جزئیات هر کسری یا اضافه خدمت، جدول مربوطه را بررسی کنید.</li>
+            </ul>
+         </div>
+      </div>
+      <div class="card-box guide-box">
          <h3 class="card-title">❓ راهنمای استفاده از صفحه</h3>
          <div class="card-content guide-content">
             <ul>
@@ -211,125 +224,149 @@
    <div class="print-segment print-only">
       <div class="page A4">
          <h3 class="page-title" >گزارش انفرادی</h3>
-  <div class="columns">
-    <!-- ستون سمت چپ -->
-    <div class="column col1">
-      <table class="info-table">
-         <tbody>
-            <tr><td>کد سازمانی</td><td>246</td></tr>
-         </tbody>
-      </table>
-      <table class="info-table">
-         <tbody>
-            <tr><td>نام</td><td>عادل</td></tr>
-            <tr><td>نام خانوادگی</td><td>شعبانی</td></tr>
-            <tr><td>شماره ملی</td><td>2130646336</td></tr>
-            <tr><td>نام پدر</td><td>محمود</td></tr>
-            <tr><td>کد پاسداری</td><td>75137809</td></tr>
-            <tr><td>حکم کارگزینی</td><td>*</td></tr>
-            <tr><td>تاریخ تولد</td><td>1378/05/17</td></tr>
-            <tr><td>محل صدور</td><td>آمل</td></tr>
-            <tr><td>وضعیت تاهل</td><td>مجرد</td></tr>
-            <tr><td>تعداد اولاد</td><td>-</td></tr>
-            <tr><td>وضعیت سلامت</td><td>سالم</td></tr>
-            <tr><td>توضیحات وضعیت سلامت</td><td>-</td></tr>
-            <tr><td>محل سکونت</td><td>آمل</td></tr>
-            <tr><td>وضعیت سکونت</td><td>بومی</td></tr>
-            <tr><td>مسافت (کیلومتر)</td><td>49</td></tr>
-            <tr><td>مدرک</td><td>دیپلم</td></tr>
-            <tr><td>درجه</td><td>سرباز(1)</td></tr>
-            <tr><td>پاسدار وظیفه</td><td>خیر</td></tr>
-            <tr><td>فراری</td><td>خیر</td></tr>
-            <tr><td>سابقه فرار</td><td>خیر</td></tr>
-            <tr><td>سابقه اعتیاد</td><td>خیر</td></tr>
-            <tr><td>رشته تحصیلی</td><td>دیپلم</td></tr>
-            <tr><td>معرف</td><td>صدقانی</td></tr>
-            <tr><td>تاریخ اعزام</td><td>1402/06/01</td></tr>
-            <tr><td>مدت آموزش (روز)</td><td>0</td></tr>
-            <tr><td>مقدار خدمت انجام شده</td><td>1 سال و 8 ماه و 15 روز</td></tr>
-            <tr><td>ورود به یگان</td><td>1402/07/30</td></tr>
-            <tr><td>پایان خدمت</td><td>1404/01/25</td></tr>
-            <tr><td>نام قسمت</td><td>آماد</td></tr>
-            <tr><td>زیرقسمت</td><td>سرباز آشپزخانه</td></tr>
-            <tr><td>تردد</td><td>شیفتی</td></tr>
-            <tr><td>مدت خدمت ضرورت</td><td>21</td></tr>
-            <tr><td>موبایل</td><td>09115695164</td></tr>
-            <tr><td>منزل</td><td>01144220028</td></tr>
-            <tr><td>کدپستی</td><td>4615875839</td></tr>
-            <tr><td>آخرین استعلام تست روان</td><td>1403/07/15</td></tr>
-            <tr><td>گواهینامه دارد؟</td><td>ندارد</td></tr>
-            <tr><td>نوع گواهینامه</td><td>ندارد</td></tr>
-            <tr><td>وضعیت پرونده</td><td>نقص دارد</td></tr>
-            <tr><td>توضیحات</td><td>0</td></tr>
-         </tbody>
-      </table>
-    </div>
+         <div class="columns">
+            <!-- ستون سمت چپ -->
+            <div class="column col1">
+               <table class="info-table">
+                     <tbody>
+                        <tr><td>کد سازمانی</td><td>{{ soldier.organizational_code_display|default:'نامشخص' }}</td></tr>
+                     </tbody>
+               </table>
+               <table class="info-table">
+                     <tbody>
+                        <tr><td>نام</td><td>{{ soldier.first_name }}</td></tr>
+                        <tr><td>نام خانوادگی</td><td>{{ soldier.last_name }}</td></tr>
+                        <tr><td>شماره ملی</td><td>{{ soldier.national_code }}</td></tr>
+                        <tr><td>نام پدر</td><td>{{ soldier.father_name }}</td></tr>
+                        <tr><td>کد پاسداری</td><td>{{ soldier.id_card_code|default:'0' }}</td></tr>
+                        <tr><td>حکم کارگزینی</td><td>{{ soldier.employment_order|default:'*' }}</td></tr>
+                        <tr><td>تاریخ تولد</td><td>{{ soldier.birth_date|to_jalali }}</td></tr>
+                        <tr><td>محل صدور</td><td>{{ soldier.birth_place }}</td></tr>
+                        <tr><td>وضعیت تاهل</td><td>{{ soldier.marital_status }}</td></tr>
+                        <tr><td>تعداد اولاد</td><td>{{ soldier.children_count|default:"-" }}</td></tr>
+                        <tr><td>وضعیت سلامت</td><td>{{ soldier.health_status }}</td></tr>
+                        <tr><td>توضیحات وضعیت سلامت</td><td>{{ soldier.health_desc|default:"-" }}</td></tr>
+                        <tr><td>محل سکونت</td><td>{{ soldier.residence_city|default:'-' }}</td></tr>
+                        <tr><td>وضعیت سکونت</td><td>{{ soldier.independent_married|yesno:'مستقل,غیرمستقل' }}</td></tr>
+                        <tr><td>مسافت (کیلومتر)</td><td>
+                        {% if soldier.residence_city %}
+                        {{ soldier.residence_city.distance }}
+                        {% endif %}
+                        </td></tr>
+                        <tr><td>مدرک</td><td>{{ soldier.degree }}</td></tr>
+                        <tr><td>درجه</td><td>{{ soldier.rank }}</td></tr>
+                        <tr><td>پاسدار وظیفه</td><td>{{ soldier.is_guard_duty|yesno:"بله,خیر" }}</td></tr>
+                        <tr><td>فراری</td><td>{{ soldier.is_fugitive|yesno:"بله,خیر" }}</td></tr>
+                        <tr><td>سابقه فرار</td><td>{{ soldier.fugitive_history|yesno:"بله,خیر" }}</td></tr>
+                        <tr><td>سابقه اعتیاد</td><td>{{ soldier.addiction_history|yesno:"بله,خیر" }}</td></tr>
+                        <tr><td>رشته تحصیلی</td><td>{{ soldier.field_of_study|default:'-' }}</td></tr>
+                        <tr><td>معرف</td><td>{{ soldier.referral_person|default:'ندارد' }}</td></tr>
+                        <tr><td>تاریخ اعزام</td><td>{{ soldier.dispatch_date|to_jalali }}</td></tr>
+                        <tr><td>مدت آموزش (روز)</td><td>{{ soldier.training_duration }}</td></tr>
+                        <tr><td>مقدار خدمت انجام شده</td><td>{{ service.main_service_days|human_duration }}</td></tr>
+                        <tr><td>ورود به یگان</td><td>{{ soldier.service_entry_date|to_jalali }}</td></tr>
+                        <tr><td>پایان خدمت</td><td>{{ soldier.service_end_date|to_jalali }}</td></tr>
+                        <tr><td>نام قسمت</td><td>{{ soldier.current_parent_unit }}</td></tr>
+                        <tr><td>زیرقسمت</td><td>{{ soldier.current_sub_unit }}</td></tr>
+                        <tr><td>تردد</td><td>{{ soldier.traffic_status }}</td></tr>
+                        <tr><td>مدت خدمت ضرورت</td><td>{{ soldier.essential_service_duration }}</td></tr>
+                        <tr><td>موبایل</td><td>{{ soldier.phone_mobile }}</td></tr>
+                        <tr><td>منزل</td><td>{{ soldier.phone_home }}</td></tr>
+                        <tr><td>کدپستی</td><td>{{ soldier.postal_code }}</td></tr>
+                     
+                     </tbody>
+               </table>
+            </div>
 
-    <!-- ستون سمت راست -->
-    <div class="column col2">
-     <table class="info-table">
-         <tbody>
-         <!-- تاریخ -->
-            <tr><td>تاریخ</td><td>1404/02/23</td></tr>
-         </tbody>
-      </table>
-      <table class="info-table">
-         <tbody>
-            <!-- مرخصی استفاده شده -->
-            <tr><td>استحقاقی</td><td>44</td></tr>
-            <tr><td>تشویقی</td><td>2</td></tr>
-            <tr><td>استعلاجی</td><td>0</td></tr>
-            <tr><td>طلب استحقاقی تا قبل از توضیحات</td><td>0</td></tr>
-         </tbody>
-      </table>
-      <table class="info-table">
-         <tbody>
-            <!-- کسری و اضافه خدمت -->
-            <tr><td>مجموع کسری+اضافه</td><td>1 ماه و 6 روز کسری خدمت</td></tr>
-            <tr><td>کسری</td><td>مجموع:60؛ بسیج:60؛ همسر:0</td></tr>
-            <tr><td>اضافه خدمت</td><td>مجموع:24؛ انضباطی:16؛ خلاء:8</td></tr>
-         </tbody>
-      </table>
-      <table class="info-table">
-         <tbody>
-            <!-- جایگاه و ثبت -->
-            <tr><td>جایگاه سازمانی</td><td>متصدي حفاظت فیزیکی</td></tr>
-            <tr><td>کد جایگاه</td><td>2011263366261000000000354</td></tr>
-            <tr><td>تاریخ ثبت</td><td>1403/03/07</td></tr>
-            <tr><td>نقص پرونده</td><td>پرونده تکمیل است</td></tr>
-         </tbody>
-      </table>
-      <table class="info-table">
-         <tbody>
-            <!-- پایان خدمت -->
-            <tr><td>پایان خدمت با احتساب 24 ماه</td><td></td></tr>
-            <tr><td>پایان خدمت با احتساب 21 ماه</td><td></td></tr>
-            <tr><td>پایان خدمت واقعی</td><td></td></tr>
-            <tr><td>مدت خدمت انجام شده</td><td>ماه / روز</td></tr>
-         </tbody>
-      </table>
-    <!-- مسئولین -->
-      <div style="margin:20px 0;" class="text-center">
-         <h4 class="font-bold">ستوان دوم پاسدار     میثم گلبابازاده</h4>
-         <h6>کارشناس منابع انسانی  سرباز آموزشگاه رزم مقدماتی المهدی(عج) نزسا</h6>
-      </div>
-      <table class="info-table">
-         <tbody>
-            <!-- تسویه و کارت -->
-            <tr><td>تاریخ ثبت تسویه در سامانه</td><td></td></tr>
-            <tr><td>تحویل مدارک مهارت آموزی</td><td></td></tr>
-            <tr><td>وضعیت صدور کارت</td><td></td></tr>
-            <tr><td>تاریخ فعالسازی</td><td></td></tr>
-            <tr><td>بررسی حقوق ماه</td><td>عودت</td></tr>
-            <tr><td>حقوق عودتی (ریال)</td><td></td></tr>
-            <tr><td>شماره حساب عودت حقوق</td><td>1051-36-9997770-2</td></tr>
-            <tr><td>تحویل برگه تسویه</td><td>تحویل</td></tr>
-            <tr><td>حذف از ثامن</td><td>تسویه داخلی</td></tr>
-            <tr><td>صدور کارتکس</td><td></td></tr>
-         </tbody> 
-      </table>
-    </div>
-  </div>
+            <!-- ستون سمت راست -->
+            <div class="column col2">
+               <table class="info-table">
+                     <tbody>
+                        <tr><td>تاریخ</td><td>{{ today|to_jalali }}</td></tr>
+                     </tbody>
+               </table>
+               <table class="info-table">
+                  <tbody>
+                       <tr><td>آخرین استعلام تست روان</td><td>{{ soldier.last_psych_test|default:'نامعلوم' }}</td></tr>
+                        <tr><td>گواهینامه دارد؟</td><td>{{ soldier.has_license|yesno:"دارد,ندارد" }}</td></tr>
+                        <tr><td>نوع گواهینامه</td><td>{{ soldier.license_type|default:"ندارد" }}</td></tr>
+                        <tr><td>وضعیت پرونده</td><td>{{ soldier.file_shortage }}</td></tr>
+                        <tr><td>توضیحات</td><td>{{ soldier.description }}</td></tr>
+                  </tbody>
+               </table>
+    
+               <table class="info-table">
+                     <tbody>
+                        <tr><td>استحقاقی</td><td>{{ leave.annual_leave_used }}</td></tr>
+                        <tr><td>تشویقی</td><td>{{ leave.incentive_leave_used }}</td></tr>
+                        <tr><td>استعلاجی</td><td>{{ leave.sick_leave_used }}</td></tr>
+                        <tr><td>طلب استحقاقی تا قبل از توضیحات</td><td>{{ leave.annual_leave_remaining }} روز</td></tr>
+                     </tbody>
+               </table>
+               <table class="info-table">
+                     <tbody>
+                        <tr><td>مجموع کسری+اضافه</td><td>
+                           <div>
+                              {{ service.reduction_total|human_duration }} کسری خدمت
+                           </div>
+                           <div>
+                              {{ service.reduction_total|human_duration }} اضافه خدمت
+                           </div>
+                        </td></tr>
+                        <tr><td>کسری</td><td>{{ service.reduction_total|human_duration }}</td></tr>
+                        <tr><td>اضافه خدمت</td><td>{{ service.addition_total|human_duration }}</td></tr>
+                     </tbody>
+               </table>
+               <table class="info-table">
+                     <tbody>
+                        <tr><td>جایگاه سازمانی</td><td>
+                        {% if soldier.position %}
+                           {{soldier.position.position_group}}
+                        {% else %}
+                        ندارد  
+                        {% endif %}
+                        </td></tr>
+                        <tr><td>کد جایگاه</td><td>
+                               {% if soldier.position %}
+                                 {{soldier.position.position_code}}
+                              {% else %}
+                              ندارد  
+                              {% endif %}
+                        </td></tr>
+                        <tr><td>تاریخ ثبت</td><td>{{ soldier.position_at|to_jalali }}</td></tr>
+                        <tr><td>نقص پرونده</td><td>{{ soldier.file_complete_status|default:'-' }}</td></tr>
+                     </tbody>
+               </table>
+               <table class="info-table">
+                     <tbody>
+                        <tr><td>پایان خدمت با احتساب 24 ماه</td><td>{{ soldier.service_end_24m|default:'-' }}</td></tr>
+                        <tr><td>پایان خدمت با احتساب 21 ماه</td><td>{{ soldier.service_end_21m|default:'-' }}</td></tr>
+                        <tr><td>پایان خدمت واقعی</td><td>{{ service.actual_service_end_date|to_jalali }}</td></tr>
+                        <tr><td>مدت خدمت انجام شده</td><td>{{ soldier.service_duration_completed|default:'-' }}</td></tr>
+                     </tbody>
+               </table>
+               <!-- مسئولین -->
+               <div style="margin:20px 0;" class="text-center">
+                     <h4 class="font-bold">{{ soldier.supervisor_name }}</h4>
+                     <h6>{{ soldier.supervisor_position }}</h6>
+               </div>
+               <table class="info-table">
+                     <tbody>
+                        <tr><td>تاریخ ثبت تسویه در سامانه</td><td>{{ soldier.final_settlement_date }}</td></tr>
+                        <tr><td>تحویل مدارک مهارت آموزی</td><td>{{ soldier.skill_docs_delivered }}</td></tr>
+                        <tr><td>وضعیت صدور کارت</td><td>{{ soldier.card_status }}</td></tr>
+                        <tr><td>تاریخ فعالسازی</td><td>{{ soldier.card_activation_date }}</td></tr>
+                        <tr><td>بررسی حقوق ماه</td><td>{{ soldier.last_rights_check_date }}</td></tr>
+                        <tr><td>حقوق عودتی (ریال)</td><td>{{ soldier.returned_salary }}</td></tr>
+                        <tr><td>شماره حساب عودت حقوق</td><td>{{ soldier.returned_salary_account }}</td></tr>
+                        <tr><td>تحویل برگه تسویه</td><td>{{ soldier.checkout_sheet_status }}</td></tr>
+                        <tr><td>حذف از ثامن</td><td>{{ soldier.samen_delete_status }}</td></tr>
+                        <tr><td>صدور کارتکس</td><td>{{ soldier.cardex_status }}</td></tr>
+                     </tbody> 
+               </table>
+            </div>
+         </div>
+
 </div>
 
 

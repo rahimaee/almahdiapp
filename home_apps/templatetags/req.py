@@ -1,4 +1,3 @@
-# organizational_position/templatetags/organizational_tags.py
 from django import template
 
 register = template.Library()
@@ -38,3 +37,29 @@ def lnumtrans(value=''):
         return num
 
     return value
+
+
+
+@register.filter
+def human_duration(days):
+    """
+    تبدیل تعداد روز به فرمت خوانا: سال، ماه، روز
+    فرض می‌کنیم هر سال 365 روز و هر ماه 30 روز است.
+    """
+    try:
+        days = int(days)
+    except (ValueError, TypeError):
+        return ''
+
+    years, remainder = divmod(days, 365)
+    months, days_left = divmod(remainder, 30)
+
+    parts = []
+    if years:
+        parts.append(f"{years} سال" if years > 1 else "یک سال")
+    if months:
+        parts.append(f"{months} ماه" if months > 1 else "یک ماه")
+    if days_left:
+        parts.append(f"{days_left} روز" if days_left > 1 else "یک روز")
+
+    return " و ".join(parts) if parts else "0 روز"

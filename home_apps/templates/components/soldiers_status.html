@@ -1,0 +1,78 @@
+
+counts_married
+counts_single
+
+<div class="shadow-card">
+    <div class="soldier-status">
+        <div class="soldier-item soldier-total">
+            <div class="item-content">
+                <span class="label">آمار کل سربازان</span>
+                <span class="value">{{ stats.counts_all_soldiers }} نفر</span>
+            </div>
+            <a class="btn-download" href="{% url 'export_soldiers' %}?category=all" target="_blank">📥 اکسل</a>
+        </div>
+
+        <div class="soldier-item soldier-active">
+            <div class="item-content">
+                <span class="label">حاضر</span>
+                <span class="value">{{ stats.counts_present }} نفر</span>
+            </div>
+            <a class="btn-download" href="{% url 'export_soldiers' %}?category=active" target="_blank">📥 اکسل</a>
+        </div>
+
+        <div class="soldier-item soldier-forari">
+            <div class="item-content">
+                <span class="label">فراری</span>
+                <span class="value">{{ stats.counts_fugitives }} نفر</span>
+            </div>
+            <a class="btn-download" href="{% url 'export_soldiers' %}?category=fugitives" target="_blank">📥 اکسل</a>
+        </div>
+                    <!-- 45 روز مانده -->
+        <div class="soldier-item soldier-single alarm-blink">
+            <div class="item-content">
+                <span class="label">45 روز تا پایان خدمت</span>
+                <span class="value">{{ stats.soldiers_45_to_end }} نفر</span>
+            </div>
+            <a class="btn-download" href="{% url 'soldier_list' %}?remainingFilter=remaining45" target="_blank">مشاهده</a>
+        </div>
+        <div class="soldier-item soldier-financial-debt">
+            <div class="item-content">
+                <span class="label">جذبی های المهدی</span>
+                <span class="value">{{ stats.counts_absorption }} نفر</span>
+            </div>
+            <a class="btn-download" href="{% url 'export_soldiers' %}?category=financial_debt" target="_blank">
+                📥 اکسل
+            </a>
+        </div>
+        <div class="soldier-item soldier-financial-debt">
+            <div class="item-content">
+                <span class="label">پذیرش سرباز</span>
+                <span class="value">{{ stats.jazbi }} نفر</span>
+            </div>
+            <a class="btn-download" href="{% url 'export_soldiers' %}?category=jazbi" target="_blank">
+                📥 اکسل
+            </a>
+        </div>
+        <div class="soldier-item soldier-active">
+            <div class="item-content">
+                <span class="label">حاظر و سالم</span>
+                <span class="value">{{ stats.counts_healthy_safe }} نفر</span>
+            </div>
+            <a class="btn-download" href="{% url 'export_soldiers' %}?category=active" target="_blank">📥 اکسل</a>
+        </div>
+        <div class="soldier-item soldier-financial-debt">
+            <div class="item-content">
+                <span class="label">حاظر و معاف از رزم</span>
+                <span class="value">{{ stats.counts_healthy_exempt }} نفر</span>
+            </div>
+            <a class="btn-download" href="{% url 'export_soldiers' %}?category=active" target="_blank">📥 اکسل</a>
+        </div>
+        <div class="soldier-item soldier-forari">
+            <div class="item-content">
+                <span class="label">حاظر و گروه ب</span>
+                <span class="value">{{ stats.counts_healthy_exemptb }} نفر</span>
+            </div>
+            <a class="btn-download" href="{% url 'export_soldiers' %}?category=active" target="_blank">📥 اکسل</a>
+        </div>
+    </div>
+</div>
