@@ -818,6 +818,7 @@
                         <i class="fa fa-sort-down"></i>
                     </td>
                 </tr>
+                {% if request.user.is_staff %}
                 <tr class="soldier-manage">
                     <td colspan="8" class="hiddenRow">
                         <div  class="accordian-body collapse" id="row{{ soldier.id }}">
@@ -896,6 +897,8 @@
                         </div>
                     </td>
                 </tr>
+                
+                {% endif %}
             {% endfor %}
             </tbody>
         </table>
