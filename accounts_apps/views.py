@@ -31,7 +31,7 @@ def user_login_page(request, *args, **kwargs):
 
 def c_logout(request):
     logout(request)
-    return redirect('home_page')
+    return redirect('panel_home')
 # لیست مسئولین
 def manager_list(request):
     managers = User.objects.all()  # استفاده از مدل User برای مسئولین

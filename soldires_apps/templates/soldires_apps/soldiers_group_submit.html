@@ -175,7 +175,7 @@ body {
 }
 </style>
 
-<div class="container-custom">
+<div class="">
     <!-- فرم آپلود -->
     <div class="row">
         <div class="col-md-12">
@@ -217,7 +217,8 @@ body {
             <th>وضعیت تاهل</th>
             <th>درجه</th>
             <th>وضعیت سلامت</th>
-            <th>تحصیلات</th>
+            <th>مدرک</th>
+            <th>رشته تحصیلی</th>
             <th>آدرس</th>
             <th>موبایل</th>
             <th>شیعه</th>
@@ -240,6 +241,7 @@ body {
     <td>{% if s.rank %}{{ s.rank }}{% endif %}</td>
     <td>{% if s.health_status %}{{ s.health_status }}{% endif %}</td>
     <td>{% if s.degree %}{{ s.degree }}{% endif %}</td>
+    <td>{% if s.field_of_study %}{{ s.field_of_study }}{% endif %}</td>
     <td>{% if s.address %}{{ s.address }}{% endif %}</td>
     <td>{% if s.phone_mobile %}{{ s.phone_mobile }}{% endif %}</td>
     <td>{% if s.shiite %}{{ s.shiite }}{% endif %}</td>

@@ -1,93 +1,222 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>ورود | سامانه سرباز</title>
-    <!-- Tell the browser to be responsive to screen width -->
+
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <!-- Bootstrap 3.3.7 -->
+
+    <!-- Bootstrap -->
     <link rel="stylesheet" href="{% static 'dist/css/bootstrap-theme.css' %}">
-    <!-- Bootstrap rtl -->
     <link rel="stylesheet" href="{% static 'dist/css/rtl.css' %}">
-    <!-- Font Awesome -->
+
+    <!-- Icons -->
     <link rel="stylesheet" href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}">
-    <!-- Ionicons -->
     <link rel="stylesheet" href="{% static 'bower_components/Ionicons/css/ionicons.min.css' %}">
-    <!-- Theme style -->
+
+    <!-- AdminLTE -->
     <link rel="stylesheet" href="{% static 'dist/css/AdminLTE.css' %}">
+
     <!-- iCheck -->
     <link rel="stylesheet" href="{% static 'plugins/iCheck/square/blue.css' %}">
 
-
+    <!-- پس‌زمینه -->
     <style>
-        .login-page, .register-page {
+        .login-page {
             background-image: url({% static 'img/rahbari.jpg' %});
-            background-repeat: no-repeat, repeat;
+            background-repeat: no-repeat;
             background-size: cover;
+            background-position: center;
         }
     </style>
-    <!-- Google Font -->
+
+    <!-- استایل جدید -->
+    <style>
+        body.login-page {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-page .login-box {
+            width: 480px;
+            margin: 0;
+        }
+
+        .login-box-body {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 30px 25px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            color: #333;
+            border: 1px solid #e8e8e8;
+        }
+
+        .login-logo a {
+            font-size: 22px !important;
+            font-weight: bold;
+            text-shadow: none;
+            color: #ffd700 !important;
+        }
+
+        .login-box-msg {
+            font-size: 15px;
+            color: #444;
+            font-weight: 300;
+        }
+
+        label {
+            color: #333 !important;
+            font-weight: bold;
+        }
+
+        input.form-control {
+            height: 45px;
+            border-radius: 12px;
+            border: 1px solid #ccc;
+            background: #fafafa;
+            color: #333;
+            transition: 0.25s;
+        }
+
+        input.form-control:focus {
+            border-color: #ffbf00;
+            box-shadow: 0 0 6px rgba(255,200,0,0.5);
+            background: #fff;
+        }
+
+        .btn-primary {
+            background: #ffbf00;
+            border: none;
+            color: #000;
+            font-weight: bold;
+            border-radius: 12px;
+            height: 45px;
+            font-size: 16px;
+            transition: 0.25s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .btn-primary:hover {
+            background: #e5aa00;
+            transform: translateY(-2px);
+        }
+
+        .login-box img {
+            display: block;
+            margin: auto;
+            height: 140px;
+        }
+        .form-group {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        .form-group label {
+            flex:1 ;
+        }
+        .form-group input {
+            flex:3 ;
+        }
+        /* کانتینر فیلد رمز */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* آیکن چشم */
+.password-toggle {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #777;
+    cursor: pointer;
+    font-size: 18px;
+    transition: 0.2s;
+}
+
+/* هاور آیکن */
+.password-toggle:hover {
+    color: #333;
+}
+
+    </style>
 
 </head>
+
 <body class="hold-transition login-page">
+
 <div class="login-box">
-    <div class="login-logo">
-        <a style="color: #FFD700"  href="{% url 'login' %}"><b style="font-size: 25px;font-weight: bold">سامانه جامع رزم‌آموز المهدی(عج) </b></a>
-    </div>
-    <!-- /.login-logo -->
     <div class="login-box-body">
-        <img style="height: 150px;display: block;margin-left: auto;margin-right: auto;width: 50%"
-             src="{% static 'img/Sepah.png' %}" alt="Sepah">
-        <br>
-        <p class="login-box-msg">فرم زیر را تکمیل کنید و ورود بزنید</p>
+        <img src="{% static 'img/Sepah.png' %}" alt="Sepah">
+
+        <div class="login-logo">
+            <a href="{% url 'login' %}">
+                <b style="font-size: 25px; font-weight: bold; color:#FFD700;">
+                    سامانه جامع رزم یار المهدی(عج)
+                </b>
+            </a>
+        </div>
+
 
         <form method="post">
             {% csrf_token %}
+
             <div class="form-group has-feedback">
                 <label>نام کاربری</label>
                 {{ login_form.username }}
-
             </div>
-            <div class="form-group has-feedback">
-                <label>رمز عبور</label>
+            <div class="form-group password-wrapper">
+                <label>گذرواژه</label>
                 {{ login_form.password }}
-
+                <i class="fa fa-eye password-toggle" id="togglePassword"></i>
             </div>
-            <div class="row">
-                <div class="col-xs-12">
 
-                </div>
-                <!-- /.col -->
-                <div class="col-xs-12">
-                    <button type="submit" class="btn btn-primary btn-block btn-flat">ورود</button>
-                </div>
-                <!-- /.col -->
-            </div>
+            <p class="login-box-msg">فرم زیر را تکمیل کنید و ورود بزنید</p>
+            <button type="submit" class="btn btn-primary btn-block ">
+                ورود
+            </button>
         </form>
 
-
     </div>
-    <!-- /.login-box-body -->
 </div>
-<!-- /.login-box -->
 
-<!-- jQuery 3 -->
+<!-- Scripts -->
 <script src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
-<!-- Bootstrap 3.3.7 -->
 <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
-<!-- iCheck -->
 <script src="{% static 'plugins/iCheck/icheck.min.js' %}"></script>
+
 <script>
     $(function () {
         $('input').iCheck({
             checkboxClass: 'icheckbox_square-blue',
             radioClass: 'iradio_square-blue',
-            increaseArea: '20%' // optional
+            increaseArea: '20%'
         });
+    });
+</script>
+<script>
+    const togglePassword = document.getElementById("togglePassword");
+    const passwordInput = document.querySelector("input[type='password']");
+
+    togglePassword.addEventListener("click", function () {
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            togglePassword.classList.remove("fa-eye");
+            togglePassword.classList.add("fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            togglePassword.classList.remove("fa-eye-slash");
+            togglePassword.classList.add("fa-eye");
+        }
     });
 </script>
 </body>
 </html>
- 

@@ -100,9 +100,9 @@ def home(request):
     counts_all_soldiers = counts_present + counts_fugitives
     counts_all_absorption = counts_absorption + counts_fugitives_absorption
     actions = [
-        { "label": "دانلود اکسل", "icon": "📥", "base": "export_soldiers","disabled":True },
-        { "label": "چاپ", "icon": "🖨️", "base": "export_soldiers" ,"disabled":True},
-        { "label": "مشاهده", "icon": "👁️", "base": "export_soldiers" ,"disabled":True},
+        { "label": "دانلود اکسل", "icon": "📥", "base": "export_soldiers","disabled":False,'show':request.user.is_staff },
+        { "label": "چاپ", "icon": "🖨️", "base": "export_soldiers" ,"disabled":True,'show':request.user.is_staff},
+        { "label": "مشاهده", "icon": "👁️", "base": "soldier_list" ,"disabled":False,'show':True},
     ]
     
     education_counts = EducationGroup(present).get_grouped_counts()
@@ -114,15 +114,17 @@ def home(request):
             "label": "سربازان حاضر",
             "gradient": "gradient-green",
             "count": counts_present,
-            "query": "present",
+            "query": "defaultFilter=present",
             "actions": actions,
+            
+    
             "items": [
-                { "label": "سالم", "count": counts_healthy_safe, "query": "healthy" },
-                { "label": "معاف از رزم", "count": counts_healthy_exempt, "query": "exempt" },
-                { "label": "گروه ب", "count": counts_healthy_exemptb, "query": "exemptb" },
-                { "label": "متأهل", "count": counts_married, "query": "married" },
-                { "label": "مجرد", "count": counts_single, "query": "single" },
-                { "label": "جذبی", "count": counts_absorption, "query": "absorption" },
+                { "label": "سالم", "count": counts_healthy_safe,            "query": "health_status=سالم" },
+                { "label": "معاف از رزم", "count": counts_healthy_exempt,   "query": "health_status=معاف از رزم" },
+                { "label": "گروه ب", "count": counts_healthy_exemptb,       "query": "health_status=معاف+گروه ب" },
+                { "label": "متأهل", "count": counts_married,                "query": "marital_status=متاهل" },
+                { "label": "مجرد", "count": counts_single,                  "query": "marital_status=مجرد" },
+                { "label": "جذبی", "count": counts_absorption,              "query": "absorption=True" },
             ]
         },
         {
@@ -130,15 +132,15 @@ def home(request):
             "label": "سربازان فراری",
             "gradient": "gradient-red",
             "count": counts_fugitives,
-            "query": "fugitives",
+            "query": "defaultFilter=absent",
             "actions": actions,
             "items": [
-                { "label": "سالم", "count": counts_fugitives_healthy, "query": "healthy" },
-                { "label": "معاف از رزم", "count": counts_fugitives_exempt, "query": "exempt" },
-                { "label": "گروه ب", "count": counts_fugitives_exemptb, "query": "exemptb" },
-                { "label": "متأهل", "count": counts_fugitives_married, "query": "married" },
-                { "label": "مجرد", "count": counts_fugitives_single, "query": "single" },
-                { "label": "جذبی", "count": counts_fugitives_absorption, "query": "single" },
+                { "label": "سالم", "count": counts_fugitives_healthy,           "query": "health_status=سالم" },
+                { "label": "معاف از رزم", "count": counts_fugitives_exempt,     "query": "health_status=معاف از رزم" },
+                { "label": "گروه ب", "count": counts_fugitives_exemptb,        "query": "health_status=معاف+گروه ب"  },
+                { "label": "متأهل", "count": counts_fugitives_married,          "query": "marital_status=متاهل" },
+                { "label": "مجرد", "count": counts_fugitives_single,            "query": "marital_status=مجرد" },
+                { "label": "جذبی", "count": counts_fugitives_absorption,        "query": "absorption=True" },
             ]
         },
         {
@@ -146,25 +148,24 @@ def home(request):
             "label": "آمار کل سربازان",
             "gradient": "gradient-blue",
             "count": counts_all_soldiers,
-            "query": "category=all",
             "actions": actions,
             "items": [
-                { "label": "حاضر", "count": counts_present, "query": "present" },
-                { "label": "فراری", "count": counts_fugitives, "query": "fugitives" },
-                { "label": "جذبی", "count": counts_all_absorption, "query": "category=financial_debt" },
-                { "label": "45 روز تا پایان", "count": Soldier.date_to_ends(45).count(), "query": "remainingFilter=remaining45" },
-                { "label": "30 روز تا پایان", "count": Soldier.date_to_ends(30).count(), "query": "remainingFilter=remaining30" },
-                { "label": "15 روز تا پایان", "count": Soldier.date_to_ends(15).count(), "query": "remainingFilter=remaining15" },
+                { "label": "حاضر", "count": counts_present, "query": "defaultFilter=present" },
+                { "label": "فراری", "count": counts_fugitives, "query": "defaultFilter=absent" },
+                { "label": "جذبی", "count": counts_all_absorption, "query": "absorption=True" },
+                { "label": "45 روز تا پایان", "count": Soldier.date_to_ends(45).count(), "query": "defaultFilter=present&remainingFilter=remaining45" },
+                { "label": "30 روز تا پایان", "count": Soldier.date_to_ends(30).count(), "query": "defaultFilter=present&remainingFilter=remaining30" },
+                { "label": "15 روز تا پایان", "count": Soldier.date_to_ends(15).count(), "query": "defaultFilter=present&remainingFilter=remaining15" },
             ]
         },
         {
             'col':6,
             "label": "تحصیلات و مدرک ",
             "gradient": "gradient-gray",
-            "query": "all",
+            "query": "present",
             "actions": actions,
             "items": [
-                { "label": degree, "count": count, "query": f"degree_{i}" }
+                { "label": degree, "count": count, "query": f"degree={degree}" }
                 for i, (degree, count) in enumerate(education_counts.items(), start=1)
             ]
         },
@@ -172,11 +173,11 @@ def home(request):
             'col':6,
             "label": "درجات و ترفیعات",
             "gradient": "gradient-purple",
-            "query": "all",
+            "query": "present",
             "actions": actions,
             'itemsCol':3,
             "items": [
-                { "label": rank, "count": count, "query": f"rank_{i}" }
+                { "label": rank, "count": count, "query": f"rank={rank}" }
                 for i, (rank, count) in enumerate(rank_counts.items(), start=1)
             ]
         },
@@ -219,48 +220,81 @@ def footer_references_partial_view(request, *args, **kwargs):
 def manages_app(request):
     return render(request, 'manage_apps/index.html')
 
-
+from io import BytesIO
 
 @login_required
 def export_soldiers_excel(request):
-    category = request.GET.get('category', 'all')
+    parent = request.GET.get('parent', 'all')
+    item = request.GET.get('item', '')
 
-    # فیلتر بر اساس category
-    soldiers = Soldier.objects.all()
-    if category == 'active':
-        soldiers = soldiers.filter(is_checked_out=False)
-    elif category == 'fugitives':
-        soldiers = soldiers.filter(is_fugitive=True)
-    elif category == 'administrative':
-        soldiers = soldiers.filter(status='توجیحی')
-    elif category == 'shifted':
-        soldiers = soldiers.filter(status='حین خدمت')
-    elif category == 'posted':
-        soldiers = soldiers.filter(status='پایان خدمت')
-    elif category == 'transferred':
-        soldiers = soldiers.filter(status='انتقالی')
-    elif category == 'married':
-        soldiers = soldiers.filter(marital_status='متاهل')
-    elif category == 'single':
-        soldiers = soldiers.filter(marital_status='مجرد')
-    elif category == 'with_card':
-        soldiers = soldiers.filter(eligible_for_card_issuance=True)
-    elif category == 'health_salam':
-        soldiers = soldiers.filter(health_status='سالم')
-    elif category == 'health_exempt':
-        soldiers = soldiers.filter(health_status='معاف از رزم')
-    elif category == 'health_group_b':
-        soldiers = soldiers.filter(health_status='گروه ب')
-    elif category == 'health_exempt_b':
-        soldiers = soldiers.filter(health_status='معاف+گروه ب')
+    print(parent,item)
+    # ===============================
+    # تعیین والد (present / fugitives / all)
+    # ===============================
+    if parent == "present":
+        soldiers = PresentSoldiers().get_queryset()
+    elif parent == "fugitives":
+        soldiers = RunawaySoldiers().get_queryset()
+    else:
+        soldiers = AllSoldiers().get_queryset()
 
-    now_str = datetime.now().strftime("%Y%m%d_%H%M")
-    filename = f"soldiers_{category}_{now_str}"
+    # ===============================
+    # فیلترهای مشابه صفحه home
+    # ===============================
+
+    if item == "healthy":
+        soldiers = HealthySoldiers(soldiers).get_queryset()
+    elif item == "exempt":
+        soldiers = ExemptSoldiers(soldiers).get_queryset()
+    elif item == "exemptb":
+        soldiers = ExemptBSoldiers(soldiers).get_queryset()
+    elif item == "married":
+        soldiers = MarriedSoldiers(soldiers).get_queryset()
+    elif item == "single":
+        soldiers = SingleSoldiers(soldiers).get_queryset()
+    elif item == "absorption":
+        soldiers = AbsorptionSoldiers(soldiers).get_queryset()
+
+    # ============ مانده خدمت ============
+    elif item == "remaining45":
+        soldiers = Soldier.date_to_ends(45).filter(id__in=soldiers)
+    elif item == "remaining30":
+        soldiers = Soldier.date_to_ends(30).filter(id__in=soldiers)
+    elif item == "remaining15":
+        soldiers = Soldier.date_to_ends(15).filter(id__in=soldiers)
+
+    # ============ گروه تحصیلی ============
+    elif item.startswith("degree_"):
+        index = int(item.split("_")[1])
+        edu_map = list(EducationGroup(soldiers).get_grouped_counts().keys())
+        if index <= len(edu_map):
+            selected = edu_map[index - 1]
+            soldiers = soldiers.filter(degree=selected)
+
+    # ============ گروه درجه ============
+    elif item.startswith("rank_"):
+        index = int(item.split("_")[1])
+        rank_map = list(RankGroup(soldiers).get_grouped_counts().keys())
+        if index <= len(rank_map):
+            selected = rank_map[index - 1]
+            soldiers = soldiers.filter(rank=selected)
+
+    # ============ ساخت فایل اکسل ============
     wb = create_soldiers_excel(soldiers)
 
+    # ذخیره در حافظه بجای save_virtual_workbook
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+
+    now_str = datetime.now().strftime("%Y%m%d_%H%M")
+    filename = f"soldiers_{item}_{now_str}.xlsx"
+
     response = HttpResponse(
-        content=openpyxl.writer.excel.save_virtual_workbook(wb),
+        output.getvalue(),
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
-    response['Content-Disposition'] = f'attachment; filename="{filename}.xlsx"'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
     return response
+

@@ -703,10 +703,9 @@
         <table class="modern-table">
             <thead>
             <tr>
-                <th>کدسازمانی</th>
                 <th>سرباز</th>
                 <th>وضعیت</th>
-                <th>قسمت</th>
+                <th>قسمت و مدرک</th>
                 <th>تلفن</th>
                 <th>ورود به خدمت</th>
                 <th>ترخیص</th>
@@ -716,23 +715,31 @@
             <tbody>
             {% for soldier in soldiers %}
                 <tr data-toggle="expand" aria-expanded="false" data-target="#row{{ soldier.id }}" class="accordion-toggle" style="font-size: 14px;font-weight: bold;">
-                    <td>{{ soldier.organizational_code.code_number }}</td>
                     <td>
-                        <div>
-                             <a href="{% url 'soldier_detail' soldier.pk %}">
-                                {{ soldier.first_name }} {{ soldier.last_name }}
-                             </a>
-                        </div>
-                        {% if soldier.photo_scan %}
-                            <i class="fa fa-camera text-primary"></i>
-                        {% endif %}
-                        <div class="badge badge-default" style="padding: 4px 8px;border-radius: 4px;">
-                            کد ملی : {{ soldier.national_code }}
+                        <div style="display: flex;flex-direction: column;align-items: center;justify-content: center;">
+                            <div style="display: flex;align-items: center;justify-content: space-between;gap: 4px;">
+                                <a style="color: #1cc88a;" href="{% url 'soldier_detail' soldier.pk %}">
+                                    <i class="fa fa-eye"></i> {{ soldier.first_name }} {{ soldier.last_name }} 
+                                </a>
+                                <a style="display: flex;align-items: center;"  href="{% url 'soldier_edit' pk=soldier.pk %}" ><i class="fa fa-edit"></i>ویرایش</a>
+                            </div>
+                            {% if soldier.photo_scan %}
+                                <i class="fa fa-camera text-primary"></i>
+                            {% endif %}
+                            <div style="margin-top: 4px;">
+                                <div class="badge badge-default" style="padding: 4px 8px;border-radius: 4px;font-size: 14px;"> {{ soldier.organizational_code }}</div>
+                                <div class="badge badge-default" style="padding: 4px 8px;border-radius: 4px;font-size: 14px;">
+                                    کد ملی : {{ soldier.national_code }}
+                                </div>
+                            </div>
                         </div>
                     </td>
                     <td>
-                        <div style="display: flex;align-items: center;font-weight: bold;">
-                                <!-- وضعیت سلامت -->
+                        <div style="display: flex;align-items: center;font-weight: bold;flex-wrap:  wrap;">
+                            <span style="font-size: 16px;flex: 1;font-weight: bold;" class="label label-default">
+                                    {{ soldier.marital_status|default:'تاهل نامشخص' }}
+                            </span>
+                            <!-- وضعیت سلامت -->
                             <span  style="font-size: 16px;flex: 1;font-weight: bold;" class="label
                                 {% if soldier.health_status == 'سالم' %}label-success
                                 {% elif soldier.health_status == 'معاف از رزم' %}label-primary
@@ -776,6 +783,13 @@
                                 {% else %}
                                     <span class="text-muted">-</span>
                                 {% endif %}
+                            </div>
+                            <hr style="margin: 1px;padding:0 ;" />
+                             <div style="display: flex;align-items: center;justify-content: space-between;">
+                                    <span data-toggle="tooltip" title="مدرک تحصیلی سرباز">
+                                        {{soldier.degree|default:'-'}}
+                                    </span>
+                                    <span class="badge bade-default">{{soldier.field_of_study|default:'-'}}</span>
                             </div>
                     </td>
   

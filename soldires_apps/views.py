@@ -44,11 +44,10 @@ from datetime import datetime
 import jdatetime
 from .enums import SoldierStatusFilterEnum
 def jalali_to_gregorian(jdate_str):
-    # jdate_str looks like "1404/10/01"
     y, m, d = map(int, jdate_str.split('/'))
     return jdatetime.date(y, m, d).togregorian()
 
-@feature_required('لیست سربازان')
+# @feature_required('لیست سربازان')
 def soldier_list(request):
     default_filter = SoldierStatusFilterEnum.PRESENT.key  # مقدار پیش‌فرض
     status_choices = [(s.key, s.label) for s in SoldierStatusFilterEnum]
@@ -64,7 +63,6 @@ def soldier_list(request):
     )
     # مقدار انتخاب شده توسط کاربر
     selected_filter = request.GET.get("defaultFilter", default_filter)
-    print(selected_filter)
     # ================================
     #   اعمال فیلتر وضعیت انتخاب شده
     # ================================
@@ -912,7 +910,8 @@ def soldiers_group_submit(request):
                     'marital_status': "" if pd.isna(row.get("وضعیت تاهل")) else row.get("وضعیت تاهل"),
                     'rank': "" if pd.isna(row.get("درجه")) else row.get("درجه"),
                     'health_status': "" if pd.isna(row.get("وضعیت سلامت")) else row.get("وضعیت سلامت"),
-                    'degree': "" if pd.isna(row.get("تحصیلات")) else row.get("تحصیلات"),
+                    'degree': "" if pd.isna(row.get("مدرک")) else row.get("مدرک"),
+                    'field_of_study': "" if pd.isna(row.get("رشته تحصیلی")) else row.get("رشته تحصیلی"),
                     'address': "" if pd.isna(row.get("آدرس منزل")) else row.get("آدرس منزل", row.get("محل سکونت", "")),
                     'phone_mobile': "" if pd.isna(row.get("موبایل")) else clean_phone(row.get("موبایل")),
                     'shiite': "" if pd.isna(row.get("شیعه")) else row.get("شیعه"),

@@ -86,6 +86,7 @@ class Soldier(models.Model):
         null=True,
         blank=True,
     )
+    
     number_of_children = models.PositiveIntegerField(
         default=0, verbose_name="تعداد اولاد"
     )

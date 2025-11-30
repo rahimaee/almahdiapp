@@ -154,7 +154,11 @@ def import_soldiers_from_excel(file_path):
                 fields['addiction_record'] = clean_int(row.get("سابقه اعتیاد"))
                 fields['number_of_certificates'] = clean_int(row.get("تعداد مدرک"))
                 fields['essential_service_duration'] = clean_int(row.get("مدت خدمت ضرورت"))
-
+                fields['degree'] = clean_str(row.get("مدرک"))
+                fields['field_of_study'] = clean_str(row.get("رشته تحصیلی"))
+                print(f"fields['degree'] = {fields['degree']}")
+                print(f"fields['field_of_study'] = {fields['field_of_study']}")
+                
                 # مقادیر متنی و Boolean
                 fields.update({
                     'first_name': clean_str(row.get("نام")),
@@ -205,6 +209,7 @@ def import_soldiers_from_excel(file_path):
                     'is_certificate': str(row.get("نیاز به مدرک", "")) == "بلی",
                 })
 
+
                 # MultiSelectField برای نوع گواهینامه
                 license_value = row.get("نوع گواهینامه", "")
                 if pd.isna(license_value) or license_value == "":
@@ -251,7 +256,7 @@ def create_soldiers_excel(soldiers):
     headers = [
         "ردیف", "کد ملی", "نام", "نام خانوادگی", "نام پدر",
         "وضعیت تاهل", "درجه", "وضعیت سلامت", "گروه مهارتی",
-        "تحصیلات", "بدهی حقوقی", "آدرس", "موبایل", "شماره کارت پایان خدمت"
+        "مدرک","رشته تحصیلی", "بدهی حقوقی", "آدرس", "موبایل", "شماره کارت پایان خدمت"
     ]
     ws.append(headers)
 
@@ -277,6 +282,7 @@ def create_soldiers_excel(soldiers):
             s.health_status,
             s.skill_group,
             s.degree,
+            s.field_of_study,
             s.file_shortage,
             s.address,
             s.phone_mobile,

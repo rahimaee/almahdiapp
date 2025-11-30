@@ -184,7 +184,7 @@
     .dropdown-content {
         display: none;
         position: absolute;
-        right: 0;
+        left: 0;
         background: #ffffff;
         padding: 8px 0;
         border-radius: 10px;
@@ -248,41 +248,42 @@
                         {% endfor %}
                     </div>
                 </div>
-                {% if request.user.is_staff %}
                     <!-- دکمه‌ها + Dropdown -->
                     <div class="btn-box">
                         {% for action in group.actions %}
-                        <div class="dropdown">
+                            {% if action.show %}
+                                <div class="dropdown">
 
-                            <button 
-                                class="dropdown-btn {% if action.disabled %}disabled-action{% endif %}" 
-                                {% if action.disabled %}disabled{% endif %}
-                            >
-                                {{ action.icon }} {{ action.label }}
-                            </button>
+                                    <button 
+                                        class="dropdown-btn {% if action.disabled %}disabled-action{% endif %}" 
+                                        {% if action.disabled %}disabled{% endif %}
+                                    >
+                                        {{ action.icon }} {{ action.label }}
+                                    </button>
 
-                            {% if not action.disabled %}
-                            <div class="dropdown-content">
-                                {% if group.query %}
-                                    <a class="action-link" href="{% url action.base %}?parent={{ group.query }}">
-                                        <span>{{ group.label }}</span>
-                                        <span>{{ action.icon }}</span>
-                                    </a>
-                                {% endif %}
+                                    {% if not action.disabled %}
+                                    <div class="dropdown-content">
+                                        {% if group.query %}
+                                            <a class="action-link" href="{% url action.base %}?{{ group.query }}">
+                                                <span>{{ group.label }}</span>
+                                                <span>{{ action.icon }}</span>
+                                            </a>
+                                        {% endif %}
 
-                                {% for item in group.items %}
-                                    <a class="action-link" href="{% url action.base %}?parent={{ group.query }}&item={{ item.query }}">
-                                        <span>{{ group.label }} {{ item.label }}</span>
-                                        <span>{{ action.icon }}</span>
-                                    </a>
-                                {% endfor %}
-                            </div>
+                                        {% for item in group.items %}
+                                            <a class="action-link" href="{% url action.base %}?{{ group.query }}&{{ item.query }}">
+                                                <span>{{ group.label }} {{ item.label }}</span>
+                                                <span>{{ action.icon }}</span>
+                                            </a>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+
+                                </div>
                             {% endif %}
 
-                        </div>
                         {% endfor %}
                     </div>
-                {% endif %}
 
             </div>
         </div>

@@ -215,10 +215,12 @@
 
 </style>
 <script>
+
+    const is_staff ={% if request.user.is_staff %}true {% else %} false{% endif %}
 $(function() {
     const tabsData = [
-        { title: "اصلی", url: "{% url 'analystics:index' %}", subTabs: [] },
-        { title: "آمار نوبه ای", url: "{% url 'analystics:latest_statistics' %}", subTabs: [] },
+        { title: "اصلی", url: "{% url 'analystics:index' %}", subTabs: [] ,permission:true},
+        { title: "آمار نوبه ای", url: "{% url 'analystics:latest_statistics' %}", subTabs: [],permission:true },
         { 
             title: "گزارش گیری", url: "{% url 'analystics:reports_all' %}", 
             subTabs: [
@@ -231,10 +233,11 @@ $(function() {
                 { title: "برنامه ریزی", url: "{% url 'analystics:reports_planning' %}" },
                 { title: "نزدیک پایان خدمت", url: "{% url 'analystics:reports_near_end_service' %}" },
                 { title: "مهارت اموزی", url: "{% url 'analystics:reports_skill_training' %}" }
-            ]
+            ],
+            permission:true
         },
-        { title: "گزارش گیری دوم", url: "{% url 'analystics:reports_type2' %}", subTabs: [] },
-        { title: "اشراف", url: "{% url 'analystics:reports_eshraf' %}", subTabs: [] },
+        { title: "گزارش گیری دوم", url: "{% url 'analystics:reports_type2' %}", subTabs: [],permission:true },
+        { title: "اشراف", url: "{% url 'analystics:reports_eshraf' %}", subTabs: [],permission:is_staff },
 
     ];
 
@@ -251,21 +254,25 @@ $(function() {
                 sub.active = true;
             }
         });
-
-        // ایجاد تب اصلی
-        const $li = $('<li class="'+(isActive ? 'active' : '')+'"><a href="'+tab.url+'" data-tab="tab'+(i+1)+'">'+tab.title+'</a></li>');
-        $mainTabs.append($li);
-
-        // ایجاد زیرتب‌ها
-        const $subUl = $('<ul class="nav nav-pills" id="tab'+(i+1)+'-sub"></ul>').hide();
-        if(tab.subTabs.length > 0){
-            tab.subTabs.forEach(sub => {
-                const subActive = sub.active ? 'active' : '';
-                const $subLi = $('<li class="'+subActive+'"><a href="'+sub.url+'">'+sub.title+'</a></li>');
-                $subUl.append($subLi);
-            });
+        console.log({tab})
+        if (tab.permission)
+        {
+            // ایجاد تب اصلی
+            const $li = $('<li class="'+(isActive ? 'active' : '')+'"><a href="'+tab.url+'" data-tab="tab'+(i+1)+'">'+tab.title+'</a></li>');
+            $mainTabs.append($li);
+    
+            // ایجاد زیرتب‌ها
+            const $subUl = $('<ul class="nav nav-pills" id="tab'+(i+1)+'-sub"></ul>').hide();
+            if(tab.subTabs.length > 0){
+                tab.subTabs.forEach(sub => {
+                    const subActive = sub.active ? 'active' : '';
+                    const $subLi = $('<li class="'+subActive+'"><a href="'+sub.url+'">'+sub.title+'</a></li>');
+                    $subUl.append($subLi);
+                });
+            }
+            $subContainer.append($subUl);
+            
         }
-        $subContainer.append($subUl);
     });
 
     // نمایش زیرتب تب فعال

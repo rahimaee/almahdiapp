@@ -13,15 +13,18 @@
             <div class="col-md-12">
                 {% include "../components/analystics_dashboard.html" %}
             </div>
-        <div  class="col-md-2">
-            {% include "../components/quick_access.html" %}
-        </div>
-        <div class="col-md-5 ">
-            {% include "../components/clearances_with_tabs.html" %}
-        </div>
-        <div class="col-md-5 ">
-            {% include "../components/registration_with_tabs.html" %}
-        </div>
+            {% if request.user.is_staff %}
+                <div  class="col-md-2">
+                    {% include "../components/quick_access.html" %}
+                </div>
+                <div class="col-md-5 ">
+                    {% include "../components/clearances_with_tabs.html" %}
+                </div>
+                <div class="col-md-5 ">
+                    {% include "../components/registration_with_tabs.html" %}
+                </div>
+            {% endif %}
+
         </div>
     </div>
 

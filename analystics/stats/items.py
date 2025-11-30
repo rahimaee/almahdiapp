@@ -24,7 +24,7 @@ class RunawaySoldiers(StatBase):
     base_queryset = Soldier.objects.filter(is_checked_out=False, is_fugitive=True)
 
     def get_queryset(self):
-        return self.queryset
+        return self.queryset.filter(is_checked_out=False, is_fugitive=True)
 
 
 class FinishedService(StatBase):

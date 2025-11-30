@@ -6,12 +6,12 @@
 
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel">
+            {% if user.profile_picture %}
             <div class="pull-right image">
-                {% if user.profile_picture %}
                     <img src="{{ user.profile_picture.url }}" class="img-circle elevation-2" alt="User Image">
-                {% endif %}
-            </div>
-            <div class="pull-right info">
+                </div>
+            {% endif %}
+            <div style="position: relative;right: 0;" class="pull-right info">
                 <p>{{ user.get_full_name }}({{ user.get_employment_status }})</p>
                 <!-- Status -->
                 <a href="{% url 'profile' %}"><i class="fa fa-circle text-success"></i>آنلاین</a>
@@ -20,9 +20,9 @@
 
 
         <!-- search form (Optional) -->
-        <form action="#" method="get" class="sidebar-form">
-            <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="جستجو">
+        <form style="padding: 0;margin: 0 10px ;" action="#" method="get" class="sidebar-form">
+            <div  class="input-group">
+                <input  type="text" name="q" class="form-control" placeholder="جستجو">
                 <span class="input-group-btn">
                       <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i
                               class="fa fa-search"></i>
@@ -42,7 +42,7 @@
                 </a>
                 <ul class="treeview-menu">
                     <li><a href="{% url 'soldier_list' %}">اطلاعات جامع سرباز</a></li>
-                    <li><a href="{% url 'soldier_list' %}">مدیریت سربازان</a></li>
+                    {% if request.user.is_staff %}
                     <li><a href="{% url 'expired_soldiers' %}">منقضی از خدمت</a></li>
                     <li><hr style="margin-top: 5px;margin-bottom: 5px;"/></li>
                     <li><a href="{% url 'checked_out_soldiers_list' %}">تسویه‌حساب شده</a></li>
@@ -56,9 +56,10 @@
                     <li><a href="{% url 'bulk_photo_upload' %}">آپلود گروهی عکس</a></li>
                     <li><a href="{% url 'organizational_codes_list' %}">کد سازمانی</a></li>
                     <li><a href="{% url 'organizational_position_index' %}">جایگاه سازمانی</a></li>
+                    {% endif %}
                 </ul>
             </li>
-            {% if request.user.is_staff == True %}
+            {% if request.user.is_staff %}
                 <li>
                     <a href="{% url 'main_letters' %}"><i class="fa fa-envelope"></i> <span>فرم و نامه ها</span>
                         <span class="pull-left-container">
@@ -84,60 +85,70 @@
                     </ul>
                 </li>
             {% endif %}
-                        <li class="treeview">
-                <a href="#"><i class="fa fa-area-chart"></i> <span>تسویه حساب و کارت</span>
-                    <span class="pull-left-container">
-                        <i class="fa fa-angle-right pull-left"></i>
-                      </span>
-                </a>
-                <ul class="treeview-menu">
-                    <li><a href="{% url 'review_settlements' %}">بررسی حقوق سربازان</a></li>
-                    <li><a href="{% url 'soldiers_settlement_list' %}">وضعیت تسویه‌حساب</a></li>
-                    <li><a href="{% url 'soldiers_ready_for_card' %}">سربازان آماده برای ارسال کارت</a></li>
-                    <li><a href="{% url 'card_series_list' %}">لیست سری‌های کارت</a></li>
-                    <li><a href="{% url 'card_series_create' %}">ایجاد سری کارت</a></li>
-                    <li><a href="{% url 'card_send_list_n' %}">بررسی ارسال کارت‌ها</a></li>
-                    {% comment %} <li><a href="{% url 'card_send_list' %}">لیست</a></li> {% endcomment %}
-                </ul>
-            </li>
-            <li class="treeview">
-                <a href="#"><i class="fa fa-user-plus"></i> <span>کارکنان</span>
-                    <span class="pull-left-container">
-                        <i class="fa fa-angle-right pull-left"></i>
-                      </span>
-                </a>
-                <ul class="treeview-menu">
-                    <li><a href="{% url 'user_list' %}">لیست کارکنان</a></li>
-                    <li><a href="{% url 'user_create' %}">کارمند جدید</a></li>
-                </ul>
-            </li>
-            <li class="treeview">
-                <a href="#"><i class="fa fa-user-plus"></i> <span>عقیدتی</span>
-                    <span class="pull-left-container">
-                        <i class="fa fa-angle-right pull-left"></i>
-                      </span>
-                </a>
-                <ul class="treeview-menu">
-                    <li><a href="{% url 'religious_period_list' %}">لیست</a></li>
-                    <li><a href="{% url 'religious_period_add' %}">ایجاد دوره</a></li>
-                    <li><a href="{% url 'soldiers_with_training' %}">لیست سربازان و دوره عقیدتی</a></li>
-                    <li><a href="{% url 'soldiers_without_training' %}">سربازان بدون دوره عقیدتی</a></li>
-                    <li><a href="{% url 'upload-excel' %}">آپلود فایل اکسل دوره عقیدتی</a></li>
-                </ul>
-            </li>
-            <li class="treeview">
-                <a href="#"><i class="fa fa-user-plus"></i> <span>ناصرین</span>
-                    <span class="pull-left-container">
-                        <i class="fa fa-angle-right pull-left"></i>
-                      </span>
-                </a>
-                <ul class="treeview-menu">
-                    <li><a href="{% url 'naserin_list' %}">لیست گروه های ناصرین</a></li>
-                    <li><a href="{% url 'naserin_create' %}">ایجاد گروه ناصرین</a></li>
-                    <li><a href="{% url 'soldire_naserin_list' %}">لیست سربازان و گروه های ناصرین</a></li>
-                    <li><a href="{% url 'bulk_edit_naserin' %}">تخصیص گروه به سربازان فاقد گروه</a></li>
-                </ul>
-            </li>
+            
+            {% if request.user.is_staff %}
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-area-chart"></i> <span>تسویه حساب و کارت</span>
+                        <span class="pull-left-container">
+                            <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="{% url 'review_settlements' %}">بررسی حقوق سربازان</a></li>
+                        <li><a href="{% url 'soldiers_settlement_list' %}">وضعیت تسویه‌حساب</a></li>
+                        <li><a href="{% url 'soldiers_ready_for_card' %}">سربازان آماده برای ارسال کارت</a></li>
+                        <li><a href="{% url 'card_series_list' %}">لیست سری‌های کارت</a></li>
+                        <li><a href="{% url 'card_series_create' %}">ایجاد سری کارت</a></li>
+                        <li><a href="{% url 'card_send_list_n' %}">بررسی ارسال کارت‌ها</a></li>
+                        {% comment %} <li><a href="{% url 'card_send_list' %}">لیست</a></li> {% endcomment %}
+                    </ul>
+                </li>
+            {% endif %}
+            {% if request.user.is_staff %}
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-user-plus"></i> <span>کارکنان</span>
+                        <span class="pull-left-container">
+                            <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="{% url 'user_list' %}">لیست کارکنان</a></li>
+                        <li><a href="{% url 'user_create' %}">کارمند جدید</a></li>
+                    </ul>
+                </li>
+            {% endif %}
+            {% if request.user.is_staff %}
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-user-plus"></i> <span>عقیدتی</span>
+                        <span class="pull-left-container">
+                            <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="{% url 'religious_period_list' %}">لیست</a></li>
+                        <li><a href="{% url 'religious_period_add' %}">ایجاد دوره</a></li>
+                        <li><a href="{% url 'soldiers_with_training' %}">لیست سربازان و دوره عقیدتی</a></li>
+                        <li><a href="{% url 'soldiers_without_training' %}">سربازان بدون دوره عقیدتی</a></li>
+                        <li><a href="{% url 'upload-excel' %}">آپلود فایل اکسل دوره عقیدتی</a></li>
+                    </ul>
+                </li>
+            {% endif %}
+            {% if request.user.is_staff %}
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-user-plus"></i> <span>ناصرین</span>
+                        <span class="pull-left-container">
+                            <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="{% url 'naserin_list' %}">لیست گروه های ناصرین</a></li>
+                        <li><a href="{% url 'naserin_create' %}">ایجاد گروه ناصرین</a></li>
+                        <li><a href="{% url 'soldire_naserin_list' %}">لیست سربازان و گروه های ناصرین</a></li>
+                        <li><a href="{% url 'bulk_edit_naserin' %}">تخصیص گروه به سربازان فاقد گروه</a></li>
+                    </ul>
+                </li>
+            {% endif %}
+
             <li>
                 <a  href="{% url 'analystics:index' %}">
                     <i class="fa fa-area-chart"></i> <span>آمار</span>
@@ -166,8 +177,9 @@
                     </a>
                 </li>
             {% endif %}
-                <li><a href="#"><i class="fa fa-support"></i> <span>درباره سامانه</span></a>
-            <li><a href="#"><i class="fa fa-sign-out"></i> <span>خروج</span></a>
+            
+            <li><a href="#"><i class="fa fa-support"></i> <span>درباره سامانه</span></a>
+            <li><a href="{% url "logout" %}"><i class="fa fa-sign-out"></i> <span>خروج</span></a>
         </ul>
         <!-- /.sidebar-menu -->
     </section>
