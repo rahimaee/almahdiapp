@@ -38,6 +38,7 @@ urlpatterns = [
     path('letter/', include('soldire_letter_apps.urls')),
     path('escaped/', include('soldire_runaway_apps.urls')),
     path('analystics/', include('analystics.urls', namespace='analystics')),
+    path('gardan/', include('gardan_gharargah.urls', namespace='gardan')),
     
     re_path(r'^header_partial_view',
             header_partial_view,

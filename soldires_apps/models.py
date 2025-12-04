@@ -10,6 +10,7 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 from .constants import *
 from datetime import date
+from almahdiapp.utils.date import gtosh
 
 @deconstructible
 class PathAndRename:
@@ -172,7 +173,13 @@ class Soldier(models.Model):
     service_end_date = models.DateField(
         blank=True, null=True, verbose_name="پایان خدمت"
     )
-    
+    @property
+    def service_end_date_display(self):
+        if self.service_end_date:
+            return gtosh(self.service_end_date)
+        return "-"
+
+
     @property
     def remaining_days(self):
         """تعداد روز باقی مانده خدمت"""

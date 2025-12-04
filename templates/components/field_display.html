@@ -1,0 +1,27 @@
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+
+    <span style="font-weight: normal; font-size: 12px;">{{ label }} :</span>
+
+    {% if value %}
+        <span>{{ value }}</span>
+    {% else %}
+        <span 
+            class="badge"
+            style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #ff0062ff;
+                color: white;
+                border-radius: 4px;
+                font-size: 14px;
+                padding: 6px 16px 4px;
+                gap: 4px;
+            "
+        >
+
+            <span style="font-size: 11px;">{{empty_text|default:""}}</span>
+            <i class="fa fa-exclamation-circle"></i>
+        </span>
+    {% endif %}
+</div>

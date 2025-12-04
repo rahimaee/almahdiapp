@@ -1,0 +1,632 @@
+<!-- ===========  CSS کامل =========== -->
+<style>
+section.app-container {
+    display: flex;
+    gap: 12px;
+    direction: rtl;
+}
+aside.app-sidebar {
+    min-width: 260px;
+}
+
+/* Base */
+.sidebar-card {
+    border-radius: 6px;
+    margin-bottom: 10px;
+    background: #fff;
+}
+.sidebar-card-header {
+    background: #0069d9;
+    color: #fff;
+    padding: 7px 10px;
+    font-weight: 600;
+    border-radius: 10px 10px 0 0;
+    margin-bottom: 5px;
+}
+
+.list-group { padding: 5px; }
+
+.list-group-item {
+    padding: 6px 8px !important;
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.2s;
+    cursor: pointer;
+}
+.list-group-item:hover {
+    background: #f1f5fb;
+}
+.list-group-item span {
+    flex-grow: 1;
+    text-align: right;
+    font-size: 14px;
+}
+.list-group-item i {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-left: 6px;
+}
+.active-link {
+    background: #e6fdffff !important;
+    font-weight: bold;
+}
+.disabled-link {
+    pointer-events: none;
+    opacity: 0.4;
+    background: #e9ecef !important;
+    color: #6c757d !important;
+}
+
+/* ---- submenu styles ---- */
+.menu-item {
+    position: relative;
+    padding-right: 10px !important;
+}
+.menu-item .arrow {
+    transition: .25s;
+    opacity: .7;
+}
+.menu-item:hover .arrow {
+    transform: translateX(-3px);
+}
+
+/* dropdown */
+.submenu {
+    position: absolute;
+    right: 100%;
+    top: 0;
+    background: #f8f9fa;
+    min-width: 300px;
+    border-radius: 6px;
+    padding: 6px 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: .25s ease;
+    z-index: 9999;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18),0 3px 6px rgba(0, 0, 0, 0.10);
+}
+.submenu  hr {
+    margin: 0;
+    padding: 0;
+}
+.menu-item:hover .submenu {
+    opacity: 1;
+    visibility: visible;
+    right: calc(100% + 6px);
+}
+
+.submenu a {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 6px 12px;
+    font-size: 13px;
+    color: #333;
+    transition: 0.2s;
+}
+
+.submenu a:hover {
+    background: #eef3ff;
+}
+
+</style>
+<style>
+    /* -----------------------
+       UI GLOBAL CARD STYLES
+       ----------------------- */
+    .ui-card {
+        background: #ffffff;
+        border-radius: 14px;
+        border: 1px solid #e6e6e6;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+    }
+
+    .ui-card:hover {
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .ui-card-header {
+        padding: 14px;
+        border-radius: 14px 14px 0 0;
+        color: #fff;
+        text-align: center;
+        font-weight: 600;
+        font-size: 17px;
+    }
+
+    .ui-card-header-primary {
+        background: linear-gradient(135deg, #0069d9, #0053b3);
+    }
+
+    .ui-card-header-secondary {
+        background: linear-gradient(135deg, #6c757d, #565e64);
+    }
+
+    .ui-card-body {
+        padding: 20px;
+    }
+
+    /* -----------------------
+       UI FORM ELEMENTS
+       ----------------------- */
+    .ui-form-group {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+    }
+
+    .ui-form-group label {
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #333;
+        display: block;
+        font-size: 14px;
+        flex: 1;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .ui-input,
+    .ui-textarea,
+    .ui-select {
+        flex: 2;
+        width: 100%;
+        background: #fafafa;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 14px;
+        transition: all 0.25s ease;
+    }
+
+    .ui-input:focus,
+    .ui-textarea:focus,
+    .ui-select:focus {
+        outline: none;
+        border-color: #0d6efd;
+        background: #fff;
+        box-shadow: 0 0 4px rgba(13, 110, 253, 0.3);
+    }
+    /* =====================================
+   XS — خیلی کوچک
+===================================== */
+.ui-form-group.xs label {
+    font-size: 11px !important;
+}
+.ui-form-group.xs .ui-input,
+.ui-form-group.xs .ui-textarea,
+.ui-form-group.xs .ui-select {
+    padding: 4px 6px !important;
+    font-size: 11px !important;
+    border-radius: 5px !important;
+}
+
+
+
+/* =====================================
+   SM — کوچک
+===================================== */
+.ui-form-group.sm label {
+    font-size: 12px !important;
+}
+
+.ui-form-group.sm .ui-input,
+.ui-form-group.sm .ui-textarea,
+.ui-form-group.sm .ui-select {
+    padding: 7px 10px !important;
+    font-size: 13px !important;
+    border-radius: 6px !important;
+}
+
+
+
+/* =====================================
+   LG — بزرگ
+===================================== */
+.ui-form-group.lg label {
+    font-size: 15px !important;
+}
+
+.ui-form-group.lg .ui-input,
+.ui-form-group.lg .ui-textarea,
+.ui-form-group.lg .ui-select {
+    padding: 12px 14px !important;
+    font-size: 16px !important;
+    border-radius: 10px !important;
+}
+
+
+
+/* =====================================
+   XL — خیلی بزرگ
+===================================== */
+.ui-form-group.xl label {
+    font-size: 17px !important;
+}
+
+.ui-form-group.xl .ui-input,
+.ui-form-group.xl .ui-textarea,
+.ui-form-group.xl .ui-select {
+    padding: 15px 20px !important;
+    font-size: 18px !important;
+    border-radius: 12px !important;
+}
+/* ===============================
+   UI BUTTON COLORS (GLOBAL)
+   =============================== */
+
+    .ui-btn {
+        width: 100%;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: none;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s ease, color 0.3s ease;
+        color: #fff;
+        display: inline-block;
+        gap: 4px;
+    }
+    .ui-btn .ui-label {
+        flex: 1;
+        text-align: center;
+    }
+
+    .ui-btn .ui-icon {
+    }
+    /* -----------------------------
+    Success (سبز)
+    ----------------------------- */
+    .ui-btn-success {
+        background-color: #28a745;
+    }
+    .ui-btn-success:hover {
+        background-color: #218838;
+    }
+
+    /* -----------------------------
+    Primary (آبی)
+    ----------------------------- */
+    .ui-btn-primary {
+        background-color: #0d6efd;
+    }
+    .ui-btn-primary:hover {
+        background-color: #0b5ed7;
+    }
+
+    /* -----------------------------
+    Danger (قرمز)
+    ----------------------------- */
+    .ui-btn-danger {
+        background-color: #dc3545;
+    }
+    .ui-btn-danger:hover {
+        background-color: #bb2d3b;
+    }
+
+    /* -----------------------------
+    Warning (نارنجی)
+    ----------------------------- */
+    .ui-btn-warning {
+        background-color: #ffc107;
+        color: #212529; /* متن تیره برای وضوح */
+    }
+    .ui-btn-warning:hover {
+        background-color: #e0a800;
+    }
+
+    /* -----------------------------
+    Info (آبی روشن)
+    ----------------------------- */
+    .ui-btn-info {
+        background-color: #0dcaf0;
+        color: #212529;
+    }
+    .ui-btn-info:hover {
+        background-color: #31d2f2;
+    }
+
+    /* -----------------------------
+    Light (سفید/خاکستری روشن)
+    ----------------------------- */
+    .ui-btn-light {
+        background-color: #f8f9fa;
+        color: #212529;
+    }
+    .ui-btn-light:hover {
+        background-color: #e2e6ea;
+    }
+
+    /* -----------------------------
+    Dark (مشکی/خاکستری تیره)
+    ----------------------------- */
+    .ui-btn-dark {
+        background-color: #212529;
+    }
+    .ui-btn-dark:hover {
+        background-color: #1a1e21;
+    }
+    .national-card {
+        padding : 5px;
+        margin :0;
+        font-family: Vazir, Yekan, Naskh, sans-serif;
+    }
+    .text-truncate {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;  
+        overflow: hidden;
+        font-size:12px;
+    }
+</style>
+<style>
+
+    .ui-select {
+        width: 100%;
+        padding: 10px 12px !important;
+        font-size: 15px !important;
+        line-height: 1.6 !important;
+        border: 1px solid #d0d0d0 !important;
+        border-radius: 8px !important;
+        background-color: #fff !important;
+        color: #222 !important;
+    }
+
+    .ui-select:focus {
+        border-color: #4a90e2 !important;
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2) !important;
+    }
+
+
+    /* ============================
+    NORMAL OPTION STYLE
+    ============================ */
+
+    .ui-select option {
+        padding: 10px !important;
+        font-size: 15px !important;
+    }
+
+
+    /* ============================
+    SELECT2 BASE STYLE
+    ============================ */
+
+    .select2-container .select2-selection--single {
+        height: 44px !important;
+        border-radius: 8px !important;
+    }
+
+    /* متن داخل select2 */
+    .select2-selection__rendered {
+        font-size: 15px !important;
+        color: #222 !important;
+        padding-left: 12px !important;
+        line-height: 44px !important;
+    }
+
+
+    /* لیست بازشونده */
+    .select2-container .select2-results__option {
+        padding: 10px !important;
+        font-size: 15px !important;
+        color: #222 !important;
+    }
+
+    /* فاصله بین گزینه‌ها هنگام Hover */
+    .select2-container .select2-results__option--highlighted {
+        background-color: #4a90e2 !important;
+        color: white !important;
+    }
+
+    /* ============================
+    یک دست‌سازی ظاهر انتخاب شده
+    ============================ */
+
+    .select2-results__option--selected {
+        background-color: #e8f0fe !important;
+        color: #222 !important;
+    }
+
+</style>
+<style>
+    /* سبز – موفق */
+    .badge-success {
+        background-color: #28a745 !important;
+    }
+
+    /* نارنجی – هشدار / در حال بررسی */
+    .badge-warning {
+        background-color: #ff9800 !important;
+        color: #000 !important;
+    }
+
+    /* قرمز – خطا / رد شده */
+    .badge-danger {
+        background-color: #d9534f !important;
+    }
+
+    /* آبی – وضعیت عادی / چاپ */
+    .badge-info {
+        background-color: #17a2b8 !important;
+    }
+
+    /* خاکستری – سایر وضعیت‌ها */
+    .badge-secondary {
+        background-color: #6c757d !important;
+    }
+
+    /* بنفش – وضعیت خاص */
+    .badge-purple {
+        background-color: #6f42c1 !important;
+    }
+
+    /* مشکی – نهایی کامل */
+    .badge-dark {
+        background-color: #343a40 !important;
+    }
+    .ui-hint-list {
+        padding: 0;
+        margin: 0;
+    }
+
+    .ui-hint-list li {
+        background: #f8f9fa;
+        border: 1px solid #e1e1e1;
+        padding: 6px 8px;
+        border-radius: 6px;
+        margin-bottom: 4px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between; /* متن سمت راست، آیکون سمت چپ */
+        transition: all 0.25s ease;
+        cursor: default;
+    }
+
+    .ui-hint-list li:hover {
+        background: #eef3ff;
+        border-color: #cbd6ff;
+    }
+
+    /* آیکون‌ها */
+    .ui-hint-list li i {
+        font-size: 16px;
+        opacity: 0.8;
+        margin-left: 8px; /* فاصله از متن */
+        transition: opacity 0.2s ease;
+    }
+
+    .ui-hint-list li:hover i {
+        opacity: 1;
+    }
+
+</style>
+<style>
+    /* پایه‌ای */
+.d-flex {
+    display: flex !important;
+}
+
+.d-inline-flex {
+    display: inline-flex !important;
+}
+
+/* جهت‌بندی اصلی (Main Axis) */
+.flex-row {
+    flex-direction: row !important; /* پیش‌فرض */
+}
+
+.flex-row-reverse {
+    flex-direction: row-reverse !important;
+}
+
+.flex-column {
+    flex-direction: column !important;
+}
+
+.flex-column-reverse {
+    flex-direction: column-reverse !important;
+}
+
+/* Wrap */
+.flex-wrap {
+    flex-wrap: wrap !important;
+}
+
+.flex-nowrap {
+    flex-wrap: nowrap !important;
+}
+
+.flex-wrap-reverse {
+    flex-wrap: wrap-reverse !important;
+}
+.justify-start { justify-content: flex-start !important; }
+.justify-end { justify-content: flex-end !important; }
+.justify-center { justify-content: center !important; }
+.justify-between { justify-content: space-between !important; }
+.justify-around { justify-content: space-around !important; }
+.justify-evenly { justify-content: space-evenly !important; }
+.items-start { align-items: flex-start !important; }
+.items-end { align-items: flex-end !important; }
+.items-center { align-items: center !important; }
+.items-baseline { align-items: baseline !important; }
+.items-stretch { align-items: stretch !important; }
+.content-start { align-content: flex-start !important; }
+.content-end { align-content: flex-end !important; }
+.content-center { align-content: center !important; }
+.content-between { align-content: space-between !important; }
+.content-around { align-content: space-around !important; }
+.content-stretch { align-content: stretch !important; }
+.self-auto { align-self: auto !important; }
+.self-start { align-self: flex-start !important; }
+.self-end { align-self: flex-end !important; }
+.self-center { align-self: center !important; }
+.self-baseline { align-self: baseline !important; }
+.self-stretch { align-self: stretch !important; }
+
+</style>
+<style>
+    .helper-block {
+    font-family: Vazir, Yekan, Naskh, sans-serif;
+    direction: rtl;
+}
+
+.helper-block ol {
+    counter-reset: item;
+    margin: 0;
+    padding: 0;
+}
+
+.helper-block ol li {
+    list-style: none;
+    position: relative;
+    padding: 12px 16px 12px 60px;
+    margin-bottom: 6px;
+    background: #f9f9f9;
+    border-left: 6px solid #0d6efd;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.helper-block ol li:hover {
+    background: #eef3ff;
+    border-right-color: #0056b3;
+}
+
+.helper-block ol li .badge {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: #fff;
+}
+
+.helper-block ol li strong {
+    color: #0d6efd;
+}
+
+.helper-block ol li a {
+    color: #0d6efd;
+    text-decoration: underline;
+}
+
+.helper-block ol li i {
+    margin-left: 6px;
+    opacity: 0.8;
+}
+
+/* رنگ‌های badge پیشنهادی که با کلاس ui-btn-* همخوانی دارند */
+.badge.ui-btn-success { background-color: #28a745; }
+.badge.ui-btn-info    { background-color: #17a2b8; }
+.badge.ui-btn-warning { background-color: #ffc107; color: #000; }
+.badge.ui-btn-primary { background-color: #0d6efd; }
+.badge.ui-btn-dark    { background-color: #343a40; }
+
+</style>

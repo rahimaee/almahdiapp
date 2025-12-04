@@ -10,8 +10,8 @@
     /* گروه‌ها */
     .stat-group {
         padding: 20px;
-        border-radius: 18px;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.30);
+        border-radius: 10px;
+        box-shadow: 0 0 40px rgba(83, 83, 83, 0.3);
         color: white;
         flex: 1;
         display: flex;
@@ -25,7 +25,6 @@
         font-weight: bold;
         padding: 0;
         margin: 0;
-        margin-bottom: 6px;
         text-align: right;
     }
 
@@ -71,8 +70,16 @@
         font-weight: bold;
         padding: 0;
         margin: 0;
+        display: inline-block;
+        min-width: 36px;
+        text-align: center;
     }
-
+    .stat-item span  {
+        background: rgba(255,255,255,0.3);
+        border-radius: 4px;
+        padding: 1px 6px;
+        line-height: 20px;
+    }
     .stat-item:hover {
         background: rgba(255,255,255,0.25);
     }
@@ -109,10 +116,15 @@
     .gradient-gray {
         background: linear-gradient(135deg, #4d504eff, #101311ff);
     }
+    .gradient-yellow {
+        background: linear-gradient(135deg, #69600fff, #b99726ff);
+    }
     .stat-head {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        margin-bottom: 6px;
+    
     }
     /* ریسپانسیو */
     @media (max-width: 900px) {
@@ -156,13 +168,13 @@
 
     /* Button */
     .dropdown-btn {
-        padding: 8px 16px;
-        border-radius: 10px;
+        padding: 4px 10px;
+        border-radius: 6px;
         background: #ffffff;
         color: #000;
         cursor: pointer;
         border: none;
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 600;
         transition: 0.25s;
     }
@@ -188,7 +200,7 @@
         background: #ffffff;
         padding: 8px 0;
         border-radius: 10px;
-        min-width: 280px;
+        min-width: 380px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.35);
         z-index: 200;
     }
@@ -222,12 +234,14 @@
         align-items: center;
         justify-content: space-between;
     }
-   
+    .card-box.xs .stat-item h6 ,.card-box.xs .stat-item span {
+        font-size: 10px;
+    }
 </style>
 <div class="dashboard row">
 
     {% for group in analytics %}
-        <div class="card-box col-md-{{group.col|default:"4"}}">
+        <div class="card-box col-md-{{group.col|default:"4"}} {{group.size|default:"md"}}">
             <div class="stat-group {{ group.gradient }}">
                 <!-- عنوان -->
                 <div class="stat-head">

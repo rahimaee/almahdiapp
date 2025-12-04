@@ -95,10 +95,10 @@ class SoldierOrgCodeStatusEnum(Enum):
 from enum import Enum
 
 class SoldierStatusFilterEnum(Enum):
-    ALL = "", "همه"
-    PRESENT_AND_ABSENT = "present_and_absent", "حاضر و فراری"
-    PRESENT = "present", "حاضر"
-    ABSENT = "absent", "فراری"
+    ALL = "", "همه سربازان"
+    PRESENT_AND_ABSENT = "present_and_absent", "سربازان حاضر و فراری"
+    PRESENT = "present", "سربازان حاضر"
+    ABSENT = "absent", "سربازان فراری"
     CHECKOUT = "CHECKOUT", "تسویه حساب شده"
 
     @property

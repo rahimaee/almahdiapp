@@ -36,4 +36,79 @@
     body * {
         font-family: Vazir, sans-serif;
     }
+    
+
+</style>
+<style>
+    /* سبز – موفق */
+    .badge-success {
+        background-color: #28a745 !important;
+    }
+
+    /* نارنجی – هشدار / در حال بررسی */
+    .badge-warning {
+        background-color: #ff9800 !important;
+        color: #000 !important;
+    }
+
+    /* قرمز – خطا / رد شده */
+    .badge-danger {
+        background-color: #d9534f !important;
+    }
+
+    /* آبی – وضعیت عادی / چاپ */
+    .badge-info {
+        background-color: #17a2b8 !important;
+    }
+
+    /* خاکستری – سایر وضعیت‌ها */
+    .badge-secondary {
+        background-color: #6c757d !important;
+    }
+
+    /* بنفش – وضعیت خاص */
+    .badge-purple {
+        background-color: #6f42c1 !important;
+    }
+
+    /* مشکی – نهایی کامل */
+    .badge-dark {
+        background-color: #343a40 !important;
+    }
+    .ui-hint-list {
+        padding: 0;
+        margin: 0;
+    }
+
+    .ui-hint-list li {
+        background: #f8f9fa;
+        border: 1px solid #e1e1e1;
+        padding: 6px 8px;
+        border-radius: 6px;
+        margin-bottom: 4px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between; /* متن سمت راست، آیکون سمت چپ */
+        transition: all 0.25s ease;
+        cursor: default;
+    }
+
+    .ui-hint-list li:hover {
+        background: #eef3ff;
+        border-color: #cbd6ff;
+    }
+
+    /* آیکون‌ها */
+    .ui-hint-list li i {
+        font-size: 16px;
+        opacity: 0.8;
+        margin-left: 8px; /* فاصله از متن */
+        transition: opacity 0.2s ease;
+    }
+
+    .ui-hint-list li:hover i {
+        opacity: 1;
+    }
+
 </style>

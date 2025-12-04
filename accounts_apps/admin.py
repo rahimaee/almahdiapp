@@ -42,7 +42,7 @@ class MyUserAdmin(UserAdmin):
         (None, {'fields': ('username', 'password')}),
         ('اطلاعات', {'fields': (
         'first_name', 'last_name', 'email', 'national_code', 'phone_number', 'address', 'profile_picture', 'id_code',
-        'Employment_status', 'units')}),
+        'Employment_status', 'units','role')}),
         ('مجوزها', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('تاریخ‌های مهم', {'fields': ('last_login', 'date_joined')}),
     )

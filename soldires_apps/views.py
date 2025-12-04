@@ -80,7 +80,10 @@ def soldier_list(request):
 
     elif selected_filter == SoldierStatusFilterEnum.CHECKOUT.key:
         soldiers = soldiers.filter(is_checked_out=True)
-
+    selected_filter_label = next(
+        (item.label for item in SoldierStatusFilterEnum if item.key == selected_filter),
+        ""
+    )
     all_soldiers_counts= len(soldiers) 
     remaining_filter = None
     
@@ -213,6 +216,7 @@ def soldier_list(request):
         'remainingFilter':remaining_filter,
         'status_choices':status_choices,
         'selected_filter':selected_filter,
+        'selected_filter_label':selected_filter_label,
     })
 
 

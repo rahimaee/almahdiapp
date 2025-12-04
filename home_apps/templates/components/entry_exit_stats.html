@@ -1,0 +1,62 @@
+<div class="dashboard row">
+        <div class="card-box col-md-{{entry_exit.col|default:"4"}}">
+            <div class="stat-group {{ entry_exit.gradient }}">
+                <!-- عنوان -->
+                <div class="stat-head">
+                    <h2 class="stat-title">{{ entry_exit.label }}</h2>
+                    <div class="stat-value">{{ entry_exit.count }}</div>
+                </div>
+                <!-- گرید آمار -->
+                <div class="stat-cards">
+                    <div  class="row">
+                        {% for item in entry_exit.items %}
+                        <div  class="item col-md-{{entry_exit.itemsCol|default:'4'}}">
+                            <div class="stat-item">
+                                <h6>{{ item.label }}</h6>
+                                <span>{{ item.count }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                    <!-- دکمه‌ها + Dropdown -->
+                    <div class="btn-box">
+                        {% for action in entry_exit.actions %}
+                            {% if action.show %}
+                                <div class="dropdown">
+
+                                    <button 
+                                        class="dropdown-btn {% if action.disabled %}disabled-action{% endif %}" 
+                                        {% if action.disabled %}disabled{% endif %}
+                                    >
+                                        {{ action.icon }} {{ action.label }}
+                                    </button>
+
+                                    {% if not action.disabled %}
+                                    <div class="dropdown-content">
+                                        {% if entry_exit.query %}
+                                            <a class="action-link" href="{% url action.base %}?{{ entry_exit.query }}">
+                                                <span>{{ entry_exit.label }}</span>
+                                                <span>{{ action.icon }}</span>
+                                            </a>
+                                        {% endif %}
+
+                                        {% for item in entry_exit.items %}
+                                            <a class="action-link" href="{% url action.base %}?{{ entry_exit.query }}&{{ item.query }}">
+                                                <span>{{ entry_exit.label }} {{ item.label }}</span>
+                                                <span>{{ action.icon }}</span>
+                                            </a>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+
+                                </div>
+                            {% endif %}
+
+                        {% endfor %}
+                    </div>
+
+            </div>
+        </div>
+
+</div>

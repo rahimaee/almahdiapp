@@ -1,0 +1,25 @@
+{% load req %}
+
+<div class="sidebar-card shadow-sm">
+    <div class="sidebar-card-header">
+        <i class="fa fa-exclamation-circle me-1"></i> تنبیهات
+    </div>
+    <div class="list-group list-group-flush">
+
+        <a href="#" class="list-group-item {% active_link 'discipline_list' %}">
+            <i class="fa fa-list"></i>
+            <span class="me-2">فهرست تنبیهات</span>
+        </a>
+
+        <a href="#" class="list-group-item {% active_link 'discipline_create' %}">
+            <i class="fa fa-plus-circle"></i>
+            <span class="me-2">افزودن تنبیه جدید</span>
+        </a>
+
+        <a href="#" class="list-group-item {% active_link 'discipline_reports' %}">
+            <i class="fa fa-file-alt"></i>
+            <span class="me-2">گزارشات تنبیهی</span>
+        </a>
+
+    </div>
+</div>

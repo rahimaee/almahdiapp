@@ -1,0 +1,319 @@
+{% load static %}
+{% load jalali_filters %}
+{% load req %}
+{% load css %}
+{% include "shared/app_layout_style.html" %}
+
+<style>
+    .soldiers-form-nav {
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+    }
+
+    #soldierForm {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    /* عنوان h4 */
+    .filter-title {
+        display: flex;
+        align-items: center;
+        font-size: 18px;
+        font-weight: bold;
+        margin: 5px 0 15px;
+    }
+    .filter-title .text-title {
+        flex: 1;
+    }
+    .filter-title .info-icon {
+        margin-right: 8px;
+        cursor: pointer;
+        font-size: 17px;
+        color: #007bff;
+        position: relative;
+    }
+
+    /* Tooltip hint */
+    .filter-title .info-icon .hint-box {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 25px;
+        background: rgba(0,0,0,0.85);
+        padding: 8px 12px;
+        border-radius: 6px;
+        color: white;
+        width: 180px;
+        font-size: 13px;
+        line-height: 1.7;
+        z-index: 10;
+    }
+
+    .filter-title .info-icon:hover .hint-box {
+        display: block;
+    }
+
+    .filters-scroll {
+        flex: 1;
+        overflow-y: auto;
+        padding-left: 5px;
+    }
+
+    .filters-scroll::-webkit-scrollbar {
+        width: 6px;
+    }
+    .filters-scroll::-webkit-scrollbar-thumb {
+        background: #cfcfcf;
+        border-radius: 10px;
+    }
+    .ui-btn.sm {
+        padding: 8px 16px;
+        font-size: 12px;
+    }
+    #soldierForm .ui-form-group {
+        margin-bottom : 4px;
+    }
+    #soldierForm  .app-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0;
+        padding: 0;
+        margin-top: 0;
+        margin-bottom: 10px;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+</style>
+
+<div class="soldiers-form-nav">
+
+    <form id="soldierForm">
+        <div style="text-align: center;margin-bottom: 10px;">
+            <h1 class="app-title">فهرست سربازان یگان المهدی</h1> 
+            <span style="font-size: 14px;" class="bg-danger text-white  soldiers-search">
+            نتیجه     {{soldiers_counts}} نفر از {{all_soldiers_counts}} نفر ({{selected_filter_label}})
+            </span>
+        </div>
+        <div class="ui-form-group sm"> 
+                <label>نمایش پیشفرض</label> 
+                <select name="defaultFilter" class="ui-select">
+                    {% for value, label in status_choices %} 
+                    <option value="{{ value }}" {% if value == selected_filter %}selected{% endif %}>{{ label }}</option> 
+                    {% endfor %} 
+                </select> 
+        </div> 
+        <div class="ui-form-group sm">
+                <input type="text" id="query" name="query" class="ui-input" placeholder="کدملی، نام، نام خانوادگی، کد سازمانی ..." /> 
+                <div style="margin:0 2px;"></div> 
+                <div> 
+                    <button onclick="setFormAction('search')" class="ui-btn ui-btn-primary sm d-flex items-center justify-between"> 
+                        <span class="ui-label">جستجو</span> <span class="ui-icon">🔍</span>
+                    </button> 
+                </div>
+        </div>
+
+
+        <!-- 🔹 فیلترهای پیشرفته -->
+        <h4 class="filter-title">
+            <span class="text-title">فیلترهای پیشرفته</span>
+            <span class="info-icon"> <span>ℹ️</span> <div class="hint-box"> از این بخش می‌توانید جستجوی دقیق‌تری انجام دهید. </div> </span>
+        </h4>
+        <button type="submit" class="ui-btn ui-btn-primary d-flex items-center justify-between" style="margin-bottom: 15px;">
+            <span>اجرای عملیات</span> 🔎
+        </button>
+        <div class="filters-scroll">
+
+            {% include "components/breaker.html" with label="🔹 اطلاعات هویتی" %}
+            <!-- 🔹 اطلاعات هویتی -->
+            <div class="ui-form-group sm">
+                <label>{{ form.national_code.label }}</label>
+                {{ form.national_code|add_class:"ui-input" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.first_name.label }}</label>
+                {{ form.first_name|add_class:"ui-input" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.last_name.label }}</label>
+                {{ form.last_name|add_class:"ui-input" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.father_name.label }}</label>
+                {{ form.father_name|add_class:"ui-input" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.organizational_code.label }}</label>
+                {{ form.organizational_code|add_class:"ui-input" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.id_card_code.label }}</label>
+                {{ form.id_card_code|add_class:"ui-input" }}
+            </div>
+                        <!-- 🔹 پایان خدمت -->
+            {% include "components/breaker.html" with label="🔹 پایان خدمت" %}
+            <div class="ui-form-group sm">
+                <label>{{ form.remainingFilter.label }}</label>
+                {{ form.remainingFilter|add_class:"ui-select" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.end_service_from_date.label }}</label>
+                {{ form.end_service_from_date|add_class:"ui-input" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.end_service_to_date.label }}</label>
+                {{ form.end_service_to_date|add_class:"ui-input" }}
+            </div>
+            {% include "components/breaker.html" with label="🔹 اطلاعات مکانی" %}
+            <!-- 🔹 اطلاعات مکانی -->
+            <div class="ui-form-group sm">
+                <label>{{ form.birth_place.label }}</label>
+                {{ form.birth_place|add_class:"ui-input" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.issuance_place.label }}</label>
+                {{ form.issuance_place|add_class:"ui-input" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.residence_province.label }}</label>
+                {{ form.residence_province|add_class:"ui-select" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.residence_city.label }}</label>
+                {{ form.residence_city|add_class:"ui-select" }}
+            </div>
+            {% include "components/breaker.html" with label="🔹 یگان خدمتی " %}
+            <!-- 🔹 اطلاعات خدمت -->
+            <div class="ui-form-group sm">
+                <label>{{ form.current_parent_unit.label }}</label>
+                {{ form.current_parent_unit|add_class:"ui-select" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.current_sub_unit.label }}</label>
+                {{ form.current_sub_unit|add_class:"ui-select" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.rank.label }}</label>
+                {{ form.rank|add_class:"ui-select" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.is_guard_duty.label }}</label>
+                {{ form.is_guard_duty|add_class:"ui-select" }}
+            </div>
+            {% include "components/breaker.html" with label="🔹 اوضاع خدمتی" %}
+
+            <!-- 🔹 اطلاعات زمانی -->
+            <div class="ui-form-group sm">
+                <label>{{ form.service_entry_date.label }}</label>
+                {{ form.service_entry_date|add_class:"ui-input" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.dispatch_date.label }}</label>
+                {{ form.dispatch_date|add_class:"ui-input" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.birth_date.label }}</label>
+                {{ form.birth_date|add_class:"ui-input" }}
+            </div>
+            {% include "components/breaker.html" with label="🔹 اطلاعات آموزشی" %}
+
+            <!-- 🔹 اطلاعات آموزشی -->
+            <div class="ui-form-group sm">
+                <label>{{ form.training_duration.label }}</label>
+                {{ form.training_duration|add_class:"ui-input" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.basic_training_center.label }}</label>
+                {{ form.basic_training_center|add_class:"ui-select" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.essential_service_duration.label }}</label>
+                {{ form.essential_service_duration|add_class:"ui-input" }}
+            </div>
+            {% include "components/breaker.html" with label="🔹 اطلاعات خانوادگی" %}
+            <!-- 🔹 اطلاعات خانوادگی -->
+            <div class="ui-form-group sm">
+                <label>{{ form.marital_status.label }}</label>
+                {{ form.marital_status|add_class:"ui-select" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.independent_married.label }}</label>
+                {{ form.independent_married|add_class:"ui-select" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.number_of_children.label }}</label>
+                {{ form.number_of_children|add_class:"ui-input" }}
+            </div>
+            {% include "components/breaker.html" with label="🔹 وضعیت سلامت" %}
+
+            <!-- 🔹 اطلاعات سلامت -->
+            <div class="ui-form-group sm">
+                <label>{{ form.health_status.label }}</label>
+                {{ form.health_status|add_class:"ui-select" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.blood_group.label }}</label>
+                {{ form.blood_group|add_class:"ui-select" }}
+            </div>
+            {% include "components/breaker.html" with label="🔹 مهارتی" %}
+
+            <!-- 🔹 مدارک تحصیلی و مهارتی -->
+            <div class="ui-form-group sm">
+                <label>{{ form.degree.label }}</label>
+                {{ form.degree|add_class:"ui-select" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.skill_certificate.label }}</label>
+                {{ form.skill_certificate|add_class:"ui-select" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.number_of_certificates.label }}</label>
+                {{ form.number_of_certificates|add_class:"ui-input" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.is_certificate.label }}</label>
+                {{ form.is_certificate|add_class:"ui-select" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.skill_group.label }}</label>
+                {{ form.skill_group|add_class:"ui-select" }}
+            </div>
+
+            <div class="ui-form-group sm">
+                <label>{{ form.has_driving_license.label }}</label>
+                {{ form.has_driving_license|add_class:"ui-select" }}
+            </div>
+
+        </div>
+    </form>
+</div>

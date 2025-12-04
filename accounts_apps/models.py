@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
-
+from .enums import ROLE_CHOICES,AccountingRole
 
 class MyUser(AbstractUser):
     # اضافه کردن فیلدهای اضافی
@@ -11,6 +11,17 @@ class MyUser(AbstractUser):
                                         verbose_name="عکس پروفایل")
     address = models.TextField(blank=True, null=True, verbose_name="آدرس")
     id_code = models.CharField(blank=True, null=True, max_length=50, verbose_name='کدپاسداری')
+    role = models.IntegerField(
+        choices=ROLE_CHOICES,
+        default=AccountingRole.BEHDARI_PARASTAR.code,   # 0 - Default
+        verbose_name="نقش کاربر",
+        null=False,
+        blank=True,
+    )
+    @property
+    def role_display(self):
+        return AccountingRole.get_label(self.role)
+
     units = models.ManyToManyField(
         'units_apps.ParentUnit',
         blank=True,

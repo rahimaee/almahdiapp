@@ -1,5 +1,6 @@
 from django import forms
 from persiantools.jdatetime import JalaliDate
+import jdatetime
 
 def shamsi_to_gregorian(value: str):
     """
@@ -17,3 +18,13 @@ def shamsi_to_gregorian(value: str):
         return JalaliDate(year, month, day).to_gregorian()
     except Exception:
         raise forms.ValidationError("تاریخ نامعتبر است")
+
+def gtosh(value=None):
+    print(value)
+    if value:
+        try:
+            j_dt = jdatetime.datetime.fromgregorian(datetime=value)
+            return j_dt.strftime("%Y/%m/%d")
+        except Exception:
+            return value
+    return ''

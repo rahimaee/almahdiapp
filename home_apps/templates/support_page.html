@@ -1,0 +1,186 @@
+{% extends 'shared/_PanelMain.html' %}
+{% load static %}
+
+{% block header %}
+<style>
+body {
+    font-family: 'Vazir', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+/* Container اصلی */
+.about-container {
+    padding: 20px;
+}
+
+/* عنوان اصلی */
+.about-header {
+    text-align: center;
+    font-size: 3em;
+    font-weight: 700;
+    margin-bottom: 60px;
+}
+
+/* بخش معرفی سامانه */
+.about-intro {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-bottom: 70px;
+}
+
+.about-intro .text {
+    flex: 1 1 500px;
+    line-height: 1.8;
+    font-size: 1.15em;
+}
+
+.about-intro .image {
+    flex: 1 1 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.about-intro .image img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* بخش تیم */
+.team-section {
+    margin-bottom: 70px;
+}
+
+.team-header {
+    font-size: 2em;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 30px;
+}
+
+.team-card {
+    display: flex;
+    justify-content: flex-start;
+    gap: 15px; /* فاصله بین عکس و متن */
+    direction: rtl; /* برای راست به چپ بودن عکس و متن */
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.team-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.team-card img {
+    width: 120px;
+    height: 120px;
+    background:black;
+    border-radius: 10%;
+}
+
+.team-card strong {
+    display: block;
+    font-size: 1.15em;
+    margin-bottom: 5px;
+}
+
+.team-card span {
+    font-size: 0.95em;
+    color: #555;
+}
+
+/* بخش تماس */
+.contact-section {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.contact-section a {
+    display: inline-block;
+    margin: 10px 12px;
+    padding: 10px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    border: 1px solid #ccc;
+    transition: all 0.3s ease;
+}
+
+.contact-section a:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+}
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="about-container">
+
+    <div class="about-header">درباره ما</div>
+
+    <!-- بخش معرفی سامانه -->
+    <div class="about-intro">
+        <div class="text">
+            سامانه جامع رزم‌آموز المهدی(عج) با هدف بهبود فرآیندهای مدیریتی و افزایش دقت در ثبت و پیگیری امور سربازان طراحی و اجرا شده است.
+            این سامانه در دوران فرماندهی <strong>سرهنگ پاسدار علی متولی طاهر</strong> و با همکاری <strong>سرهنگ پاسدار رضا سروی</strong> و <strong>ستوان دوم پاسدار میثم گلبابازاده</strong> توسعه یافته است.
+            <br><br>
+            توسعه و برنامه‌نویسی این سامانه به عهده <strong>ستوان دوم وظیفه سید محمدرضا رحیمایی</strong>  و  <strong>سجاد سیفی لر</strong> بوده است.
+        </div>
+        <div class="image">
+            <img src="{% static 'images/about_us_placeholder.png' %}" alt="About Us Image">
+        </div>
+    </div>
+
+    <!-- بخش تیم -->
+    <div class="team-section">
+        <div class="team-header">تیم کلیدی پروژه</div>
+<div class="team-grid">
+    <div class="team-card">
+        <img src="{% static 'img/support/golbaba.jpg' %}" alt="ستوان دوم پاسدار میثم گلبابازاده">
+        <div class="team-info">
+            <strong>ستوان دوم پاسدار میثم گلبابازاده</strong>
+            <span>مسئول منابع سربازان</span>
+        </div>
+    </div>
+    <div class="team-card">
+        <img src="{% static 'img/support/rahimaii.jpg' %}" alt="ستوان دوم وظیفه سید محمدرضا رحیمایی">
+        <div class="team-info">
+            <strong>ستوان دوم وظیفه سید محمدرضا رحیمایی</strong>
+            <span>برنامه‌نویس و توسعه‌دهنده نرم‌افزار</span>
+        </div>
+    </div>
+    <div class="team-card">
+        <img src="{% static 'img/support/sajjadseifi.jpg' %}" alt="سجاد سیفی لر">
+        <div class="team-info">
+            <strong>سجاد سیفی لر</strong>
+            <span>برنامه‌نویس و توسعه‌دهنده نرم‌افزار</span>
+        </div>
+    </div>
+</div>
+    </div>
+
+    <!-- بخش تماس -->
+    <div class="contact-section">
+        <a href="tel:09914914853">تماس با محمدرضا رحیمایی</a>
+        <a href="mailto:mohammad.rahimaee@gmail.com">ایمیل محمدرضا رحیمایی</a>
+        <a href="tel:09334497255">تماس با سجاد سیفی لر</a>
+        <a href="mailto:sajjadseifilor@gmail.com">ایمیل سجاد سیفی لر</a>
+    </div>
+
+</div>
+{% endblock %}

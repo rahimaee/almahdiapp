@@ -1,0 +1,25 @@
+{% load req %}
+
+<div class="sidebar-card shadow-sm">
+    <div class="sidebar-card-header">
+        <i class="fa fa-calendar-check me-1"></i> لوحه نگهبانی
+    </div>
+    <div class="list-group list-group-flush">
+
+        <a href="#" class="list-group-item {% active_link 'guard_board' %}">
+            <i class="fa fa-calendar"></i>
+            <span class="me-2">مشاهده لوحه</span>
+        </a>
+
+        <a href="#" class="list-group-item {% active_link 'guard_board_create' %}">
+            <i class="fa fa-plus-circle"></i>
+            <span class="me-2">ایجاد لوحه جدید</span>
+        </a>
+
+        <a href="#" class="list-group-item {% active_link 'guard_board_archive' %}">
+            <i class="fa fa-archive"></i>
+            <span class="me-2">آرشیو لوحه‌ها</span>
+        </a>
+
+    </div>
+</div>

@@ -27,35 +27,81 @@ def index(request):
     present = PresentSoldiers()  # کوئری پایه
 
     STAT_REGISTRY = [
-        ("کل سربازان", AllSoldiers),
-        ("سربازان حاضر", lambda: present),
-        ("سالم", lambda: HealthySoldiers(present)),
-        ("معاف از رزم", lambda: ExemptSoldiers(present)),
-        ("معاف از رزم گروه ب", lambda: ExemptBSoldiers(present)),
-        ("فراری", RunawaySoldiers),
+        ("کل سربازان", AllSoldiers,True),
+        ("سربازان حاضر", lambda: present,True),
+        ("سالم", lambda: HealthySoldiers(present),True),
+        ("معاف از رزم", lambda: ExemptSoldiers(present),True),
+        ("معاف از رزم گروه ب", lambda: ExemptBSoldiers(present),True),
+        ("فراری", RunawaySoldiers,True),
         # --- این سه مورد که گفتی هم از present استفاده کنند ---
-        ("اعلام حضور نشده در سامانه", lambda: SystemPresenceNotReported(present)),
-        ("اعلام حضور نشده (ورود به یگان)", lambda: NotReportedSoldiers(present)),
-        ("جذبی", lambda: AbsorptionSoldiers(present)),
-        ("سربازان حاضر (نیاز به تسویه)", lambda: PresentOutedService(present)),
-        ("پایان خدمت", FinishedService),
-        ("در حال صدور کارت", CardIssuing),
+        ("اعلام حضور نشده در سامانه", lambda: SystemPresenceNotReported(present),request.user.is_staff),
+        ("اعلام حضور نشده (ورود به یگان)", lambda: NotReportedSoldiers(present),request.user.is_staff),
+        ("جذبی", lambda: AbsorptionSoldiers(present),True),
+        ("سربازان حاضر (نیاز به تسویه)", lambda: PresentOutedService(present),request.user.is_staff),
+        ("پایان خدمت", FinishedService,True),
+        ("در حال صدور کارت", CardIssuing,request.user.is_staff),
     ]
 
     stats = []
-    for title, cls in STAT_REGISTRY:
+    for title, cls,access in STAT_REGISTRY:
         instance = cls() if not callable(cls) else cls()
-        stats.append(StatItem(title, instance.count()))
+        stats.append(StatItem(title, instance.count(),access))
 
     return render(request, "analystics_index.html", { "stats": stats })
 
 def latest_statistics(request):
-   context = {
-      'main_stats': {},
-      'shift_stats': {},
-      'base_stats': {},
-   }
-   return render(request, 'analystics/latest_statistics_page.html',context)
+    
+    
+    present = PresentSoldiers()
+    existance = RankGroup(present).dagrees_grouped()
+    normal =  HealthySoldiers(present).get_queryset().count()
+    exempt =  ExemptSoldiers(present).get_queryset().count()
+    exemptb = ExemptBSoldiers(present).get_queryset().count()
+    exempta =  normal + exempt
+    healthy = {
+        'normal':normal,
+        'exempt':exempt + exemptb,
+        'total1':normal + exempt + exemptb,
+        'exempta':exempta,
+        'exemptb':exemptb ,
+        'total2':exempta + exemptb,
+    }
+    no_sunni = present.get_queryset().filter(is_sunni=False).count()
+    sunni = present.get_queryset().filter(is_sunni=True).count()
+    religus = {
+        'no_sunni':no_sunni,
+        'sunni':sunni,
+        'total':sunni + no_sunni,
+    }
+    context = {
+        'existance':existance,
+        'healthy':healthy,
+        'religus':religus,
+
+    }
+    
+    active_service =  ActiveServiceStats().get_data()
+    active_service_totals = {
+        "staff": active_service["normal"]["staff"] + active_service["daghree"]["staff"] + active_service["officer"]["staff"],
+        "unit": active_service["normal"]["unit"] + active_service["daghree"]["unit"] + active_service["officer"]["unit"],
+        "battalion": active_service["normal"]["battalion"] + active_service["daghree"]["battalion"] + active_service["officer"]["battalion"],
+        "total": active_service["normal"]["total"] + active_service["daghree"]["total"] + active_service["officer"]["total"],
+        "py": active_service["normal"]["py"] + active_service["daghree"]["py"] + active_service["officer"]["py"],
+        "local": active_service["normal"]["local"] + active_service["daghree"]["local"] + active_service["officer"]["local"],
+        "non_local": active_service["normal"]["non_local"] + active_service["daghree"]["non_local"] + active_service["officer"]["non_local"],
+    }
+    context = {
+        "health": HealthStats().get_data(),
+        "existance": RankGroupStats().get_data(),
+        "religus": ReligionStats().get_data(),
+        "active_service": active_service,
+        "active_service_totals":active_service_totals,
+        "education_exempt": EducationExemptRunawayStats().get_data(),
+        "retention": StaffRetentionStats().get_data(),
+        "command_active": CommandActiveServiceStats().get_data(),
+        "other": OtherStats().get_data(),
+    }
+    return render(request, 'analystics/latest_statistics_page.html',context)
 
 def reports_all(request):
     units = ParentUnit.objects.all()

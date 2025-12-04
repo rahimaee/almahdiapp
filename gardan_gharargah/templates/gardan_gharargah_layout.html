@@ -1,0 +1,13 @@
+{% extends 'shared/app_layout.html' %}
+{% load req %}
+
+{% block sidebar %}
+    <aside class="app-sidebar">
+        {% include "./_sidebars/dashboard_sidebar.html" %}
+        {% include "./_sidebars/letters_sidebar.html" %}
+        {% include "./_sidebars/discipline_sidebar.html" %}
+        {% include "./_sidebars/reward_sidebar.html" %}
+        {% include "./_sidebars/board_sidebar.html" %}
+        {% include "./_sidebars/guard_entry_sidebar.html" %}
+    </aside>
+{% endblock %}

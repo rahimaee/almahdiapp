@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'apps_settings',
     'analystics',
     'expired_soldiers',
-    'organizational_position'
+    'organizational_position',
+    'gardan_gharargah'
 ]
 
 MIDDLEWARE = [

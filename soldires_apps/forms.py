@@ -41,7 +41,7 @@ class SoldierForm(forms.ModelForm):
 
     current_sub_unit = forms.ModelChoiceField(
         queryset=SubUnit.objects.none(),  # مقدار اولیه خالی، بعداً با AJAX پر می‌شود
-        empty_label="انتخاب زیرواحد",
+        empty_label="--- انتخاب زیرواحد ---",
         widget=forms.Select(attrs={"class": "form-control", "id": "sub-unit-select"}),
         label='زیرقسمت',
         required=False,
@@ -257,48 +257,55 @@ def jalali_to_gregorian(jdate_str):
         return jdatetime.date(y, m, d).togregorian()
     else:
         return None
-    
+
+BOOLEAN_CHOICES = [
+    ("", "همه"),
+    ("true", "بله"),
+    ("false", "خیر"),
+]
+
+date_attrs_widget = {
+    'class': 'form-control date',
+    'placeholder': 'مثال: 1403/01/15',
+    'maxlength': '10',
+    'dir': 'ltr',
+    'oninput': 'formatDateInput(this)'
+}
+
+remaining_filter_choices = [
+    ("", "همه"),
+    ("unknown", "نامشخص"),
+    ("end", "پایان خدمت"),
+    ("remaining", "بیش از 45 روز مانده"),
+    ("remaining45", "کمتر از 45 روز"),
+    ("remaining30", "کمتر از 30 روز"),
+    ("remaining15", "کمتر از 15 روز"),
+    ("remaining5", "کمتر از 5 روز"),
+]
+
+
 class SoldierSearchForm(forms.Form):
-        # فیلترهای پایان خدمت
+
+    # --- فیلتر پایان خدمت ---
     remainingFilter = forms.ChoiceField(
         label="تا پایان خدمت",
         required=False,
-        choices=[
-            ("", "همه"),
-            ("unknown", "نامشخص"),
-            ("end", "پایان خدمت"),
-            ("remaining", "بیش از 45 روز مانده"),
-            ("remaining45", "کمتر از 45 روز"),
-            ("remaining30", "کمتر از 30 روز"),
-            ("remaining15", "کمتر از 15 روز"),
-            ("remaining5", "کمتر از 5 روز")
-        ],
-        widget=forms.Select(attrs={'class': 'form-control'})
+        choices=remaining_filter_choices,
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'انتخاب کنید'})
     )
 
     end_service_from_date = forms.CharField(
         label="پایان خدمت از تاریخ",
         required=False,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'YYYY/MM/DD',
-            'maxlength': '10',
-            'dir': 'ltr',
-            'oninput': 'formatDateInput(this)'
-        })
+        widget=forms.TextInput(attrs=date_attrs_widget)
     )
 
     end_service_to_date = forms.CharField(
         label="پایان خدمت تا تاریخ",
         required=False,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'YYYY/MM/DD',
-            'maxlength': '10',
-            'dir': 'ltr',
-            'oninput': 'formatDateInput(this)'
-        })
+        widget=forms.TextInput(attrs=date_attrs_widget)
     )
+
     def clean_end_service_from_date(self):
         date = self.cleaned_data.get("end_service_from_date")
         return jalali_to_gregorian(date)
@@ -306,163 +313,201 @@ class SoldierSearchForm(forms.Form):
     def clean_end_service_to_date(self):
         date = self.cleaned_data.get("end_service_to_date")
         return jalali_to_gregorian(date)
-    
-    # اطلاعات هویتی
-    national_code = forms.CharField(label='کد ملی', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    first_name = forms.CharField(label='نام', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    last_name = forms.CharField(label='نام خانوادگی', required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
-    father_name = forms.CharField(label='نام پدر', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    organizational_code = forms.CharField(label='کد سازمانی', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    id_card_code = forms.CharField(label='کد پاسداری', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    # اطلاعات مکانی
-    birth_place = forms.CharField(label='محل تولد', required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
-    issuance_place = forms.CharField(label='محل صدور', required=False,widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    # --- اطلاعات هویتی ---
+    national_code = forms.CharField(
+        label='کد ملی',
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'مثال: 1234567890'})
+    )
+    first_name = forms.CharField(
+        label='نام',
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'نام'})
+    )
+    last_name = forms.CharField(
+        label='نام خانوادگی',
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'نام خانوادگی'})
+    )
+    father_name = forms.CharField(
+        label='نام پدر',
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'نام پدر'})
+    )
+    organizational_code = forms.CharField(
+        label='کد سازمانی',
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'کد سازمانی'})
+    )
+    id_card_code = forms.CharField(
+        label='کد پاسداری',
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'کد پاسداری'})
+    )
+
+    # --- محل سکونت ---
+    birth_place = forms.CharField(
+        label='محل تولد',
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'محل تولد'})
+    )
+    issuance_place = forms.CharField(
+        label='محل صدور',
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'محل صدور شناسنامه'})
+    )
+
     residence_province = forms.ModelChoiceField(
         queryset=Province.objects.all(),
         label='استان',
+        empty_label='همه',
         required=False,
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'انتخاب استان'})
     )
     residence_city = forms.ModelChoiceField(
         queryset=City.objects.all(),
         label='شهر',
+        empty_label='همه',
         required=False,
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'انتخاب شهر'})
     )
 
-    # اطلاعات خدمت
+    # --- اطلاعات خدمتی ---
     current_parent_unit = forms.ModelChoiceField(
         queryset=ParentUnit.objects.all(),
         label='قسمت',
+        empty_label='همه',
         required=False,
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'انتخاب قسمت'})
     )
     current_sub_unit = forms.ModelChoiceField(
         queryset=SubUnit.objects.all(),
         label='زیرقسمت',
+        empty_label='همه',
         required=False,
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
-    rank = forms.ChoiceField(
-        choices=Soldier.RANK_CHOICES,
-        label='درجه',
-        required=False,
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
-    is_guard_duty = forms.BooleanField(
-        label='پاسدار وظیفه',
-        required=False,
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'انتخاب زیرقسمت'})
     )
 
-    # اطلاعات زمانی
+    rank = forms.ChoiceField(
+        choices=[('', 'همه')] + Soldier.RANK_CHOICES,
+        label='درجه',
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'انتخاب درجه'})
+    )
+
+    is_guard_duty = forms.ChoiceField(
+        choices=BOOLEAN_CHOICES,
+        label='پاسدار وظیفه',
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'انتخاب وضعیت'})
+    )
+
+    # --- اطلاعات زمانی ---
     service_entry_date = forms.CharField(
         label='تاریخ ورود به یگان',
         required=False,
-        widget=forms.TextInput(attrs={'type': 'text', 'class': 'form-control'})
+        widget=forms.TextInput(attrs=date_attrs_widget)
     )
     dispatch_date = forms.CharField(
         label='تاریخ اعزام',
         required=False,
-        widget=forms.TextInput(attrs={'type': 'text', 'class': 'form-control'})
+        widget=forms.TextInput(attrs=date_attrs_widget)
     )
     birth_date = forms.CharField(
         label='تاریخ تولد',
         required=False,
-        widget=forms.TextInput(attrs={'type': 'text', 'class': 'form-control'})
+        widget=forms.TextInput(attrs=date_attrs_widget)
     )
 
-    # اطلاعات آموزشی
+    # --- اطلاعات آموزشی ---
     training_duration = forms.IntegerField(
         label='مدت آموزش (روز)',
         required=False,
-        widget=forms.NumberInput(attrs={'class': 'form-control'})
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'مدت آموزش'})
     )
     basic_training_center = forms.ModelChoiceField(
         queryset=TrainingCenter.objects.all(),
-        label='نام آموزشگاه رزم مقدماتی',
+        label='آموزشگاه رزم مقدماتی',
+        empty_label='همه',
         required=False,
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'انتخاب آموزشگاه'})
     )
     essential_service_duration = forms.IntegerField(
         label='مدت خدمت ضرورت',
         required=False,
-        widget=forms.NumberInput(attrs={'class': 'form-control'})
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'مدت خدمت'})
     )
 
-    # اطلاعات شخصی
+    # --- اطلاعات شخصی ---
     marital_status = forms.ChoiceField(
-        choices=Soldier.MARITAL_STATUS_CHOICES,
+        choices=[('', 'همه')] + Soldier.MARITAL_STATUS_CHOICES,
         label='وضعیت تأهل',
         required=False,
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'انتخاب وضعیت'})
     )
-    independent_married = forms.BooleanField(
+    independent_married = forms.ChoiceField(
+        choices=BOOLEAN_CHOICES,
         label='متاهل مستقل',
         required=False,
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'انتخاب وضعیت'})
     )
     number_of_children = forms.IntegerField(
         label='تعداد اولاد',
         required=False,
-        widget=forms.NumberInput(attrs={'class': 'form-control'})
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'تعداد'})
     )
 
-    # اطلاعات سلامت
+    # --- اطلاعات سلامت ---
     health_status = forms.ChoiceField(
-        choices=Soldier.HEALTH_STATUS_CHOICES,
+        choices=[('', 'همه')] + Soldier.HEALTH_STATUS_CHOICES,
         label='وضعیت سلامت',
         required=False,
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
-    health_status_description = forms.CharField(
-        label='توضیحات وضعیت سلامت',
-        required=False,
-        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 2})
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'انتخاب وضعیت'})
     )
     blood_group = forms.ChoiceField(
-        choices=Soldier.blood_group_choices,
+        choices=[('', 'همه')] + Soldier.blood_group_choices,
         label='گروه خون',
         required=False,
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'انتخاب گروه خون'})
     )
 
-    # اطلاعات مدارک
+    # --- اطلاعات مدارک ---
     degree = forms.ChoiceField(
-        choices=Soldier.degree_choices,
+        choices=[('', 'همه')] + Soldier.degree_choices,
         label='مدرک تحصیلی',
         required=False,
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'انتخاب مدرک'})
     )
     skill_certificate = forms.ChoiceField(
-        choices=Soldier.skill_certificate_choices,
+        choices=[('', 'همه')] + Soldier.skill_certificate_choices,
         label='نوع مدرک مهارتی',
         required=False,
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'انتخاب مدرک'})
     )
     number_of_certificates = forms.IntegerField(
         label='تعداد مدرک',
         required=False,
-        widget=forms.NumberInput(attrs={'class': 'form-control'})
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'تعداد'})
     )
-    is_certificate = forms.BooleanField(
-        label='مدرک مهارت آموزی دارد؟',
+    is_certificate = forms.ChoiceField(
+        choices=BOOLEAN_CHOICES,
+        label='مدرک مهارت‌آموزی دارد؟',
         required=False,
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'انتخاب وضعیت'})
     )
     skill_group = forms.ChoiceField(
-        choices=Soldier.skill_group_choices,
+        choices=[('', 'همه')] + Soldier.skill_group_choices,
         label='گروه مهارتی',
         required=False,
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'انتخاب گروه'})
     )
     has_driving_license = forms.ChoiceField(
-        choices=Soldier.has_driving_license_choices,
-        label='گواهی نامه',
+        choices=[('', 'همه')] + Soldier.has_driving_license_choices,
+        label='گواهی‌نامه',
         required=False,
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'انتخاب نوع گواهی‌نامه'})
     )
-
 
 class SoldierPhotoForm(forms.ModelForm):
     class Meta:

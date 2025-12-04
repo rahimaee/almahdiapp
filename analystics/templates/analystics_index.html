@@ -139,17 +139,20 @@
 <div class="container-fluid">
     <div class="stats-card">
       {% for item in stats %}
-        <div class="card">
-          <h4 class="card-title">{{ item.title }}</h4>
-          <div class="stat-row">
-            <span class="stat-key">تعداد</span>
-            <span class="stat-value">{{ item.value }}</span>
+        {% if item.access %}
+          <div class="card">
+            <h4 class="card-title">{{ item.title }}</h4>
+            <div class="stat-row">
+              <span class="stat-key">تعداد</span>
+              <span class="stat-value">{{ item.value }}</span>
+            </div>
           </div>
-        </div>
+        {% endif %}
       {% endfor %}
     </div>
 
-    <div class="tab-container">
+    <p style="border: 1px dashed gray;text-align: center;font-size: 20px;padding: 20px;background-color: #2d3748;;color: white;border-radius: 10px;">درحال تکمیل چارت ها و داده های آماری...</p>
+    <div style="display: flex;align-items: center;justify-content: center;" class="tab-container">
         <button class="tab-btn active" data-tab="tab-presence">وضعیت حضور</button>
         <button class="tab-btn" data-tab="tab-education">تحصیلات و درجات</button>
         <button class="tab-btn" data-tab="tab-status">صدور کارت</button>

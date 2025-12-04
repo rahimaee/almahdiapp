@@ -107,41 +107,108 @@ def home(request):
     
     education_counts = EducationGroup(present).get_grouped_counts()
     rank_counts = RankGroup(present).get_grouped_counts()
-    
+
+    entry_exit_acions = actions = [
+        { "label": "دانلود اکسل", "icon": "📥", "base": "export_soldiers","disabled":False,'show':request.user.is_staff },
+        { "label": "چاپ", "icon": "🖨️", "base": "export_soldiers" ,"disabled":True,'show':request.user.is_staff},
+        { "label": "مشاهده", "icon": "👁️", "base": "soldier_list" ,"disabled":False,'show':True},
+    ]
+
     analytics = [
         {
-            'col':4,
-            "label": "سربازان حاضر",
-            "gradient": "gradient-green",
-            "count": counts_present,
-            "query": "defaultFilter=present",
-            "actions": actions,
-            
-    
+            "col": 6,
+            "label": "ورود و خروج دژبانی (امروز)",
+            "gradient": "gradient-yellow",
+            "count": 'حاظرین و غائبین',
+            "query": "",
+            "itemsCol":4,
+            "actions": entry_exit_acions,
             "items": [
-                { "label": "سالم", "count": counts_healthy_safe,            "query": "health_status=سالم" },
-                { "label": "معاف از رزم", "count": counts_healthy_exempt,   "query": "health_status=معاف از رزم" },
-                { "label": "گروه ب", "count": counts_healthy_exemptb,       "query": "health_status=معاف+گروه ب" },
-                { "label": "متأهل", "count": counts_married,                "query": "marital_status=متاهل" },
-                { "label": "مجرد", "count": counts_single,                  "query": "marital_status=مجرد" },
-                { "label": "جذبی", "count": counts_absorption,              "query": "absorption=True" },
+                # ورود
+                {"label": "ورود حاضر", "count": 0},
+                {"label": "ورود غائب", "count": 0},
+                {"label": "ورود تاخیر", "count": 0},
+
+                # خروج
+                {"label": "خروج حاضر", "count": 0},
+                {"label": "خروج غائب", "count": 0},
+                {"label": "خروج تاخیر", "count": 0},
+
+                # حاضرین
+                {"label": "حاضرین حاضر", "count": 0},
+                {"label": "حاضرین غائب", "count": 0},
+                {"label": "حاظرین تاخیر", "count": 0},
             ]
+
+
+        },        
+        {
+            "col": 6,
+            "label": "ورود و خروج دژبانی (امروز)",
+            "gradient": "gradient-yellow",
+            "count": 'اشخاص و وسیله نقلیه',
+            "query": "",
+            "itemsCol":6,
+            "actions": entry_exit_acions,
+            "items": [
+                {"label": "ورود اشخاص", "count": 0},
+                {"label": "ورود وسیله نقلیه", "count": 0},
+                {"label": "خروج اشخاص", "count": 0},
+                {"label": "خروج وسیله نقلیه", "count": 0},
+                {"label": "حاضرین اشخاص", "count": 0},
+                {"label": "حاضرین وسیله نقلیه", "count": 0},
+            ],
+            
         },
         {
-            'col':4,
-            "label": "سربازان فراری",
-            "gradient": "gradient-red",
-            "count": counts_fugitives,
-            "query": "defaultFilter=absent",
-            "actions": actions,
+            "col": 6,
+            "label": "ورود و خروج دژبانی (امروز)",
+            "gradient": "gradient-yellow",
+            "count": 'وضعیت تردد',
+            "query": "",
+            "itemsCol":4,
+            "actions": entry_exit_acions,
             "items": [
-                { "label": "سالم", "count": counts_fugitives_healthy,           "query": "health_status=سالم" },
-                { "label": "معاف از رزم", "count": counts_fugitives_exempt,     "query": "health_status=معاف از رزم" },
-                { "label": "گروه ب", "count": counts_fugitives_exemptb,        "query": "health_status=معاف+گروه ب"  },
-                { "label": "متأهل", "count": counts_fugitives_married,          "query": "marital_status=متاهل" },
-                { "label": "مجرد", "count": counts_fugitives_single,            "query": "marital_status=مجرد" },
-                { "label": "جذبی", "count": counts_fugitives_absorption,        "query": "absorption=True" },
+                # ورود
+                {"label": "ورود اداری", "count": 0},
+                {"label": "ورود شیفتی", "count": 0},
+                {"label": "ورود پستی", "count": 0},
+
+                # خروج
+                {"label": "خروج اداری", "count": 0},
+                {"label": "خروج شیفتی", "count": 0},
+                {"label": "خروج پستی", "count": 0},
+
+                # حاضرین
+                {"label": "حاضرین اداری", "count": 0},
+                {"label": "حاضرین شیفتی", "count": 0},
+                {"label": "حاضرین پستی", "count": 0},
             ]
+
+        },
+        {
+            "col": 6,
+            "label": "ورود و خروج دژبانی (امروز)",
+            "gradient": "gradient-yellow",
+            "count": 'وضعیت سلامت',
+            "query": "",
+            "itemsCol":4,
+            "actions": entry_exit_acions,
+            "items": [
+                # ورود
+                {"label": "ورود سالم", "count": 0},
+                {"label": "ورود معاف از رزم", "count": 0},
+                {"label": "ورود گروه ب", "count": 0},
+                # خروج
+                {"label": "خروج سالم", "count": 0},
+                {"label": "خروج معاف از رزم", "count": 0},
+                {"label": "خروج گروه ب", "count": 0},
+                # حاضرین
+                {"label": "حاضرین سالم", "count": 0},
+                {"label": "حاضرین معاف از رزم", "count": 0},
+                {"label": "حاضرین گروه ب", "count": 0},
+            ]
+
         },
         {
             'col':4,
@@ -158,6 +225,39 @@ def home(request):
                 { "label": "15 روز تا پایان", "count": Soldier.date_to_ends(15).count(), "query": "defaultFilter=present&remainingFilter=remaining15" },
             ]
         },
+        {
+            'col':4,
+            "label": "حاظر به خدمت",
+            "gradient": "gradient-green",
+            "count": counts_present,
+            "query": "defaultFilter=present",
+            "actions": actions,
+            "items": [
+                { "label": "سالم", "count": counts_healthy_safe,            "query": "health_status=سالم" },
+                { "label": "معاف از رزم", "count": counts_healthy_exempt,   "query": "health_status=معاف از رزم" },
+                { "label": "گروه ب", "count": counts_healthy_exemptb,       "query": "health_status=معاف+گروه ب" },
+                { "label": "متأهل", "count": counts_married,                "query": "marital_status=متاهل" },
+                { "label": "مجرد", "count": counts_single,                  "query": "marital_status=مجرد" },
+                { "label": "جذبی", "count": counts_absorption,              "query": "absorption=True" },
+            ]
+        },
+        {
+            'col':4,
+            "label": "فرار از خدمت",
+            "gradient": "gradient-red",
+            "count": counts_fugitives,
+            "query": "defaultFilter=absent",
+            "actions": actions,
+            "items": [
+                { "label": "سالم", "count": counts_fugitives_healthy,           "query": "health_status=سالم" },
+                { "label": "معاف از رزم", "count": counts_fugitives_exempt,     "query": "health_status=معاف از رزم" },
+                { "label": "گروه ب", "count": counts_fugitives_exemptb,        "query": "health_status=معاف+گروه ب"  },
+                { "label": "متأهل", "count": counts_fugitives_married,          "query": "marital_status=متاهل" },
+                { "label": "مجرد", "count": counts_fugitives_single,            "query": "marital_status=مجرد" },
+                { "label": "جذبی", "count": counts_fugitives_absorption,        "query": "absorption=True" },
+            ]
+        },
+        
         {
             'col':6,
             "label": "تحصیلات و مدرک ",
@@ -298,3 +398,7 @@ def export_soldiers_excel(request):
 
     return response
 
+
+
+def support_page(request):
+    return render(request,'support_page.html')

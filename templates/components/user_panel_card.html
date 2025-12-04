@@ -1,0 +1,185 @@
+<div class="user-panel-card">
+    <!-- تصویر پروفایل -->
+    <div class="user-image-wrapper">
+        {% if user.profile_picture %}
+        <div class="user-image">
+            <img src="{{ user.profile_picture.url }}" alt="User Image">
+        </div>
+        {% else %}
+        <div class="user-image-placeholder">
+            {{ user.first_name|slice:":1" }}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- اطلاعات کاربر -->
+    <div class="user-info">
+        <div class="user-details">
+            <p class="user-fullname">{{ user.get_full_name }}</p>
+            <span>
+                <i class="fa fa-caret-down"></i>
+            </span>
+        </div>
+        <div class="user-details">
+            <a href="{% url 'profile' %}" class="user-role">{{ user.role_display }}</a>
+            <span class="badge">{{ user.get_employment_status }}</span>
+        </div>
+    </div>
+
+<!-- منوی Dropdown -->
+<div class="user-dropdown">
+    <a href="#" class="dropdown-item">
+        پروفایل من
+        <i class="fa fa-user"></i>
+    </a>
+    <a href="#" class="dropdown-item">
+        اعلان‌ها
+        <i class="fa fa-bell"></i>
+    </a>
+    <a href="#" class="dropdown-item">
+        تنظیمات
+        <i class="fa fa-cog"></i>
+    </a>
+    <a href="#" class="dropdown-item">
+        راهنما
+        <i class="fa fa-question-circle"></i>
+    </a>
+    <div class="dropdown-divider"></div>
+    <a href="{% url 'logout' %}" class="dropdown-item logout">
+        خروج
+        <i class="fa fa-sign-out"></i>
+    </a>
+</div>
+
+</div>
+
+<style>
+    .user-panel-card {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        position: relative;
+        cursor: pointer;
+        transition: box-shadow 0.2s ease;
+    }
+    .user-panel-card:hover {
+        box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    }
+
+        /* تصویر پروفایل شیشه‌ای */
+        .user-image, .user-image-placeholder {
+            width: 50px;
+            height: 50px;
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            /* افکت شیشه‌ای */
+            background: rgba(150, 150, 150, 0.2);
+            backdrop-filter: blur(8px) saturate(180%);
+            transition: 0.3s ease;
+        }
+
+
+    .user-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* اطلاعات کاربر */
+    .user-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex: 1;
+    }
+    .user-fullname {
+        font-weight: 600;
+        font-size: 16px;
+        color: #222;
+        margin: 0;
+    }
+    .user-details {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-top: 2px;
+    }
+    .user-role {
+        font-size: 13px;
+        color: #0069d9;
+        text-decoration: none;
+    }
+    .user-role:hover {
+        text-decoration: underline;
+    }
+    .badge {
+        font-size: 12px;
+        padding: 2px 8px;
+        background-color: #28a745;
+        color: #fff;
+        border-radius: 10px;
+    }
+
+.user-dropdown {
+    position: absolute;
+    top: 10%;
+    right: 90%;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    min-width: 170px;
+    padding: 8px 0;
+    display: none;
+    z-index: 9999;
+    flex-direction: column;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;  /* آیکون انتهای متن */
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #333;
+    text-decoration: none;
+    transition: 0.25s;
+}
+
+.dropdown-item i {
+    font-size: 16px;
+    opacity: 0.8;
+}
+
+.dropdown-item:hover {
+    background: #f5f7fa;
+}
+
+.dropdown-item.logout {
+    color: #d63031;
+}
+
+.dropdown-item.logout i {
+    color: #d63031;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: #e5e5e5;
+    margin: 6px 0;
+}
+
+    /* نمایش Dropdown هنگام هاور روی کارت */
+    .user-panel-card:hover .user-dropdown,.user-dropdown:hover  {
+        display: flex;
+    }
+</style>

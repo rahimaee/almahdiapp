@@ -6,83 +6,76 @@
 {% endblock %}
 
 {% block main %}
+<style>
+    .analystics h3 {
+        margin: 0;
+        padding: 10px;
+    }
+</style>
 <div >
     <div>
         {% include '../layout/AnalysticsNavbar.html' %}
     </div>
 
-    <div class="row">
-        <div class="col-md-7"  >
-            <h3 class="font-semibold text-lg mb-2">استعداد حاضر به خدمت</h3>
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th rowspan="2">عنوان</th>
-                            <th colspan="4">استعداد حاضر به خدمت</th>
-                            <th rowspan="2">PY</th>
-                            <th colspan="2">وضعیت موجودی</th>
-                        </tr>
-                        <tr>
-                            <th>ستاد</th>
-                            <th>عده</th>
-                            <th>گردان</th>
-                            <th>جمع</th>
-                            <th>بومی</th>
-                            <th>غیر بومی</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>عادی (1-4)</td>
-                            <td>71</td>
-                            <td>84</td>
-                            <td>0</td>
-                            <td>155</td>
-                            <td>155</td>
-                            <td>0</td>
-                            <td>0</td>
-                        </tr>
-                        <tr>
-                            <td>درجه دار (5-9)</td>
-                            <td>47</td>
-                            <td>34</td>
-                            <td>0</td>
-                            <td>81</td>
-                            <td>79</td>
-                            <td>2</td>
-                            <td>2</td>
-                        </tr>
-                        <tr>
-                            <td>افسر (10-12)</td>
-                            <td>20</td>
-                            <td>5</td>
-                            <td>0</td>
-                            <td>25</td>
-                            <td>25</td>
-                            <td>0</td>
-                            <td>0</td>
-                        </tr>
-                        <tr class="total">
-                            <td><b>مجموع</b></td>
-                            <td>138</td>
-                            <td>123</td>
-                            <td>0</td>
-                            <td>261</td>
-                            <td>259</td>
-                            <td>2</td>
-                            <td>2</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <div class="row analystics">
+<div class="col-md-7">
+    <h3 class="font-semibold text-lg mb-2">استعداد حاضر به خدمت</h3>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th rowspan="2">عنوان</th>
+                    <th colspan="4">استعداد حاضر به خدمت</th>
+                    <th rowspan="2">PY</th>
+                    <th colspan="2">وضعیت موجودی</th>
+                </tr>
+                <tr>
+                    <th>ستاد</th>
+                    <th>عده</th>
+                    <th>گردان</th>
+                    <th>جمع</th>
+                    <th>بومی</th>
+                    <th>غیر بومی</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for label, group in active_service.items %}
+                <tr>
+                    <td>
+                        {% if label == "normal" %}عادی (1-4){% elif label == "daghree" %}درجه دار (5-9){% elif label == "officer" %}افسر (10-12){% endif %}
+                    </td>
+                    <td>{{ group.staff }}</td>
+                    <td>{{ group.unit }}</td>
+                    <td>{{ group.battalion }}</td>
+                    <td>{{ group.total }}</td>
+                    <td>{{ group.py }}</td>
+                    <td>{{ group.local }}</td>
+                    <td>{{ group.non_local }}</td>
+                </tr>
+                {% endfor %}
+                <tr class="total">
+                    <td><b>مجموع</b></td>
+                    <td>{{ active_service_totals.staff }}</td>
+                    <td>{{ active_service_totals.unit }}</td>
+                    <td>{{ active_service_totals.battalion }}</td>
+                    <td>{{ active_service_totals.total }}</td>
+                    <td>{{ active_service_totals.py }}</td>
+                    <td>{{ active_service_totals.local }}</td>
+                    <td>{{ active_service_totals.non_local }}</td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
         <div class="col-md-5">
             <h3 class="font-semibold text-lg mb-2">قبولی دانشگاه / معافیت / فراری / انتقالی</h3>
             <div class="table-responsive">
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
+                            <th rowspan="2">عنوان</th>
                             <th rowspan="2">قبولی دانشگاه</th>
                             <th colspan="2">معافیت</th>
                             <th rowspan="2">فراری</th>
@@ -96,6 +89,7 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <td>عادی (1-4)</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -104,6 +98,7 @@
                             <td>31</td>
                         </tr>
                         <tr>
+                            <td>درجه دار (5-9)</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -112,6 +107,7 @@
                             <td>1</td>
                         </tr>
                         <tr>
+                            <td>افسر (10-12)</td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -120,6 +116,7 @@
                             <td>0</td>
                         </tr>
                         <tr class="total">
+                            <td><b>مجموع</b></td>
                             <td>0</td>
                             <td>0</td>
                             <td>0</td>
@@ -255,9 +252,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr><td>سالم</td><td>209</td></tr>
-                <tr><td>معاف از رزم</td><td>38</td></tr>
-                <tr class="total"><td>جمع</td><td>261</td></tr>
+                <tr><td>سالم</td><td>{{health.normal}}</td></tr>
+                <tr><td>معاف از رزم</td><td>{{health.exempt}}</td></tr>
+                <tr class="total"><td>جمع</td><td>{{health.total1}}</td></tr>
             </tbody>
             <thead class="thead-dark">
                 <tr>
@@ -266,9 +263,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr><td>گروه الف</td><td>209</td></tr>
-                <tr><td>گروه ب</td><td>10</td></tr>
-                <tr class="total"><td>جمع</td><td>261</td></tr>
+                <tr><td>گروه الف</td><td>{{health.exempta}}</td></tr>
+                <tr><td>گروه ب</td><td>{{health.exemptb}}</td></tr>
+                <tr class="total"><td>جمع</td><td>{{health.total2}}</td></tr>
             </tbody>
             <thead class="thead-dark">
                 <tr>
@@ -287,10 +284,10 @@
                     <tr><th>رده</th><th>تعداد</th></tr>
                 </thead>
                 <tbody>
-                    <tr><td>افسر</td><td>25</td></tr>
-                    <tr><td>درجه‌دار</td><td>81</td></tr>
-                    <tr><td>عادی</td><td>155</td></tr>
-                    <tr class="total"><td>جمع کل</td><td>261</td></tr>
+                    <tr><td>افسر</td><td>{{existance.officers}}</td></tr>
+                    <tr><td>درجه‌دار</td><td>{{existance.daghrees}}</td></tr>
+                    <tr><td>عادی</td><td>{{existance.soldiers}}</td></tr>
+                    <tr class="total"><td>جمع کل</td><td>{{existance.total}}</td></tr>
                 </tbody>
             </table>
     </div>
@@ -309,9 +306,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>شیعه</td><td>261</td></tr>
-                    <tr><td>اهل تسنن</td><td>0</td></tr>
-                    <tr class="total"><td>جمع کل</td><td>261</td></tr>
+                    <tr><td>شیعه</td><td>{{religus.no_sunni}}</td></tr>
+                    <tr><td>اهل تسنن</td><td>{{religus.sunni}}</td></tr>
+                    <tr class="total"><td>جمع کل</td><td>{{religus.total}}</td></tr>
                 </tbody>
             </table>
         </div>
@@ -329,9 +326,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>آمار پاسدار وظیفه یگان</td><td>5</td></tr>
-                    <tr><td>آمار کارکنان وظیفه معتاد یگان</td><td>0</td></tr>
-                    <tr class="total"><td>جمع کل</td><td>261</td></tr>
+                    <tr><td>آمار پاسدار وظیفه یگان</td><td>{{other.guard}}</td></tr>
+                    <tr><td>آمار کارکنان وظیفه معتاد یگان</td><td>{{other.addicted}}</td></tr>
+                    <tr class="total"><td>جمع کل</td><td>{{other.total}}</td></tr>
                 </tbody>
             </table>
         </div>

@@ -1,0 +1,25 @@
+{% load req %}
+
+<div class="sidebar-card shadow-sm">
+    <div class="sidebar-card-header">
+        <i class="fa fa-shield-alt me-1"></i> ورود و خروج دژبانی
+    </div>
+    <div class="list-group list-group-flush">
+
+        <a href="#" class="list-group-item {% active_link 'guard_entry_exit' %}">
+            <i class="fa fa-sign-in-alt"></i>
+            <span class="me-2">ثبت ورود و خروج</span>
+        </a>
+
+        <a href="#" class="list-group-item {% active_link 'guard_daily_report' %}">
+            <i class="fa fa-file-alt"></i>
+            <span class="me-2">گزارش روزانه</span>
+        </a>
+
+        <a href="#" class="list-group-item {% active_link 'guard_log' %}">
+            <i class="fa fa-list"></i>
+            <span class="me-2">سوابق دژبانی</span>
+        </a>
+
+    </div>
+</div>

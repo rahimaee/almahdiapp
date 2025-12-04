@@ -1,0 +1,243 @@
+{% load static %}
+{% load jalali_filters %}
+<style>
+.modern-table-container {
+    height: 100%;    /* ارتفاع دلخواه */
+    overflow-y: hidden;
+    overflow-x: hidden;
+    position: relative;
+    padding-bottom: 100px;
+}
+
+/* هدر ثابت بدون نیاز به div */
+.modern-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #224abe;   
+}
+.modern-table tbody {
+    overflow-y: auto;
+}
+/* زیباسازی */
+.modern-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+
+}
+/* اسکرول روی بدنه */
+.modern-table-body {
+    height: calc(100% - 40px); /* براساس ارتفاع هدر */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+</style>
+<div class="modern-table-container">
+    <div style="display: flex;align-items: center;justify-content: center;margin: 10px;">
+        {% include "./soldiers_list_pagination.html" %}
+    </div>
+    <table class="modern-table">
+        <thead>
+            <tr>
+                <th colspan="2">سرباز</th>
+                <th>وضعیت</th>
+                <th>جایگاه و درجات</th>
+                <th>شماره همراه</th>
+                <th>اوضاع خدمتی</th>
+            </tr>
+        </thead>
+    </table>
+    <div class="modern-table-body">
+        <table class="modern-table">
+            <tbody>
+                {% for soldier in soldiers %}
+                    <tr data-toggle="expand" aria-expanded="false" data-target="#row{{ soldier.id }}" class="accordion-toggle" style="font-size: 14px;font-weight: bold;">
+                        <td colspan="2">
+                            {% comment %} <div style="display: flex;flex-direction: column;align-items: center;justify-content: center;margin: 0 auto;">
+                                <div style="display: flex;align-items: center;justify-content: space-between;gap: 4px;">
+                                    <a style="color: #1cc88a;" href="{% url 'soldier_detail' soldier.pk %}">
+                                        <i class="fa fa-eye"></i> {{ soldier.first_name }} {{ soldier.last_name }} 
+                                    </a>
+                                    <a style="display: flex;align-items: center;"  href="{% url 'soldier_edit' pk=soldier.pk %}" ><i class="fa fa-edit"></i>ویرایش</a>
+                                </div>
+                                {% if soldier.photo_scan %}
+                                    <i class="fa fa-camera text-primary"></i>
+                                {% endif %}
+                                <div style="margin-top: 4px;">
+                                    <div class="badge badge-default" style="padding: 4px 8px;border-radius: 4px;font-size: 14px;"> {{ soldier.organizational_code }}</div>
+                                    <div class="badge badge-default" style="padding: 4px 8px;border-radius: 4px;font-size: 14px;">
+                                        کد ملی : {{ soldier.national_code }}
+                                    </div>
+                                </div>
+                            </div> {% endcomment %}
+                            <div style="display: flex;height: 100%;text-align: right;gap: 4px;">
+                                <div style="width: 80px;aspect-ratio: 3/4;">
+                                    {% include 'components/soldier_avatar.html' with avatar_url=soldier.avatar  %}
+                                    {% comment %} image profile {% endcomment %}
+                                </div>
+                                <div style="flex: 1;">
+                                    <h5 style="display: flex;align-items: center;justify-content: space-between;">
+                                        <span>{{ soldier.first_name }} {{ soldier.last_name }}</span> 
+
+                                        <span class="badge">فرزند  : {{ soldier.father_name }}</span>
+                                    </h5>
+                                    {% include 'components/field_display.html' with label="کدملی" value=soldier.national_code badge_color="#d9534f" empty_text="ندارد" %}
+                                    {% include 'components/field_display.html' with label="کدسازمانی" value=soldier.organizational_code.code_number badge_color="#d9534f" empty_text="ندارد" %}
+
+
+                                    {% comment %} details {% endcomment %}
+                                </div>
+                                <div>
+                                    {% comment %} action {% endcomment %}
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex;align-items: center;font-weight: bold;flex-wrap:  wrap;">
+                                <span style="font-size: 12px;flex: 1;font-weight: bold;" class="label label-default">
+                                        {{ soldier.marital_status|default:'تاهل نامشخص' }}
+                                </span>
+                                <!-- وضعیت سلامت -->
+                                <span  style="font-size: 12px;flex: 1;font-weight: bold;" class="label
+                                    {% if soldier.health_status == 'سالم' %}label-success
+                                    {% elif soldier.health_status == 'معاف از رزم' %}label-primary
+                                    {% elif soldier.health_status == 'گروه ب' %}label-warning
+                                    {% else %}label-warning{% endif %}
+                                    "
+                                >
+                                    {{ soldier.health_status }}
+                                </span>
+                                {% if soldier.is_fugitive %}
+                                    <span class="label label-danger" style="font-size: 12px;flex: 1;font-weight: bold;">فراری</span>
+                                    {% endif %}
+                                <!-- وضعیت تسویه‌حساب -->
+                                {% if soldier.status %}
+                                    <span  style="font-size: 12px;flex: 1;font-weight: bold;" class="label
+                                        {% if soldier.status == 'پایان خدمت' %}label-success
+                                        {% elif soldier.status == 'قبولی در دانشگاه' %}label-info
+                                        {% elif soldier.status == 'انتقالی' %}label-warning
+                                        {% elif soldier.status == 'استخدام در نیروهای مسلح' %}label-primary
+                                        {% else %}label-default{% endif %}">
+                                        {{ soldier.get_status_display }}
+                                    </span>
+                                {% else %}
+                                {% endif %}
+                            </div>
+                        </td>
+                        
+                        <td>
+                            {% include 'components/field_display.html' with label=soldier.current_parent_unit|default:'فاقد قسمت' value=soldier.current_sub_unit badge_color="#d9534f" empty_text="زیرقسمت" %}
+                            {% include 'components/field_display.html' with label="درجه" value=soldier.rank badge_color="#d9534f" empty_text="ندارد" %}
+                            {% include 'components/field_display.html' with label=soldier.degree|default:'فاقد مدرک' value=soldier.field_of_study badge_color="#d9534f" empty_text="رشته تحصیلی" %}
+                        </td>
+
+                        <td>
+                            {% include 'components/field_display.html' with label="همراه" value=soldier.phone_mobile badge_color="#d9534f" empty_text="ندارد" %}
+                            {% include 'components/field_display.html' with label="پدر یا مادر" value=soldier.phone_parent badge_color="#d9534f" empty_text="ندارد" %}
+                            {% include 'components/field_display.html' with label="منزل" value=soldier.phone_home badge_color="#d9534f" empty_text="ندارد" %}
+                        </td>
+
+                        <td>
+                            {% include 'components/field_display.html' with label="تاریخ اعزام" value=soldier.dispatch_date|to_jalali empty_text="نامشخص" %}
+                            {% include 'components/field_display.html' with label="ورود به یگان" value=soldier.service_entry_date|to_jalali badge_color="#d9534f" empty_text="نامشخص" %}
+                            {% include 'components/field_display.html' with label="پایان خدمت"  value=soldier.service_end_date|to_jalali badge_color="#d9534f" empty_text="نامشخص" %}
+                        </td>
+{% comment %} 
+                        <td>
+                            <div style="display: flex;justify-content: space-between;align-items: center;">
+                                <span style="font-weight: normal;font-size: 12px;">تا پایان :</span>
+                                <span class="remaining {{ soldier.remaining_str_type }}"> {{ soldier.remaining_str }}</span>   
+                            </div>
+                        </td> {% endcomment %}
+                        {% comment %} <td>
+                            <i class="fa fa-sort-down"></i>
+                        </td> {% endcomment %}
+                    </tr>
+                    {% if request.user.is_staff %}
+                    <tr class="soldier-manage">
+                        <td colspan="8" class="hiddenRow">
+                            <div  class="accordian-body collapse" id="row{{ soldier.id }}">
+                                    <div style="padding:0 20px;" class="panel-body">
+                                        <div class="row details-row">
+                                            <div class="col-md-3 ">
+                                                <div class="card-details">
+                                                    <h5>
+                                                    <i class="fa fa-info-circle text-primary"></i> مشخصات فردی
+                                                </h5>
+                                                <dl class="dl-horizontal">
+                                                    <dt>تاریخ تولد:</dt>
+                                                    <dd>{{ soldier.birth_date|to_jalali }}</dd>
+
+                                                    <dt>گروه خون:</dt>
+                                                    <dd>{{ soldier.blood_group }}</dd>
+
+                                                    <dt>تاهل:</dt>
+                                                    <dd>{{ soldier.get_marital_status_display }}</dd>
+                                                </dl>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <div class="card-details">
+
+                                                <h5><i class="fa fa-shield text-success"></i> وضعیت خدمت</h5>
+                                                <dl class="dl-horizontal">
+                                                    <dt>تاریخ اعزام:</dt>
+                                                    <dd id="dispatch-date">{{ soldier.dispatch_date|to_jalali }}</dd>
+
+                                                    <dt>خدمت انجام شده:</dt>
+                                                    <dd id="days-since-dispatch"> {{ soldier.dispatch_date|to_end }}روز
+                                                        گذشته
+                                                    </dd>
+
+                                                    <dt>تردد:</dt>
+                                                    <dd>
+                                                        {% if soldier.traffic_status %}
+                                                            {{ soldier.get_traffic_status_display }}
+                                                        {% else %}
+                                                            <span class="text-muted">-</span>
+                                                        {% endif %}
+                                                    </dd>
+                                                </dl>
+                                            </div>
+                                            </div>
+
+                                            <div class="col-md-5">
+                                                <div class="card-details">
+
+                                                <h5 class="text-center"><i class="fa fa-cogs text-danger"></i> مدیریت</h5>
+                                                <div class="btn-group-vertical btn-block">
+                                                    <a href="{% url 'soldier_detail' soldier.pk %}"
+                                                    class="btn btn-default btn-sm text-right">
+                                                        <i class="fa fa-file-text"></i>
+                                                        اطلاعات کامل
+                                                    </a>
+                                                    <a href="{% url 'soldier_vacation_edit' soldier.id %}"
+                                                    class="btn btn-info btn-sm text-right">
+                                                        <i class="fa fa-file-text"></i> استعلام مرخصی
+                                                    </a>
+                                                    <a href="{% url 'soldier_service_edit' soldier.pk %}"
+                                                    class="btn btn  btn-sm text-right">
+                                                        <i class="fa fa-history"></i> کسریا اضافه خدمت
+                                                    </a>
+                                                    <a href="{% url 'upload_soldier_photo' soldier.pk %}"
+                                                    class="btn btn-warning btn-sm text-right">
+                                                        <i class="fa fa-history"></i>بارگذاری عکس برای سرباز
+                                                    </a>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
