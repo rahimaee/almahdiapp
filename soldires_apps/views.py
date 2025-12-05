@@ -53,7 +53,7 @@ def soldier_list(request):
     status_choices = [(s.key, s.label) for s in SoldierStatusFilterEnum]
 
     form = SoldierSearchForm(request.GET or None)
-    soldiers = get_accessible_soldiers_for_user(request.user)
+    soldiers = get_accessible_soldiers_for_user(request.user).order_by('organizational_code__code_number')
     soldiers = soldiers.filter().select_related(
         'residence_province',
         'residence_city',

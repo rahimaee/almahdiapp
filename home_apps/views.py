@@ -77,7 +77,7 @@ def home(request):
     registrations = {'r_today': r_today,'r_day3': r_day3,'r_day7': r_day7,'r_day30': r_day30 }
 
 
-    #حاظر 
+    #حاضر 
     present = PresentSoldiers()
     counts_present = present.count()
     counts_healthy_exemptb = ExemptBSoldiers(present).count()
@@ -119,7 +119,7 @@ def home(request):
             "col": 6,
             "label": "ورود و خروج دژبانی (امروز)",
             "gradient": "gradient-yellow",
-            "count": 'حاظرین و غائبین',
+            "count": 'حاضرین و غائبین',
             "query": "",
             "itemsCol":4,
             "actions": entry_exit_acions,
@@ -137,7 +137,7 @@ def home(request):
                 # حاضرین
                 {"label": "حاضرین حاضر", "count": 0},
                 {"label": "حاضرین غائب", "count": 0},
-                {"label": "حاظرین تاخیر", "count": 0},
+                {"label": "حاضرین تاخیر", "count": 0},
             ]
 
 
@@ -227,7 +227,7 @@ def home(request):
         },
         {
             'col':4,
-            "label": "حاظر به خدمت",
+            "label": "حاضر به خدمت",
             "gradient": "gradient-green",
             "count": counts_present,
             "query": "defaultFilter=present",

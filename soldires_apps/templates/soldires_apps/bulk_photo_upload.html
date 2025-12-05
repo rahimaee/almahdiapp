@@ -142,7 +142,7 @@
       <h5><span style="font-size: 20px;">✅</span> عکس‌های آپلود شده:</h5>
       <ul class="mb-0 list-group list-group-flush">
         {% for code in uploaded %}
-          <li class="list-group-item py-1 px-2">{{ code }}</li>
+          <li style="color: black;" class="list-group-item py-1 px-2">{{ code }}</li>
         {% endfor %}
       </ul>
     </div>
@@ -153,7 +153,7 @@
       <h5><span style="font-size: 20px;">❌</span> سربازان یافت نشده (کد ملی):</h5>
       <ul class="mb-0 list-group list-group-flush">
         {% for code in not_found %}
-          <li class="list-group-item py-1 px-2">{{ code }}</li>
+          <li  style="color: black;" class="list-group-item py-1 px-2">{{ code }}</li>
         {% endfor %}
       </ul>
     </div>

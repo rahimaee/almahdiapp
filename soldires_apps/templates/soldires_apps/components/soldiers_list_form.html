@@ -90,6 +90,10 @@
         padding-top: 0;
         padding-bottom: 0;
     }
+    .bg-rose {
+        background-color: brown;
+        color: white;
+    }
 </style>
 
 <div class="soldiers-form-nav">
@@ -97,9 +101,16 @@
     <form id="soldierForm">
         <div style="text-align: center;margin-bottom: 10px;">
             <h1 class="app-title">فهرست سربازان یگان المهدی</h1> 
-            <span style="font-size: 14px;" class="bg-danger text-white  soldiers-search">
+            <span style="font-size: 14px;" class="bg-rose text-white  soldiers-search">
             نتیجه     {{soldiers_counts}} نفر از {{all_soldiers_counts}} نفر ({{selected_filter_label}})
             </span>
+        </div>
+        <button type="submit" class="ui-btn ui-btn-primary d-flex items-center justify-between" style="margin-bottom: 15px;">
+            <span>اجرای عملیات جستجو</span> 🔎
+        </button>
+        <div class="ui-form-group sm">
+                <label>عبارت جستجو</label> 
+                <input type="text" id="query" name="query" class="ui-input" placeholder="کدملی، نام، نام خانوادگی، کد سازمانی ..." /> 
         </div>
         <div class="ui-form-group sm"> 
                 <label>نمایش پیشفرض</label> 
@@ -110,24 +121,16 @@
                 </select> 
         </div> 
         <div class="ui-form-group sm">
-                <input type="text" id="query" name="query" class="ui-input" placeholder="کدملی، نام، نام خانوادگی، کد سازمانی ..." /> 
-                <div style="margin:0 2px;"></div> 
-                <div> 
-                    <button onclick="setFormAction('search')" class="ui-btn ui-btn-primary sm d-flex items-center justify-between"> 
-                        <span class="ui-label">جستجو</span> <span class="ui-icon">🔍</span>
-                    </button> 
-                </div>
+            <label>{{ form.gurd_filter.label }}</label>
+            {{ form.gurd_filter|add_class:"ui-select" }}
         </div>
-
-
+ 
         <!-- 🔹 فیلترهای پیشرفته -->
         <h4 class="filter-title">
             <span class="text-title">فیلترهای پیشرفته</span>
             <span class="info-icon"> <span>ℹ️</span> <div class="hint-box"> از این بخش می‌توانید جستجوی دقیق‌تری انجام دهید. </div> </span>
         </h4>
-        <button type="submit" class="ui-btn ui-btn-primary d-flex items-center justify-between" style="margin-bottom: 15px;">
-            <span>اجرای عملیات</span> 🔎
-        </button>
+
         <div class="filters-scroll">
 
             {% include "components/breaker.html" with label="🔹 اطلاعات هویتی" %}

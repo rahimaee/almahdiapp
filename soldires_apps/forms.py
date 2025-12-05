@@ -284,8 +284,16 @@ remaining_filter_choices = [
 ]
 
 
-class SoldierSearchForm(forms.Form):
+gurd_entry_today_choices = [
+    ('all', 'همه'),
+    ('entry', 'ورود'),
+    ('exit', 'خروج'),
+    ('absent', 'غیبت'),
+    ('delay', 'تاخیر'),
+]
 
+
+class SoldierSearchForm(forms.Form):
     # --- فیلتر پایان خدمت ---
     remainingFilter = forms.ChoiceField(
         label="تا پایان خدمت",
@@ -293,7 +301,12 @@ class SoldierSearchForm(forms.Form):
         choices=remaining_filter_choices,
         widget=forms.Select(attrs={'class': 'form-control', 'placeholder': 'انتخاب کنید'})
     )
-
+    gurd_filter = forms.ChoiceField(
+        choices=gurd_entry_today_choices,
+        required=False,
+        initial='all',
+        label="ورود خروج امروز"
+    )
     end_service_from_date = forms.CharField(
         label="پایان خدمت از تاریخ",
         required=False,
@@ -357,7 +370,6 @@ class SoldierSearchForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'محل صدور شناسنامه'})
     )
-
     residence_province = forms.ModelChoiceField(
         queryset=Province.objects.all(),
         label='استان',

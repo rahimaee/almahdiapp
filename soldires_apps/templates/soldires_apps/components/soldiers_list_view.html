@@ -6,7 +6,7 @@
     overflow-y: hidden;
     overflow-x: hidden;
     position: relative;
-    padding-bottom: 100px;
+    padding-bottom: 60px;
 }
 
 /* هدر ثابت بدون نیاز به div */
@@ -32,69 +32,344 @@
     overflow-y: auto;
     overflow-x: hidden;
 }
+.group-2-col {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.group-2-col > * {
+    flex: 0 0 calc(50% - 0.5rem);
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+}
+
+@media (max-width: 768px) {
+    .group-2-col > * {
+        flex: 0 0 100%;
+    }
+}
+.badge-entry {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 6px 0;
+    background-color: darkgrey;
+    display: block;
+    padding: 2px 6px;
+    font-size: 10px;
+    color: white;
+    font-weight: lighter;
+}
+
+.badge-entry.entry {
+    background-color: teal;
+}
+.badge-entry.exit {
+    background-color: brown;
+}
+.badge-entry.delay {
+    background-color: goldenrod;
+}
+.soldier-action {
+    display: flex;
+    gap: 6px;
+    align-items: stretch;
+}
+
+/* دکمه‌های کوچک مینیمال */
+.btn-mini {
+    padding: 6px 10px;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #f4f4f4;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-mini:hover {
+    background: #eaeaea;
+    border-color: #bfbfbf;
+}
+
+/* آیکون‌ها */
+.icon {
+    width: 14px;
+    height: 14px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Dropdown */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-btn {
+    background: #f4f4f4;
+}
+
+.dropdown-btn .arrow {
+    transition: transform 0.2s ease-in-out;
+}
+
+/* منو */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 200px;
+    background: white;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    display: none;
+    flex-direction: column;
+    padding: 6px 0;
+    z-index: 20;
+}
+.dropdown-menu hr {
+    margin: 2px 0;
+    padding: 0;
+    border-top: 1px solid gainsboro;
+}
+.dropdown-menu button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    padding: 8px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+    text-align: right;
+}
+
+.dropdown-menu button:hover {
+    background: #f5f5f5;
+}
+
+/* فعال شدن منو */
+.dropdown:hover .dropdown-menu {
+    display: flex;
+}
+
+.dropdown:hover .arrow {
+    transform: rotate(180deg);
+}
+
 
 </style>
 <div class="modern-table-container">
-    <div style="display: flex;align-items: center;justify-content: center;margin: 10px;">
-        {% include "./soldiers_list_pagination.html" %}
-    </div>
+
     <table class="modern-table">
         <thead>
             <tr>
-                <th colspan="2">سرباز</th>
-                <th>وضعیت</th>
-                <th>جایگاه و درجات</th>
-                <th>شماره همراه</th>
-                <th>اوضاع خدمتی</th>
+                <th colspan="2">اطلاعات فردی سرباز</th>
+                <th colspan="1">وضعیت</th>
+                <th colspan="1">اوضاع خدمتی</th>
+                <th colspan="1">جایگاه و درجات</th>
+                <th colspan="1">راه ارتباطی</th>
             </tr>
         </thead>
     </table>
+ 
     <div class="modern-table-body">
         <table class="modern-table">
             <tbody>
                 {% for soldier in soldiers %}
-                    <tr data-toggle="expand" aria-expanded="false" data-target="#row{{ soldier.id }}" class="accordion-toggle" style="font-size: 14px;font-weight: bold;">
+                    <tr data-toggle="expand" aria-expanded="false" data-target="#row{{ soldier.id }}" 
+                    
+                    class="accordion-toggle" 
+                    style="
+                        font-size: 14px;
+                        font-weight: bold;
+                        {% if soldier.is_top5 %}
+                            background-color: gold;
+                        {% endif %}
+                    "
+                    >
                         <td colspan="2">
-                            {% comment %} <div style="display: flex;flex-direction: column;align-items: center;justify-content: center;margin: 0 auto;">
-                                <div style="display: flex;align-items: center;justify-content: space-between;gap: 4px;">
-                                    <a style="color: #1cc88a;" href="{% url 'soldier_detail' soldier.pk %}">
-                                        <i class="fa fa-eye"></i> {{ soldier.first_name }} {{ soldier.last_name }} 
-                                    </a>
-                                    <a style="display: flex;align-items: center;"  href="{% url 'soldier_edit' pk=soldier.pk %}" ><i class="fa fa-edit"></i>ویرایش</a>
-                                </div>
-                                {% if soldier.photo_scan %}
-                                    <i class="fa fa-camera text-primary"></i>
-                                {% endif %}
-                                <div style="margin-top: 4px;">
-                                    <div class="badge badge-default" style="padding: 4px 8px;border-radius: 4px;font-size: 14px;"> {{ soldier.organizational_code }}</div>
-                                    <div class="badge badge-default" style="padding: 4px 8px;border-radius: 4px;font-size: 14px;">
-                                        کد ملی : {{ soldier.national_code }}
+                            <div style="display: flex;height: 100%;text-align: right;gap: 4px; position: relative;">
+                                <div 
+                                class="user-image-placeholder"
+                                style=";width:90px;height:120px;aspect-ratio: 3/4;position: relative;flex-direction: column;">
+                                    {% if soldier.photo_scan %}
+                                        {% include 'components/soldier_avatar.html' with avatar_url=soldier.photo_scan.url  %}
+                                    {% else %}
+                                        {% include 'components/soldier_avatar.html' with avatar_url=""  %}
+                                    {% endif %}
+                                    <div 
+                                        style="
+                                            width: 100%;text-align: center;
+                                            
+                                            color: white;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            flex-direction: column;
+                                            border-radius: 0 10px;
+                                            {% if soldier.is_checked_out %}
+                                                background-color: black;
+                                            {% else %}
+                                                background-color: chocolate;
+                                            {% endif %}
+                                        "
+                                    >
+                                        <span>{{soldier.organizational_code.code_number|default:'!'}}</span>
                                     </div>
-                                </div>
-                            </div> {% endcomment %}
-                            <div style="display: flex;height: 100%;text-align: right;gap: 4px;">
-                                <div style="width: 80px;aspect-ratio: 3/4;">
-                                    {% include 'components/soldier_avatar.html' with avatar_url=soldier.avatar  %}
-                                    {% comment %} image profile {% endcomment %}
+                                    {% if soldier.is_entry or soldier.is_exit %}
+                                        <span class="badge-entry 
+                                            {% if soldier.is_entry %}
+                                                {% if soldier.is_delay %}
+                                                    delay
+                                                {% else %}
+                                                    entry
+                                                {% endif %} 
+                                            {% endif %} 
+                                            {% if soldier.is_exit %}exit{% endif %}
+                                        ">
+                                            {% if soldier.is_entry %}
+                                                {% if soldier.is_delay %}
+                                                ورود با تاخیر
+                                                {% else %}
+                                                ورود
+                                                {% endif %}
+                                            {% endif %} 
+                                            {% if soldier.is_exit %}خروج{% endif %}
+                                        </span>
+                                    {% endif %}
                                 </div>
                                 <div style="flex: 1;">
-                                    <h5 style="display: flex;align-items: center;justify-content: space-between;">
-                                        <span>{{ soldier.first_name }} {{ soldier.last_name }}</span> 
+                                    <div style="display: flex;align-items: center;justify-content: space-between;">
+                                        <h5>
+                                            <a style="text-decoration: none;font-weight: bold;">
+                                                {{ soldier.first_name }} {{ soldier.last_name }} <i class="fa fa-eye"></i>
+                                            </a>
+                                            {% if soldier.is_top5 %}
+                                                <span style="font-size:10px;color:gold;display: flex;align-items: center;justify-content: center; background-color: white;padding: 4px 6px;border-radius: 6px;">
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                </span>
+                                            {% endif %}
+                                        </h5>
+                                        <span style="flex:1;"></span> 
+                                        <span  style="font-size: 14px;line-height: 14px;padding:4px 8px;display: flex;align-items: center; gap: 4px;font-weight: bold;" class="label label-default">
+                                            <i class="fa fa-copy"></i>
+                                            {% include 'components/field_display.html' with label="کدملی" value=soldier.national_code badge_color="#d9534f" empty_text="ندارد" %}
+                                        </span>
+                                    </div>
+                                    <div class="soldier-action">
 
-                                        <span class="badge">فرزند  : {{ soldier.father_name }}</span>
-                                    </h5>
-                                    {% include 'components/field_display.html' with label="کدملی" value=soldier.national_code badge_color="#d9534f" empty_text="ندارد" %}
-                                    {% include 'components/field_display.html' with label="کدسازمانی" value=soldier.organizational_code.code_number badge_color="#d9534f" empty_text="ندارد" %}
+                                        <button class="btn-mini">
+                                            <svg class="icon" viewBox="0 0 24 24">
+                                                <path d="M12 20h9" stroke="currentColor" stroke-width="2"/>
+                                                <path d="M16 4l4 4-12 12H4V16L16 4z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                            </svg>
+                                            ویرایش
+                                        </button>
 
+                                        <button class="btn-mini">
+                                            <svg class="icon" viewBox="0 0 24 24">
+                                                <path d="M4 4h16v4H4zM4 10h16v10H4z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                            </svg>
+                                            ثبت گزارش
+                                        </button>
 
-                                    {% comment %} details {% endcomment %}
+                                        <div style="flex:1;" class="dropdown">
+                                            <button style="width: 100%;" class="dropdown-btn btn-mini">
+                                                <svg class="icon" viewBox="0 0 24 24">
+                                                    <circle cx="12" cy="5" r="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                                                    <circle cx="12" cy="12" r="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                                                    <circle cx="12" cy="19" r="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                                                </svg>
+                                                <span style="flex: 1;">عملیات سرباز</span>
+                                                <svg class="icon arrow" width="14" height="14" viewBox="0 0 24 24">
+                                                    <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2"/>
+                                                </svg>
+                                            </button>
+
+                                            <div class="dropdown-menu">
+                                                <button>
+                                                    <svg class="icon" viewBox="0 0 24 24">
+                                                        <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-4 0-8 2-8 5v2h16v-2c0-3-4-5-8-5z"
+                                                        stroke="currentColor" stroke-width="2" fill="none"/>
+                                                    </svg>
+                                                    اطلاعات جامع سرباز
+                                                </button>
+                                                <button>
+                                                    <svg class="icon" viewBox="0 0 24 24">
+                                                        <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2"/>
+                                                    </svg>
+                                                    فهرست ورود و خروج
+                                                </button>
+                                                <hr/>
+                                                <button>
+                                                    <svg class="icon" viewBox="0 0 24 24">
+                                                        <path d="M6 19l6-6 6 6" stroke="currentColor" stroke-width="2" fill="none"/>
+                                                        <path d="M12 13V5" stroke="currentColor" stroke-width="2"/>
+                                                    </svg>
+                                                    امضای خروج
+                                                </button>
+
+                                                <button>
+                                                    <svg class="icon" viewBox="0 0 24 24">
+                                                        <path d="M18 6L6 18" stroke="currentColor" stroke-width="2"/>
+                                                        <path d="M6 6l12 12" stroke="currentColor" stroke-width="2"/>
+                                                    </svg>
+                                                    لغو خروج
+                                                </button>
+
+                                                <button>
+                                                    <svg class="icon" viewBox="0 0 24 24">
+                                                        <path d="M4 4h16v16H4z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                                        <path d="M4 9h16" stroke="currentColor" stroke-width="2"/>
+                                                    </svg>
+                                                    مداوت کاری
+                                                </button>
+                                                <hr/>
+                                                <button>
+                                                    <svg class="icon" viewBox="0 0 24 24">
+                                                        <path d="M12 2L15 8l6 .5-4.5 4 1 6-5.5-3-5.5 3 1-6-4.5-4L9 8z"
+                                                        stroke="currentColor" stroke-width="2" fill="none"/>
+                                                    </svg>
+                                                    ثبت تشویقی
+                                                </button>
+
+                                                <button>
+                                                    <svg class="icon" viewBox="0 0 24 24">
+                                                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+                                                        <path d="M12 7v5M12 16h.01" stroke="currentColor" stroke-width="2"/>
+                                                    </svg>
+                                                    ثبت تنبیهی
+                                                </button>
+                                               
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="group-2-col">
+                                        {% include 'components/field_display.html' with label="فرزند" value=soldier.father_name badge_color="#d9534f" empty_text="ندارد" %}
+                                        {% include 'components/field_display.html' with label="کد پاسداری" value=soldier.id_card_code badge_color="#d9534f" empty_text="ندارد" %}
+                                        {% include 'components/field_display.html' with label="تولد" value=soldier.birth_date|to_jalali badge_color="#d9534f" empty_text="ندارد" %}
+                                        {% include 'components/field_display.html' with label="سکونت" value=soldier.residence_city badge_color="#d9534f" empty_text="ندارد" %}
+                                    </div>
+                                   
                                 </div>
                                 <div>
                                     {% comment %} action {% endcomment %}
                                 </div>
                             </div>
                         </td>
-                        <td>
+                        <td  colspan="1">
                             <div style="display: flex;align-items: center;font-weight: bold;flex-wrap:  wrap;">
                                 <span style="font-size: 12px;flex: 1;font-weight: bold;" class="label label-default">
                                         {{ soldier.marital_status|default:'تاهل نامشخص' }}
@@ -126,34 +401,25 @@
                                 {% endif %}
                             </div>
                         </td>
-                        
-                        <td>
+                        <td colspan="1">
+                            {% include 'components/field_display.html' with label="تاریخ اعزام" value=soldier.dispatch_date|to_jalali empty_text="نامشخص" %}
+                            {% include 'components/field_display.html' with label="ورود به یگان" value=soldier.service_entry_date|to_jalali badge_color="#d9534f" empty_text="نامشخص" %}
+                            {% include 'components/field_display.html' with label="پایان خدمت"  value=soldier.service_end_date|to_jalali badge_color="#d9534f" empty_text="نامشخص" %}
+                            {% include 'components/field_display.html' with label="مانده"  value=soldier.remaining_str|to_jalali badge_color="#d9534f" empty_text="نامشخص" %}
+                        </td>
+                        <td colspan="1">
                             {% include 'components/field_display.html' with label=soldier.current_parent_unit|default:'فاقد قسمت' value=soldier.current_sub_unit badge_color="#d9534f" empty_text="زیرقسمت" %}
                             {% include 'components/field_display.html' with label="درجه" value=soldier.rank badge_color="#d9534f" empty_text="ندارد" %}
                             {% include 'components/field_display.html' with label=soldier.degree|default:'فاقد مدرک' value=soldier.field_of_study badge_color="#d9534f" empty_text="رشته تحصیلی" %}
                         </td>
 
-                        <td>
+                        <td colspan="1">
                             {% include 'components/field_display.html' with label="همراه" value=soldier.phone_mobile badge_color="#d9534f" empty_text="ندارد" %}
-                            {% include 'components/field_display.html' with label="پدر یا مادر" value=soldier.phone_parent badge_color="#d9534f" empty_text="ندارد" %}
+                            {% include 'components/field_display.html' with label="والدین" value=soldier.phone_parent badge_color="#d9534f" empty_text="ندارد" %}
                             {% include 'components/field_display.html' with label="منزل" value=soldier.phone_home badge_color="#d9534f" empty_text="ندارد" %}
+                            {% include 'components/field_display.html' with label="مجازی" value=soldier.phone_virtual badge_color="#d9534f" empty_text="ندارد" %}
                         </td>
 
-                        <td>
-                            {% include 'components/field_display.html' with label="تاریخ اعزام" value=soldier.dispatch_date|to_jalali empty_text="نامشخص" %}
-                            {% include 'components/field_display.html' with label="ورود به یگان" value=soldier.service_entry_date|to_jalali badge_color="#d9534f" empty_text="نامشخص" %}
-                            {% include 'components/field_display.html' with label="پایان خدمت"  value=soldier.service_end_date|to_jalali badge_color="#d9534f" empty_text="نامشخص" %}
-                        </td>
-{% comment %} 
-                        <td>
-                            <div style="display: flex;justify-content: space-between;align-items: center;">
-                                <span style="font-weight: normal;font-size: 12px;">تا پایان :</span>
-                                <span class="remaining {{ soldier.remaining_str_type }}"> {{ soldier.remaining_str }}</span>   
-                            </div>
-                        </td> {% endcomment %}
-                        {% comment %} <td>
-                            <i class="fa fa-sort-down"></i>
-                        </td> {% endcomment %}
                     </tr>
                     {% if request.user.is_staff %}
                     <tr class="soldier-manage">
@@ -239,5 +505,8 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+           <div style="display: flex;align-items: center;justify-content: center;margin: 10px;">
+        {% include "./soldiers_list_pagination.html" %}
     </div>
 </div>

@@ -21,7 +21,7 @@ class SoldierAdmin(admin.ModelAdmin):
         ("نظامی", {"fields": ["rank", "is_guard_duty", "is_fugitive", "fugitive_record", "addiction_record", "referral_person", "dispatch_date", "training_duration", "basic_training_center", "service_duration_completed", "service_entry_date", "essential_service_duration", "service_end_date", "total_service_adjustment", "service_deduction_type", "service_extension_type", "remaining_days", "remaining_str", "remaining_str_type", "current_parent_unit", "current_sub_unit", "traffic_status"]}),
         ("گواهینامه", {"fields": ["has_driving_license", "driving_license_type"]}),
         ("مدارک و مهارت‌ها", {"fields": ["degree", "field_of_study", "skill_5", "skill_group", "skill_certificate", "number_of_certificates", "is_certificate"]}),
-        ("سایر", {"fields": ["saman_username", "card_chip", "ideological_training_period", "independent_married", "weekly_or_monthly_presence", "is_needy", "expertise", "is_sunni", "is_sayyed", "photo_scan", "eligible_for_card_issuance", "card_issuance_status", "expired_file_number", "clearance_expired_file_number", "system_presence", "absorption", "Is_the_Basij_sufficient", "height", "weight", "eye_color", "hair_color", "position", "position_at", "file_shortage", "comments"]}),
+        ("سایر", {"fields": ["is_top5","saman_username", "card_chip", "ideological_training_period", "independent_married", "weekly_or_monthly_presence", "is_needy", "expertise", "is_sunni", "is_sayyed", "photo_scan", "eligible_for_card_issuance", "card_issuance_status", "expired_file_number", "clearance_expired_file_number", "system_presence", "absorption", "Is_the_Basij_sufficient", "height", "weight", "eye_color", "hair_color", "position", "position_at", "file_shortage", "comments"]}),
     ]
 
 

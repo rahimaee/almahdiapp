@@ -331,6 +331,9 @@ class Soldier(models.Model):
     is_certificate = models.BooleanField(
         default=False, verbose_name="مدرک مهارت آموزی دارد؟", choices=need_certificate_choices, null=True, blank=True
     )
+    is_top5 = models.BooleanField(
+        default=False, verbose_name="برتر", choices=need_certificate_choices, null=True, blank=True
+    )
     degree = models.CharField(
         max_length=100, blank=True, null=True, verbose_name="مدرک تحصیلی", choices=degree_choices
     )
@@ -397,6 +400,31 @@ class Soldier(models.Model):
                 missing.append(verbose)
         return missing
 
+
+    @property
+    def is_entry(self):
+        if not self.organizational_code:
+            return False
+        
+        return not self.organizational_code.code_number % 2
+
+    @property
+    def is_delay(self):
+        if not self.organizational_code:
+            return False
+        
+        return  self.organizational_code.code_number % 3
+
+    @property
+    def is_exit(self):
+        if not self.organizational_code:
+            return False
+        
+        return self.organizational_code.code_number % 2
+
+
+
+        
     def update_has_driving_license(self):
         if self.driving_license_type != "ندارد":
             self.has_driving_license = 'دارد'

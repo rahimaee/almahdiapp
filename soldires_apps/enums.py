@@ -44,7 +44,7 @@ class OrganizationalCodeStatusEnum(Enum):
     INACTIVE    = "inactive", "غیرفعال"
     CHECKOUT    = "checkout", "تسویه حساب"
     FUGITIVE    = "FUGITIVE", "فراری"
-    PRESENT     = "PRESENT", "حاظر"
+    PRESENT     = "PRESENT", "حاضر"
 
     @property
     def key(self):
