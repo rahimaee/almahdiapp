@@ -72,60 +72,63 @@
         <div class="col-md-5">
             <h3 class="font-semibold text-lg mb-2">قبولی دانشگاه / معافیت / فراری / انتقالی</h3>
             <div class="table-responsive">
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th rowspan="2">عنوان</th>
-                            <th rowspan="2">قبولی دانشگاه</th>
-                            <th colspan="2">معافیت</th>
-                            <th rowspan="2">فراری</th>
-                            <th rowspan="2">انتقالی</th>
-                            <th rowspan="2">جمع</th>
-                        </tr>
-                        <tr>
-                            <th>پزشکی</th>
-                            <th>غیرپزشکی</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>عادی (1-4)</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>31</td>
-                            <td>0</td>
-                            <td>31</td>
-                        </tr>
-                        <tr>
-                            <td>درجه دار (5-9)</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>1</td>
-                            <td>0</td>
-                            <td>1</td>
-                        </tr>
-                        <tr>
-                            <td>افسر (10-12)</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                        </tr>
-                        <tr class="total">
-                            <td><b>مجموع</b></td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>32</td>
-                            <td>0</td>
-                            <td><b>32</b></td>
-                        </tr>
-                    </tbody>
-                </table>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th rowspan="2">عنوان</th>
+            <th rowspan="2">قبولی دانشگاه</th>
+            <th colspan="2">معافیت</th>
+            <th rowspan="2">فراری</th>
+            <th rowspan="2">انتقالی</th>
+            <th rowspan="2">جمع</th>
+        </tr>
+        <tr>
+            <th>پزشکی</th>
+            <th>غیرپزشکی</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>عادی (1-4)</td>
+            <td>{{ clearance.university.soldiers }}</td>
+            <td>{{ clearance.medical_exemption.soldiers }}</td>
+            <td>{{ clearance.non_medical_exemption.soldiers }}</td>
+            <td>{{ clearance.fugitive.soldiers }}</td>
+            <td>{{ clearance.transfer.soldiers }}</td>
+            <td>{{ clearance.row_totals.soldiers}}</td>
+
+        </tr>
+        <tr>
+            <td>درجه دار (5-9)</td>
+            <td>{{ clearance.university.daghrees }}</td>
+            <td>{{ clearance.medical_exemption.daghrees }}</td>
+            <td>{{ clearance.non_medical_exemption.daghrees }}</td>
+            <td>{{ clearance.fugitive.daghrees }}</td>
+            <td>{{ clearance.transfer.daghrees }}</td>
+            <td>{{ clearance.row_totals.daghrees}}</td>
+
+        </tr>
+        <tr>
+            <td>افسر (10-12)</td>
+            <td>{{ clearance.university.officers }}</td>
+            <td>{{ clearance.medical_exemption.officers }}</td>
+            <td>{{ clearance.non_medical_exemption.officers }}</td>
+            <td>{{ clearance.fugitive.officers }}</td>
+            <td>{{ clearance.transfer.officers }}</td>
+            <td>{{ clearance.row_totals.officers}}</td>
+        </tr>
+        <tr class="total">
+            <td><b>مجموع</b></td>
+            <td>{{ clearance.university.total }}</td>
+            <td>{{ clearance.medical_exemption.total }}</td>
+            <td>{{ clearance.non_medical_exemption.total }}</td>
+            <td>{{ clearance.fugitive.total }}</td>
+            <td>{{ clearance.transfer.total }}</td>
+            <td><b>{{ clearance.overall_total }}</b></td>
+        </tr>
+    </tbody>
+</table>
+
             </div>
         </div>
     </div>
@@ -155,30 +158,30 @@
                     <tr>
                         <td>عادی (1-4)</td>
                         <td class="body-cell">0</td>
-                        <td class="body-cell">126</td>
-                        <td class="body-cell">29</td>
-                        <td class="body-cell">155</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
                     </tr>
                     <tr>
                         <td>درجه دار (5-9)</td>
                         <td class="body-cell">0</td>
-                        <td class="body-cell">55</td>
-                        <td class="body-cell">26</td>
-                        <td class="body-cell">81</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
                     </tr>
                     <tr>
                         <td>افسر (10-12)</td>
                         <td class="body-cell">0</td>
-                        <td class="body-cell">8</td>
-                        <td class="body-cell">17</td>
-                        <td class="body-cell">25</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
                     </tr>
                     <tr class="total total">
                         <td>مجموع</td>
                         <td class="body-cell">0</td>
-                        <td class="body-cell">189</td>
-                        <td class="body-cell">72</td>
-                        <td class="body-cell">261</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
                     </tr>
                 </tbody>
             </table>
@@ -203,35 +206,35 @@
                 <tbody>
                     <tr>
                         <td>عادی (1-4)</td>
-                        <td class="body-cell">152</td>
-                        <td class="body-cell">183</td>
-                        <td class="body-cell">3</td>
                         <td class="body-cell">0</td>
-                        <td class="body-cell">186</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
                     </tr>
                     <tr>
                         <td>درجه دار (5-9)</td>
-                        <td class="body-cell">78</td>
-                        <td class="body-cell">79</td>
-                        <td class="body-cell">3</td>
                         <td class="body-cell">0</td>
-                        <td class="body-cell">82</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
                     </tr>
                     <tr>
                         <td>افسر (10-12)</td>
-                        <td class="body-cell">23</td>
-                        <td class="body-cell">23</td>
-                        <td class="body-cell">2</td>
                         <td class="body-cell">0</td>
-                        <td class="body-cell">25</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
                     </tr>
                     <tr class="total total">
                         <td>مجموع</td>
-                        <td class="body-cell">253</td>
-                        <td class="body-cell">285</td>
-                        <td class="body-cell">8</td>
                         <td class="body-cell">0</td>
-                        <td class="body-cell">293</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
+                        <td class="body-cell">0</td>
                     </tr>
                 </tbody>
             </table>

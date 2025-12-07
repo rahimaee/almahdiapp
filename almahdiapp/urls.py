@@ -39,6 +39,8 @@ urlpatterns = [
     path('escaped/', include('soldire_runaway_apps.urls')),
     path('analystics/', include('analystics.urls', namespace='analystics')),
     path('gardan/', include('gardan_gharargah.urls', namespace='gardan')),
+    path('gurds/', include('gurd_apps.urls', namespace='gurds')),
+    path('pasdar/', include('pasdar_apps.urls', namespace='pasdar')),
     
     re_path(r'^header_partial_view',
             header_partial_view,

@@ -1,0 +1,82 @@
+{% load req %}
+
+<aside class="app-sidebar">
+    <!-- مدیریتی -->
+    <div class="sidebar-card shadow-sm">
+        <div class="sidebar-card-header">مدیریتی</div>
+        <div class="list-group list-group-flush">
+            <a href="{% url 'gurds:dashboard' %}" class="list-group-item {% active_link 'gurds:dashboard' %}"><span>داشبورد</span> <i class="fa fa-tachometer"></i></a>
+            <a href="{% url 'gurds:corrections' %}" class="list-group-item {% active_link 'gurds:corrections' %}" class="list-group-item"><span>اصلاح و تغییرات</span> <i class="fa fa-edit"></i></a>
+            <a href="#" class="list-group-item disabled-link"><span>ماشین جدید</span> <i class="fa fa-car"></i></a>
+            <a href="#" class="list-group-item disabled-link"><span>تردد امروز</span> <i class="fa fa-calendar-check"></i></a>
+        </div>
+    </div>
+
+    <!-- خروجی -->
+    <div class="sidebar-card shadow-sm">
+        <div class="sidebar-card-header" style="background-color: #28a745; color: white;">گزارش و خروجی</div>
+        <div class="list-group list-group-flush">
+
+            <!-- اکسل ورود و خروج -->
+            <div class="list-group-item menu-item">
+                <span>اکسل ورود و خروج</span> <i class="fa fa-chevron-left arrow"></i>
+                <div class="submenu">
+                    <a href="#" class="disabled-link"><span>بازه تاریخی خاص</span> <i class="fa fa-calendar"></i></a>
+                    <hr/>
+                    <a href="#" class="disabled-link"><span>امروز</span> <i class="fa fa-file-excel-o"></i></a>
+                    <a href="#" class="disabled-link"><span>دیروز</span> <i class="fa fa-file-excel-o"></i></a>
+                    <a href="#" class="disabled-link"><span>هفته جاری</span> <i class="fa fa-file-excel-o"></i></a>
+                    <a href="#" class="disabled-link"><span>ماه جاری</span> <i class="fa fa-file-excel-o"></i></a>
+                    <hr/>
+                    <a href="#" class="disabled-link"><span>3 روز اخیر</span> <i class="fa fa-file-excel-o"></i></a>
+                    <a href="#" class="disabled-link"><span>7 روز اخیر</span> <i class="fa fa-file-excel-o"></i></a>
+                    <a href="#" class="disabled-link"><span>۳۰ روز اخیر</span> <i class="fa fa-file-excel-o"></i></a>
+                </div>
+            </div>
+
+            <!-- چاپ ورود و خروج -->
+            <div class="list-group-item menu-item">
+                <span>چاپ ورود و خروج</span> <i class="fa fa-chevron-left arrow"></i>
+                <div class="submenu">
+                    <a href="#" class="disabled-link"><span>بازه تاریخی خاص</span> <i class="fa fa-calendar"></i></a>
+                    <hr/>
+                    <a href="#" class="disabled-link"><span>امروز</span> <i class="fa fa-print"></i></a>
+                    <a href="#" class="disabled-link"><span>دیروز</span> <i class="fa fa-print"></i></a>
+                    <a href="#" class="disabled-link"><span>هفته جاری</span> <i class="fa fa-print"></i></a>
+                    <a href="#" class="disabled-link"><span>ماه جاری</span> <i class="fa fa-print"></i></a>
+                    <hr/>
+                    <a href="#" class="disabled-link"><span>3 روز اخیر</span> <i class="fa fa-print"></i></a>
+                    <a href="#" class="disabled-link"><span>7 روز اخیر</span> <i class="fa fa-print"></i></a>
+                    <a href="#" class="disabled-link"><span>۳۰ روز اخیر</span> <i class="fa fa-print"></i></a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- فهرست -->
+    <div class="sidebar-card shadow-sm">
+        <div class="sidebar-card-header">فهرست</div>
+        <div class="list-group list-group-flush">
+            <a href="#" class="list-group-item disabled-link"><span>تردد سربازان</span> <i class="fa fa-user"></i></a>
+            <a href="#" class="list-group-item"><span>تردد سرباز</span> <i class="fa fa-user"></i></a>
+            <a href="#" class="list-group-item disabled-link"><span>ماشین ها تردد</span> <i class="fa fa-car"></i></a>
+            <a href="#" class="list-group-item disabled-link"><span>اشخاص تردد</span> <i class="fa fa-users"></i></a>
+            <a href="#" class="list-group-item disabled-link"><span>ماشین ها</span> <i class="fa fa-car"></i></a>
+            <a href="#" class="list-group-item disabled-link"><span>اشخاص</span> <i class="fa fa-users"></i></a>
+        </div>
+    </div>
+
+    <!-- آمار -->
+    <div class="sidebar-card shadow-sm">
+        <div class="sidebar-card-header">آمار</div>
+        <div class="list-group list-group-flush">
+            <a href="#" class="list-group-item disabled-link"><span>آمار تردد سرباز</span> <i class="fa fa-bar-chart"></i></a>
+            <a href="#" class="list-group-item disabled-link"><span>آمار تردد ماشین</span> <i class="fa fa-line-chart"></i></a>
+            <a href="#" class="list-group-item disabled-link"><span>آمار تردد اشخاص</span> <i class="fa fa-pie-chart"></i></a>
+            <a href="#" class="list-group-item disabled-link"><span>نمودار ورودی خروجی</span> <i class="fa fa-area-chart"></i></a>
+        </div>
+    </div>
+
+</aside>

@@ -54,10 +54,18 @@
             </li>
             
             <li>
-                    <a href="{% url 'gardan:gurd_dashboard' %}">
-                        <i class="fa fa-home"></i> <span>داشبورد دژبانی</span>
-                    </a>
+                <a href="{% url 'gurds:dashboard' %}">
+                    <i class="fa fa-shield"></i> <span>داشبورد دژبانی</span>
+                </a>
             </li>
+            {% if request.perm.can_view_pasdar %}
+                <li>
+                    <a href="{% url 'pasdar:dashboard' %}">
+                        <i class="fa fa-shield"></i> <span>داشبورد کارگزینی (رسمی)</span>
+                    </a>
+                </li>
+            {% endif %}
+
             {% if request.user.is_staff %}
                 <li>
                     <a href="{% url 'main_letters' %}"><i class="fa fa-envelope"></i> <span>فرم و نامه ها</span>
@@ -150,7 +158,7 @@
 
             <li>
                 <a  href="{% url 'analystics:index' %}">
-                    <i class="fa fa-area-chart"></i> <span>داشبورد آماری</span>
+                    <i class="fa fa-area-chart"></i> <span>گزارش گیری و آمار</span>
                 </a>
             </li>
             {#                    {% if request.user.is_staff == True %}#}
@@ -185,4 +193,5 @@
         </ul>
                     
     </section>
+
 </aside>

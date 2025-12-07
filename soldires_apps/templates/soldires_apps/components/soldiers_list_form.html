@@ -53,7 +53,7 @@
         width: 180px;
         font-size: 13px;
         line-height: 1.7;
-        z-index: 10;
+        z-index: 100000;
     }
 
     .filter-title .info-icon:hover .hint-box {
@@ -99,32 +99,8 @@
 <div class="soldiers-form-nav">
 
     <form id="soldierForm">
-        <div style="text-align: center;margin-bottom: 10px;">
-            <h1 class="app-title">فهرست سربازان یگان المهدی</h1> 
-            <span style="font-size: 14px;" class="bg-rose text-white  soldiers-search">
-            نتیجه     {{soldiers_counts}} نفر از {{all_soldiers_counts}} نفر ({{selected_filter_label}})
-            </span>
-        </div>
-        <button type="submit" class="ui-btn ui-btn-primary d-flex items-center justify-between" style="margin-bottom: 15px;">
-            <span>اجرای عملیات جستجو</span> 🔎
-        </button>
-        <div class="ui-form-group sm">
-                <label>عبارت جستجو</label> 
-                <input type="text" id="query" name="query" class="ui-input" placeholder="کدملی، نام، نام خانوادگی، کد سازمانی ..." /> 
-        </div>
-        <div class="ui-form-group sm"> 
-                <label>نمایش پیشفرض</label> 
-                <select name="defaultFilter" class="ui-select">
-                    {% for value, label in status_choices %} 
-                    <option value="{{ value }}" {% if value == selected_filter %}selected{% endif %}>{{ label }}</option> 
-                    {% endfor %} 
-                </select> 
-        </div> 
-        <div class="ui-form-group sm">
-            <label>{{ form.gurd_filter.label }}</label>
-            {{ form.gurd_filter|add_class:"ui-select" }}
-        </div>
- 
+        <h1 class="app-title">فهرست سربازان یگان المهدی</h1> 
+        <br/>
         <!-- 🔹 فیلترهای پیشرفته -->
         <h4 class="filter-title">
             <span class="text-title">فیلترهای پیشرفته</span>
@@ -318,5 +294,25 @@
             </div>
 
         </div>
+        <hr/>
+        <div class="ui-form-group sm">
+                <label>عبارت جستجو</label> 
+                <input type="text" id="query" name="query" class="ui-input" placeholder="کدملی، نام، نام خانوادگی، کد سازمانی ..." /> 
+        </div>
+        <div class="ui-form-group sm"> 
+                <label>نمایش پیشفرض</label> 
+                <select name="defaultFilter" class="ui-select">
+                    {% for value, label in status_choices %} 
+                    <option value="{{ value }}" {% if value == selected_filter %}selected{% endif %}>{{ label }}</option> 
+                    {% endfor %} 
+                </select> 
+        </div> 
+        <div class="ui-form-group sm">
+            <label>{{ form.gurd_filter.label }}</label>
+            {{ form.gurd_filter|add_class:"ui-select" }}
+        </div>
+        <button type="submit" class="ui-btn ui-btn-primary d-flex items-center justify-between" style="margin-top: 15px;">
+            <span>اجرای عملیات جستجو</span> 🔎
+        </button>
     </form>
 </div>

@@ -12,13 +12,18 @@ def feature_required(feature_name, redirect_to_view='access_denied'):
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
+
             user = request.user
             redirect_url = resolve_url(redirect_to_view)
+            
             if not user.is_authenticated:
                 return redirect(f"{redirect_url}?reason=unauthenticated")
             if user.is_superuser == False:
                 if not hasattr(user, 'has_feature') or not user.has_feature(feature_name):
                     return redirect(f"{redirect_url}?reason=unauthorized&feature={feature_name}")
+
+
+            
             return view_func(request, *args, **kwargs)
 
         return _wrapped_view

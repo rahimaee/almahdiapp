@@ -116,101 +116,6 @@ def home(request):
 
     analytics = [
         {
-            "col": 6,
-            "label": "ورود و خروج دژبانی (امروز)",
-            "gradient": "gradient-yellow",
-            "count": 'حاضرین و غائبین',
-            "query": "",
-            "itemsCol":4,
-            "actions": entry_exit_acions,
-            "items": [
-                # ورود
-                {"label": "ورود حاضر", "count": 0},
-                {"label": "ورود غائب", "count": 0},
-                {"label": "ورود تاخیر", "count": 0},
-
-                # خروج
-                {"label": "خروج حاضر", "count": 0},
-                {"label": "خروج غائب", "count": 0},
-                {"label": "خروج تاخیر", "count": 0},
-
-                # حاضرین
-                {"label": "حاضرین حاضر", "count": 0},
-                {"label": "حاضرین غائب", "count": 0},
-                {"label": "حاضرین تاخیر", "count": 0},
-            ]
-
-
-        },        
-        {
-            "col": 6,
-            "label": "ورود و خروج دژبانی (امروز)",
-            "gradient": "gradient-yellow",
-            "count": 'اشخاص و وسیله نقلیه',
-            "query": "",
-            "itemsCol":6,
-            "actions": entry_exit_acions,
-            "items": [
-                {"label": "ورود اشخاص", "count": 0},
-                {"label": "ورود وسیله نقلیه", "count": 0},
-                {"label": "خروج اشخاص", "count": 0},
-                {"label": "خروج وسیله نقلیه", "count": 0},
-                {"label": "حاضرین اشخاص", "count": 0},
-                {"label": "حاضرین وسیله نقلیه", "count": 0},
-            ],
-            
-        },
-        {
-            "col": 6,
-            "label": "ورود و خروج دژبانی (امروز)",
-            "gradient": "gradient-yellow",
-            "count": 'وضعیت تردد',
-            "query": "",
-            "itemsCol":4,
-            "actions": entry_exit_acions,
-            "items": [
-                # ورود
-                {"label": "ورود اداری", "count": 0},
-                {"label": "ورود شیفتی", "count": 0},
-                {"label": "ورود پستی", "count": 0},
-
-                # خروج
-                {"label": "خروج اداری", "count": 0},
-                {"label": "خروج شیفتی", "count": 0},
-                {"label": "خروج پستی", "count": 0},
-
-                # حاضرین
-                {"label": "حاضرین اداری", "count": 0},
-                {"label": "حاضرین شیفتی", "count": 0},
-                {"label": "حاضرین پستی", "count": 0},
-            ]
-
-        },
-        {
-            "col": 6,
-            "label": "ورود و خروج دژبانی (امروز)",
-            "gradient": "gradient-yellow",
-            "count": 'وضعیت سلامت',
-            "query": "",
-            "itemsCol":4,
-            "actions": entry_exit_acions,
-            "items": [
-                # ورود
-                {"label": "ورود سالم", "count": 0},
-                {"label": "ورود معاف از رزم", "count": 0},
-                {"label": "ورود گروه ب", "count": 0},
-                # خروج
-                {"label": "خروج سالم", "count": 0},
-                {"label": "خروج معاف از رزم", "count": 0},
-                {"label": "خروج گروه ب", "count": 0},
-                # حاضرین
-                {"label": "حاضرین سالم", "count": 0},
-                {"label": "حاضرین معاف از رزم", "count": 0},
-                {"label": "حاضرین گروه ب", "count": 0},
-            ]
-
-        },
-        {
             'col':4,
             "label": "آمار کل سربازان",
             "gradient": "gradient-blue",
@@ -259,7 +164,7 @@ def home(request):
         },
         
         {
-            'col':6,
+            'col':5,
             "label": "تحصیلات و مدرک ",
             "gradient": "gradient-gray",
             "query": "present",
@@ -270,7 +175,7 @@ def home(request):
             ]
         },
         {
-            'col':6,
+            'col':7,
             "label": "درجات و ترفیعات",
             "gradient": "gradient-purple",
             "query": "present",

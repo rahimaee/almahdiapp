@@ -1,0 +1,111 @@
+{% extends 'shared/app_layout.html' %}
+{% load static %}
+{% load req %}
+
+{% block sidebar %}
+    <aside class="app-sidebar">
+
+        <!-- مدیریت فردی -->
+        <div class="sidebar-card shadow-sm">
+            <div class="sidebar-card-header">مدیریت فردی</div>
+            <div class="list-group list-group-flush">
+                <div  class="ui-form-group xs">
+                    <select  id="pasdar_select" class="ui-select">
+                        <option value="">انتخاب کنید...</option>
+                        {% for pasdar in pasdars %}
+                            <option value="{{ pasdar.id }}">{{ pasdar.full_name }} ({{ pasdar.code }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <a href="#" id="pasdar_view_btn" class="list-group-item">
+                    مشاهده اطلاعات
+                </a>
+            </div>
+        </div>
+
+        <!-- مدیریت گروهی -->
+        <div class="sidebar-card shadow-sm">
+            <div class="sidebar-card-header">مدیریت گروهی</div>
+            <div class="list-group list-group-flush">
+                <a href="{% url 'pasdar:dashboard' %}" class="list-group-item {% active_link 'pasdar:dashboard' %}">
+                    <span>داشبورد</span>
+                    <i class="fa fa-tachometer"></i>
+                </a>
+                <a href="#" class="list-group-item">
+                    <span>فهرست پاسداران</span>
+                    <i class="fa fa-users"></i>
+                </a>
+                <a href="#" class="list-group-item">
+                    <span>دوره عقیدتی</span>
+                    <i class="fa fa-book"></i>
+                </a>
+                <a href="#" class="list-group-item">
+                    <span>دوره آموزش پاسدار</span>
+                    <i class="fa fa-graduation-cap"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- نامه‌ها و فرم‌ها -->
+        <div class="sidebar-card shadow-sm">
+            <div class="sidebar-card-header">نامه‌ها و فرم‌ها</div>
+            <div class="list-group list-group-flush">
+                <div class="list-group-item menu-item">
+                    <span>ایجاد نامه جدید</span> 
+                    <i class="fa fa-chevron-left arrow"></i>
+                    <div class="submenu">
+                        <a href="#"><span>نامه پاسدار</span> <i class="fa fa-plus-square-o"></i></a>
+                        <a href="#"><span>نامه آموزشی</span> <i class="fa fa-plus-square-o"></i></a>
+                        <a href="#"><span>نامه تشویقی</span> <i class="fa fa-plus-square-o"></i></a>
+                        <a href="#"><span>نامه تنبیهی</span> <i class="fa fa-plus-square-o"></i></a>
+                    </div>
+                </div>
+                <a href="#" class="list-group-item"><span>فهرست  نامه</span><i class="fa fa-envelope"></i></a>
+                <a href="#" class="list-group-item"><span>نامه پاسدار</span> <i class="fa fa-menu"></i></a>
+                <a href="#" class="list-group-item"><span>نامه آموزشی</span> <i class="fa fa-menu"></i></a>
+                <a href="#" class="list-group-item"><span>نامه تشویقی</span> <i class="fa fa-menu"></i></a>
+                <a href="#" class="list-group-item"><span>نامه تنبیهی</span> <i class="fa fa-menu"></i></a>
+            </div>
+        </div>
+
+        <!-- گذرنامه و سفر -->
+        <div class="sidebar-card shadow-sm">
+            <div class="sidebar-card-header">گذرنامه و سفر</div>
+            <div class="list-group list-group-flush">
+                <a href="#" class="list-group-item">
+                    <span>گذرنامه‌ها</span>
+                    <i class="fa fa-id-card"></i>
+                </a>
+                <a href="#" class="list-group-item">
+                    <span>ثبت گذرنامه جدید</span>
+                    <i class="fa fa-plus-circle"></i>
+                </a>
+                <a href="#" class="list-group-item">
+                    <span>کربلا</span>
+                    <i class="fa fa-map-marker-alt"></i>
+                </a>
+                <a href="#" class="list-group-item">
+                    <span>مکه مکرمه</span>
+                    <i class="fa fa-map-marker-alt"></i>
+                </a>
+                <a href="#" class="list-group-item">
+                    <span>مشهد مقدس</span>
+                    <i class="fa fa-map-marker-alt"></i>
+                </a>
+            </div>
+        </div>
+
+    </aside>
+    <script>
+        // مشاهده اطلاعات پاسدار انتخابی
+        document.getElementById('pasdar_view_btn').addEventListener('click', function(e){
+            e.preventDefault();
+            var select = document.getElementById('pasdar_select');
+            var pasdarId = select.value;
+            if(pasdarId){
+                window.location.href = `#`; // مسیر جزئیات پاسدار (فعلاً #)
+            }
+        });
+    </script>
+ 
+{% endblock %}

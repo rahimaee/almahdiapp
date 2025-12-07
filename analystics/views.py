@@ -90,7 +90,9 @@ def latest_statistics(request):
         "local": active_service["normal"]["local"] + active_service["daghree"]["local"] + active_service["officer"]["local"],
         "non_local": active_service["normal"]["non_local"] + active_service["daghree"]["non_local"] + active_service["officer"]["non_local"],
     }
+    
     context = {
+        "clearance":ClearanceStats().get_all_stats(),
         "health": HealthStats().get_data(),
         "existance": RankGroupStats().get_data(),
         "religus": ReligionStats().get_data(),
@@ -136,9 +138,10 @@ def reports_all(request):
     }
 
     soldiers = Soldier.objects.filter(is_checked_out=False,is_fugitive=False)
+    print(len(soldiers))
     for unit in units:
-        soldiers = soldiers.filter(current_parent_unit=unit)
-
+        sus = SubUnit.objects.filter(parent_unit__name=unit.name)
+        soldiers = soldiers.filter(current_sub_unit__in=sus)
         row = {
             'unit': unit,
             'edu': {
@@ -152,7 +155,7 @@ def reports_all(request):
             'health': {
                 'healthy': soldiers.filter(health_status='سالم').count(),
                 'exempt_from_service': soldiers.filter(health_status='معاف از رزم').count(),
-                'group_b': soldiers.filter(health_status='گروه ب').count(),
+                'group_b': soldiers.filter(health_status__in=['گروه ب' + 'معاف+گروه ب']).count(),
                 'exempt_plus_group_b': soldiers.filter(health_status='معاف+گروه ب').count(),
             },
             'commission': soldiers.filter(status='توجیحی').count(),

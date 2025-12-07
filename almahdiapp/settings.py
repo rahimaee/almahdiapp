@@ -55,7 +55,9 @@ INSTALLED_APPS = [
     'analystics',
     'expired_soldiers',
     'organizational_position',
-    'gardan_gharargah'
+    'gardan_gharargah',
+    'gurd_apps',
+    'pasdar_apps',
 ]
 
 MIDDLEWARE = [
@@ -66,6 +68,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'accounts_apps.middleware.LoadUserPermissionsMiddleware', 
 ]
 
 ROOT_URLCONF = 'almahdiapp.urls'

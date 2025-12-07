@@ -3,16 +3,41 @@ from django import template
 register = template.Library()
 
 @register.simple_tag(takes_context=True)
-def active_link(context, url_name,className='active-link'):
+def active_link(context, full_name, className='active-link'):
     """
-    بررسی می‌کند آیا مسیر فعلی برابر با url_name مشخص شده است یا نه.
-    اگر بله، 'active-link' برمی‌گرداند، در غیر این صورت رشته خالی.
+    full_name باید به صورت:
+        'namespace:url_name'
+    یا فقط:
+        'url_name'
+    باشد
     """
     request = context.get('request')
-    if request and hasattr(request, 'resolver_match'):
-        if request.resolver_match.url_name == url_name:
-            return className
-    return ''
+    if not request or not hasattr(request, 'resolver_match'):
+        return ''
+
+    resolver = request.resolver_match
+
+    # مقدار ورودی را تجزیه کنیم
+    if ':' in full_name:
+        ns, name = full_name.split(':', 1)
+    else:
+        ns, name = None, full_name
+
+    # چک url_name
+    match_name = resolver.url_name
+    match_namespace = resolver.namespace  # تک فضای نام
+    match_namespaces = resolver.namespaces  # لیست فضای‌نام‌ها
+
+    # مقایسه url_name
+    if name != match_name:
+        return ''
+
+    # اگر namespace مشخص شده، باید تطابق داشته باشد
+    if ns and ns not in match_namespaces:
+        return ''
+
+    return className
+
 
 @register.filter
 def lnumtrans(value=''):

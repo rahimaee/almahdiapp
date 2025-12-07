@@ -15,7 +15,14 @@
     <!-- اطلاعات کاربر -->
     <div class="user-info">
         <div class="user-details">
-            <p class="user-fullname">{{ user.get_full_name }}</p>
+            <p class="user-fullname">
+                {{ user.get_full_name }}
+                {% if request.user.is_staff %}
+                     <span class="badge badge-info">ادمین کل</span>
+                     {% else %}
+                     <span class="badge badge-secondary">کاربر</span>
+                {% endif %}
+            </p>
             <span>
                 <i class="fa fa-caret-down"></i>
             </span>
@@ -28,19 +35,19 @@
 
 <!-- منوی Dropdown -->
 <div class="user-dropdown">
-    <a href="#" class="dropdown-item">
+    <a href="#" class="dropdown-item disabled-link">
         پروفایل من
         <i class="fa fa-user"></i>
     </a>
-    <a href="#" class="dropdown-item">
+    <a href="#" class="dropdown-item disabled-link">
         اعلان‌ها
         <i class="fa fa-bell"></i>
     </a>
-    <a href="#" class="dropdown-item">
+    <a href="#" class="dropdown-item disabled-link">
         تنظیمات
         <i class="fa fa-cog"></i>
     </a>
-    <a href="#" class="dropdown-item">
+    <a href="#" class="dropdown-item disabled-link">
         راهنما
         <i class="fa fa-question-circle"></i>
     </a>
@@ -60,7 +67,7 @@
         gap: 10px;
         padding: 10px 16px;
         background: #fff;
-        border-radius: 12px;
+        border-radius:0 0 12px 12px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         position: relative;
         cursor: pointer;
@@ -69,12 +76,15 @@
     .user-panel-card:hover {
         box-shadow: 0 6px 18px rgba(0,0,0,0.15);
     }
+    .user-panel-card .user-image{
+            border: 1px solid gray;
 
+    }
         /* تصویر پروفایل شیشه‌ای */
         .user-image, .user-image-placeholder {
             width: 50px;
             height: 50px;
-            border-radius: 10px 10px 0 10px ;
+            border-radius: 10px 0 10px  10px ;
             overflow: hidden;
             display: flex;
             align-items: center;

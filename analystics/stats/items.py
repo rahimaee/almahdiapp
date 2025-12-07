@@ -467,6 +467,85 @@ class RankGroupStats(StatBase):
             "total": totals,
         }
 
+from django.utils import timezone
+from .base import StatBase
+from soldire_letter_apps.models import ClearanceLetter
+
+
+class ClearanceStats(StatBase):
+    """
+    Monthly clearance letters stats by reason (English keys)
+    """
+    base_queryset = ClearanceLetter.objects.all()
+
+    REASONS = {
+        "transfer": "انتقالی",
+        "university": "قبولی دانشگاه",
+        "medical_exemption": "معافیت پزشکی",
+        "non_medical_exemption": "معافیت غیرپزشکی",
+        "fugitive": "فراری",
+    } 
+    def get_queryset(self):
+        """Only letters from current month"""
+        today = timezone.now().date()
+        month_start = today.replace(day=1,month=1)
+        return self.queryset.filter(issue_date__gte=month_start)
+
+    def filter_by_reason(self, reason_key):
+        """Filter clearance letters by reason key"""
+        reason_name = self.REASONS.get(reason_key)
+        if reason_key == "medical_exemption":
+            return self.get_queryset().filter(reason="معافیت دائم", soldier__health_status="سالم")
+        elif reason_key == "non_medical_exemption":
+            return self.get_queryset().filter(reason="معافیت دائم").exclude(soldier__health_status="سالم")
+        elif reason_key == "fugitive":
+            return RunawaySoldiers().get_queryset()
+        else:
+            return self.get_queryset().filter(reason=reason_name)
+
+    def get_soldiers_by_reason(self, reason_key):
+        letters_or_soldiers = self.filter_by_reason(reason_key)
+        if reason_key == "fugitive":
+            return letters_or_soldiers  # خودش QuerySet از Soldier است
+        soldier_ids = letters_or_soldiers.values_list('soldier', flat=True)
+        return Soldier.objects.filter(id__in=soldier_ids)
+
+
+    def get_rank_stats_by_reason(self, reason_key):
+        soldiers_qs = self.get_soldiers_by_reason(reason_key)
+        rank_stats = RankGroupStats()
+        rank_stats.queryset = soldiers_qs
+        data = rank_stats.get_data()
+        data['total'] = data['soldiers'] + data['daghrees'] + data['officers']
+        return data
+
+    def get_all_stats(self):
+        result = {}
+        # جمع سطری (برای هر نوع رتبه)
+        row_totals = {'soldiers': 0, 'daghrees': 0, 'officers': 0}
+        # جمع ستونی (برای هر دلیل تسویه)
+        col_totals = {key: 0 for key in self.REASONS.keys()}
+        overall_total = 0
+
+        for key in self.REASONS.keys():
+            data = self.get_rank_stats_by_reason(key)
+            result[key] = data
+
+            # جمع سطری
+            row_totals['soldiers'] += data['soldiers']
+            row_totals['daghrees'] += data['daghrees']
+            row_totals['officers'] += data['officers']
+
+            # جمع ستونی
+            col_totals[key] = data['total']
+
+            overall_total += data['total']
+
+        result['row_totals'] = row_totals
+        result['col_totals'] = col_totals
+        result['overall_total'] = overall_total
+        return result
+
 
 class ReligionStats(StatBase):
     """

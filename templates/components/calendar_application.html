@@ -1,0 +1,131 @@
+{% load static %}
+
+ <style>
+/* کارت تقویم شبیه iOS */
+.calendar-card {
+    border-radius: 20px;
+    padding: 15px;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    border: 1px solid rgba(0,0,0,0.05);
+    max-width: 340px;
+    margin: 20px auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* هدر */
+.datepicker-header {
+    background: rgba(248,248,248,0.9);
+    border-radius: 15px;
+    padding: 10px;
+    font-weight: 600;
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* دکمه‌های ناوبری */
+.btn-prev, .btn-next {
+    color: #007aff;
+    cursor: pointer;
+}
+
+/* جدول روزها */
+.table-days span {
+    display: inline-block;
+    width: 48px !important;
+    height: 48px !important;
+    line-height: 48px !important;
+    text-align: center;
+    border-radius: 12px;
+    transition: 0.25s;
+    margin: 2px;
+    cursor: default;
+}
+
+/* هاور روزها */
+.table-days span:hover {
+    background: rgba(0,122,255,0.1);
+}
+
+/* امروز */
+.table-days span.today {
+    border: 2px solid #007aff;
+    color: #007aff;
+    font-weight: 600;
+}
+
+/* روز انتخاب شده */
+.table-days span.selected {
+    background: #007aff;
+    color: white;
+    font-weight: 600;
+}
+
+/* روزهای تعطیل جمعه */
+.table-days span.holiday {
+    color: #ff3b30 !important;
+    background: rgba(255,59,48,0.1) !important;
+    font-weight: 600 !important;
+}
+
+/* روزهای ماه دیگر */
+.table-days span.other-month {
+    color: #a0a0a0;
+}
+</style>
+
+<div class="calendar-container" id="calendar" style="direction:ltr;"></div>
+
+
+<!-- JS کتابخانه‌ها --> 
+ <script src="{% static 'dist/js/persian-date-0.1.8.min.js' %}"></script> 
+ <script src="{% static 'dist/js/persian-datepicker-0.4.5.min.js' %}"></script> 
+ <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+
+
+
+<script>
+function markHolidays() {
+    console.log("markHolidays")
+    // اضافه کردن کمی تاخیر تا عناصر جدول ساخته شوند
+    setTimeout(function() {
+        $(".table-days span").each(function() {
+            var unix = $(this).attr("unixdate");
+            if (!unix) return;
+            var pd = new persianDate(parseInt(unix));
+            console.log({pd : pd.pDate})
+            var weekday = pd.pDate.weekDayNumber // 0 = شنبه, 6 = جمعه
+            if (weekday === 0) { // جمعه
+                $(this).addClass("holiday");
+            }
+        });
+    }, 50); // 50 میلی‌ثانیه کافی است
+}
+
+// اجرای بعد از رندر شدن تقویم
+$("#calendar").persianDatepicker({
+    inline: true,
+    initialValue: true,
+    format: "YYYY/MM/DD",
+    toolbox: { enabled: false },
+    dayPicker: { enabled: true, onSelect: function () { return false; } },
+    monthPicker: { enabled: false },
+    yearPicker: { enabled: false },
+    navigator: { enabled: true, scroll: { enabled: false } },
+});
+
+// مانیتور تغییرات DOM در تقویم
+var target = document.querySelector("#calendar .datepicker-day-view .table-days");
+if (target) {
+    var observer = new MutationObserver(function(mutations) {
+        markHolidays();
+    });
+    observer.observe(target, { childList: true, subtree: true });
+}
+
+// اجرا یکبار برای روزهای فعلی
+markHolidays();
+</script>

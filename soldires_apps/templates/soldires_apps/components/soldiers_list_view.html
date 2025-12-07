@@ -6,7 +6,7 @@
     overflow-y: hidden;
     overflow-x: hidden;
     position: relative;
-    padding-bottom: 60px;
+    padding-bottom: 50px;
 }
 
 /* هدر ثابت بدون نیاز به div */
@@ -22,7 +22,7 @@
 /* زیباسازی */
 .modern-table {
     width: 100%;
-    table-layout: fixed;
+    table-layout: auto !important;
     border-collapse: collapse;
 
 }
@@ -121,8 +121,9 @@
 .dropdown-menu {
     position: absolute;
     top: 100%;
-    right: 0;
+    right: 50%;
     width: 200px;
+    transform: translateX(50%);
     background: white;
     border: 1px solid #dcdcdc;
     border-radius: 6px;
@@ -164,6 +165,7 @@
 }
 
 
+
 </style>
 <div class="modern-table-container">
 
@@ -180,7 +182,8 @@
     </table>
  
     <div class="modern-table-body">
-        <table class="modern-table">
+        <table   class="modern-table">
+
             <tbody>
                 {% for soldier in soldiers %}
                     <tr data-toggle="expand" aria-expanded="false" data-target="#row{{ soldier.id }}" 
@@ -197,8 +200,10 @@
                         <td colspan="2">
                             <div style="display: flex;height: 100%;text-align: right;gap: 4px; position: relative;">
                                 <div 
-                                class="user-image-placeholder"
-                                style=";width:90px;height:120px;aspect-ratio: 3/4;position: relative;flex-direction: column;">
+                                    class=" user-image-placeholder"
+                                    style="width:90px;min-width:90px; height:120px;aspect-ratio: 3/4;position: relative;flex-direction: column;"
+                                >
+
                                     {% if soldier.photo_scan %}
                                         {% include 'components/soldier_avatar.html' with avatar_url=soldier.photo_scan.url  %}
                                     {% else %}
@@ -246,10 +251,16 @@
                                     {% endif %}
                                 </div>
                                 <div style="flex: 1;">
-                                    <div style="display: flex;align-items: center;justify-content: space-between;">
-                                        <h5>
-                                            <a style="text-decoration: none;font-weight: bold;">
-                                                {{ soldier.first_name }} {{ soldier.last_name }} <i class="fa fa-eye"></i>
+                                    <div class="user-profile" style="display: flex;align-items: center;justify-content: space-between;">
+                                        <h5  >
+                                            <a  style="text-decoration: none;font-weight: bold;">
+                                                <span>
+                                                    {{ soldier.first_name }} {{ soldier.last_name }}
+                                                   
+                                                </span> <i class="fa fa-eye"></i>
+                                                <div class="soldier-box-wraper">
+                                                    {% include "./soldiers_list_hint_box.html" with soldier=soldier %}
+                                                </div>
                                             </a>
                                             {% if soldier.is_top5 %}
                                                 <span style="font-size:10px;color:gold;display: flex;align-items: center;justify-content: center; background-color: white;padding: 4px 6px;border-radius: 6px;">
@@ -276,12 +287,18 @@
                                             </svg>
                                             ویرایش
                                         </button>
-
-                                        <button class="btn-mini">
+ 
+                                        <button class="btn-mini commingsoon">
                                             <svg class="icon" viewBox="0 0 24 24">
                                                 <path d="M4 4h16v4H4zM4 10h16v10H4z" stroke="currentColor" stroke-width="2" fill="none"/>
                                             </svg>
                                             ثبت گزارش
+                                        </button>
+                                        <button class="btn-mini commingsoon">
+                                            <svg class="icon" viewBox="0 0 24 24">
+                                                <path d="M4 4h16v4H4zM4 10h16v10H4z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                            </svg>
+                                            امار
                                         </button>
 
                                         <div style="flex:1;" class="dropdown">
@@ -298,21 +315,21 @@
                                             </button>
 
                                             <div class="dropdown-menu">
-                                                <button>
+                                                <button class="commingsoon">
                                                     <svg class="icon" viewBox="0 0 24 24">
                                                         <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-4 0-8 2-8 5v2h16v-2c0-3-4-5-8-5z"
                                                         stroke="currentColor" stroke-width="2" fill="none"/>
                                                     </svg>
                                                     اطلاعات جامع سرباز
                                                 </button>
-                                                <button>
+                                                <button class="commingsoon">
                                                     <svg class="icon" viewBox="0 0 24 24">
                                                         <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2"/>
                                                     </svg>
                                                     فهرست ورود و خروج
                                                 </button>
                                                 <hr/>
-                                                <button>
+                                                <button class="commingsoon">
                                                     <svg class="icon" viewBox="0 0 24 24">
                                                         <path d="M6 19l6-6 6 6" stroke="currentColor" stroke-width="2" fill="none"/>
                                                         <path d="M12 13V5" stroke="currentColor" stroke-width="2"/>
@@ -320,7 +337,7 @@
                                                     امضای خروج
                                                 </button>
 
-                                                <button>
+                                                <button class="commingsoon">
                                                     <svg class="icon" viewBox="0 0 24 24">
                                                         <path d="M18 6L6 18" stroke="currentColor" stroke-width="2"/>
                                                         <path d="M6 6l12 12" stroke="currentColor" stroke-width="2"/>
@@ -328,7 +345,7 @@
                                                     لغو خروج
                                                 </button>
 
-                                                <button>
+                                                <button class="commingsoon">
                                                     <svg class="icon" viewBox="0 0 24 24">
                                                         <path d="M4 4h16v16H4z" stroke="currentColor" stroke-width="2" fill="none"/>
                                                         <path d="M4 9h16" stroke="currentColor" stroke-width="2"/>
@@ -336,7 +353,7 @@
                                                     مداوت کاری
                                                 </button>
                                                 <hr/>
-                                                <button>
+                                                <button class="commingsoon">
                                                     <svg class="icon" viewBox="0 0 24 24">
                                                         <path d="M12 2L15 8l6 .5-4.5 4 1 6-5.5-3-5.5 3 1-6-4.5-4L9 8z"
                                                         stroke="currentColor" stroke-width="2" fill="none"/>
@@ -344,7 +361,7 @@
                                                     ثبت تشویقی
                                                 </button>
 
-                                                <button>
+                                                <button class="commingsoon">
                                                     <svg class="icon" viewBox="0 0 24 24">
                                                         <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
                                                         <path d="M12 7v5M12 16h.01" stroke="currentColor" stroke-width="2"/>
@@ -506,7 +523,23 @@
             </tbody>
         </table>
     </div>
-           <div style="display: flex;align-items: center;justify-content: center;margin: 10px;">
+    <div style="background-color: #bcdfffff;display: flex;align-items: center;justify-content: space-between;padding: 5px;border-radius: 0 0 10px;">
+        
         {% include "./soldiers_list_pagination.html" %}
+        <div style="flex: 1;text-align: center;">
+            <div style="text-align: center;margin: 0 auto;">
+                <span style="font-size: 18px;font-weight: bold;" class="  soldiers-search">
+                 تعداد درصفحه : {{soldiers|length}}
+                </span>
+            </div>
+        </div>
+        <div style="flex: 1;text-align: center;">
+            <div style="text-align: center;margin: 0 auto;">
+                <span style="font-size: 14px; border-radius: 6px;" class="bg-rose text-white  soldiers-search">
+                نتیجه     {{soldiers_counts}} نفر از {{all_soldiers_counts}} نفر ({{selected_filter_label}})
+                </span>
+            </div>
+        </div>
+
     </div>
 </div>

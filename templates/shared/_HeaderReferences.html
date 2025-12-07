@@ -19,6 +19,7 @@
       page. However, you can choose any other skin. Make sure you
       apply the skin class to the body tag so the changes take effect. -->
 <link rel="stylesheet" href="{% static 'dist/css/skins/skin-yellow-light.min.css' %}">
+<link rel="stylesheet" href="{% static 'dist/css/persian-datepicker-0.4.5.min.css' %}">
 
 <!-- Select2 CSS -->
 <link href="{% static 'bower_components/select2/dist/css/select2.min.css' %}" rel="stylesheet" />
@@ -110,5 +111,66 @@
     .ui-hint-list li:hover i {
         opacity: 1;
     }
+
+    /* کلاس اصلی */
+.commingsoon {
+    position: relative;
+    opacity: 0.4;
+    pointer-events: none; /* کلیک را غیرفعال می‌کند */
+    user-select: none;
+    cursor: not-allowed;
+}
+
+/* فعال کردن هاور فقط برای tooltip */
+.commingsoon:hover {
+    pointer-events: auto;
+}
+
+/* tooltip */
+.commingsoon::after {
+    content: "به زودی...";
+    position: absolute;
+    bottom: 120%;
+    right: 50%;
+    transform: translateX(50%);
+    background: #333;
+    color: #fff;
+    padding: 4px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+    border-radius: 6px;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.25s;
+    pointer-events: none; /* تا روی tooltip هم کلیک نشود */
+    z-index: 999999999999;
+}
+
+/* فلش tooltip */
+.commingsoon::before {
+    content: "";
+    position: absolute;
+    bottom: 110%;
+    right: 50%;
+    transform: translateX(50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #333;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.25s;
+    z-index: 999999999999;
+}
+
+/* نمایش tooltip در هاور */
+.commingsoon:hover::after,
+.commingsoon:hover::before {
+    opacity: 1;
+    visibility: visible;
+    
+}
+
 
 </style>

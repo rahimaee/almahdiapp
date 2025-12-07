@@ -10,8 +10,15 @@
 {% block main %}
     <div>
         <div class="row ">
-       
-       
+            {% comment %} <div style="display: flex;align-items: center;" class="col-md-12">
+                    <div >
+                        {% include 'components/calendar_application.html' %}
+                    </div>
+                    <div style="flex: 1;">
+                        امار تردد و ورد خروح لحظه ای 
+                    </div>
+                </div>
+            </div> {% endcomment %}
             <div class="col-md-12">
                 {% include "../components/analystics_dashboard.html" %}
             </div>

@@ -1,0 +1,224 @@
+<style>
+.user-profile {
+    cursor: pointer;
+    z-index: 999;
+    overflow: unset !important;
+    position: relative;
+}
+
+/* =======================================
+   CYBER SECRET BOX
+======================================= */
+.soldier-box-wraper {
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    
+    padding: 22px;
+    max-width: 950px;
+    background: rgba(12, 12, 12, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 255, 150, 0.25);
+    border-radius: 6px;
+    box-shadow: 0 0 28px rgba(0, 255, 160, 0.3), inset 0 0 15px rgba(0,255,180,0.12);
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.3s ease-in-out;
+    font-family: 'Orbitron', 'IRANSans', sans-serif;
+    color: #d7ffe5;
+    z-index: 99999999999;
+    overflow: hidden;
+}
+
+/* Hover */
+.user-profile:hover .soldier-box-wraper {
+    opacity: 1;
+    pointer-events: auto;
+    box-shadow: 0 0 35px rgba(0, 255, 180, 0.45), inset 0 0 18px rgba(0,255,180,0.18);
+}
+
+/* Arrow */
+.soldier-box-wraper::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    border-width: 12px;
+    border-style: solid;
+    border-color: transparent rgba(0,255,150,0.45) transparent transparent;
+}
+
+/* Scan line */
+.soldier-box-wraper::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background: linear-gradient(-90deg, transparent, #00ffaa, transparent);
+    animation: scan 2.5s linear infinite;
+    opacity: 0.25;
+}
+
+@keyframes scan {
+    0% { top: 0; opacity: 0.35; }
+    100% { top: 100%; opacity: 0.08; }
+}
+
+/* TITLE */
+.soldier-hint-title {
+    position: relative;
+    z-index: 2;
+    font-size: 18px;
+    font-weight: bold;
+    color: #00ffb2;
+    text-shadow: 0 0 8px #00ffb2;
+    letter-spacing: 1.5px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0,255,160,0.28);
+    margin-bottom: 16px;
+    text-align: center;
+    direction: rtl;
+}
+
+/* TOP ROW: AVATAR + INFO */
+.soldier-top-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+/* AVATAR */
+.hint-image {
+    width: 170px;
+    height: 230px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid rgba(0,255,160,0.35);
+    box-shadow: 0 0 18px rgba(0,255,160,0.28);
+    z-index: 2;
+}
+
+/* INFO & REPORT BOX STYLE */
+.info-box,
+.reports-box {
+    background: rgba(0,0,0,0.15);
+    border: 1px solid rgba(0,255,160,0.22);
+    border-radius: 6px;
+    box-shadow: inset 0 0 12px rgba(0,255,160,0.15);
+    padding: 14px;
+    flex: 1;
+    min-width: 380px;
+    position: relative;
+    z-index: 2;
+}
+
+/* BOX TITLES */
+.box-title {
+    font-size: 15px;
+    font-weight: bold;
+    color: #0ff;
+    text-shadow: 0 0 5px #00e0ff;
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgba(0,255,160,0.22);
+    text-align: center;
+}
+
+/* INFO ITEMS */
+.info-item,
+.report-item {
+    background: rgba(0,255,160,0.06);
+    border: 1px solid rgba(0,255,160,0.18);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    color: #caffea;
+    margin-bottom: 6px;
+}
+
+/* REPORT BOX BELOW */
+.reports-box {
+    margin-top: 18px;
+}
+</style>
+
+<div class="soldier-hint-box">
+
+    <div class="soldier-hint-title">دسترسی محرمانه(حالت دمو)</div>
+
+    <!-- TOP ROW: AVATAR + INFO -->
+    <div class="soldier-top-row">
+
+        <!-- AVATAR -->
+        <div class="soldier-avatar">
+            
+                <img
+                src="{% if soldier.photo_scan %}{{ soldier.photo_scan.url }}{% endif %}" class="hint-image" />
+            
+        </div>
+
+        <!-- INFO -->
+        <div class="info-box">
+            <div class="box-title">مشخصات سرباز</div>
+
+            <div class="info-item">
+                <span>نام:</span>
+                <span>{{ soldier.first_name }} {{ soldier.last_name }}</span>
+            </div>
+            <div class="info-item">
+                <span>وضعیت:</span>
+                <span>
+                    {% if soldier.is_entry %} ورود {% endif %}
+                    {% if soldier.is_exit %} خروج {% endif %}
+                    {% if soldier.is_delay %} (تأخیر) {% endif %}
+                </span>
+            </div>
+            <div class="report-item">
+                <span>مجوز خروج:</span>
+                <span class="status">
+                    {% if soldier.is_prohibited %} ممنوع‌الخروج {% endif %}
+                    {% if soldier.is_duty_continuous %} استمرار کاری {% endif %}
+                    {% if soldier.special_reason %} ({{ soldier.special_reason }}) {% endif %}
+                </span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- REPORTS BELOW -->
+    <div class="reports-box">
+        <div class="box-title">گزارشات</div>
+
+        <div class="report-item">
+            <span>آخرین ورود:</span>
+            <span>{{ soldier.last_entry|default:"-" }}</span>
+        </div>
+
+        <div class="report-item">
+            <span>آخرین خروج:</span>
+            <span>{{ soldier.last_exit|default:"-" }}</span>
+        </div>
+
+        <div class="report-item">
+            <span>تأخیر ماه جاری:</span>
+            <span>{{ soldier.total_delay|default:"0" }} دقیقه</span>
+        </div>
+
+        <div class="report-item">
+            <span>تخلفات:</span>
+            <span>{{ soldier.violations|default:"-" }}</span>
+        </div>
+        <div class="report-item">
+            <span>مجازات:</span>
+            <span>{{ soldier.violation_punishment|default:"-" }}</span>
+        </div>
+    </div>
+
+</div>

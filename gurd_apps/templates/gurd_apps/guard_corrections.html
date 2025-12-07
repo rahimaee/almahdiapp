@@ -1,0 +1,365 @@
+{% extends '../gurd_apps_layout.html' %}
+
+{% block page %}
+
+<style>
+/* ========== GENERAL LAYOUT ========== */
+.row { margin: 0; }
+.text-center { text-align: center; }
+
+/* ========== MODERN TABS ========== */
+.modern-tabs {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #e6e6e6;
+}
+.modern-tabs li {
+    flex: 1;
+}
+.modern-tabs li a {
+    display: block;
+    text-align: center;
+    padding: 6px 0;
+    background: #f8f9fa;
+    color: #333;
+    border-radius: 6px 6px 0 0;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+    font-size: 14px;
+}
+.modern-tabs li.active a,
+.modern-tabs li a:hover {
+    background: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd #0d6efd transparent #0d6efd;
+}
+
+/* ========== HINT / HELPER BLOCK ========== */
+.helper-block ol {
+    counter-reset: item;
+    margin: 10px 0 0 0;
+    padding: 0;
+}
+.helper-block ol li {
+    list-style: none;
+    position: relative;
+    padding: 10px 12px 10px 50px;
+    margin-bottom: 6px;
+    background: #f8f9fa;
+    border-left: 5px solid #0d6efd;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #222;
+}
+.helper-block ol li:hover {
+    background: #eef3ff;
+}
+
+/* ========== STATS BOX ========== */
+.stats-box {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 ستون مساوی */
+    gap: 10px;
+    padding: 10px;
+}
+
+.stats-box .stat-item {
+    grid-column: span 1; /* می‌توانید 2 یا 3 بگذارید تا عرض بیشتری بگیرد */
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stats-box .stat-item strong {
+    display: block;
+    font-size: 18px;
+    margin-top: 4px;
+    color: #0d6efd;
+}
+
+/* ========== FILTER BAR ========== */
+.filter-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+.filter-bar .ui-form-group {
+    flex: 1 1 120px;
+}
+.filter-bar .ui-btn {
+    margin-top: 24px;
+}
+.tab-pane {
+    padding: 10px;
+}
+/* ========== TAB CONTENT CARDS ========== */
+.tab-content .ui-card {
+    margin-bottom: 10px;
+}
+.tab-content .card-title {
+    font-weight: 600;
+    font-size: 14px;
+}
+.tab-content .card-text {
+    font-size: 13px;
+    color: #6c757d;
+}
+
+/* ========== FORM TAB ========== */
+.nav-tabs > li > a {
+    border-radius: 6px 6px 0 0;
+    font-size: 14px;
+    padding: 8px 12px;
+}
+.tab-content .ui-form-group { margin-bottom: 12px; }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .filter-bar { flex-direction: column; }
+    .stats-box .stat-item { flex: 1 1 100%; }
+}
+</style>
+
+<div class="row">
+
+    <!-- LEFT COLUMN: STATS + FORM -->
+    <div class="col-md-5">
+
+        <!-- STATS -->
+        <div class="ui-card mb-3">
+            <div class="ui-card-header ui-card-header-primary">آمار لحظه‌ای</div>
+            <div class="ui-card-body stats-box">
+                <div class="stat-item">
+                    ورود سرباز
+                    <strong>12</strong>
+                </div>
+                <div class="stat-item">
+                    خروج سرباز
+                    <strong>8</strong>
+                </div>
+                <div class="stat-item">
+                    ورود ماشین
+                    <strong>5</strong>
+                </div>
+                <div class="stat-item">
+                    خروج ماشین
+                    <strong>3</strong>
+                </div>
+                <div class="stat-item">
+                    ورود شخص
+                    <strong>7</strong>
+                </div>
+                <div class="stat-item">
+                    خروج شخص
+                    <strong>4</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORM TAB -->
+        <div class="ui-card">
+            <div class="ui-card-header ui-card-header-primary">فرم  ورود خروج</div>
+            <div class="tabbable  ui-card-body">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#soldierForm" data-toggle="tab">سرباز</a></li>
+                    <li><a href="#carForm" data-toggle="tab">وسیله نقلیه</a></li>
+                    <li><a href="#personForm" data-toggle="tab">اشخاص</a></li>
+                </ul>
+
+                <div class="tab-content" style="margin-top: 15px;">
+
+                    <!-- SOLDIER -->
+                    <div class="tab-pane fade in active" id="soldierForm">
+                        <form>
+                            <div class="ui-form-group">
+                                <label>انتخاب سرباز</label>
+                                <select class="ui-select select2">
+                                    <option>سرباز 12345</option>
+                                    <option>سرباز 67890</option>
+                                </select>
+                            </div>
+                            <div class="ui-form-group">
+                                <label>ساعت ورود/خروج</label>
+                                <input type="datetime-local" class="ui-input" value="{{ now|date:'Y-m-d\TH:i' }}">
+                            </div>
+                            <button type="submit" class="ui-btn ui-btn-primary">ثبت سرباز</button>
+
+                            <div class="helper-block mt-2">
+                                <ol>
+                                    <li>از لیست سرباز موردنظر را انتخاب و ساعت ورود/خروج را وارد کنید.</li>
+                                </ol>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- CAR -->
+                    <div class="tab-pane fade" id="carForm">
+                        <form>
+                            <div class="ui-form-group">
+                                <label>انتخاب خودرو</label>
+                                <select class="ui-select select2">
+                                    <option>12الف345</option>
+                                    <option>22ب333</option>
+                                </select>
+                            </div>
+                            <div class="ui-form-group">
+                                <label>نام راننده</label>
+                                <input type="text" class="ui-input" placeholder="نام راننده">
+                            </div>
+                            <div class="ui-form-group">
+                                <label>ساعت ورود/خروج</label>
+                                <input type="datetime-local" class="ui-input" value="{{ now|date:'Y-m-d\TH:i' }}">
+                            </div>
+                            <button type="submit" class="ui-btn ui-btn-success">ثبت خودرو</button>
+
+                            <div class="helper-block mt-2">
+                                <ol>
+                                    <li>پلاک خودرو و نام راننده را وارد و ساعت ورود/خروج را ثبت کنید.</li>
+                                </ol>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- PERSON -->
+                    <div class="tab-pane fade" id="personForm">
+                        <form>
+                            <div class="ui-form-group">
+                                <label>نام و نام خانوادگی</label>
+                                <input type="text" class="ui-input" placeholder="نام کامل شخص">
+                            </div>
+                            <div class="ui-form-group">
+                                <label>ساعت ورود/خروج</label>
+                                <input type="datetime-local" class="ui-input" value="{{ now|date:'Y-m-d\TH:i' }}">
+                            </div>
+                            <button type="submit" class="ui-btn ui-btn-warning">ثبت شخص</button>
+
+                            <div class="helper-block mt-2">
+                                <ol>
+                                    <li>نام شخص را وارد و ساعت ورود/خروج را ثبت کنید.</li>
+                                </ol>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN: FILTER + MODERN TABS -->
+    <div class="col-md-7">
+
+        <!-- FILTER BAR -->
+        <div class="ui-card mb-3">
+            <div class="ui-card-body filter-bar">
+                <div class="ui-form-group">
+                    <label>مرتب سازی</label>
+                    <select class="ui-select">
+                        <option value="entry">ورود</option>
+                        <option value="exit">خروج</option>
+                        <option value="created">ساعت ثبت</option>
+                        <option value="updated">ساعت ویرایش</option>
+                    </select>
+                </div>
+                <div class="ui-form-group">
+                    <label>ترتیب</label>
+                    <select class="ui-select">
+                        <option value="asc">عادی</option>
+                        <option value="desc">معکوس</option>
+                    </select>
+                </div>
+                <div class="ui-form-group">
+                    <label>از تاریخ</label>
+                    <input type="date" class="ui-input">
+                </div>
+                <div class="ui-form-group">
+                    <label>تا تاریخ</label>
+                    <input type="date" class="ui-input">
+                </div>
+                <div class="ui-form-group">
+                    <label>جستجو</label>
+                    <input type="text" class="ui-input" placeholder="جستجو...">
+                </div>
+                <div>
+                    <button class="ui-btn ui-btn-primary mt-4">اعمال فیلتر</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODERN TABS -->
+        <ul class="modern-tabs">
+            <li class="active"><a href="#all" data-toggle="tab">همه</a></li>
+            <li><a href="#cars" data-toggle="tab">ماشین‌ها</a></li>
+            <li><a href="#soldiers" data-toggle="tab">سربازان</a></li>
+            <li><a href="#persons" data-toggle="tab">اشخاص</a></li>
+        </ul>
+
+        <div class="tab-content" style="margin-top:10px;">
+            <div class="tab-pane fade in active" id="all">
+                <div class="ui-card mb-2">
+                    <div class="ui-card-body">
+                        <h6 class="card-title">ورود سرباز</h6>
+                        <p class="card-text">کد 12345 • ساعت 08:10</p>
+                    </div>
+                </div>
+                <div class="ui-card mb-2">
+                    <div class="ui-card-body">
+                        <h6 class="card-title">خروج خودرو</h6>
+                        <p class="card-text">پلاک 12الف345 • ساعت 09:20</p>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="cars">
+                <div class="ui-card mb-2">
+                    <div class="ui-card-body">
+                        <h6 class="card-title">ورود خودرو</h6>
+                        <p class="card-text">پلاک 22ب333 • ساعت 10:15</p>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="soldiers">
+                <div class="ui-card mb-2">
+                    <div class="ui-card-body">
+                        <h6 class="card-title">خروج سرباز</h6>
+                        <p class="card-text">کد 87654 • ساعت 12:30</p>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="persons">
+                <div class="ui-card mb-2">
+                    <div class="ui-card-body">
+                        <h6 class="card-title">ورود شخص</h6>
+                        <p class="card-text">آقای رضایی • ساعت 14:00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+$(function(){
+    // Bootstrap 3 tabs
+    $('.nav-tabs a, .modern-tabs a').click(function(e){
+        e.preventDefault();
+        $(this).tab('show');
+        $(this).parent().siblings().removeClass('active');
+        $(this).parent().addClass('active');
+    });
+});
+</script>
+
+{% endblock %}
