@@ -121,6 +121,75 @@
                     <td>0</td>
                     <td>0</td>
                 </tr>
+                {% if request.user.is_staff %}
+                    <tr class="table-primary natives">
+                        <td colspan="3"><b>آمار اصلی</b></td>
+
+                        <td>{{ natives.edu.under_diploma }}</td>
+                        <td>{{ natives.edu.diploma }}</td>
+                        <td>{{ natives.edu.associate }}</td>
+                        <td>{{ natives.edu.bachelor }}</td>
+                        <td>{{ natives.edu.master }}</td>
+                        <td>{{ natives.edu.doctor }}</td>
+
+                        <td>{{ natives.health.healthy }}</td>
+                        <td>{{ natives.health.exempt_from_service }}</td>
+                        <td>{{ natives.health.group_b }}</td>
+                        <td>{{ natives.health.exempt_plus_group_b }}</td>
+
+                        <td>{{ natives.commission }}</td>
+
+                        <td>{{ natives.marital.single }}</td>
+                        <td>{{ natives.marital.married }}</td>
+
+                        <td>{{ natives.admin }}</td>
+                        <td>{{ natives.shift }}</td>
+                        <td>{{ natives.post }}</td>
+
+                        <td>{{ natives.native }}</td>
+                        <td>{{ natives.non_native }}</td>
+
+                        <td>{{ natives.total }}</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                    </tr>
+                    <tr class="table-primary difference">
+                        <td colspan="3"><b>اختلاف اماری</b></td>
+
+                        <td>{{ difference.edu.under_diploma }}</td>
+                        <td>{{ difference.edu.diploma }}</td>
+                        <td>{{ difference.edu.associate }}</td>
+                        <td>{{ difference.edu.bachelor }}</td>
+                        <td>{{ difference.edu.master }}</td>
+                        <td>{{ difference.edu.doctor }}</td>
+
+                        <td>{{ difference.health.healthy }}</td>
+                        <td>{{ difference.health.exempt_from_service }}</td>
+                        <td>{{ difference.health.group_b }}</td>
+                        <td>{{ difference.health.exempt_plus_group_b }}</td>
+
+                        <td>{{ difference.commission }}</td>
+
+                        <td>{{ difference.marital.single }}</td>
+                        <td>{{ difference.marital.married }}</td>
+
+                        <td>{{ difference.admin }}</td>
+                        <td>{{ difference.shift }}</td>
+                        <td>{{ difference.post }}</td>
+
+                        <td>{{ difference.native }}</td>
+                        <td>{{ difference.non_native }}</td>
+
+                        <td>{{ difference.total }}</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                    </tr>
+                {% endif %}
+
             </tbody>
         </table>
     </div>

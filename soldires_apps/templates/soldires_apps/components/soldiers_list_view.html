@@ -228,7 +228,7 @@
                                     >
                                         <span>{{soldier.organizational_code.code_number|default:'!'}}</span>
                                     </div>
-                                    {% if soldier.is_entry or soldier.is_exit %}
+                                    {% if False and soldier.is_entry or soldier.is_exit and False %}
                                         <span class="badge-entry 
                                             {% if soldier.is_entry %}
                                                 {% if soldier.is_delay %}
@@ -279,14 +279,15 @@
                                         </span>
                                     </div>
                                     <div class="soldier-action">
-
-                                        <button class="btn-mini">
-                                            <svg class="icon" viewBox="0 0 24 24">
-                                                <path d="M12 20h9" stroke="currentColor" stroke-width="2"/>
-                                                <path d="M16 4l4 4-12 12H4V16L16 4z" stroke="currentColor" stroke-width="2" fill="none"/>
-                                            </svg>
-                                            ویرایش
-                                        </button>
+                                        {% if request.perm.can_edit_soldier %}
+                                            <button class="btn-mini">
+                                                <svg class="icon" viewBox="0 0 24 24">
+                                                    <path d="M12 20h9" stroke="currentColor" stroke-width="2"/>
+                                                    <path d="M16 4l4 4-12 12H4V16L16 4z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                                </svg>
+                                                ویرایش
+                                            </button>
+                                        {% endif %}
  
                                         <button class="btn-mini commingsoon">
                                             <svg class="icon" viewBox="0 0 24 24">

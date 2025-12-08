@@ -48,6 +48,27 @@ h3 {
     background-color: #fde68a; /* زرد روشن */
     font-weight: 700;
 }
+.table tbody tr.total {
+    font-weight: 700;
+}
+
+.table > tbody > tr.natives> td, 
+.table > tbody > tr.natives> th
+{
+    background-color: #c9ffd1; /* زرد روشن */
+    font-weight: 700;
+}
+
+
+.table > tbody > tr.difference> td,
+.table > tbody > tr.difference> th
+{
+    background-color: #ffbad1; /* زرد روشن */
+    font-weight: 700;
+}
+
+
+
 /* ردیف‌های tbody */
 .table tbody tr:nth-child(odd) {
     background-color: #f7f9fc;
@@ -58,9 +79,7 @@ h3 {
     background-color: #ffffff;
 }
 
-.table tbody tr.total {
-    font-weight: 700;
-}
+
 
 /* رنگ‌بندی بخش‌ها */
 .health-status th {

@@ -105,71 +105,22 @@ def latest_statistics(request):
     }
     return render(request, 'analystics/latest_statistics_page.html',context)
 
+from .utils import generate_all_report ,genrate_all_report_template,generate_difference_report
 def reports_all(request):
     units = ParentUnit.objects.all()
+    soldiers = Soldier.objects.filter(is_checked_out=False,is_fugitive=False)
+
+    natives = generate_all_report(soldiers)
+    natives['total'] =len(soldiers)
+    totals = genrate_all_report_template()
 
     reports = []
-    totals = {
-        'edu': {
-            'under_diploma': 0,
-            'diploma': 0,
-            'associate': 0,
-            'bachelor': 0,
-            'master': 0,
-            'doctor': 0,
-        },
-        'health': {
-            'healthy': 0,
-            'exempt_from_service': 0,
-            'group_b': 0,
-            'exempt_plus_group_b': 0,
-        },
-        'commission': 0,
-        'marital': {
-            'single': 0,
-            'married': 0,
-        },
-        'admin': 0,
-        'shift': 0,
-        'post': 0,
-        'native': 0,
-        'non_native': 0,
-        'total': 0,
-    }
-
-    soldiers = Soldier.objects.filter(is_checked_out=False,is_fugitive=False)
-    print(len(soldiers))
     for unit in units:
-        sus = SubUnit.objects.filter(parent_unit__name=unit.name)
-        soldiers = soldiers.filter(current_sub_unit__in=sus)
-        row = {
-            'unit': unit,
-            'edu': {
-                'under_diploma': soldiers.filter(degree__in=['زیر دیپلم','زیردیپلم']).count(),
-                'diploma': soldiers.filter(degree='دیپلم').count(),
-                'associate': soldiers.filter(degree='فوق دیپلم').count(),
-                'bachelor': soldiers.filter(degree='لیسانس').count(),
-                'master': soldiers.filter(degree='فوق لیسانس').count(),
-                'doctor': soldiers.filter(degree__in=['دکترا', 'دکترا پزشکی','دکتری']).count(),
-            },
-            'health': {
-                'healthy': soldiers.filter(health_status='سالم').count(),
-                'exempt_from_service': soldiers.filter(health_status='معاف از رزم').count(),
-                'group_b': soldiers.filter(health_status__in=['گروه ب' + 'معاف+گروه ب']).count(),
-                'exempt_plus_group_b': soldiers.filter(health_status='معاف+گروه ب').count(),
-            },
-            'commission': soldiers.filter(status='توجیحی').count(),
-            'marital': {
-                'single': soldiers.filter(marital_status='مجرد').count(),
-                'married': soldiers.filter(marital_status='متاهل').count(),
-            },
-            'admin': soldiers.filter(traffic_status='اداری').count(),
-            'shift': soldiers.filter(traffic_status='شیفتی').count(),
-            'post': soldiers.filter(traffic_status='پستی').count(),
-            'native': soldiers.filter(residence_province=unit.province).count() if hasattr(unit, 'province') else 0,
-            'non_native': soldiers.filter(residence_province__ne=unit.province).count() if hasattr(unit, 'province') else 0,
-        }
+        sus = SubUnit.objects.filter(parent_unit=unit)
+        unit_soldiers = soldiers.filter(current_sub_unit__in=sus)
 
+        row = generate_all_report(unit_soldiers)
+        row['unit'] = unit
         row['total'] = sum(row['edu'].values())
 
         # جمع کل
@@ -188,10 +139,15 @@ def reports_all(request):
         totals['total'] += row['total']
 
         reports.append(row)
+    
+    difference = generate_difference_report(natives, totals)
 
     context = {
         'reports': reports,
+        
         'totals': totals,
+        'natives':natives,
+        'difference':difference
     }
 
     return render(request, 'analystics/reports_all_page.html', context)

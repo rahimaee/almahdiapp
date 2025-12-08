@@ -37,9 +37,9 @@ class LoadUserPermissionsMiddleware:
             # پرمیشن‌های گروه‌ها
             all_permissions += list(Permission.objects.filter(group__user=user))
 
-        for perm in all_permissions:
-            key = f"can_{perm.codename}"
-            request.perm.set(key, True)
+            for perm in all_permissions:
+                key = f"can_{perm.codename}"
+                request.perm.set(key, True)
 
         response = self.get_response(request)
         return response

@@ -1,0 +1,262 @@
+{% load static %}
+<style>
+
+    /* Footer Container */
+.main-footer {
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(20, 20, 20, 0.9);
+    color: #ccc;
+    padding: 10px 20px;
+    font-family: IRANSans, sans-serif;
+    z-index: 9999;
+}
+
+/* Top Section Layout */
+.footer-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+
+}
+
+/* Columns */
+.footer-col {
+    flex: 1 1 45%;
+}
+
+.footer-col-full {
+    flex: 1 1 100%;
+}
+
+/* Text */
+.footer-text {
+    font-size: 11px;
+    color: #ccc;
+    margin: 5px 0;
+    display: flex;
+}
+
+/* Badges */
+.badge {
+    padding: 3px 10px;
+    border-radius: 4px;
+    color: white;
+    margin-right: 5px;
+    display: inline-block;
+}
+
+.badge-red {
+    background-color: crimson;
+}
+
+.badge-blue {
+    background-color: cornflowerblue;
+}
+
+.badge-green {
+    background-color: green;
+}
+.badge-codemirror {
+    background-color: chocolate;
+}
+/* Bottom Section */
+.footer-bottom {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 10px;
+    border-top: 2px solid #aaa;
+    padding-top: 10px;
+}
+
+.footer-location {
+    background-color: rgba(100, 100, 100, 0.4);
+    padding: 4px 10px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+.footer-text span {
+    flex: 2; 
+    display: block;
+}
+
+.footer-text strong {
+    flex: 4;
+    display: block;
+    padding: 6px;
+}
+
+.footer-warning {
+    margin: 0;
+}
+.footer-info {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    color: #ccc;
+    margin-top: 10px;
+    padding-top: 8px;
+    font-family: IRANSans, sans-serif;
+}
+
+.footer-info span {
+    display: inline-block;
+}
+
+.footer-link {
+    display: inline-block;
+    color: cornflowerblue;
+    text-decoration: none;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.footer-link:hover {
+    background-color: rgba(100, 149, 237, 0.2);
+    color: #fff;
+}
+.footer-sepah-logo {
+    background-color: white;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+}
+.footer-sepah-logo p {
+    padding: 0;
+    margin: 0;
+    margin-top: 10px;
+    font-size: 10px;
+    font-weight: bold;
+    color: black;
+}
+.footer-info {
+    flex: 1;
+    color: #f9fafb;
+    font-family: 'Vazir', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-radius: 12px; /* گوشه‌های گرد */
+}
+
+.footer-info .app-name {
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.footer-info .project-year {
+    font-size: 1.2rem;
+    color: #cbd5e1;
+}
+
+.footer-info .project-desc {
+    font-size: 1.25rem;
+    color: #e5e7eb;
+    line-height: 1.5;
+}
+
+.footer-info hr {
+    border: 0;
+    height: 1px;
+    margin: 12px 0;
+    border-color: 1px solid #4b5563;
+}
+
+.footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    border-top:1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 10px;
+}
+
+ .footer-link {
+    display: inline-block;
+    padding: 6px 20px;
+    border-radius: 8px;
+    backdrop-filter: blur(6px); /* افکت شیشه‌ای */
+    background-color: rgba(255, 255, 255, 0.1); /* نیمه شفاف */
+    color: #60a5fa;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+ .footer-link:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #3b82f6;
+    transform: translateY(-2px);
+}
+
+</style>
+<footer class="main-footer">
+    <div class="footer-row">
+        <div style="width: 600px;" >
+            <div  style="margin: 0 auto 10px;text-align: center;">
+                <span class="footer-link">مشارکت و همکاری در نرم افزار</span>
+            </div>
+            <h5 class="footer-text">
+                <span>توسعه‌دهنده و طراح نرم‌افزار:</span>
+                <strong class="badge badge-red">
+                     ستوان سوم ⭐ وظیفه سجاد سیفی لر (سرباز کارگزینی وظیفه)
+                </strong>
+            </h5>
+            <h5 class="footer-text">
+                <span>با مدیریت:</span>
+                <strong class="badge badge-blue">
+                     ستوان دوم ⭐⭐ پاسدار میثم گل بابازاده (کارشناس منابع سرباز)
+                </strong>
+            </h5>
+            <h5 class="footer-text">
+                <span>ناظر بر پروژه:</span>
+                <strong class="badge badge-codemirror">
+                     سرهنگ دوم ⭐⭐ پاسدار رضا سروی (فرمانده نیروی انسانی)
+                </strong>
+            </h5>
+            <h5 class="footer-text">
+                <span>ناظر بر پروژه:</span>
+                <strong class="badge badge-green">
+                     سرهنگ پاسدار ⭐⭐⭐ علی متولی طاهر (فرمانده پادگان)
+                </strong>
+            </h5>
+        </div>
+
+        <div class="footer-info">
+            <span style="text-align: right;" class="app-name">سامانه مدیریت سربازان وظیفه — نرم‌افزار: "رزمایشی المهدی"</span>
+            <span style="text-align: right;" class="project-year">
+                توسعه و تعاون در پادگان آموزشی رزم مقدماتی المهدی (عج )   بابل در سال 1404
+            </span>
+            <span style="text-align: right;" class="project-desc">
+                این سامانه به مدیران و واحدهای مرتبط امکان مدیریت، پیگیری و گزارش‌گیری وضعیت سربازان وظیفه را می‌دهد.
+            </span>
+            <div class="footer-links">
+                <a href="/about" class="footer-link">درباره سامانه</a>
+                <a href="/contact" class="footer-link">ارتباط با ما</a>
+                <a href="/faq" class="footer-link">سوالات متداول</a>
+                <a href="/privacy" class="footer-link">حریم خصوصی</a>
+            </div>
+        </div>
+
+
+        <div class="footer-sepah-logo" >
+            <img src="{% static 'img/Sepah.png' %}" alt="Sepah" width="100px"/>
+            <p>نیروی زمینی سپاه</p>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        <p class="footer-warning">
+            <span class="copyright-icon">©</span>
+            هرگونه کپی‌برداری از محتوای سامانه، پیگرد قانونی خواهد داشت
+        </p>
+
+    </div>
+</footer>
