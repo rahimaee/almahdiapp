@@ -41,7 +41,7 @@
   .voice-detail-box h1 {
     padding: 0;
     margin: 0;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
     color: #2a2d3a;
   }
@@ -321,47 +321,133 @@ class VoiceAssistant {
   }
 
   handleCommand(cmd) {
-    if(!cmd || !cmd.trim()) return;
+      if (!cmd || !cmd.trim()) return;
 
-    const normalized = cmd.trim().replace(/[.,!?]$/g, "").toLowerCase();
-    const userText = cmd;
-    let response = "";
+      let raw = cmd.trim();
+      let normalized = raw
+          .normalize("NFC")
+          .replace(/[.,!?؟]+$/g, "")
+          .replace(/\s+/g, " ")
+          .toLowerCase();
 
-    if(!this.isListeningEnabled){
-      if(normalized.includes("یاحق")){
-        this.isListeningEnabled = true;
-        response = "گوش دادن فعال شد ✅";
-        this._writeLog(userText, response);
-      } else {
-        this._writeLog(userText); 
+      const userText = raw;
+      let response = "";
+
+      // ------------------------------
+      // تابع کمکی تشخیص "یا حق"
+      // ------------------------------
+      const isYaHagh = () => {
+          const compact = normalized.replace(/\s+/g, "");
+          const variants = ["یاحق","یاااحق","یا حـق","یا حق","یا حق برادر"];
+          return variants.some(v => compact.includes(v.replace(/\s+/g, "")));
+      };
+
+      // ------------------------------
+      // اگر گوش‌دادن غیرفعال باشد
+      // ------------------------------
+      if (!this.isListeningEnabled) {
+          if (isYaHagh()) {
+              this.isListeningEnabled = true;
+              response = "گوش دادن فعال شد ✅";
+              this._writeLog(userText, response);
+              return response;
+          }
+          this._writeLog(userText);
+          return "";
       }
+
+      // ------------------------------
+      // دستورات صالح → فقط ابتدای جمله
+      // ------------------------------
+      if (normalized.startsWith("صالح")) {
+
+          const words = normalized.split(" ");
+
+          if (words[1] === "به" && words[2] === "گوشی") {
+              response = "به گوشم برادر";
+
+              // --- ادامه جمله را پردازش کن (Command Chaining) ---
+              const rest = words.slice(3).join(" ");
+              if (rest.trim().length > 0) {
+                  return response + " → " + this.handleCommand(rest);
+              }
+
+              this._writeLog(userText, response);
+              return response;
+          }
+
+          // صالح صالح {X}
+          if (words[1] === "صالح" && words[2]) {
+              response = `${words[2]} به گوشم`;
+
+              const rest = words.slice(3).join(" ");
+              if (rest.trim().length > 0) {
+                  return response + " → " + this.handleCommand(rest);
+              }
+
+              this._writeLog(userText, response);
+              return response;
+          }
+      }
+
+      // ------------------------------
+      // فهرست سربازان
+      // ------------------------------
+      if (normalized.startsWith("فهرست سربازان")) {
+          const parts = normalized.split(" ").slice(2);
+          const filters = parts.filter(x => x.trim());
+          const query = filters.length ? "?filters=" + encodeURIComponent(filters.join(",")) : "";
+
+          response = "صبور باش برادر، در حال انجامه...";
+          this._writeLog(userText, response);
+
+          setTimeout(() => {
+              window.location.href = "{% url 'soldier_list' %}" + query;
+          }, 1200);
+
+          return response;
+      }
+
+      // ------------------------------
+      // اطلاعات سرباز
+      // ------------------------------
+      if (normalized.startsWith("اطلاعات سرباز")) {
+          const text = normalized.replace("اطلاعات سرباز", "").trim();
+
+          let query = "";
+
+          if (text.includes("با کد ملی")) {
+              query = "?national_code=" + encodeURIComponent(text.replace("با کد ملی", "").trim());
+          }
+          else if (text.includes("با کد سازمانی")) {
+              query = "?organizational_code=" + encodeURIComponent(text.replace("با کد سازمانی", "").trim());
+          }
+          else {
+              query = "?complex_query=" + encodeURIComponent(text);
+          }
+
+          response = "صبور باش برادر، پیداش می‌کنم...";
+          this._writeLog(userText, response);
+
+          setTimeout(() => {
+              window.location.href = "{% url 'soldier_list' %}" + query;
+          }, 1200);
+
+          return response;
+      }
+
+      // ------------------------------
+      // دوباره "یا حق"
+      // ------------------------------
+      if (isYaHagh()) {
+          this.isListeningEnabled = true;
+          response = "گوش دادن دوباره فعال شد ✅";
+      }
+
+      this._writeLog(userText, response);
       return response;
-    }
-
-    // حالت گوش دادن فعال
-    if(normalized.includes("صالح")){
-      const words = normalized.split(/\s+/);
-      console.log({words})
-      if(words[0]==="صالح" && words[1]==="به" && words[2]==="گوشی") response = "به گوشم برادر";
-      else if(words[0]==="صالح" && words[1]==="صالح" && words[2]) response = `${words[2]} بگوشم`;
-      else if(words[0]==="صالح" && words[1]==="صالح") response = "بگوشم جناب";
-      else if(normalized.includes("فهرست سربازان")) {
-        response = "صبور باش برادر درحال انجامه...";
-        setTimeout(()=>{
-          window.location.href = "{% url 'soldier_list' %}"
-        },2000)
-      }
-    }
-
-    // اگر جمله "یاحق برادر" در حالت گوش دادن گفته شد، دوباره حالت گوش دادن را فعال نگه دار
-    if(normalized.includes("یاحق")){
-      this.isListeningEnabled = true;
-      response = "گوش دادن دوباره فعال شد ✅";
-    }
-
-    this._writeLog(userText, response);
-    return response;
   }
+
 
   _speak(text){
     try{

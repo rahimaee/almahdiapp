@@ -297,7 +297,7 @@
         <hr/>
         <div class="ui-form-group sm">
                 <label>عبارت جستجو</label> 
-                <input type="text" id="query" name="query" class="ui-input" placeholder="کدملی، نام، نام خانوادگی، کد سازمانی ..." /> 
+                <input type="text" id="complex_query" name="complex_query" value="{{complex_query|default:""}}" class="ui-input" placeholder="کدملی، نام، نام خانوادگی، کد سازمانی ..." /> 
         </div>
         <div class="ui-form-group sm"> 
                 <label>نمایش پیشفرض</label> 
@@ -314,5 +314,12 @@
         <button type="submit" class="ui-btn ui-btn-primary d-flex items-center justify-between" style="margin-top: 15px;">
             <span>اجرای عملیات جستجو</span> 🔎
         </button>
+        <a href="{% url 'soldier_list' %}" class="ui-btn ui-btn-danger d-flex items-center justify-between" style="margin-top: 15px;">
+            <span>حذف فیلتر</span> X
+        </a>
+        <button type="submit" name="action" value="exportexcel" class="ui-btn ui-btn-success d-flex items-center justify-between" style="margin-top: 15px;">
+            <span>خروجی اکسل با فیلتر</span>
+        </button>
+
     </form>
 </div>

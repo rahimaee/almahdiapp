@@ -63,6 +63,7 @@ def soldier_list(request):
     )
     # مقدار انتخاب شده توسط کاربر
     selected_filter = request.GET.get("defaultFilter", default_filter)
+    complex_query = request.GET.get("complex_query", '')
     # ================================
     #   اعمال فیلتر وضعیت انتخاب شده
     # ================================
@@ -97,7 +98,7 @@ def soldier_list(request):
         # فیلدهای متنی
         text_fields = [
             'national_code', 'first_name', 'last_name', 'father_name',
-            'organizational_code', 'id_card_code', 'birth_place',
+            'id_card_code', 'birth_place',
             'issuance_place', 'health_status_description'
         ]
         for field in text_fields:
@@ -185,13 +186,30 @@ def soldier_list(request):
         elif remaining_filter == "remaining5":
             query &= Q(remaining_days__lte=5)
 
-
+        organizational_code = request.GET.get("organizational_code", '')
+        if organizational_code:
+            query &= Q(organizational_code__code_number=organizational_code)
         # اعمال فیلتر
         soldiers = soldiers.filter(query)
 
 
+    if complex_query:
+        query |= Q(organizational_code__code_number__icontains=complex_query)
+        query |= Q(national_code__icontains=complex_query)
+        query |= Q(first_name__icontains=complex_query)
+        query |= Q(last_name__icontains=complex_query)
+
+        # Full name search
+        parts = complex_query.split()
+
+        if len(parts) == 2:
+            first, last = parts
+            query |= Q(first_name__icontains=first, last_name__icontains=last)
+
+        soldiers = soldiers.filter(query)
+
     action = request.POST.get("action")
-    print(action)
+
     if action == "exportexcel":
         wb = create_soldiers_excel(soldiers)
 
@@ -217,6 +235,7 @@ def soldier_list(request):
         'status_choices':status_choices,
         'selected_filter':selected_filter,
         'selected_filter_label':selected_filter_label,
+        'complex_query':complex_query or '',
     })
 
 
