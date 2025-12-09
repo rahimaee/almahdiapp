@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>ورود | سامانه سرباز</title>
+    <title>سامانه صالح</title>
 
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
@@ -22,14 +22,38 @@
     <link rel="stylesheet" href="{% static 'plugins/iCheck/square/blue.css' %}">
     <link href="{% static 'dist/css/fonts.css' %}" rel="stylesheet" />
     <style>
+        .login-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+        }
+        .login-wallpare {
+            flex: 1;
+            height: 100%;
+        }
+        .login-form {
+            height: 100%;
+            padding: 50px;
+            margin-left: -40px;
+            border-radius: 40px;
+            background-color: white;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-box {
+        }
          body .login-page {
             font-family: Vazir, sans-serif;
         }
-        .login-page {
-            background-image: url({% static 'img/rahbari.jpg' %});
+        .login-wallpare {
+            background-image: url({% static 'img/rahbari2.jpg' %});
             background-repeat: no-repeat;
             background-size: cover;
-            background-position: center;
         }
         body.login-page {
             background-size: cover;
@@ -41,27 +65,26 @@
         }
 
         .login-page .login-box {
-            width: 580px;
+            width: 500px;
             margin: 0;
             display: flex;
             justify-content: center;
             flex-direction: column;
+            gap: 10px;
         }
 
         .login-box-body {
             background: #ffffff;
             border-radius: 16px;
             padding: 30px 25px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
             color: #333;
-            border: 1px solid #e8e8e8;
         }
 
         .login-logo a {
             font-size: 22px !important;
             font-weight: bold;
             text-shadow: none;
-            color: #ffd700 !important;
         }
 
         .login-box-msg {
@@ -74,28 +97,34 @@
             color: #333 !important;
             font-weight: bold;
         }
+        html body .login-box input {
 
-        input.form-control {
-            border-radius: 12px;
+        }
+        .login-box input.form-control {
+            font-size: 16px;
             border: 0 none;
-            background: #fffaeaff;
-            color: #111;
+            background: #006e7436;
+            color: #003d41ff;
             transition: 0.25s;
             padding:  20px 10px;
             border-radius: 8px;
+            border:0 none;
+            outline:0;
+            font-weight: bold;
         }
 
         input.form-control::placeholder {
             text-align: right;
+            color: #003d41ff;
         }
         input.form-control:focus {
-            background: rgba(248, 239, 210, 1)
+            background: rgba(0, 110, 116, 0.3)
         }
 
         .btn-primary {
-            background: #ffbf00;
+            background-color: #003d41ff;
             border: none;
-            color: #000;
+            color: white;
             font-weight: bold;
             border-radius: 12px;
             height: 45px;
@@ -105,14 +134,14 @@
         }
 
         .btn-primary:hover {
-            background: #e5aa00;
+            background: #006c70ff;
             transform: translateY(-2px);
         }
 
         .login-box img {
             display: block;
             margin: auto;
-            height: 80px;
+            height: 120px;
         }
         .login-box .form-group {
             display: flex;
@@ -153,12 +182,20 @@
     color: #333;
 }
 .sepha-logo-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+}
+.logo-card {
     background-color: #fafafa;
     padding: 10px;
     border-radius: 10px;
     margin: 0  auto;
     text-align: center;
     font-weight: bolder;
+
 }
 .sepha-title {
     font-weight: bold;
@@ -169,120 +206,126 @@
 </head>
 
 <body class="hold-transition login-page">
-
-<div class="login-box">
-
-    <div class="login-box-body">
-            <div class="sepha-logo-card">
-                <img src="{% static 'img/Sepah.png' %}" alt="Sepah">
-            </div>
-        <div class="login-logo">
-            <a href="{% url 'login' %}">
-                <b style="font-size: 25px; font-weight: bold; color:#FFD700;">
-                    درگاه ورود به سامانه جامع رزم یار
-                </b>
-            </a>
-        </div>
-       
-
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group ">
-                <label>نام کاربری</label>
-                {{ login_form.username }}
-            </div>
-            <div class="form-group password-wrapper">
-                <div style="flex: 1;position: relative;display: flex;align-items: center;">
-                    <label>گذرواژه</label>
-                    <i class="fa fa-eye password-toggle" id="togglePassword"></i>
+        <div class="login-form">
+            <div class="login-box">
+                <div class="sepha-logo-card">
+                    <div class="logo-card">
+                        <img  src="{% static 'img/Sepah.png' %}" alt="Sepah">
+                    </div>
+                    <div style="margin-top: 10px; font-weight: bold;">
+                        <div style="color: black;">نیروی زمینی سپاه</div>
+                        <div style="color: black;">جمهوری اسلامی ایران</div>
+                    </div>
+                    
                 </div>
-                    {{ login_form.password }}
+                <div class="login-box-body">
+                    <div class="login-logo">
+                        <a href="{% url 'login' %}">
+                            <b style="font-size: 25px; font-weight: bold; color:#015e64ff;">
+                                ورود به سامانه هوشمند صالح 
+                            </b>
+                            <p style="text-align: center;font-size: 16px;color: gray;">سامانه مدیریتی سربازان یگان</p>
+                        </a>
+                    </div>
+                
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group ">
+                            <label>نام کاربری</label>
+                            {{ login_form.username }}
+                        </div>
+                        <div class="form-group password-wrapper">
+                            <div style="flex: 1;position: relative;display: flex;align-items: center;">
+                                <label>گذرواژه</label>
+                                <i class="fa fa-eye password-toggle" id="togglePassword"></i>
+                            </div>
+                                {{ login_form.password }}
+                        </div>
+
+                        <button style="margin-top: 10px;" type="submit" class="btn btn-primary btn-block ">
+                            ورود
+                        </button>
+                    </form>
+
+                    <h3 style="text-align: center;"></h3>
+
+                    <footer 
+                        style="
+                            width: 100%;
+                            display: flex;
+                            flex-direction: column;
+                            gap: 0;
+                            padding: 10px;
+                            font-family: IRANSans, sans-serif;
+                            background-color: rgba(20, 20, 20, 0.9);
+                            color: #ccc;
+                            margin:40px 0 0 0;
+                            border-radius: 10px;
+                            " 
+                        class="main-footer text-center">
+                        <div style="border-top:4x solid crimson; color: white;text-align: center;padding: 5px 10px; border-radius: 10px;">
+                            توسعه و تعاون در پادگان  آموزشی رزم مقدماتی المهدی (عج)
+                        </div>
+
+                        <hr style="margin-top: 0;margin-bottom: 6px; border: 1px solid wheat;width: 100%;"/>
+                        <h5 style="color: #ccc;padding: 0; margin: 0; font-size: 10px;text-align: right;display: flex;align-items: center;">
+                            <span style="flex: 2;">با نظارت:</span>
+                            <strong style=" text-align: center;flex:4;background-color: gray; border-radius: 4px ; padding: 6px 10px; color: white;">
+                                سرهنگ پاسدار  پاسدار علی متولی طاهر (فرمانده پادگان)
+                            </strong>
+                        </h5>   
+                        <h5 style="color:#ccc;padding: 0; margin:4px 0; font-size: 10px;text-align: right;display: flex;align-items: center;">
+                            <span style="flex: 2;">مدیریت و برنامه ریزی:</span>
+                            <strong style=" text-align: center;flex:4;color: white;background-color: gray; border-radius: 4px; padding: 6px 10px; ">
+                                ستوان دوم  پاسدار میثم گل بابازاده (کارشناس منابع سرباز)
+                            </strong>
+                        </h5> 
+                        <h5 style="   color: #ccc;padding: 0; margin: 0; font-size: 10px;display: flex;align-items: center;">
+                            <span style="flex: 2;text-align: right;">توسعه‌دهنده و طراح نرم‌افزار:</span>
+                            <strong  style=" text-align: center;flex:4;background-color: gray; border-radius: 4px ; padding: 6px 10px; color: white;">
+                                ستوان سوم  وظیفه سجاد سیفی لر ( کارگزینی وظیفه)
+                            </strong>
+                        </h5>
+                    </footer>
+                </div>
+                <div style="text-align: center;margin-top: 10px;">
+                    <span style="border-radius:6px;background-color: chocolate;color: white;padding: 2px 10px;font-weight: bold;">نسخه : 1.0.1</span>
+                </div>
+            
             </div>
+        </div>
+        <div class="login-wallpare"></div>
 
-            <button style="margin-top: 10px;" type="submit" class="btn btn-primary btn-block ">
-                ورود
-            </button>
-        </form>
+    <!-- Scripts -->
+    <script src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'plugins/iCheck/icheck.min.js' %}"></script>
 
-        <h3 style="text-align: center;"></h3>
-
-        <footer 
-            style="
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-                gap: 0;
-                padding: 10px;
-                font-family: IRANSans, sans-serif;
-                background-color: rgba(20, 20, 20, 0.9);
-                color: #ccc;
-                margin:0 0 0 0;
-                border-radius: 10px;
-               
-                " 
-            class="main-footer text-center">
-            <div style="border-top:4x solid crimson; color: white;text-align: center;padding:  margin-top: 10px;border-radius: 10px;">
-                توسعه و تعاون در پادگان  آموزشی رزم مقدماتی المهدی (عج)
-            </div>
-            <div style="border-top:4x solid crimson; color: white;text-align: center;padding: 10px; border-radius: 10px;">
-                    نیروی زمینی سپاه جمهوری اسلامی ایران
-            </div>
-            <hr style="margin-top: 0;margin-bottom: 6px; border: 1px solid wheat;width: 100%;"/>
-            <h5 style="color: #ccc;padding: 0; margin: 0; font-size: 11px;text-align: right;display: flex;align-items: center;">
-                <span style="flex: 2;">با نظارت:</span>
-                <strong style=" text-align: center;flex:4;background-color: green; border-radius: 4px 4px 0 0; padding: 6px 10px; color: white;">
-                     سرهنگ پاسدار⭐⭐⭐  پاسدار علی متولی طاهر (فرمانده پادگان)
-                </strong>
-            </h5>   
-            <h5 style="color:#ccc;padding: 0; margin: 0; font-size: 11px;text-align: right;display: flex;align-items: center;">
-                <span style="flex: 2;">مدیریت و برنامه ریزی:</span>
-                <strong style=" text-align: center;flex:4;color: black;background-color: white; border-radius: 0; padding: 6px 10px; color: black;">
-                     ستوان دوم⭐⭐  پاسدار میثم گل بابازاده (کارشناس منابع سرباز)
-                </strong>
-            </h5> 
-            <h5 style="   color: #ccc;padding: 0; margin: 0; font-size: 11px;display: flex;align-items: center;">
-                <span style="flex: 2;text-align: right;">توسعه‌دهنده و طراح نرم‌افزار:</span>
-                <strong  style=" text-align: center;flex:4;background-color: crimson; border-radius: 0 0 4px 4px ; padding: 6px 10px; color: white;">
-                     ستوان سوم ⭐ وظیفه سجاد سیفی لر ( کارگزینی وظیفه)
-                </strong>
-            </h5>
-
-
-    
-        </footer>
-    </div>
- 
-</div>
-
-<!-- Scripts -->
-<script src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
-<script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
-<script src="{% static 'plugins/iCheck/icheck.min.js' %}"></script>
-
-<script>
-    $(function () {
-        $('input').iCheck({
-            checkboxClass: 'icheckbox_square-blue',
-            radioClass: 'iradio_square-blue',
-            increaseArea: '20%'
+    <script>
+        $(function () {
+            $('input').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue',
+                increaseArea: '20%'
+            });
         });
-    });
-</script>
-<script>
-    const togglePassword = document.getElementById("togglePassword");
-    const passwordInput = document.querySelector("input[type='password']");
+    </script>
+    <script>
+        const togglePassword = document.getElementById("togglePassword");
+        const passwordInput = document.querySelector("input[type='password']");
 
-    togglePassword.addEventListener("click", function () {
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-            togglePassword.classList.remove("fa-eye");
-            togglePassword.classList.add("fa-eye-slash");
-        } else {
-            passwordInput.type = "password";
-            togglePassword.classList.remove("fa-eye-slash");
-            togglePassword.classList.add("fa-eye");
-        }
-    });
-</script>
+        togglePassword.addEventListener("click", function () {
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                togglePassword.classList.remove("fa-eye");
+                togglePassword.classList.add("fa-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                togglePassword.classList.remove("fa-eye-slash");
+                togglePassword.classList.add("fa-eye");
+            }
+        });
+    </script>
 </body>
 </html>

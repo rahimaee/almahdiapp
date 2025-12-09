@@ -575,9 +575,8 @@ class Soldier(models.Model):
 
         # 2️⃣ پیدا کردن کد سازمانی که این سرباز در آن است
         orgc = self.organizational_code
-        print(orgc)
         # 3️⃣ بررسی کد ملی و آزاد کردن کد سازمانی
-        if orgc and self.national_code == orgc.current_soldier.national_code:
+        if orgc and orgc.current_soldier and  self.national_code == orgc.current_soldier.national_code:
             orgc.current_soldier = None
             orgc.save(update_fields=['current_soldier'])
     @property

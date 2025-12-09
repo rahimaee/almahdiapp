@@ -2,196 +2,211 @@
 
 <style>
     .main-sidebar {
-        width: 280px;
+        width: 320px;
+        height: 100vh;
+    }
+
+    .sidebar {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+    }
+    .sidebar-items-box {
+        flex: 1;
+        overflow-y: auto;
     }
     html body .content-wrapper,html body  .main-footer {
-        margin-right :280px;
+        margin-right :320px;
+    }
+    .sidebar-footer{
+        padding: 10px;
     }
 
 </style>
 <aside class="main-sidebar">
-
-    <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
         {% include "components/user_panel_card.html" %}        
-        <ul class="sidebar-menu" data-widget="tree">
-            <li class="active"><a href="{% url 'panel_home' %}"><i class="fa fa-home"></i> <span>صفحه اصلی</span></a>
-            </li>
+       <div class="sidebar-items-box">
+            <ul class="sidebar-menu" data-widget="tree">
+                <li class="active"><a href="{% url 'panel_home' %}"><i class="fa fa-home"></i> <span>صفحه اصلی</span></a>
+                </li>
 
-            <li class="treeview">
-                <a href="#"><i class="fa fa-user-plus"></i> <span>مدیریت سرباز</span>
-                    <span class="pull-left-container">
-                        <i class="fa fa-angle-right pull-left"></i>
-                      </span>
-                </a>
-                <ul class="treeview-menu">
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-user-plus"></i> <span>مدیریت سرباز</span>
+                        <span class="pull-left-container">
+                            <i class="fa fa-angle-right pull-left"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li>
+                            <a href="{% url 'soldier_list' %}">
+                                <i class="fa fa-user"></i><span>فهرست سربازان</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'soldier_list' %}">
+                                <i class="fa fa-user"></i><span>اطلاعات جامع سرباز</span>
+                            </a>
+                        </li>
+                        {% if request.user.is_staff %}
+                            <li><a href="{% url 'expired_soldiers' %}">منقضی از خدمت</a></li>
+                            <li><hr style="margin-top: 5px;margin-bottom: 5px;"/></li>
+                            <li><a href="{% url 'checked_out_soldiers_list' %}">تسویه‌حساب شده</a></li>
+                            <li><a href="{% url 'due_mental_health_letters' %}">تست مجدد سلامت</a></li>
+                            <li><a href="{% url 'escaped_soldiers' %}">فراری ها</a></li>
+                            <li><hr style="margin-top: 5px;margin-bottom: 5px;"/></li>
+                            <li><a href="{% url 'soldier_create' %}">پذیرش سرباز</a></li>
+                            <li><a href="{% url 'soldiers_by_entry_date' %}">ورودی های جدید</a></li>
+                            <li><hr style="margin-top: 5px;margin-bottom: 5px;"/></li>
+                            <li><a href="{% url 'incomplete_soldiers_list' %}">نواقص پرونده</a></li>
+                            <li><a href="{% url 'bulk_photo_upload' %}">آپلود گروهی عکس</a></li>
+                            <li><a href="{% url 'organizational_codes_list' %}">کد سازمانی</a></li>
+                            <li><a href="{% url 'organizational_position_index' %}">جایگاه سازمانی</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                
+                <li>
+                    <a href="{% url 'gurds:dashboard' %}">
+                        <i class="fa fa-shield"></i> <span>داشبورد دژبانی</span>
+                    </a>
+                </li>
+                {% if request.perm.can_view_pasdar %}
                     <li>
-                        <a href="{% url 'soldier_list' %}">
-                            <i class="fa fa-user"></i><span>فهرست سربازان</span>
+                        <a href="{% url 'pasdar:dashboard' %}">
+                            <i class="fa fa-shield"></i> <span>داشبورد کارگزینی (رسمی)</span>
                         </a>
                     </li>
+                {% endif %}
+
+                {% if request.user.is_staff %}
                     <li>
-                        <a href="{% url 'soldier_list' %}">
-                            <i class="fa fa-user"></i><span>اطلاعات جامع سرباز</span>
+                        <a href="{% url 'main_letters' %}"><i class="fa fa-envelope"></i> <span>فرم و نامه ها</span>
+                            <span class="pull-left-container">
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="{% url 'ClearanceLetterListView' %}">لیست نامه تسویه‌حساب اصلی</a></li>
+                            <li><a href="{% url 'clearance_letter_create' %}">ایجاد نامه تسویه‌حساب اصلی</a></li>
+                            <li><a href="{% url 'normal_letter_list' %}">لیست نامه های عادی</a></li>
+                            <li><a href="{% url 'judicial_inquiry_list' %}">لیست استعلام قضایی</a></li>
+                            <li><a href="{% url 'judicial_inquiry_create' %}">ایجاد استعلام قضایی</a></li>
+                            <li><a href="{% url 'domestic_settlement_list' %}">لیست توسیه حساب داخلی</a></li>
+                            <li><a href="{% url 'domestic_settlement_create' %}">ایجاد توسیه حساب داخلی</a></li>
+                            <li><a href="{% url 'introduction_letter_list' %}">لیست نامه معرفی</a></li>
+                            <li><a href="{% url 'introduction_letter_create' %}">ایجاد معرفی</a></li>
+                            <li><a href="{% url 'membership_certificate_list' %}">لیست گواهی</a></li>
+                            <li><a href="{% url 'membership_certificate_create' %}">ایجاد گواهی</a></li>
+                            <li><a href="{% url 'membership_certificate_create' %}">ایجاد گواهی</a></li>
+                            <li><a href="{% url 'health_iodine_letter_list' %}">لیست تائیدیه سلامت</a></li>
+                            <li><a href="{% url 'health_iodine_letter_create' %}">ایحاد تائیدیه سلامت</a></li>
+                            <li><a href="{% url 'commitment_letter_list' %}">لیست تعهد نامه</a></li>
+                            <li><a href="{% url 'commitment_letter_create' %}">ایجاد تعهد نامه</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+                
+                {% if request.user.is_staff %}
+                    <li class="treeview">
+                        <a href="#"><i class="fa fa-area-chart"></i> <span>تسویه حساب و کارت</span>
+                            <span class="pull-left-container">
+                                <i class="fa fa-angle-right pull-left"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="{% url 'review_settlements' %}">بررسی حقوق سربازان</a></li>
+                            <li><a href="{% url 'soldiers_settlement_list' %}">وضعیت تسویه‌حساب</a></li>
+                            <li><a href="{% url 'soldiers_ready_for_card' %}">سربازان آماده برای ارسال کارت</a></li>
+                            <li><a href="{% url 'card_series_list' %}">لیست سری‌های کارت</a></li>
+                            <li><a href="{% url 'card_series_create' %}">ایجاد سری کارت</a></li>
+                            <li><a href="{% url 'card_send_list_n' %}">بررسی ارسال کارت‌ها</a></li>
+                            {% comment %} <li><a href="{% url 'card_send_list' %}">لیست</a></li> {% endcomment %}
+                        </ul>
+                    </li>
+                {% endif %}
+                {% if request.user.is_staff %}
+                    <li class="treeview">
+                        <a href="#"><i class="fa fa-user-plus"></i> <span>کارکنان</span>
+                            <span class="pull-left-container">
+                                <i class="fa fa-angle-right pull-left"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="{% url 'user_list' %}">لیست کارکنان</a></li>
+                            <li><a href="{% url 'user_create' %}">کارمند جدید</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+                {% if request.user.is_staff %}
+                    <li class="treeview">
+                        <a href="#"><i class="fa fa-user-plus"></i> <span>عقیدتی</span>
+                            <span class="pull-left-container">
+                                <i class="fa fa-angle-right pull-left"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="{% url 'religious_period_list' %}">لیست</a></li>
+                            <li><a href="{% url 'religious_period_add' %}">ایجاد دوره</a></li>
+                            <li><a href="{% url 'soldiers_with_training' %}">لیست سربازان و دوره عقیدتی</a></li>
+                            <li><a href="{% url 'soldiers_without_training' %}">سربازان بدون دوره عقیدتی</a></li>
+                            <li><a href="{% url 'upload-excel' %}">آپلود فایل اکسل دوره عقیدتی</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+                {% if request.user.is_staff %}
+                    <li class="treeview">
+                        <a href="#"><i class="fa fa-user-plus"></i> <span>ناصرین</span>
+                            <span class="pull-left-container">
+                                <i class="fa fa-angle-right pull-left"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="{% url 'naserin_list' %}">لیست گروه های ناصرین</a></li>
+                            <li><a href="{% url 'naserin_create' %}">ایجاد گروه ناصرین</a></li>
+                            <li><a href="{% url 'soldire_naserin_list' %}">لیست سربازان و گروه های ناصرین</a></li>
+                            <li><a href="{% url 'bulk_edit_naserin' %}">تخصیص گروه به سربازان فاقد گروه</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+
+                <li>
+                    <a  href="{% url 'analystics:index' %}">
+                        <i class="fa fa-area-chart"></i> <span>گزارش گیری و آمار</span>
+                    </a>
+                </li>
+                {#                    {% if request.user.is_staff == True %}#}
+                {#                        <li><a href="{% url 'CreateOrUpdateSettings' %}"><i class="fa fa-gears"></i> <span>تنظیمات</span></a>#}
+                {#                        </li>#}
+                {#                        <li class="treeview">#}
+                {#                            <a href="#"><i class="fa fa-area-chart"></i> <span>پشتیبان گیری</span>#}
+                {#                                <span class="pull-left-container">#}
+                {#                        <i class="fa fa-angle-right pull-left"></i>#}
+                {#                      </span>#}
+                {#                            </a>#}
+                {#                            <ul class="treeview-menu">#}
+                {#                                <li><a href="{% url 'backup_database' %}">دریافت پشتیبان</a></li>#}
+                {#                                <li><a href="{% url 'restore_database' %}">بازگزاری پشتیبان</a></li>#}
+                {#                            </ul>#}
+                {#                        </li>#}
+                {#                    {% endif %}#}
+                {% if request.user.is_staff == True %}
+                    <li>
+                        <a href="{% url 'manages_app' %}">
+                            <i class="fa fa-cog"></i> 
+                            <span>مدیریت و تنظیمات</span>
                         </a>
                     </li>
-                    {% if request.user.is_staff %}
-                        <li><a href="{% url 'expired_soldiers' %}">منقضی از خدمت</a></li>
-                        <li><hr style="margin-top: 5px;margin-bottom: 5px;"/></li>
-                        <li><a href="{% url 'checked_out_soldiers_list' %}">تسویه‌حساب شده</a></li>
-                        <li><a href="{% url 'due_mental_health_letters' %}">تست مجدد سلامت</a></li>
-                        <li><a href="{% url 'escaped_soldiers' %}">فراری ها</a></li>
-                        <li><hr style="margin-top: 5px;margin-bottom: 5px;"/></li>
-                        <li><a href="{% url 'soldier_create' %}">پذیرش سرباز</a></li>
-                        <li><a href="{% url 'soldiers_by_entry_date' %}">ورودی های جدید</a></li>
-                        <li><hr style="margin-top: 5px;margin-bottom: 5px;"/></li>
-                        <li><a href="{% url 'incomplete_soldiers_list' %}">نواقص پرونده</a></li>
-                        <li><a href="{% url 'bulk_photo_upload' %}">آپلود گروهی عکس</a></li>
-                        <li><a href="{% url 'organizational_codes_list' %}">کد سازمانی</a></li>
-                        <li><a href="{% url 'organizational_position_index' %}">جایگاه سازمانی</a></li>
-                    {% endif %}
-                </ul>
-            </li>
-            
-            <li>
-                <a href="{% url 'gurds:dashboard' %}">
-                    <i class="fa fa-shield"></i> <span>داشبورد دژبانی</span>
-                </a>
-            </li>
-            {% if request.perm.can_view_pasdar %}
-                <li>
-                    <a href="{% url 'pasdar:dashboard' %}">
-                        <i class="fa fa-shield"></i> <span>داشبورد کارگزینی (رسمی)</span>
-                    </a>
-                </li>
-            {% endif %}
+                {% endif %}
 
-            {% if request.user.is_staff %}
-                <li>
-                    <a href="{% url 'main_letters' %}"><i class="fa fa-envelope"></i> <span>فرم و نامه ها</span>
-                        <span class="pull-left-container">
-                        </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li><a href="{% url 'ClearanceLetterListView' %}">لیست نامه تسویه‌حساب اصلی</a></li>
-                        <li><a href="{% url 'clearance_letter_create' %}">ایجاد نامه تسویه‌حساب اصلی</a></li>
-                        <li><a href="{% url 'normal_letter_list' %}">لیست نامه های عادی</a></li>
-                        <li><a href="{% url 'judicial_inquiry_list' %}">لیست استعلام قضایی</a></li>
-                        <li><a href="{% url 'judicial_inquiry_create' %}">ایجاد استعلام قضایی</a></li>
-                        <li><a href="{% url 'domestic_settlement_list' %}">لیست توسیه حساب داخلی</a></li>
-                        <li><a href="{% url 'domestic_settlement_create' %}">ایجاد توسیه حساب داخلی</a></li>
-                        <li><a href="{% url 'introduction_letter_list' %}">لیست نامه معرفی</a></li>
-                        <li><a href="{% url 'introduction_letter_create' %}">ایجاد معرفی</a></li>
-                        <li><a href="{% url 'membership_certificate_list' %}">لیست گواهی</a></li>
-                        <li><a href="{% url 'membership_certificate_create' %}">ایجاد گواهی</a></li>
-                        <li><a href="{% url 'membership_certificate_create' %}">ایجاد گواهی</a></li>
-                        <li><a href="{% url 'health_iodine_letter_list' %}">لیست تائیدیه سلامت</a></li>
-                        <li><a href="{% url 'health_iodine_letter_create' %}">ایحاد تائیدیه سلامت</a></li>
-                        <li><a href="{% url 'commitment_letter_list' %}">لیست تعهد نامه</a></li>
-                        <li><a href="{% url 'commitment_letter_create' %}">ایجاد تعهد نامه</a></li>
-                    </ul>
-                </li>
-            {% endif %}
-            
-            {% if request.user.is_staff %}
-                <li class="treeview">
-                    <a href="#"><i class="fa fa-area-chart"></i> <span>تسویه حساب و کارت</span>
-                        <span class="pull-left-container">
-                            <i class="fa fa-angle-right pull-left"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li><a href="{% url 'review_settlements' %}">بررسی حقوق سربازان</a></li>
-                        <li><a href="{% url 'soldiers_settlement_list' %}">وضعیت تسویه‌حساب</a></li>
-                        <li><a href="{% url 'soldiers_ready_for_card' %}">سربازان آماده برای ارسال کارت</a></li>
-                        <li><a href="{% url 'card_series_list' %}">لیست سری‌های کارت</a></li>
-                        <li><a href="{% url 'card_series_create' %}">ایجاد سری کارت</a></li>
-                        <li><a href="{% url 'card_send_list_n' %}">بررسی ارسال کارت‌ها</a></li>
-                        {% comment %} <li><a href="{% url 'card_send_list' %}">لیست</a></li> {% endcomment %}
-                    </ul>
-                </li>
-            {% endif %}
-            {% if request.user.is_staff %}
-                <li class="treeview">
-                    <a href="#"><i class="fa fa-user-plus"></i> <span>کارکنان</span>
-                        <span class="pull-left-container">
-                            <i class="fa fa-angle-right pull-left"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li><a href="{% url 'user_list' %}">لیست کارکنان</a></li>
-                        <li><a href="{% url 'user_create' %}">کارمند جدید</a></li>
-                    </ul>
-                </li>
-            {% endif %}
-            {% if request.user.is_staff %}
-                <li class="treeview">
-                    <a href="#"><i class="fa fa-user-plus"></i> <span>عقیدتی</span>
-                        <span class="pull-left-container">
-                            <i class="fa fa-angle-right pull-left"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li><a href="{% url 'religious_period_list' %}">لیست</a></li>
-                        <li><a href="{% url 'religious_period_add' %}">ایجاد دوره</a></li>
-                        <li><a href="{% url 'soldiers_with_training' %}">لیست سربازان و دوره عقیدتی</a></li>
-                        <li><a href="{% url 'soldiers_without_training' %}">سربازان بدون دوره عقیدتی</a></li>
-                        <li><a href="{% url 'upload-excel' %}">آپلود فایل اکسل دوره عقیدتی</a></li>
-                    </ul>
-                </li>
-            {% endif %}
-            {% if request.user.is_staff %}
-                <li class="treeview">
-                    <a href="#"><i class="fa fa-user-plus"></i> <span>ناصرین</span>
-                        <span class="pull-left-container">
-                            <i class="fa fa-angle-right pull-left"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li><a href="{% url 'naserin_list' %}">لیست گروه های ناصرین</a></li>
-                        <li><a href="{% url 'naserin_create' %}">ایجاد گروه ناصرین</a></li>
-                        <li><a href="{% url 'soldire_naserin_list' %}">لیست سربازان و گروه های ناصرین</a></li>
-                        <li><a href="{% url 'bulk_edit_naserin' %}">تخصیص گروه به سربازان فاقد گروه</a></li>
-                    </ul>
-                </li>
-            {% endif %}
-
-            <li>
-                <a  href="{% url 'analystics:index' %}">
-                    <i class="fa fa-area-chart"></i> <span>گزارش گیری و آمار</span>
-                </a>
-            </li>
-            {#                    {% if request.user.is_staff == True %}#}
-            {#                        <li><a href="{% url 'CreateOrUpdateSettings' %}"><i class="fa fa-gears"></i> <span>تنظیمات</span></a>#}
-            {#                        </li>#}
-            {#                        <li class="treeview">#}
-            {#                            <a href="#"><i class="fa fa-area-chart"></i> <span>پشتیبان گیری</span>#}
-            {#                                <span class="pull-left-container">#}
-            {#                        <i class="fa fa-angle-right pull-left"></i>#}
-            {#                      </span>#}
-            {#                            </a>#}
-            {#                            <ul class="treeview-menu">#}
-            {#                                <li><a href="{% url 'backup_database' %}">دریافت پشتیبان</a></li>#}
-            {#                                <li><a href="{% url 'restore_database' %}">بازگزاری پشتیبان</a></li>#}
-            {#                            </ul>#}
-            {#                        </li>#}
-            {#                    {% endif %}#}
-            {% if request.user.is_staff == True %}
-                <li>
-                    <a href="{% url 'manages_app' %}">
-                        <i class="fa fa-cog"></i> 
-                        <span>مدیریت و تنظیمات</span>
-                    </a>
-                </li>
-            {% endif %}
-
-        </ul>
-            
-        <ul class="sidebar-menu" data-widget="tree">
-            <li><a href="{% url "support" %}"><i class="fa fa-support"></i> <span>درباره سامانه</span></a>
-            <li><a href="{% url "logout" %}"><i class="fa fa-sign-out"></i> <span>خروج</span></a>
-        </ul>
-                    
+            </ul>
+            <ul class="sidebar-menu" data-widget="tree">
+                <li><a href="{% url "support" %}"><i class="fa fa-support"></i> <span>درباره سامانه</span></a>
+                <li><a href="{% url "logout" %}"><i class="fa fa-sign-out"></i> <span>خروج</span></a>
+            </ul>
+       </div>
+        <div class="sidebar-footer">
+            {% include "../sdk/saleh-voice-assistant.html" %}
+        </div>   
     </section>
-
 </aside>

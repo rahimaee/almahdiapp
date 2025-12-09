@@ -1088,17 +1088,15 @@ def organizational_code_match_org_code(request):
     try:
         with transaction.atomic():  # تمام تغییرات در یک تراکنش
             for row in records:
+                print(row)
                 nc = row.get("national_code")
                 oc = row.get("org_code")
                 status = row.get("status")
-
-                print(nc,"  ****  ",oc)
                 if not nc and not oc:
                     continue
                 
                 soldier = Soldier.objects.filter(national_code=nc).first()
                 org = OrganizationalCode.objects.filter(code_number=oc).first()
-                print(org,"  ****  ",soldier)
 
                 if not soldier and not org:
                     continue
@@ -1111,6 +1109,9 @@ def organizational_code_match_org_code(request):
                     else:
                         continue
 
+                print(org,"  ****  ",soldier)
+                print(status,mode)    
+
                 if mode == OrganizationalCodeStatusEnum.INEXCEL.key:
                     if status == OrganizationalCodeStatusEnum.ACTIVE.label:
                         org.current_soldier = soldier
@@ -1118,10 +1119,15 @@ def organizational_code_match_org_code(request):
                         org.current_soldier = None
                     elif status == OrganizationalCodeStatusEnum.CHECKOUT.label and soldier:
                         soldier.to_checkout()
-                    elif status == OrganizationalCodeStatusEnum.PRESENT.label and soldier:
+                    elif status == OrganizationalCodeStatusEnum.PRESENT.key and soldier:
                         soldier.is_fugitive = False
-                    elif status == OrganizationalCodeStatusEnum.FUGITIVE.label and soldier:
+                        soldier.is_checked_out = False
+                        print("FF")
+                    elif status == OrganizationalCodeStatusEnum.FUGITIVE.key and soldier:
                         soldier.is_fugitive = True
+                        soldier.is_checked_out = False
+                        print("TT")
+                    soldier.save()
                         
                 elif mode == OrganizationalCodeStatusEnum.ACTIVE.key:
                     org.current_soldier = soldier
@@ -1129,10 +1135,16 @@ def organizational_code_match_org_code(request):
                     org.current_soldier = None
                 elif mode == OrganizationalCodeStatusEnum.CHECKOUT.key and soldier:
                     soldier.to_checkout()
-                elif mode == OrganizationalCodeStatusEnum.PRESENT.label and soldier:
+                elif mode == OrganizationalCodeStatusEnum.PRESENT.key and soldier:
                         soldier.is_fugitive = False
-                elif mode == OrganizationalCodeStatusEnum.FUGITIVE.label and soldier:
+                        soldier.is_checked_out = False
+                        print("FF")
+                elif mode == OrganizationalCodeStatusEnum.FUGITIVE.key and soldier:
                         soldier.is_fugitive = True
+                        soldier.is_checked_out = False
+                        print("TT")
+                
+                print("xXXX")    
                 if soldier:
                     soldier.save()
                 if org:

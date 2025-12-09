@@ -1,0 +1,409 @@
+{% load static %}
+
+<style>
+  .voice-card {
+    padding: 10px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(145deg, #f1f3f7, #ffffff);
+    border: 1px solid #e4e6ed;
+    box-shadow: 4px 4px 12px #d2d4db, -4px -4px 12px #ffffff;
+    position: relative;
+    direction: rtl;
+    transition: all .2s ease;
+    gap: 4px;
+  }
+
+  .voice-card:hover {
+    box-shadow: 6px 6px 16px #c8c9d0, -6px -6px 16px #ffffff;
+  }
+
+  .voice-card img.voice-avatar {
+    border-radius: 14px;
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  }
+
+  .online-dot {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #28d76f;
+    border-radius: 50%;
+    bottom: 4px;
+    left: 4px;
+    border: 2px solid white;
+  }
+
+  .voice-detail-box h1 {
+    padding: 0;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #2a2d3a;
+  }
+
+  .voice-detail-box p {
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #6c768b;
+  }
+
+  .voice-version {
+    padding: 0;
+    margin: 0;
+    background: #00c9a7;
+    color: white;
+    padding: 3px 10px;
+    font-size: 11px;
+    border-radius: 6px;
+    display: inline-block;
+    letter-spacing: 0.5px;
+    box-shadow: 0 3px 10px rgba(0, 201, 167, .3);
+  }
+
+  /* تنظیمات */
+  .settings-wrapper {
+    margin-right: auto;
+    position: relative;
+  }
+
+  .settings-btn {
+    cursor: pointer;
+    transition: .2s;
+    font-size: 18px;
+  }
+
+  .settings-btn:hover {
+    background: #e3e7ee;
+  }
+
+  /* منو */
+  .settings-menu {
+    display: none;
+    position: absolute;
+    bottom:80% ;
+    right: 90%;
+    min-width: 280px;
+    background: white;
+    border: 1px solid #dcdfe6;
+    border-radius: 10px;
+    padding: 6px 0;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    animation: fadeIn .2s ease;
+    z-index: 100;
+  }
+
+  .voice-card:hover .settings-menu {
+    display: block;
+  }
+
+  .settings-menu a {
+    display: block;
+    padding: 10px 14px;
+    color: #374151;
+    font-size: 13px;
+    text-decoration: none;
+    transition: .2s;
+  }
+
+  .settings-menu a:hover {
+    background: #f3f4f6;
+    padding-right: 20px;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .voice-detail-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .mic {
+    padding: 0 20px;
+  }
+  .saleh-bio {
+    padding: 10px;
+    text-align: center;
+  }
+  .saleh-bio img {
+    border-radius: 10px;
+  }
+  .saleh-bio .saleh-descriptor {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .saleh-bio-link {
+    background-color: cyan;
+    color: #025f63ff;
+    padding:6px 10px;
+    border-radius: 4px;
+    margin: 10px auto 2px;
+    text-align: center;
+    font-weight: bold;
+  }
+#voice-text-recored-box {
+    position: absolute;
+    width: 100%;
+    padding: 12px 15px;
+    background-color: #f0f4ff;
+    border: 1px solid #c3c7e1;
+    bottom: 110%;
+    left: 0;
+    transform: translateX(-50%);
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    color: #1f2937;
+    font-size: 14px;
+    line-height: 1.4;
+    z-index: 100;
+    animation: fadeInUp 0.2s ease;
+}
+
+#voice-text-recored-box p {
+    margin: 6px 0 0 0;
+    font-size: 13px;
+    color: #4b5563;
+}
+
+/* فلش (arrow) */
+.voice-arrow {
+    position: absolute;
+    bottom: -10px; /* فاصله از جعبه */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #f0f4ff; /* همان رنگ جعبه */
+}
+
+/* انیمیشن ظاهر شدن */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translate(0,-40%); }
+    to { opacity: 1; transform: translate(0, -40%); }
+}
+
+</style>
+
+<div class="voice-card">
+    
+    <div id="voice-text-recored-box" >
+        <span class="voice-arrow"></span>
+        <span id="voice-text-tak">{% comment %} پاسخ دستیار {% endcomment %}</span>
+        <p id="voice-text-recored">{% comment %}  متن صوتی دریافت شده {% endcomment %}</p>
+    </div>
+  <!-- آواتار -->
+  <div style="position: relative;">
+    <img 
+      class="voice-avatar"
+      src="{% static 'img/person/saleh-zare.jpg' %}"
+      alt="شهید عبدالصالح زارع"
+    />
+    <span class="online-dot"></span>
+  </div>
+
+  <!-- متن -->
+  <div class="voice-detail-box" style="">
+    <h1>دستیار هوشمند صالح</h1>
+    <p >بیسیم روشن</p>
+  </div>
+  <!-- تنظیمات -->
+  <div class="settings-wrapper">
+    <div style="display: flex;align-items: center;justify-content: space-between;">
+      <div class="mic">
+        <i class="fa fa-microphone"></i>
+      </div>
+      <div class="settings-btn">
+        <i class="fa fa-arrow-circle-o-left"></i>
+      </div>
+    </div>
+
+    <div class="voice-version">نسخه 1.0.0</div>
+  </div>
+    <div class="settings-menu">
+      <div class="saleh-bio">
+            <h4 class="saleh-descriptor">زنده یاد شهید مدافع حرم عبدالصالح زارع</h4>
+            <img 
+              class="saleh-avatar"
+              src="{% static 'img/person/saleh-zare.jpg' %}"
+              alt="شهید عبدالصالح زارع"
+              width="100%"
+              height="auto"
+          />
+          <a class="saleh-bio-link">مشاهده زندگی نامه شهید</a>
+      </div>
+      <hr style="margin: 0;padding: 0;"/>
+      <a id="active-voice-saleh">فعال کردن دستیار</a>
+      <a id="deactive-voice-saleh">غیرفعال کردن دستیار</a>
+      <a href="#">آموزش دستیار</a>
+      <a id="copytext-voice-saleh">صبط برای کپی متن</a>
+    </div>
+
+</div>
+
+
+<script type="module">
+class SpeechRecognitionService {
+  constructor({ lang = "fa-IR", continuous = true, interim = false } = {}) {
+    const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!Rec) throw new Error("مرورگر شما از دستیار صوتی پشتیبانی نمی‌کند.");
+    this.recognition = new Rec();
+    this.recognition.lang = lang;
+    this.recognition.continuous = continuous;
+    this.recognition.interimResults = interim;
+
+    this.onResult = () => {};
+    this.onError = () => {};
+    this.onStart = () => {};
+    this.onEnd = () => {};
+
+    this._bindEvents();
+  }
+
+  _bindEvents() {
+    this.recognition.onresult = (e) => {
+      const transcript = Array.from(e.results)
+        .map(r => r[0].transcript)
+        .join(" ");
+      this.onResult(transcript, e);
+    };
+    this.recognition.onerror = (e) => this.onError(e.error || e.message || "unknown");
+    this.recognition.onstart = () => this.onStart();
+    this.recognition.onend = () => this.onEnd();
+  }
+
+  start() { try { this.recognition.start(); } catch(e) {} }
+  stop() { try { this.recognition.stop(); } catch(e) {} }
+}
+
+class VoiceAssistant {
+  constructor({ outputBox, enableTTS = true }) {
+    this.outputBox = outputBox;
+    this.enableTTS = enableTTS && ('speechSynthesis' in window);
+    this.isListeningEnabled = true; // حالت boolean اصلی
+    this._writeLog("دستیار: آماده به کار ✅");
+  }
+
+  _writeLog(userText, assistantText="") {
+    if (!this.outputBox) return;
+    const takEl = document.getElementById("voice-text-tak");
+    const recEl = document.getElementById("voice-text-recored");
+
+    if(userText){
+      if(takEl) takEl.textContent = "شما:";
+      if(recEl) recEl.textContent = userText;
+    }
+
+    if(assistantText){
+      setTimeout(()=>{
+        if(takEl) takEl.textContent = "دستیار:";
+        if(recEl) recEl.textContent = assistantText;
+        if(this.enableTTS) this._speak(assistantText);
+      }, 100);
+    }
+
+    this.outputBox.style.opacity = "1";
+    this.outputBox.style.transform = "translateY(0)";
+    clearTimeout(this.hideTimeout);
+    this.hideTimeout = setTimeout(()=>{
+      this.outputBox.style.opacity = "0";
+      this.outputBox.style.transform = "translateY(10px)";
+    }, 4000);
+  }
+
+  handleCommand(cmd) {
+    if(!cmd || !cmd.trim()) return;
+
+    const normalized = cmd.trim().replace(/[.,!?]$/g, "").toLowerCase();
+    const userText = cmd;
+    let response = "";
+
+    if(!this.isListeningEnabled){
+      if(normalized.includes("یاحق")){
+        this.isListeningEnabled = true;
+        response = "گوش دادن فعال شد ✅";
+        this._writeLog(userText, response);
+      } else {
+        this._writeLog(userText); 
+      }
+      return response;
+    }
+
+    // حالت گوش دادن فعال
+    if(normalized.includes("صالح")){
+      const words = normalized.split(/\s+/);
+      console.log({words})
+      if(words[0]==="صالح" && words[1]==="به" && words[2]==="گوشی") response = "به گوشم برادر";
+      else if(words[0]==="صالح" && words[1]==="صالح" && words[2]) response = `${words[2]} بگوشم`;
+      else if(words[0]==="صالح" && words[1]==="صالح") response = "بگوشم جناب";
+      else if(normalized.includes("فهرست سربازان")) {
+        response = "صبور باش برادر درحال انجامه...";
+        setTimeout(()=>{
+          window.location.href = "{% url 'soldier_list' %}"
+        },2000)
+      }
+    }
+
+    // اگر جمله "یاحق برادر" در حالت گوش دادن گفته شد، دوباره حالت گوش دادن را فعال نگه دار
+    if(normalized.includes("یاحق")){
+      this.isListeningEnabled = true;
+      response = "گوش دادن دوباره فعال شد ✅";
+    }
+
+    this._writeLog(userText, response);
+    return response;
+  }
+
+  _speak(text){
+    try{
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "fa-IR";
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+    } catch(e) {}
+  }
+
+  toggleTTS(enabled){
+    this.enableTTS = enabled && ('speechSynthesis' in window);
+  }
+}
+
+/* === اتصال UI === */
+const micBtn = document.querySelector(".mic i");
+const outputBox = document.getElementById("voice-text-recored-box");
+const assistant = new VoiceAssistant({ outputBox, enableTTS: true });
+
+let recogService;
+try {
+  recogService = new SpeechRecognitionService({ lang: "fa-IR", continuous: true, interim: false });
+} catch(e){
+  if(outputBox) outputBox.textContent = "مرورگر شما از دستیار صوتی پشتیبانی نمی‌کند.";
+}
+
+// همیشه فعال و گوش به زنگ
+if(recogService){
+  recogService.onStart = () => { micBtn.style.color = "#00c9a7"; };
+  recogService.onEnd = () => { 
+    micBtn.style.color = "#00c9a7"; 
+    setTimeout(()=>recogService.start(), 500);
+  };
+  recogService.onResult = (text) => { assistant.handleCommand(text); };
+  recogService.onError = (err) => { if(err !== "no-speech") assistant._writeLog("", "خطا: " + err); };
+  recogService.start();
+}
+
+// دکمه میکروفون فقط برای روشن/خاموش TTS
+if(micBtn) micBtn.addEventListener("click", ()=>{
+  assistant.toggleTTS(!assistant.enableTTS);
+  micBtn.style.color = assistant.enableTTS ? "#00c9a7" : "#000";
+});
+</script>
